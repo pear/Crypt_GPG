@@ -1,0 +1,704 @@
+2007-11-30  gauthierm
+
+	* [r23676] gpg/trunk/GPG/Driver/Php.php:
+	  Escape shell args using escapeshellarg() function.
+
+2007-11-29  gauthierm
+
+	* [r23664] gpg/trunk/GPG.php:
+	  Fix code sniffer warnings.
+	* [r23663] gpg/trunk/GPG/Driver/Php.php:
+	  Add missing return tag.
+	* [r23662] gpg/trunk/GPG/Driver/Php.php:
+	  Uids are returned as c-escaped strings so uncslash them when
+	  parsing.
+	* [r23660] gpg/trunk/GPG/Driver/Php.php:
+	  Clean up process arguments. Always list options before command.
+
+2007-11-28  gauthierm
+
+	* [r23639] gpg/trunk/GPG/Driver/Php.php:
+	  Typecast options.
+	* [r23638] gpg/trunk/GPG.php:
+	  Documentation cleanup.
+	* [r23637] gpg/trunk/GPG/Driver/Php.php:
+	  Documentation cleanups and updates.
+	* [r23636] gpg/trunk/GPG/Driver/Php.php:
+	  Update constructor documentation.
+
+2007-11-27  gauthierm
+
+	* [r23585] gpg/trunk/GPG.php, gpg/trunk/GPG/Driver,
+	  gpg/trunk/GPG/Driver/Php.php, gpg/trunk/package.php,
+	  gpg/trunk/tests/test.php:
+	  Make a public static factory method for creating GPG objects
+	  using a specific backend driver. This will allow a PECL-powered
+	  driver to exist in the future while maintaining the same public
+	  API.
+
+2007-11-26  nrf
+
+	* [r23546] gpg/trunk/ChangeLog, gpg/trunk/package.php:
+	  prepare for release of 0.3.8
+
+2007-11-26  gauthierm
+
+	* [r23545] gpg/trunk/GPG.php:
+	  Use new _getStatus() method in verify() method. Rename
+	  _readResponse to _parseVerifyStatus() since it doesn't actually
+	  read anymore.
+	* [r23544] gpg/trunk/tests/test.php:
+	  Make test respect API changes.
+	* [r23543] gpg/trunk/GPG.php:
+	  Handle case when encrypt is used without the public key. Parsing
+	  INV_RECP status here would also work but the status code is '0:
+	  no specific reason given' instead of '1: not found'.
+	* [r23542] gpg/trunk/GPG.php:
+	  Do a TODO. Status and error text is cached while the subprocess
+	  is open so it can be used by multiple methods.
+	* [r23518] gpg/trunk/GPG.php:
+	  Make key_id the first parameter. Seems more natural in use.
+	* [r23511] gpg/trunk/GPG.php:
+	  Make a private method for debug output.
+	* [r23510] gpg/trunk/GPG.php:
+	  Close all open pipes when closing subprocess.
+	* [r23509] gpg/trunk/GPG.php:
+	  Class constants for file descriptor numbers.
+	* [r23508] gpg/trunk/tests/test.php:
+	  Tests for verify() method.
+
+2007-11-25  gauthierm
+
+	* [r23507] gpg/trunk/GPG.php:
+	  Support verification of detached signatures. TODO: need to
+	  rework status parsing since both the verify() and
+	  colseSubprocess() commands want to use it.
+	* [r23506] gpg/trunk/GPG.php, gpg/trunk/GPG/Signature.php:
+	  Crypt_GPG_Signature
+	  - rename signature_id as id
+	  - rename username as user_id
+	  - make creation_date a unix timestamp
+	  - store expiration date
+	  - drop extra timestamp field
+	  - drop data field
+	  Crypt_GPG
+	  - don't parse creation_date twice in verify()
+	  - parse expiration_date in verify()
+	  - only set valid to true if VALIDSIG code is found
+	  - respect Crypt_GPG_Signature changes
+	  - pass signed data to GPG properly (typo)
+	  - parse other signature error codes (EXPSIG, EXPKEYSIG,
+	  REVKEYSIG)
+	* [r23505] gpg/trunk/GPG.php:
+	  Parse ISO 8601 timestamps properly in both verify() and
+	  _getKeys().
+
+2007-11-24  gauthierm
+
+	* [r23504] gpg/trunk/GPG/Key.php:
+	  Declare id property in Key class and move fingerprint before
+	  other properties.
+	* [r23503] gpg/trunk/GPG/Key.php:
+	  Whitespace
+	* [r23502] gpg/trunk/tests/test.php:
+	  Fix require path in test script.
+	* [r23501] gpg/trunk/tests/test.php:
+	  remove debug line.
+	* [r23498] gpg/trunk/tests/test.php:
+	  - Make test script use latest API
+	  - add helper functions to display test sections and output
+	  - add tests for getting private keys and private key fingerprints
+	* [r23497] gpg/trunk/GPG.php, gpg/trunk/GPG/Key.php:
+	  Crypt_GPG_Key:
+	  - store key dates as unix timestamps
+	  - store expiration date in key
+	  - store user ids as an array
+	  - remove type property
+	  Crypt_GPG
+	  - add getPrivateKeys()
+	  - renamed listKeys() as getPublicKeys()
+	  - get fingerprints correctly in get*Keys()
+	  - use === for null check in _openSubprocess()
+	  - remove output parameter from all methods
+	  - remove *File() methods
+	  - rename 'secret' as 'private'
+	  - add key_id parameter to sign method
+	  - better parsing of fingerprints in get*Fingerprint() methods
+	  that doesn't use ereg
+	  - default separator to nothing in get*Fingerprint()
+	  - more specific exception text says which type of key was not
+	  found
+	  - added deletePublicKey()
+	  - various documentation typo fixes and improvements
+
+2007-11-22  gauthierm
+
+	* [r23460] gpg/trunk/GPG.php:
+	  - Change sign() method to accept a signing mode parameter. This
+	  will allow detached signatures as well as clearsign/normal
+	  signatures.
+	  - Throw an exception in sign() when the secret key does not
+	  exist in the keyring.
+	  - add armor parameter to sign() allowing the signed data to be
+	  returned as ascii armored text rather than binary.
+
+2007-11-20  gauthierm
+
+	* [r23317] gpg/trunk/GPG.php:
+	  Use correct code in KeyNotFound exception caused by
+	  deleteSecretKey().
+
+2007-11-19  nrf
+
+	* [r23293] gpg/trunk/ChangeLog:
+	  prepare for release of 0.3.7
+	* [r23291] gpg/trunk/package.php:
+	  new version
+
+2007-11-19  gauthierm
+
+	* [r23290] gpg/trunk/tests/test.php:
+	  tabs to spaces
+	* [r23289] gpg/trunk/GPG.php:
+	  Fix some typos.
+	* [r23287] gpg/trunk/GPG.php:
+	  update copyright
+	* [r23285] gpg/trunk/tests/test.php:
+	  Respect method name change in test program.
+	* [r23284] gpg/trunk/GPG.php, gpg/trunk/GPG/Key.php:
+	  Include fingerprint in key objects returned by listKeys().
+	* [r23280] gpg/trunk/GPG.php:
+	  - Add encryptFile() method.
+	  - make filename the last argument for decryptFile().
+	  - doc fixes in encrypt()
+	* [r23277] gpg/trunk/GPG.php, gpg/trunk/GPG/Exceptions.php:
+	  Several changes:
+	  - Throw exceptions from the methods that cause exceptions. This
+	  involves rewriting all the exception generating and parsing code
+	  but results in a much saner interface for people who care about
+	  handling exceptions.
+	  - Document all thrown exceptions.
+	  - Many doc cleanups and code cleanups.
+	  - Check if input file is readable in decryptFile().
+	  - Make some parameter names better.
+	  - New exception class Crypt_GPG_FileException.
+	  - added a destructor that closes the subprocess if things go
+	  awry.
+	  - updated copyright tags.
+	* [r23222] gpg/trunk/GPG.php:
+	  doc fixes.
+	* [r23221] gpg/trunk/GPG.php:
+	  doc cleanup, wrap long line.
+	* [r23220] gpg/trunk/GPG/Exceptions.php:
+	  Clean up GPG exception classes based on output of CodeSniffer.
+	* [r23219] gpg/trunk/GPG/Signature.php:
+	  Remove redundant access tags.
+	* [r23218] gpg/trunk/GPG/Key.php:
+	  PHP_CodeSniffer cleanups and use class constants instead of
+	  global constants. They are preferred now.
+	* [r23217] gpg/trunk/package.php:
+	  Cleanups based on PHP_CodeSniffer.
+	* [r23216] gpg/trunk/GPG.php:
+	  #pear on efnet says @access tags are no longer required if you
+	  are using PHP5 scope declarations on method signatures.
+	* [r23215] gpg/trunk/GPG.php:
+	  More doc cleanups.
+	* [r23214] gpg/trunk/GPG.php:
+	  Coding convention issues picked up by PHP_CodeSniffer using PEAR
+	  coding standards. Also includes better documentation for some
+	  methods.
+
+2006-12-19  nrf
+
+	* [r13992] gpg/trunk/ChangeLog, gpg/trunk/package.php:
+	  prepare for release of 0.3.6
+
+2006-12-19  dave
+
+	* [r13991] gpg/trunk/GPG/Exceptions.php:
+	  new exception for missing self signed key
+
+2006-12-19  nrf
+
+	* [r13990] gpg/trunk/GPG.php:
+	  throw a new exception for missing self-signatures
+
+2006-09-12  nrf
+
+	* [r10914] gpg/trunk/ChangeLog, gpg/trunk/package.php:
+	  prepare for release
+
+2006-09-12  gauthierm
+
+	* [r10913] gpg/trunk/GPG.php:
+	  whitespace
+	* [r10911] gpg/trunk/GPG.php:
+	  Don't throw exceptions in get*KeyFingerprint() methods when the
+	  key is not found
+
+2006-09-12  nrf
+
+	* [r10900] gpg/trunk/ChangeLog, gpg/trunk/package.php:
+	  prepare for release
+
+2006-09-12  gauthierm
+
+	* [r10899] gpg/trunk/GPG.php:
+	  throw generic exception by default
+
+2006-09-11  nrf
+
+	* [r10800] gpg/trunk/package.php:
+	  prepare for release
+	* [r10799] gpg/trunk/ChangeLog:
+	  Update ChangeLog
+
+2006-09-11  gauthierm
+
+	* [r10798] gpg/trunk/GPG.php, gpg/trunk/GPG/Exceptions.php:
+	  theo unsigned key exception when trying to use an unsigned key
+
+2006-09-07  gauthierm
+
+	* [r10673] gpg/trunk/GPG.php:
+	  whitespace and documented exception
+
+2006-09-07  nrf
+
+	* [r10670] gpg/trunk/ChangeLog, gpg/trunk/package.php:
+	  - add a ChangeLog
+	  - prepare for release
+
+2006-09-07  gauthierm
+
+	* [r10668] gpg/trunk/GPG.php:
+	  - always capture status not just on verify
+	  - capture error and status correctly so we don't miss any data
+	  - parse status when an error occurs to throw more specific
+	  exceptions
+	  - added author line
+	* [r10667] gpg/trunk/GPG/Exceptions.php:
+	  - more exceptions
+	  - added author line
+	* [r10655] gpg/trunk/GPG/Exceptions.php:
+	  new exception type
+
+2006-09-05  nrf
+
+	* [r10586] gpg/trunk/package.php:
+	  prepare for release
+	* [r10583] gpg/trunk/package.php, gpg/trunk/package.xml:
+	  Cleanup packaging
+
+2006-09-05  dave
+
+	* [r10580] gpg/trunk/package.php:
+	  PHP file to create pear build file
+
+2006-08-17  gauthierm
+
+	* [r9747] gpg/trunk/GPG.php:
+	  fix docblock typo
+	* [r9746] gpg/trunk/GPG.php:
+	  PEAR coding convention fixes
+
+2006-08-15  dave
+
+	* [r9652] gpg/trunk/GPG.php:
+	  use the correct method which now actually checks the secret key
+	  list
+	* [r9647] gpg/trunk/package-2.0.xml:
+	  old style package config - new build process handles this for us
+	* [r9641] gpg/trunk/GPG.php:
+	  method was checking public keys, not private - we now have
+	  methods for both
+
+2006-07-23  gauthierm
+
+	* [r8345] gpg/trunk/GPG/Key.php:
+	  Fix typo.
+
+2005-11-06  danielc
+
+	* [r2470] gpg/trunk/GPG.php:
+	  Add notes to docblocks re windows and signing public keys.
+	* [r2469] gpg/trunk/GPG.php:
+	  Move --homedir to start of command because it matters in some
+	  cases. Add debug property.
+
+2005-11-03  danielc
+
+	* [r2468] gpg/trunk/GPG.php:
+	  Add decryptFile() [Doesn't work.]
+
+2005-11-02  danielc
+
+	* [r2467] gpg/trunk/GPG.php:
+	  Rename variable to 'result' for clarity in process w passphrase.
+	* [r2466] gpg/trunk/GPG/Exceptions.php, gpg/trunk/GPG/Key.php,
+	  gpg/trunk/package-2.0.xml, gpg/trunk/package.xml:
+	  Tabs to spaces.
+	* [r2465] gpg/trunk/GPG.php:
+	  In getFingerprint(), change human_readable param to separator.
+	  Also tweak alignment of docblock for method's other param.
+	* [r2464] gpg/trunk/GPG.php:
+	  Put output file name in quotes to avoid issues with spaces.
+	  When using output file, pass the --yes arg also to avoid
+	  exception when the output file already exists.
+	* [r2463] gpg/trunk/GPG.php:
+	  Add $output parameter to methods, allowing output to be sent
+	  directly to a file.
+	* [r2462] gpg/trunk/GPG.php:
+	  Docblock and minor nesting changes.
+	* [r2461] gpg/trunk/GPG.php:
+	  Add parameter/property.
+	* [r2460] gpg/trunk/GPG.php, gpg/trunk/GPG/Exceptions.php,
+	  gpg/trunk/GPG/Key.php, gpg/trunk/GPG/Signature.php,
+	  gpg/trunk/tests/test.php:
+	  Whitespace cleanup (mainly trailing). Tweak page level docblocks
+	  a tad.
+	* [r2459] gpg/trunk/GPG.php:
+	  Test commit
+
+2005-10-28  nrf
+
+	* [r2445] gpg/trunk/package.xml:
+	  prepare release
+
+2005-08-08  gauthierm
+
+	* [r1283] gpg/trunk/GPG.php, gpg/trunk/GPG/Key.php:
+	  Link to the gpg distrobution in the documentation.
+
+2005-06-20  gauthierm
+
+	* [r889] gpg/trunk/package.xml:
+	  Added PEAR dependency to the package.xml file. The exception
+	  handling
+	  was introduced in PEAR 1.3.3 so this is the version or greater
+	  is required
+	  in package.xml.
+	* [r888] gpg/trunk/GPG/Exceptions.php:
+	  Extend the PEAR exception handler (requires PEAR >= 1.4.0)
+
+2005-06-18  gauthierm
+
+	* [r886] gpg/trunk/tests/test.php:
+	  ditto
+	* [r885] gpg/trunk/GPG.php:
+	  Use docblocks for require statements.
+	* [r884] gpg/trunk/GPG.php, gpg/trunk/GPG/Exceptions.php,
+	  gpg/trunk/GPG/Key.php, gpg/trunk/GPG/Signature.php,
+	  gpg/trunk/tests/test.php:
+	  Documentation Updates
+	  - Moved license information into the page-level docblocks.
+	  - Used more descriptive short descriptions in the page-level
+	  docblocks.
+	  - Added a short description of the file inside the page-level
+	  docblocks.
+	* [r883] gpg/trunk/GPG/Key.php:
+	  s/create_date/creation_date
+
+2005-05-27  gauthierm
+
+	* [r685] gpg/trunk/package.xml:
+	  update date to today
+	* [r684] gpg/trunk/tests/test.php:
+	  use full --armor command line switch instead of shortened -a
+	  version
+	  in instructions
+	* [r683] gpg/trunk/tests/test.php:
+	  tiny formatting fix
+
+2005-05-27  nrf
+
+	* [r682] gpg/trunk/tests/test.php:
+	  Improve some comments.
+	* [r681] gpg/trunk/tests/test.php:
+	  Better instructions.
+	  Don't attempt decryption if encryption fails.
+
+2005-05-27  gauthierm
+
+	* [r680] gpg/trunk/GPG.php:
+	  user "example" instead of "test" for the comment field in
+	  example uids
+	* [r679] gpg/trunk/tests/test-html.php:
+	  remove the html test
+
+2005-05-27  nrf
+
+	* [r678] gpg/trunk/tests/test.php:
+	  Change to example.com. Write better instructions.
+
+2005-05-27  gauthierm
+
+	* [r677] gpg/trunk/GPG.php:
+	  Updated documentation and use test@exmaple.com isntead of
+	  nathan@silverorange.com
+	* [r676] gpg/trunk/tests/test.php:
+	  Better formatting for command line test
+	* [r675] gpg/trunk/tests/test.php:
+	  update error messages
+	  
+	  use echo instead of print_r for simple string
+	* [r674] gpg/trunk/GPG.php:
+	  Use key_id instead of key_exp to index the array
+	* [r672] gpg/trunk/package.xml:
+	  added Key.php
+
+2005-05-25  gauthierm
+
+	* [r669] gpg/trunk/package.xml:
+	  updated some data in package.xml for 0.2 release
+	* [r668] gpg/trunk/tests/test.php:
+	  Added header docblocks
+	  
+	  Updated test to test listKeys() and getFingerprint() methods
+	  
+	  TODO: Still need to put in tests for sign and verify methods
+	* [r667] gpg/trunk/GPG.php:
+	  Documentation fix.
+
+2005-05-25  nrf
+
+	* [r663] gpg/trunk/package.xml:
+	  Fix a mismatched tag.
+
+2005-05-24  gauthierm
+
+	* [r662] gpg/trunk/GPG.php, gpg/trunk/GPG/Key.php:
+	  Return more useful information from the listKeys() method
+	  
+	  Added a new class to contain the useful information returned by
+	  the listKeys()
+	  method.
+	* [r661] gpg/trunk/GPG.php:
+	  Make the signature timestamp always return a unix timestamp
+	  The GPG documentation says it may sometimes be returned as an
+	  ISO 8601 date string and other times as a unix timestamp.
+	  
+	  See doc/DETAILS in the GPG package for more details
+	  
+	  also, very small documentation updates
+	* [r660] gpg/trunk/GPG/Signature.php:
+	  Added documentation for properties of this class
+	* [r659] gpg/trunk/GPG/Signature.php:
+	  Missed a line in the last commit
+	* [r658] gpg/trunk/GPG.php, gpg/trunk/GPG/Exceptions.php,
+	  gpg/trunk/GPG/Signature.php:
+	  fix formatting of header docblock according to standards defined
+	  in
+	  PEAR documentation.
+	  
+	  The page is http://pear.php.net/manual/en/standards.header.php
+	* [r657] gpg/trunk/GPG.php, gpg/trunk/GPG/Exceptions.php,
+	  gpg/trunk/GPG/Signature.php:
+	  Add @link tags to the header docblocks
+	* [r656] gpg/trunk/GPG.php, gpg/trunk/GPG/Exceptions.php,
+	  gpg/trunk/GPG/Signature.php:
+	  Use the @license line as provided in PEAR documentation.
+	  
+	  The page is http://pear.php.net/manual/en/standards.header.php
+
+2005-05-23  gauthierm
+
+	* [r655] gpg/trunk/package.xml:
+	  Forgot to add the LICENSE file
+	* [r654] gpg/trunk/package.xml:
+	  Updated package.xml to work with new package name/directory
+	  structure
+	  
+	  Added Mike to list of maintainers
+	  
+	  The filelist is based of of the XML_Parser package which has a
+	  similar
+	  directory layout.
+	* [r653] gpg/trunk/package-2.0.xml:
+	  The new package.xml 2.0 format is still in alpha and is only
+	  supported
+	  by PEAR 1.4.0 but here is an initial copy. The package.xml file
+	  will
+	  still be used for now.
+
+2005-05-21  gauthierm
+
+	* [r650] gpg/trunk/COPYING, gpg/trunk/LICENSE:
+	  rename this file to a more modern version
+
+2005-05-18  gauthierm
+
+	* [r641] gpg/trunk/GPG.php:
+	  can't be null and a resource at the same time
+	* [r640] gpg/trunk/GPG.php, gpg/trunk/GPG/Exceptions.php,
+	  gpg/trunk/GPG/Signature.php:
+	  add package header docblocks to all files
+	  
+	  add code folding markers to Signature.php
+
+2005-05-18  nrf
+
+	* [r639] gpg/trunk/tests/test.php:
+	  More complete instructions.
+
+2005-05-18  gauthierm
+
+	* [r638] gpg/trunk/COPYING, gpg/trunk/GPG.php,
+	  gpg/trunk/GPG/Exceptions.php, gpg/trunk/GPG/Signature.php:
+	  reassign copyright to silverorange
+	  
+	  attach LGPL lisence
+	  
+	  tabs to spaces in Signature.php
+	* [r637] gpg/trunk/GPG.php, gpg/trunk/GPG/Exceptions.php,
+	  gpg/trunk/GPG/Signature.php:
+	  attach lisences to source files
+	* [r636] gpg/trunk/GPG.php, gpg/trunk/GPG/Exceptions.php,
+	  gpg/trunk/GPG/Signature.php:
+	  relicense everything under the LGPL
+	* [r635] gpg/trunk/GPG.php:
+	  add armor argument to the encrypt method
+	  
+	  minor changes to the sign method
+	* [r634] gpg/trunk/GPG.php:
+	  merge sign and clearsign methods into one method called sign
+	* [r633] gpg/trunk/GPG.php:
+	  no underscore required for this variable as it is not private
+	* [r632] gpg/trunk/GPG.php:
+	  tabs to spaces as per pear requirement
+	  
+	  the vim line at the top of the file will set up vim
+	* [r631] gpg/trunk/GPG.php:
+	  update exception handling
+	  
+	  move exceptions to a new file
+	  
+	  reorder methods so all private methods are at the bottom of the
+	  file
+	  
+	  add some comments
+	* [r630] gpg/trunk/GPG/Signature.php:
+	  Document this class and
+	  add the data class property
+	* [r629] gpg/trunk/GPG/Exceptions.php:
+	  split exceptions into their own file
+	* [r628] gpg/trunk/tests/test-html.php, gpg/trunk/tests/test.php:
+	  Updated tests
+	  Split tests between commandline nad html version
+
+2005-05-16  gauthierm
+
+	* [r627] gpg/trunk/GPG.php:
+	  typo
+	* [r626] gpg/trunk/GPG.php, gpg/trunk/GPG/Signature.php:
+	  split signature class into a separate file
+	* [r625] gpg/trunk/GPG.php:
+	  Added handy code folding markers for vim users
+	* [r624] gpg/trunk/GPG:
+	  helper classes will go in this subdirectory
+	* [r623] gpg/trunk/package.xml:
+	  update package.xml file to respect changes to GPG.php
+	* [r622] gpg/trunk/GPG.php, gpg/trunk/tests/test.php:
+	  various updates to make package pear compatible including
+	  
+	  - docblock cleanup
+	  - docblock additions
+	  - spacing
+	  - class name and package
+	  - making test case work
+
+2005-05-13  gauthierm
+
+	* [r621] gpg/trunk/GPG.php:
+	  somehow this got named incorrectly
+	* [r620] gpg/trunk/tests/test.php:
+	  more conventional Hello, World! text
+	* [r619] gpg/trunk/tests/test.php:
+	  Better formatting of comments
+
+2005-05-12  gauthierm
+
+	* [r618] gpg/trunk/GPG.php:
+	  use braces around one-line while statements as per pear
+	  conventions
+	* [r617] gpg/trunk/GPG.php:
+	  proper spacing around operators including the
+	  string concatenation operator
+	* [r616] gpg/trunk/GPG.php:
+	  cleaned up formatting of docblocks
+	* [r615] gpg/trunk/GPG.php:
+	  more explicitly call strlen($string) == 0 here instead of
+	  $string == ''
+	* [r614] gpg/trunk/GPG.php:
+	  use single quotes where double quotes are not needed
+	* [r613] gpg/trunk/GPG.php:
+	  use pear class declaration format
+	* [r612] gpg/trunk/GPG.php:
+	  use pear style private class properties
+	* [r611] gpg/trunk/GPG.php:
+	  use pear style function definition format
+	* [r610] gpg/trunk/GPG.php:
+	  declare the class properties as their type
+	  and declare the $process class property
+	* [r609] gpg/trunk/GPG.php:
+	  use braces for all if statements even one-liners
+	  
+	  this is a PEAR convention
+	* [r608] gpg/trunk/docs:
+	  remove docs directory
+	* [r607] gpg/trunk/docs/README:
+	  Remove README file. All documentation
+	  should be in the php file.
+	* [r606] gpg/trunk/GPG.php:
+	  Use pear conventions fo naming private methods
+	  
+	  Wrap lines at 80 chars
+
+2005-03-17  dave
+
+	* [r508] gpg/trunk/GPG.php:
+	  add php identity
+	* [r507] gpg/trunk/GPG.php:
+	  quoted key id to protect spaces
+
+2005-03-16  dave
+
+	* [r489] gpg/trunk/tests/test.php:
+	  minor adjustment
+	* [r487] gpg/trunk/tests/test.php:
+	  another minor cleanup
+
+2005-03-16  nrf
+
+	* [r482] gpg/trunk/docs, gpg/trunk/docs/README,
+	  gpg/trunk/package.xml:
+	  Clean up GPG class to submit to PEAR
+
+2005-03-05  nrf
+
+	* [r360] gpg/trunk/GPG.php:
+	  GPG::deleteSecretKey(): throw exception when key is not found
+	* [r359] gpg/trunk/tests/test.php:
+	  minor cleanup
+
+2005-03-04  nrf
+
+	* [r358] gpg/trunk/tests/test.php:
+	  Add info about running the test.
+	* [r357] gpg/trunk/GPG.php, gpg/trunk/tests/test.php:
+	  Add getFingerprint() method.
+	  Fix deleteSecretKey() method to work with newer gpg.
+	  Renaming methods and clean up.
+	  Add DEBUG mode.
+	  Update test and add it to the repo.
+	* [r356] gpg/trunk/tests/test.php:
+	  remove obsolete test
+
+2005-03-02  nrf
+
+	* [r331] gpg/trunk/GPG.php:
+	  fixup documentation
+	* [r330] gpg/trunk, gpg/trunk/GPG.php, gpg/trunk/package.xml,
+	  gpg/trunk/tests, gpg/trunk/tests/test.php:
+	  import
+

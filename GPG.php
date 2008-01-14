@@ -239,6 +239,39 @@ abstract class Crypt_GPG
     abstract public function importKey($data);
 
     // }}}
+    // {{{ exportPublicKey()
+
+    /**
+     * Exports a public key from the keyring
+     *
+     * The exported key remains on the keyring. To delete the public key, use
+     * {@link Crypt_GPG::deletePublicKey()}.
+     *
+     * If more than one key fingerprint is avaliable for the specified
+     * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
+     * public key is exported.
+     *
+     * @param string $key_id either the full uid of the public key, the email
+     *                       part of the uid of the public key or the key id of
+     *                       the public key. For example,
+     *                       "Test User (example) <test@example.com>",
+     *                       "test@example.com" or a hexidecimal string.
+     * @param boolean $armor  optional. If true, ASCII armored data is returned;
+     *                        otherwise, binary data is returned. Defaults to
+     *                        true.
+     *
+     * @return string the public key data.
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
+     *         <i>$key_id</i> is not found.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
+     *         exceptions occur.
+     */
+    abstract public function exportPublicKey($key_id, $armor = true);
+
+    // }}}
     // {{{ deletePublicKey()
 
     /**

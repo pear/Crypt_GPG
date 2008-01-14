@@ -324,6 +324,73 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     }
 
     // }}}
+    // {{{ exportPublicKey()
+
+    /**
+     * Exports a public key from the keyring
+     *
+     * The exported key remains on the keyring. To delete the public key, use
+     * {@link Crypt_GPG::deletePublicKey()}.
+     *
+     * If more than one key fingerprint is avaliable for the specified
+     * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
+     * public key is exported.
+     *
+     * Calls GPG with the --export option.
+     *
+     * @param string $key_id either the full uid of the public key, the email
+     *                       part of the uid of the public key or the key id of
+     *                       the public key. For example,
+     *                       "Test User (example) <test@example.com>",
+     *                       "test@example.com" or a hexidecimal string.
+     * @param boolean $armor  optional. If true, ASCII armored data is returned;
+     *                        otherwise, binary data is returned. Defaults to
+     *                        true.
+     *
+     * @return string the public key data.
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
+     *         <i>$key_id</i> is not found.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
+     *         exceptions occur.
+     */
+    public function exportPublicKey($key_id, $armor = true)
+    {
+        $fingerprint = $this->getPublicFingerprint($key_id);
+
+        if ($fingerprint === null) {
+            throw new Crypt_GPG_KeyNotFoundException(
+                'Public key not found: ' . $key_id,
+                Crypt_GPG::ERROR_KEY_NOT_FOUND, $key_id);
+        }
+
+        $args = array();
+
+        if ($armor) {
+            $args[] = '--armor';
+        }
+
+        $args[] = '--export ' . escapeshellarg($fingerprint);
+
+        $this->_openSubprocess($args);
+
+        $key_data = '';
+        while (!feof($this->_pipes[self::FD_OUTPUT])) {
+            $key_data .= fread($this->_pipes[self::FD_OUTPUT], 1024);
+        }
+
+        $code = $this->_closeSubprocess();
+        if ($code !== null) {
+            throw new Crypt_GPG_Exception(
+                'Unknown error deleting public key.', $code);
+        }
+
+        return $key_data;
+    }
+
+    // }}}
     // {{{ deletePublicKey()
 
     /**
@@ -356,8 +423,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         if ($fingerprint === null) {
             throw new Crypt_GPG_KeyNotFoundException(
-                'Public key not found: ' . $key_id, Crypt_GPG::ERROR_KEY_NOT_FOUND,
-                $key_id);
+                'Public key not found: ' . $key_id,
+                Crypt_GPG::ERROR_KEY_NOT_FOUND, $key_id);
         }
 
         $args = array(

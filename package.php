@@ -32,27 +32,21 @@
  */
 
 require_once 'PEAR/PackageFileManager2.php';
-//PEAR::setErrorHandling(PEAR_ERROR_DIE);
-error_reporting(E_ALL);
+PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
 $release_version = '0.3.10';
 $release_state   = 'alpha';
-$release_notes   = <<<TEXT
-First PEAR release. API is alpha. Changes will be made to Key and Signature
-objects and an exportKey() method will be added in future releases.
+$release_notes   =
+    "First PEAR release. API is alpha. Changes will be made to Key and ".
+    "Signature objects and an exportKey() method will be added in future ".
+    "releases.";
 
-TEXT;
-
-$description =<<<TEXT
-This package provides an object oriented interface to GNU Privacy
-Guard (GPG). It requires the GPG executable to be on the system.
-
-Though GPG can support symmetric-key cryptography, this package is intended
-only to facilitate public-key cryptography.
-
-This package requires PHP version 5.
-
-TEXT;
+$description =
+    "This package provides an object oriented interface to GNU Privacy ".
+    "Guard (GPG). It requires the GPG executable to be on the system.\n\n".
+    "Though GPG can support symmetric-key cryptography, this package is ".
+    "intended only to facilitate public-key cryptography.\n\n".
+    "This package requires PHP version 5.";
 
 $package = new PEAR_PackageFileManager2();
 

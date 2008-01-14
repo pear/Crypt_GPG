@@ -1039,7 +1039,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @see Crypt_GPG_Key
      */
-    public function _getKeys($public)
+    private function _getKeys($public)
     {
         $args = array(
             '--with-colons',

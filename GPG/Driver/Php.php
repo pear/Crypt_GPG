@@ -715,7 +715,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
      *         exceptions occur.
-	 *
+     *
      * @sensitive $data
      */
     public function encrypt($key_id, $data, $armor = true)
@@ -806,6 +806,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
      *         exceptions occur.
+     *
+     * @sensitive $passphrase
      */
     public function decrypt($encrypted_data, $passphrase)
     {
@@ -897,6 +899,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
      *         exceptions occur.
+     *
+     * @sensitive $passphrase
      */
     public function sign($key_id, $data, $passphrase,
         $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true)

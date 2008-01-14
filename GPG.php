@@ -461,6 +461,8 @@ abstract class Crypt_GPG
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
      *         exceptions occur.
+     *
+     * @sensitive $data
      */
     abstract public function encrypt($key_id, $data, $armor = true);
 
@@ -493,6 +495,8 @@ abstract class Crypt_GPG
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
      *         exceptions occur.
+     *
+     * @sensitive $passphrase
      */
     abstract public function decrypt($encrypted_data, $passphrase);
 
@@ -537,6 +541,8 @@ abstract class Crypt_GPG
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
      *         exceptions occur.
+     *
+     * @sensitive $passphrase
      */
     abstract public function sign($key_id, $data, $passphrase,
         $mode = self::SIGN_MODE_NORMAL, $armor = true);

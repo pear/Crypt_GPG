@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.6.2" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+    http://pear.php.net/dtd/tasks-1.0.xsd
+    http://pear.php.net/dtd/package-2.0
+    http://pear.php.net/dtd/package-2.0.xsd">
+ <name>Crypt_GPG</name>
+ <channel>pear.php.net</channel>
+ <summary>GNU Privacy Guard (GPG)</summary>
+ <description>This package provides an object oriented interface to GNU Privacy
+Guard (GPG). It requires the GPG executable to be on the system.
+
+Though GPG can support symmetric-key cryptography, this package is intended
+only to facilitate public-key cryptography.
+
+This package requires PHP version 5.
+ </description>
+ <lead>
+  <name>Mike Gauthier</name>
+  <user>gauthierm</user>
+  <email>mike@silverorange.com</email>
+  <active>yes</active>
+ </lead>
+ <lead>
+  <name>Nathan Fredrickson</name>
+  <user>nrf</user>
+  <email>nathan@silverorange.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2008-01-14</date>
+ <time>01:33:05</time>
+ <version>
+  <release>0.3.10</release>
+  <api>0.3.0</api>
+ </version>
+ <stability>
+  <release>alpha</release>
+  <api>alpha</api>
+ </stability>
+ <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
+ <notes>First PEAR release. API is alpha. Changes will be made to Key and Signature
+objects and an exportKey() method will be added in future releases.
+ </notes>
+ <contents>
+  <dir baseinstalldir="/Crypt" name="/">
+   <dir name="GPG">
+    <dir name="Driver">
+     <file name="Php.php" role="php" />
+    </dir> <!-- /GPG/Driver -->
+    <file name="Exceptions.php" role="php" />
+    <file name="Key.php" role="php" />
+    <file name="Signature.php" role="php" />
+   </dir> <!-- /GPG -->
+   <dir name="tests">
+    <file name="PhpDriver.php" role="test" />
+    <file name="test.php" role="test" />
+   </dir> <!-- /tests -->
+   <file name="ChangeLog" role="data" />
+   <file name="GPG.php" role="php" />
+   <file name="LICENSE" role="doc" />
+  </dir> <!-- / -->
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.0.5</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>0.3.10</release>
+    <api>0.3.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2008-01-14</date>
+   <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
+   <notes>First PEAR release. API is alpha. Changes will be made to Key and Signature
+objects and an exportKey() method will be added in future releases.
+   </notes>
+  </release>
+ </changelog>
+</package>

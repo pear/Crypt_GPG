@@ -354,7 +354,7 @@ TEXT;
         // }}}
 
         $decrypted_data = $this->_gpg->decrypt($encrypted_data, $passphrase);
-        $this->assertEquals($decrypted_data, $data);
+        $this->assertEquals($data, $decrypted_data);
     }
 
     // }}}
@@ -505,8 +505,8 @@ TEXT;
     {
         $key_id = 'test@example.com';
         $fingerprint = $this->_gpg->getPublicFingerprint($key_id);
-        $this->assertEquals($fingerprint,
-            '6BBCF2BD74A4A82F0DDE13973C43EC04EE18B366');
+        $this->assertEquals('6BBCF2BD74A4A82F0DDE13973C43EC04EE18B366',
+            $fingerprint);
     }
 
     // }}}
@@ -516,8 +516,8 @@ TEXT;
     {
         $key_id = 'test@example.com';
         $fingerprint = $this->_gpg->getPrivateFingerprint($key_id);
-        $this->assertEquals($fingerprint,
-            '6BBCF2BD74A4A82F0DDE13973C43EC04EE18B366');
+        $this->assertEquals('6BBCF2BD74A4A82F0DDE13973C43EC04EE18B366',
+            $fingerprint);
     }
 
     // }}}

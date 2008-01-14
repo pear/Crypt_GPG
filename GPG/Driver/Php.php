@@ -1178,11 +1178,20 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         }
 
         $command = $this->_gpg_binary;
+
+        $args = array_merge(array(
+            '--no-secmem-warning',
+            '--no-permission-warning',
+            '--no-tty',
+            '--status-fd ' . escapeshellarg(self::FD_STATUS)
+        ), $args);
+
         if ($this->_homedir) {
-            $command .= ' --homedir "' . $this->_homedir . '"';
+            array_unshift($args,
+                '--homedir ' . escapeshellarg($this->_homedir));
         }
-        $command .= ' --no-secmem-warning --no-tty --status-fd 3 ' .
-            implode(' ', $args);
+
+        $command .= ' ' . implode(' ', $args);
 
         $descriptor_spec = array(
             self::FD_INPUT   => array('pipe', 'r'), // stdin

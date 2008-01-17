@@ -56,7 +56,8 @@ require_once 'Crypt/GPG.php';
  * @todo Assert sign tests worked.
  * @todo Assert verify tests worked.
  * @todo Assert get public/private keys worked.
- * @todo Add tests for Exception API.
+ * @todo Add tests for encrypt() Exception API.
+ * @todo Add tests for sign() Exception API.
  */
 class PhpDriver extends PHPUnit_Framework_TestCase
 {
@@ -249,9 +250,9 @@ TEXT;
     // }}}
 
     // tests
-    // {{{ testImportPrivateKey()
+    // {{{ testImportKeyPrivateKey()
 
-    public function testImportPrivateKey()
+    public function testImportKeyPrivateKey()
     {
         $key_id = 'test@example.com';
 
@@ -305,6 +306,129 @@ TEXT;
     }
 
     // }}}
+    // {{{ testImportKeyDuplicateKeyImportException()
+
+    /**
+     * @expectedException Crypt_GPG_DuplicateKeyImportException
+     */
+    public function testImportKeyDuplicateKeyImportException()
+    {
+        // {{{ private key data
+        $private_key_data = <<<TEXT
+-----BEGIN PGP PRIVATE KEY BLOCK-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+lQHhBEeJvQURBACX8TxSFbEL2q2utva0lpr1XDesb8rghTOK2+nUSlB4CwITnpJW
+9iRsS1FRGDgOjlde8qnjttvhT0/pAv7iEQvyHhfwSZ9LvnElgJQM29OOazxeRanh
+bfMh5Qqu7bzFZ+3gg4OJj2mSpGvVYfgAzArl+Fg9pN7gnrtKZcgdsb0xqwCg4uW0
+yAhyCreu3futN5nWyuuEYPsEAIEJbO7ICx587TUgjf06CfMQPCpGDbn6m/ZF8ufi
+hhSN+lcBoJwOUNJvwfIfXQJS6fJv/Cc+DWaRROdb/fEfGe23tLAqHC7ouuAhX5Ao
+NbAyJNLiUjShVJS8N4eu1YvusaceveBplP9JnY/MNeZCewgKXgBr5XFWEDCVJHpW
+6S3RA/0X5Rwxgjq+KQ27upl3674aBlC0Nso8yjPmFcbWK67WTlti1NZZh5CcKb7k
+nIlNWfQkaFSXBjdH3mkUTYWKbuqKLL7TA6L1p+IHIHW/azxq/RssyTh8DVudBWTc
+Euc97jLl7OuKvG0UcYkBKRQrKAJftdNkopCG/Fk1Qp+Wu+5esv4DAwKtbw2Rb2gw
+NGByZskyHBW8UObQ59xmWXn7o2e/t0n3/C1qQv5PgEKPJOwaFKG9LuHfBjRDTIzA
+tTFisrRQR1BHIFRlc3QgVXNlciAoRG8gbm90IGVuY3J5cHQgc2Vuc2l0aXZlIGRh
+dGEgdXNpbmcgdGhpcyBrZXkuKSA8dGVzdEBleGFtcGxlLmNvbT6IYAQTEQIAIAUC
+R4m9BQIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJEDxD7ATuGLNmQgIAoMBb
+T1bF5xyI414s9F802219JY6uAJ0dvIdr+Xs4kVLx1xZhGWeZsrwewp0CYwRHib0P
+EAgA8Z92lQae5yevpKcNLsHO4FwFwsbv7k8Ye9NxoLMEXI9+tNq1v1ev7V8Orlen
+YGAZKnys6ZIhYaPzUJm9e4cPO68N5gg9kI/14a1FJgLCL87zdY4NL2EO7EW9WfbZ
+EiL7WNkHZxGCuL77iSOKwkwGWgKxFRwlKbtU/UP7z48GEuOfeXaZ5CM5yPWGMwWr
+n8+smpX37gSl5j7YcoCvRyI7KAJScu0QRBrfud/ND9Qmi1cpTrAciAGY4EtfOPmp
+5D1SOZwZoLi2LkTOOVLewfZavYA+jXGc3J23nOA6QMSRWh1INBvcQ1vuS3rKU4n+
+9xSpOuPO0839n6l4X7g/QQPZ4wADBQgApyFMRDmBw5/Azk346jqEatIFF7eNVXbo
+q9IO3Jr1r1NKXLJJt4G2T2Lar3QlJW4p3TjJAUHK2CfP2oEBlamJnEU5AEfKZci9
+d9phT+z5XNpBIIFZYRH2zRASftm2A5A5ZhHmDCWp0WUyiNY6c4oQA41woCDAEPe8
+nzIz2SjQ42Eld/eC7ukdtFIOh3c785LuQ7fClzRLrI9kmVEFt2+uPgDiqeM39At6
+G7C31qad3Pc9MV2snS3hS9mbFgT6DukVV5HeS3aPOVg7Z0TB/JXwOIQHIC+VFJra
+j+orSDZ80OeUyqHp9WAoUv9DPMH4+wwd8blP1frPf4XKTeYjXRXJif4DAwKtbw2R
+b2gwNGCZ25Mw0xSWxWU44Q51yognp+RPKIbxGNSNfcY0LpGbZt+AkobIs/2zj4YW
+itd0QhyH2U4LraOMGPMyL6Q5TJbU7vGCLCLZxCuAiEkEGBECAAkFAkeJvQ8CGwwA
+CgkQPEPsBO4Ys2bUJgCfYFt+IBLXZ554/0+i5GWQW5v6d6cAnizgRfXazECi4PMV
+LZxMnS9EVS1k
+=LVlx
+-----END PGP PRIVATE KEY BLOCK-----
+
+TEXT;
+        // }}}
+
+        $this->_gpg->importKey($private_key_data);
+    }
+
+    // }}}
+    // {{{ testImportKeyNoDataException()
+
+    /**
+     * @expectedException Crypt_GPG_NoDataException()
+     */
+    public function testImportKeyNoDataException()
+    {
+        $key_data = 'Invalid OpenPGP data.';
+        $this->_gpg->importKey($key_data);
+    }
+
+    // }}}
+    // {{{ testExportPublicKey()
+
+    public function testExportPublicKey()
+    {
+        $key_id = 'test@example.com';
+
+        // {{{ expected key data
+        $expected_key_data = <<<TEXT
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+mQGiBEeJvQURBACX8TxSFbEL2q2utva0lpr1XDesb8rghTOK2+nUSlB4CwITnpJW
+9iRsS1FRGDgOjlde8qnjttvhT0/pAv7iEQvyHhfwSZ9LvnElgJQM29OOazxeRanh
+bfMh5Qqu7bzFZ+3gg4OJj2mSpGvVYfgAzArl+Fg9pN7gnrtKZcgdsb0xqwCg4uW0
+yAhyCreu3futN5nWyuuEYPsEAIEJbO7ICx587TUgjf06CfMQPCpGDbn6m/ZF8ufi
+hhSN+lcBoJwOUNJvwfIfXQJS6fJv/Cc+DWaRROdb/fEfGe23tLAqHC7ouuAhX5Ao
+NbAyJNLiUjShVJS8N4eu1YvusaceveBplP9JnY/MNeZCewgKXgBr5XFWEDCVJHpW
+6S3RA/0X5Rwxgjq+KQ27upl3674aBlC0Nso8yjPmFcbWK67WTlti1NZZh5CcKb7k
+nIlNWfQkaFSXBjdH3mkUTYWKbuqKLL7TA6L1p+IHIHW/azxq/RssyTh8DVudBWTc
+Euc97jLl7OuKvG0UcYkBKRQrKAJftdNkopCG/Fk1Qp+Wu+5esrRQR1BHIFRlc3Qg
+VXNlciAoRG8gbm90IGVuY3J5cHQgc2Vuc2l0aXZlIGRhdGEgdXNpbmcgdGhpcyBr
+ZXkuKSA8dGVzdEBleGFtcGxlLmNvbT6IYAQTEQIAIAUCR4m9BQIbAwYLCQgHAwIE
+FQIIAwQWAgMBAh4BAheAAAoJEDxD7ATuGLNmQgIAoMBbT1bF5xyI414s9F802219
+JY6uAJ0dvIdr+Xs4kVLx1xZhGWeZsrwewrkCDQRHib0PEAgA8Z92lQae5yevpKcN
+LsHO4FwFwsbv7k8Ye9NxoLMEXI9+tNq1v1ev7V8OrlenYGAZKnys6ZIhYaPzUJm9
+e4cPO68N5gg9kI/14a1FJgLCL87zdY4NL2EO7EW9WfbZEiL7WNkHZxGCuL77iSOK
+wkwGWgKxFRwlKbtU/UP7z48GEuOfeXaZ5CM5yPWGMwWrn8+smpX37gSl5j7YcoCv
+RyI7KAJScu0QRBrfud/ND9Qmi1cpTrAciAGY4EtfOPmp5D1SOZwZoLi2LkTOOVLe
+wfZavYA+jXGc3J23nOA6QMSRWh1INBvcQ1vuS3rKU4n+9xSpOuPO0839n6l4X7g/
+QQPZ4wADBQgApyFMRDmBw5/Azk346jqEatIFF7eNVXboq9IO3Jr1r1NKXLJJt4G2
+T2Lar3QlJW4p3TjJAUHK2CfP2oEBlamJnEU5AEfKZci9d9phT+z5XNpBIIFZYRH2
+zRASftm2A5A5ZhHmDCWp0WUyiNY6c4oQA41woCDAEPe8nzIz2SjQ42Eld/eC7ukd
+tFIOh3c785LuQ7fClzRLrI9kmVEFt2+uPgDiqeM39At6G7C31qad3Pc9MV2snS3h
+S9mbFgT6DukVV5HeS3aPOVg7Z0TB/JXwOIQHIC+VFJraj+orSDZ80OeUyqHp9WAo
+Uv9DPMH4+wwd8blP1frPf4XKTeYjXRXJiYhJBBgRAgAJBQJHib0PAhsMAAoJEDxD
+7ATuGLNm1CYAn2BbfiAS12eeeP9PouRlkFub+nenAJ4s4EX12sxAouDzFS2cTJ0v
+RFUtZA==
+=QS+L
+-----END PGP PUBLIC KEY BLOCK-----
+
+TEXT;
+        // }}}
+
+        $key_data = $this->_gpg->exportPublicKey($key_id);
+        $this->assertEquals($expected_key_data, $key_data);
+    }
+
+    // }}}
+    // {{{ testExportPublicKeyNotFoundException()
+
+    /**
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     */
+    public function testExportPublicKeyNotFoundException()
+    {
+        $key_id = 'non-existent-key@example.com';
+        $key_data = $this->_gpg->exportPublicKey($key_id);
+    }
+
+    // }}}
     // {{{ testEncrypt()
 
     public function testEncrypt()
@@ -324,9 +448,8 @@ TEXT;
 
     public function testDecrypt()
     {
-        $key_id = 'test@example.com';
         $passphrase = 'test';
-        $data = 'Hello, Alice! Goodbye, Bob!';
+        $expected_decrypted_data = 'Hello, Alice! Goodbye, Bob!';
 
         // {{{ encrypted data
 
@@ -354,7 +477,134 @@ TEXT;
         // }}}
 
         $decrypted_data = $this->_gpg->decrypt($encrypted_data, $passphrase);
-        $this->assertEquals($data, $decrypted_data);
+        $this->assertEquals($expected_decrypted_data, $decrypted_data);
+    }
+
+    // }}}
+    // {{{ testDecryptKeyNotFoundException()
+
+    /**
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     */
+    public function testDecryptKeyNotFoundException()
+    {
+        $key_id = 'test@example.com';
+        $passphrase = 'test';
+
+        // {{{ encrypted data
+
+        $encrypted_data = <<<TEXT
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+hQIOA9iRsCBTswBBEAgA48W4igBuoGyFW9IMrWl7CEfUKwC/rRXJbK1MbESlHsA0
+CVG1c1Y/vLYOXVgPeuHokwwTau0nmpKIOCxMUymBu8N66UK+8RvAPekoCLlKjNg0
+iOVPu+62bPvVWHgKvWM4Kj2MKXGhC1m4OaHonaDffVMTmsa4ndEUoOV9TQb/nBNt
+L7JZ+N/KXie9nIoqJgvA1Gb0zuMkFUsLaJ+e3HThRyQUyzZ7k5LLBOTgEKW3urtK
+m9lOPTyqOCKEsNflT3XI3823do3EF//damROGNLtMcI92vQA2cY/X3reoJjN5Nb+
+yLOVkSjVGxJIXE2tPtKwJC6dELy2xTCPL0aagliqiQgAzB6/NLfos89XD4y3cvcq
+a8pfdKwGd9fsUGFtntd8Jf8moWOkLJbh1vRUyxn5eSJKHiu52FjrOCSQOWLax/qZ
+RHQM1h1MK6isLHysLgq6naLUyJVXmpL9HSrUYaCP4+jefNeC2nRAonYAr18nfAHF
+1AiRzDE3+MDy8vRZLWOitsrhqYDrCyg+x7qvgLjK5F5SSc8ZwyE3Rlee+NbRjXH3
+fzAE/l6P9GlZrZUL5inEUDBm+DB/LQcnB9K32XD/7Lkeh92Ih6d/Ykbctc0bzuD4
+CnkU/rA4z5e8s81CopOW65FchxkLK8YFGf623IURbrga7sVW0wj13AbLcmVO5fiS
+xNJWASwiaUHH6Lll3gHdcJJlMW9THKzOk2UzV56t4ZaqJPrYwWMONHS60P+UVtl2
+HQpCFn/UK5EjrXyd9DHdYHGRL2n8O3xjhu1GVuuA4sb3B46nKzxXzcU=
+=q3cD
+-----END PGP MESSAGE-----
+
+TEXT;
+        // }}}
+
+        $this->_gpg->deletePrivateKey($key_id);
+        $decrypted_data = $this->_gpg->decrypt($encrypted_data, $passphrase);
+    }
+
+    // }}}
+    // {{{ testDecryptNoDataException()
+
+    /**
+     * @expectedException Crypt_GPG_NoDataException
+     */
+    public function testDecryptNoDataException()
+    {
+        $passphrase = 'test';
+        $encrypted_data = 'Invalid OpenPGP data.';
+        $decrypted_data = $this->_gpg->decrypt($encrypted_data, $passphrase);
+    }
+
+    // }}}
+    // {{{ testDecryptBadPassphraseException_missing()
+
+    /**
+     * @expectedException Crypt_GPG_BadPassphraseException
+     */
+    public function testDecryptBadPassphraseException_missing()
+    {
+        // {{{ encrypted data
+
+        $encrypted_data = <<<TEXT
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+hQIOA9iRsCBTswBBEAgA48W4igBuoGyFW9IMrWl7CEfUKwC/rRXJbK1MbESlHsA0
+CVG1c1Y/vLYOXVgPeuHokwwTau0nmpKIOCxMUymBu8N66UK+8RvAPekoCLlKjNg0
+iOVPu+62bPvVWHgKvWM4Kj2MKXGhC1m4OaHonaDffVMTmsa4ndEUoOV9TQb/nBNt
+L7JZ+N/KXie9nIoqJgvA1Gb0zuMkFUsLaJ+e3HThRyQUyzZ7k5LLBOTgEKW3urtK
+m9lOPTyqOCKEsNflT3XI3823do3EF//damROGNLtMcI92vQA2cY/X3reoJjN5Nb+
+yLOVkSjVGxJIXE2tPtKwJC6dELy2xTCPL0aagliqiQgAzB6/NLfos89XD4y3cvcq
+a8pfdKwGd9fsUGFtntd8Jf8moWOkLJbh1vRUyxn5eSJKHiu52FjrOCSQOWLax/qZ
+RHQM1h1MK6isLHysLgq6naLUyJVXmpL9HSrUYaCP4+jefNeC2nRAonYAr18nfAHF
+1AiRzDE3+MDy8vRZLWOitsrhqYDrCyg+x7qvgLjK5F5SSc8ZwyE3Rlee+NbRjXH3
+fzAE/l6P9GlZrZUL5inEUDBm+DB/LQcnB9K32XD/7Lkeh92Ih6d/Ykbctc0bzuD4
+CnkU/rA4z5e8s81CopOW65FchxkLK8YFGf623IURbrga7sVW0wj13AbLcmVO5fiS
+xNJWASwiaUHH6Lll3gHdcJJlMW9THKzOk2UzV56t4ZaqJPrYwWMONHS60P+UVtl2
+HQpCFn/UK5EjrXyd9DHdYHGRL2n8O3xjhu1GVuuA4sb3B46nKzxXzcU=
+=q3cD
+-----END PGP MESSAGE-----
+
+TEXT;
+        // }}}
+
+        $decrypted_data = $this->_gpg->decrypt($encrypted_data);
+    }
+
+    // }}}
+    // {{{ testDecryptBadPassphraseException_bad()
+
+    /**
+     * @expectedException Crypt_GPG_BadPassphraseException
+     */
+    public function testDecryptBadPassphraseException_bad()
+    {
+        $passphrase = 'incorrect';
+
+        // {{{ encrypted data
+
+        $encrypted_data = <<<TEXT
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+hQIOA9iRsCBTswBBEAgA48W4igBuoGyFW9IMrWl7CEfUKwC/rRXJbK1MbESlHsA0
+CVG1c1Y/vLYOXVgPeuHokwwTau0nmpKIOCxMUymBu8N66UK+8RvAPekoCLlKjNg0
+iOVPu+62bPvVWHgKvWM4Kj2MKXGhC1m4OaHonaDffVMTmsa4ndEUoOV9TQb/nBNt
+L7JZ+N/KXie9nIoqJgvA1Gb0zuMkFUsLaJ+e3HThRyQUyzZ7k5LLBOTgEKW3urtK
+m9lOPTyqOCKEsNflT3XI3823do3EF//damROGNLtMcI92vQA2cY/X3reoJjN5Nb+
+yLOVkSjVGxJIXE2tPtKwJC6dELy2xTCPL0aagliqiQgAzB6/NLfos89XD4y3cvcq
+a8pfdKwGd9fsUGFtntd8Jf8moWOkLJbh1vRUyxn5eSJKHiu52FjrOCSQOWLax/qZ
+RHQM1h1MK6isLHysLgq6naLUyJVXmpL9HSrUYaCP4+jefNeC2nRAonYAr18nfAHF
+1AiRzDE3+MDy8vRZLWOitsrhqYDrCyg+x7qvgLjK5F5SSc8ZwyE3Rlee+NbRjXH3
+fzAE/l6P9GlZrZUL5inEUDBm+DB/LQcnB9K32XD/7Lkeh92Ih6d/Ykbctc0bzuD4
+CnkU/rA4z5e8s81CopOW65FchxkLK8YFGf623IURbrga7sVW0wj13AbLcmVO5fiS
+xNJWASwiaUHH6Lll3gHdcJJlMW9THKzOk2UzV56t4ZaqJPrYwWMONHS60P+UVtl2
+HQpCFn/UK5EjrXyd9DHdYHGRL2n8O3xjhu1GVuuA4sb3B46nKzxXzcU=
+=q3cD
+-----END PGP MESSAGE-----
+
+TEXT;
+        // }}}
+
+        $decrypted_data = $this->_gpg->decrypt($encrypted_data, $passphrase);
     }
 
     // }}}
@@ -368,11 +618,35 @@ TEXT;
     }
 
     // }}}
+    // {{{ testDeletePublicKeyNotFoundException()
+
+    /**
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     */
+    public function testDeletePublicKeyNotFoundException()
+    {
+        $key_id = 'non-existent-key@example.com';
+        $this->_gpg->deletePublicKey($key_id);
+    }
+
+    // }}}
     // {{{ testDeletePrivateKey()
 
     public function testDeletePrivateKey()
     {
         $key_id = 'test@example.com';
+        $this->_gpg->deletePrivateKey($key_id);
+    }
+
+    // }}}
+    // {{{ testDeletePrivateKeyNotFoundException()
+
+    /**
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     */
+    public function testDeletePrivateKeyNotFoundException()
+    {
+        $key_id = 'non-existent-key@example.com';
         $this->_gpg->deletePrivateKey($key_id);
     }
 
@@ -409,6 +683,18 @@ TEXT;
         $passphrase = 'test';
         $signature_data = $this->_gpg->sign($key_id, $data, $passphrase,
             Crypt_GPG::SIGN_MODE_DETACHED);
+    }
+
+    // }}}
+    // {{{ testVerifyNoDataException()
+
+    /**
+     * @expectedException Crypt_GPG_NoDataException
+     */
+    public function testVerifyNoDataException()
+    {
+        $signed_data = 'Invalid OpenPGP data.';
+        $signature = $this->_gpg->verify($signed_data);
     }
 
     // }}}

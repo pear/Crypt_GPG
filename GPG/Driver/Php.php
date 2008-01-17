@@ -1266,6 +1266,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             '--no-secmem-warning',
             '--no-permission-warning',
             '--no-tty',
+            '--trust-model always',
             '--status-fd ' . escapeshellarg(self::FD_STATUS)
         ), $args);
 

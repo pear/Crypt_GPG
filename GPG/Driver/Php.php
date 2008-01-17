@@ -384,7 +384,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         $code = $this->_closeSubprocess();
         if ($code !== null) {
             throw new Crypt_GPG_Exception(
-                'Unknown error deleting public key.', $code);
+                'Unknown error exporting public key.', $code);
         }
 
         return $key_data;
@@ -789,8 +789,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * encrypted data.
      *
      * @param string $encrypted_data the data to be decrypted.
-     * @param string $passphrase     the passphrase of the private key used to
-     *                               encrypt the data.
+     * @param string $passphrase     optional. The passphrase of the private
+     *                               key used to encrypt the data. Only
+     *                               required if the private key requires a
+     *                               passphrase.
      *
      * @return string the decrypted data.
      *
@@ -801,7 +803,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *         GPG encrypted data.
      *
      * @throws Crypt_GPG_BadPassphraseException if specified passphrase is
-     *         incorrect or if no passphrase is specified.
+     *         incorrect or if a required passphrase is not specified.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
@@ -809,12 +811,15 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @sensitive $passphrase
      */
-    public function decrypt($encrypted_data, $passphrase)
+    public function decrypt($encrypted_data, $passphrase = null)
     {
-        $args = array(
-            '--passphrase-fd 4',
-            '--decrypt'
-        );
+        $args = array();
+
+        if ($passphrase !== null) {
+            $args[] = '--passphrase-fd ' . escapeshellarg(self::FD_MESSAGE);
+        }
+
+        $args[] = '--decrypt';
 
         $this->_openSubprocess($args);
 
@@ -875,7 +880,9 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *                            "Test User (example) <test@example.com>",
      *                            "test@example.com" or a hexidecimal string.
      * @param string  $data       the data to be signed.
-     * @param string  $passphrase the passphrase of the user's private key.
+     * @param string  $passphrase optional. The passphrase of the private key
+     *                            used to sign the data. Only required if the
+     *                            private key requires a passphrase.
      * @param boolean $mode       otional. The data signing mode to use. Should
      *                            be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
      *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or
@@ -894,7 +901,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *         user's keyring. Signing data requires the private key.
      *
      * @throws Crypt_GPG_BadPassphraseException if specified passphrase is
-     *         incorrect or if no passphrase is specified.
+     *         incorrect or if a required passphrase is not specified.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
@@ -902,13 +909,16 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @sensitive $passphrase
      */
-    public function sign($key_id, $data, $passphrase,
+    public function sign($key_id, $data, $passphrase = null,
         $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true)
     {
         $args = array(
-            '--passphrase-fd 4',
             '--local-user ' . escapeshellarg($key_id)
         );
+
+        if ($passphrase !== null) {
+            $args[] = '--passphrase-fd ' . escapeshellarg(self::FD_MESSAGE);
+        }
 
         if ($armor) {
             $args[] = '--armor';
@@ -1208,8 +1218,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             $this->_closePipe(self::FD_INPUT);
         }
 
-        fwrite($this->_pipes[self::FD_MESSAGE], $passphrase);
-        $this->_closePipe(self::FD_MESSAGE);
+        if ($passphrase !== null) {
+            fwrite($this->_pipes[self::FD_MESSAGE], $passphrase);
+            $this->_closePipe(self::FD_MESSAGE);
+        }
 
         $result = '';
         while (!feof($this->_pipes[self::FD_OUTPUT])) {
@@ -1473,6 +1485,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         $error_code = Crypt_GPG::ERROR_UNKNOWN;
 
         $status = explode("\n", $status);
+        $need_passphrase = false;
         foreach ($status as $line) {
             $tokens = explode(' ', $line);
             if ($tokens[0] == '[GNUPG:]') {
@@ -1496,9 +1509,22 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                     $error_code = Crypt_GPG::ERROR_NO_DATA;
                     break 2;
 
+                case 'NEED_PASSPHRASE':
+                    $need_passphrase = true;
+                    break;
+
+                case 'GOOD_PASSPHRASE':
+                    $need_passphrase = false;
+                    break;
+
                 }
             }
         }
+
+        if ($error_code == Crypt_GPG::ERROR_UNKNOWN && $need_passphrase) {
+            $error_code = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+        }
+
         if ($error_code == Crypt_GPG::ERROR_UNKNOWN) {
             $pattern = '/no valid OpenPGP data found/';
             if (preg_match($pattern, $error) == 1) {

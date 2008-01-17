@@ -478,8 +478,10 @@ abstract class Crypt_GPG
      * method.
      *
      * @param string $encrypted_data the data to be decrypted.
-     * @param string $passphrase     the passphrase of the private key used to
-     *                               encrypt the data.
+     * @param string $passphrase     optional. The passphrase of the private
+     *                               key used to encrypt the data. Only
+     *                               required if the private key requires a
+     *                               passphrase.
      *
      * @return string the decrypted data.
      *
@@ -490,7 +492,7 @@ abstract class Crypt_GPG
      *         GPG encrypted data.
      *
      * @throws Crypt_GPG_BadPassphraseException if specified passphrase is
-     *         incorrect or if no passphrase is specified.
+     *         incorrect or if a required passphrase is not specified.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
@@ -498,7 +500,7 @@ abstract class Crypt_GPG
      *
      * @sensitive $passphrase
      */
-    abstract public function decrypt($encrypted_data, $passphrase);
+    abstract public function decrypt($encrypted_data, $passphrase = null);
 
     // }}}
     // {{{ sign()
@@ -517,7 +519,9 @@ abstract class Crypt_GPG
      *                            "Test User (example) <test@example.com>",
      *                            "test@example.com" or a hexidecimal string.
      * @param string  $data       the data to be signed.
-     * @param string  $passphrase the passphrase of the user's private key.
+     * @param string  $passphrase optional. The passphrase of the private key
+     *                            used to sign the data. Only required if the
+     *                            private key requires a passphrase.
      * @param boolean $mode       otional. The data signing mode to use. Should
      *                            be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
      *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or
@@ -536,7 +540,7 @@ abstract class Crypt_GPG
      *         user's keyring. Signing data requires the private key.
      *
      * @throws Crypt_GPG_BadPassphraseException if specified passphrase is
-     *         incorrect or if no passphrase is specified.
+     *         incorrect or if a required passphrase is not specified.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
@@ -544,7 +548,7 @@ abstract class Crypt_GPG
      *
      * @sensitive $passphrase
      */
-    abstract public function sign($key_id, $data, $passphrase,
+    abstract public function sign($key_id, $data, $passphrase = null,
         $mode = self::SIGN_MODE_NORMAL, $armor = true);
 
     // }}}

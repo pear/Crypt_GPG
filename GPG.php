@@ -521,7 +521,8 @@ abstract class Crypt_GPG
      * @param string  $data       the data to be signed.
      * @param string  $passphrase optional. The passphrase of the private key
      *                            used to sign the data. Only required if the
-     *                            private key requires a passphrase.
+     *                            private key requires a passphrase. Specify
+     *                            null for no passphrase.
      * @param boolean $mode       otional. The data signing mode to use. Should
      *                            be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
      *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or

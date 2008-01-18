@@ -37,7 +37,7 @@ PEAR::setErrorHandling(PEAR_ERROR_DIE);
 $release_version = '0.3.11';
 $release_state   = 'alpha';
 $release_notes   =
-    "API is alpha. Changes will be made to Key and Signature objects in i".
+    "API is alpha. Changes will be made to Key and Signature objects in ".
     "future releases.\n\n".
     "Changes in this release:\n".
     " * Allow not specifying a passphrase for keys that don't need a ".

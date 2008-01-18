@@ -236,7 +236,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *                       GPG object. All options must be optional and are
      *                       represented as key-value pairs.
      */
-    public function __construct(array $options = array())
+    protected function __construct(array $options = array())
     {
         if (array_key_exists('homedir', $options)) {
             $this->_homedir = (string)$options['homedir'];
@@ -1593,6 +1593,5 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 }
 
 // }}}
-
 
 ?>

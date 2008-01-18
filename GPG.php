@@ -210,7 +210,7 @@ abstract class Crypt_GPG
      *                       GPG object. All options must be optional and are
      *                       represented as key-value pairs.
      */
-    abstract public function __construct(array $options = null);
+    abstract protected function __construct(array $options = null);
 
     // }}}
     // {{{ importKey()
@@ -587,6 +587,5 @@ abstract class Crypt_GPG
 }
 
 // }}}
-
 
 ?>

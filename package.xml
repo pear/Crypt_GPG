@@ -6,14 +6,11 @@
  <name>Crypt_GPG</name>
  <channel>pear.php.net</channel>
  <summary>GNU Privacy Guard (GPG)</summary>
- <description>This package provides an object oriented interface to GNU Privacy
-Guard (GPG). It requires the GPG executable to be on the system.
+ <description>This package provides an object oriented interface to GNU Privacy Guard (GPG). It requires the GPG executable to be on the system.
 
-Though GPG can support symmetric-key cryptography, this package is intended
-only to facilitate public-key cryptography.
+Though GPG can support symmetric-key cryptography, this package is intended only to facilitate public-key cryptography.
 
-This package requires PHP version 5.
- </description>
+This package requires PHP version 5.</description>
  <lead>
   <name>Mike Gauthier</name>
   <user>gauthierm</user>
@@ -26,10 +23,10 @@ This package requires PHP version 5.
   <email>nathan@silverorange.com</email>
   <active>yes</active>
  </lead>
- <date>2008-01-14</date>
- <time>01:33:05</time>
+ <date>2008-01-18</date>
+ <time>16:16:06</time>
  <version>
-  <release>0.3.10</release>
+  <release>0.3.11</release>
   <api>0.3.0</api>
  </version>
  <stability>
@@ -37,9 +34,15 @@ This package requires PHP version 5.
   <api>alpha</api>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
- <notes>First PEAR release. API is alpha. Changes will be made to Key and Signature
-objects and an exportKey() method will be added in future releases.
- </notes>
+ <notes>API is alpha. Changes will be made to Key and Signature objects in future releases.
+
+Changes in this release:
+ * Allow not specifying a passphrase for keys that don&apos;t need a passphrase,
+ * Make driver constructor protected to force use of factory method,
+ * Added exportPublicKeyMethod(),
+ * Set trust model to &apos;always&apos;, mirroring the model used by PECL gnupg,
+ * Fix detection of missing passphrases, and
+ * documentation and typo fixes.</notes>
  <contents>
   <dir baseinstalldir="/Crypt" name="/">
    <dir name="GPG">
@@ -73,18 +76,24 @@ objects and an exportKey() method will be added in future releases.
  <changelog>
   <release>
    <version>
-    <release>0.3.10</release>
+    <release>0.3.11</release>
     <api>0.3.0</api>
    </version>
    <stability>
     <release>alpha</release>
     <api>alpha</api>
    </stability>
-   <date>2008-01-14</date>
+   <date>2008-01-18</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>First PEAR release. API is alpha. Changes will be made to Key and Signature
-objects and an exportKey() method will be added in future releases.
-   </notes>
+   <notes>API is alpha. Changes will be made to Key and Signature objects in future releases.
+
+Changes in this release:
+ * Allow not specifying a passphrase for keys that don&apos;t need a passphrase,
+ * Make driver constructor protected to force use of factory method,
+ * Added exportPublicKeyMethod(),
+ * Set trust model to &apos;always&apos;, mirroring the model used by PECL gnupg,
+ * Fix detection of missing passphrases, and
+ * documentation and typo fixes.</notes>
   </release>
  </changelog>
 </package>

@@ -215,8 +215,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * Creates a new GPG object that uses PHP's native process manipulation
      * functions to control the GPG process
      *
-     * Developers are encouraged to use the {@link Crypt_GPG::factory()} method
-     * to instantiate this class.
+     * Use the {@link Crypt_GPG::factory()} method to instantiate this class.
      *
      * Available options for this driver are:
      *

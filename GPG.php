@@ -206,6 +206,9 @@ abstract class Crypt_GPG
     /**
      * Creates a new Crypt_GPG object
      *
+     * The {@link Crypt_GPG::factory()} method must be used to instantiate a
+     * Crypt_GPG object.
+     *
      * @param array $options optional. An array of options used to create the
      *                       GPG object. All options must be optional and are
      *                       represented as key-value pairs.

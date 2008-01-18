@@ -34,12 +34,19 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$release_version = '0.3.10';
+$release_version = '0.3.11';
 $release_state   = 'alpha';
 $release_notes   =
-    "First PEAR release. API is alpha. Changes will be made to Key and ".
-    "Signature objects and an exportKey() method will be added in future ".
-    "releases.";
+    "API is alpha. Changes will be made to Key and Signature objects in i".
+    "future releases.\n\n".
+    "Changes in this release:\n".
+    " * Allow not specifying a passphrase for keys that don't need a ".
+    "passphrase,\n".
+    " * Make driver constructor protected to force use of factory method,\n".
+    " * Added exportPublicKeyMethod(),\n".
+    " * Set trust model to 'always', mirroring the model used by PECL gnupg,\n".
+    " * Fix detection of missing passphrases, and\n".
+    " * documentation and typo fixes.";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy ".

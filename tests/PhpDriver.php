@@ -73,7 +73,6 @@ require_once 'Crypt/GPG.php';
  * @todo Assert verify tests worked.
  * @todo Assert get public/private keys worked.
  * @todo Add tests for encrypt() Exception API.
- * @todo Add tests for sign() Exception API.
  */
 class PhpDriver extends PHPUnit_Framework_TestCase
 {
@@ -886,9 +885,59 @@ TEXT;
     }
 
     // }}}
-    // {{{ testNormalSign()
+    // {{{ testSignKeyNotFoundException()
 
-    public function testNormalSign()
+    /**
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     */
+    public function testSignKeyNotFoundException()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        $key_id = 'non-existent-key@example.com';
+        $signed_data = $this->_gpg->sign($key_id, $data);
+    }
+
+    // }}}
+    // {{{ testSignBadPassphraseException_missing()
+
+    /**
+     * @expectedException Crypt_GPG_BadPassphraseException
+     */
+    public function testSignBadPassphraseException_missing()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        $key_id = 'public-and-private@example.com';
+        $signed_data = $this->_gpg->sign($key_id, $data);
+    }
+
+    // }}}
+    // {{{ testSignBadPassphraseException_bad()
+
+    /**
+     * @expectedException Crypt_GPG_BadPassphraseException
+     */
+    public function testSignBadPassphraseException_bad()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        $key_id = 'public-and-private@example.com';
+        $passphrase = 'incorrect';
+        $signed_data = $this->_gpg->sign($key_id, $data, $passphrase);
+    }
+
+    // }}}
+    // {{{ testSignNoPassphrase()
+
+    public function testSignNoPassphrase()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        $key_id = 'no-passphrase@example.com';
+        $signed_data = $this->_gpg->sign($key_id, $data);
+    }
+
+    // }}}
+    // {{{ testSignNormal()
+
+    public function testSignNormal()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
         $key_id = 'public-and-private@example.com';
@@ -897,9 +946,9 @@ TEXT;
     }
 
     // }}}
-    // {{{ testClearSign()
+    // {{{ testSignClear()
 
-    public function testClearSign()
+    public function testSignClear()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
         $key_id = 'public-and-private@example.com';
@@ -909,9 +958,9 @@ TEXT;
     }
 
     // }}}
-    // {{{ testDetachedSignature()
+    // {{{ testSignDetached()
 
-    public function testDetachedSignature()
+    public function testSignDetached()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
         $key_id = 'public-and-private@example.com';

@@ -866,7 +866,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     /**
      * Signs data using the given key and passphrase
      *
-     * Data my be signed using and one of the three available signing modes:
+     * Data may be signed using any one of the three available signing modes:
      * - {@link Crypt_GPG::SIGN_MODE_NORMAL}
      * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
      * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
@@ -894,8 +894,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *                            Defaults to true. This has no effect if the
      *                            mode Crypt_GPG::SIGN_MODE_CLEAR is used.
      *
-     * @return string the signed data or signature data is a detached signature
-     *                is requested.
+     * @return string the signed data, or the signature data if a detached
+     *                signature is requested.
      *
      * @throws Crypt_GPG_KeyNotFoundException if the private key is not in the
      *         user's keyring. Signing data requires the private key.

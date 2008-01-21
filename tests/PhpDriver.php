@@ -71,7 +71,7 @@ require_once 'Crypt/GPG.php';
  * @todo Aassert delete tests worked.
  * @todo Assert sign tests worked.
  * @todo Assert verify tests worked.
- * @todo Assert get public/private keys worked.
+ * @todo Assert get private keys worked.
  * @todo Add tests for encrypt() Exception API.
  */
 class PhpDriver extends PHPUnit_Framework_TestCase
@@ -1058,7 +1058,107 @@ TEXT;
 
     public function testGetPublicKeys()
     {
+        $expected_keys = array();
+
+        // {{{ public-and-private@example.com
+        $key = new Crypt_GPG_Key();
+        $expected_keys[] = $key;
+
+        $user_id = new Crypt_GPG_UserId();
+        $user_id->setName('Public and Private Test Key');
+        $user_id->setComment('do not encrypt important data with this key');
+        $user_id->setEmail('public-and-private@example.com');
+        $key->addUserId($user_id);
+
+        $sub_key = new Crypt_GPG_SubKey();
+        $sub_key->setId('300579D099645239');
+        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $sub_key->setFingerprint('5A58436F752BC80B3E992C1D300579D099645239');
+        $sub_key->setLength(1024);
+        $sub_key->setCreationDate(1200670392);
+        $sub_key->setExpirationDate(0);
+        $sub_key->setCanSign(true);
+        $sub_key->setCanEncrypt(false);
+        $key->addSubKey($sub_key);
+
+        $sub_key = new Crypt_GPG_SubKey();
+        $sub_key->setId('EBEB1F9895953487');
+        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $sub_key->setFingerprint('DCC9E7AAB9248CB0541FADDAEBEB1F9895953487');
+        $sub_key->setLength(2048);
+        $sub_key->setCreationDate(1200670397);
+        $sub_key->setExpirationDate(0);
+        $sub_key->setCanSign(false);
+        $sub_key->setCanEncrypt(true);
+        $key->addSubKey($sub_key);
+        // }}}
+        // {{{ public-only@example.com
+        $key = new Crypt_GPG_Key();
+        $expected_keys[] = $key;
+
+        $user_id = new Crypt_GPG_UserId();
+        $user_id->setName('Public Only Test Key');
+        $user_id->setComment('do not encrypt important data with this key');
+        $user_id->setEmail('public-only@example.com');
+        $key->addUserId($user_id);
+
+        $sub_key = new Crypt_GPG_SubKey();
+        $sub_key->setId('16D27458B1BBA1C4');
+        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $sub_key->setFingerprint('C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4');
+        $sub_key->setLength(1024);
+        $sub_key->setCreationDate(1200670461);
+        $sub_key->setExpirationDate(0);
+        $sub_key->setCanSign(true);
+        $sub_key->setCanEncrypt(false);
+        $key->addSubKey($sub_key);
+
+        $sub_key = new Crypt_GPG_SubKey();
+        $sub_key->setId('045B7FC31C7C4644');
+        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $sub_key->setFingerprint('0DC192B106773BC9B4D40AAC045B7FC31C7C4644');
+        $sub_key->setLength(2048);
+        $sub_key->setCreationDate(1200670470);
+        $sub_key->setExpirationDate(0);
+        $sub_key->setCanSign(false);
+        $sub_key->setCanEncrypt(true);
+        $key->addSubKey($sub_key);
+        // }}}
+        // {{{ no-passphrase@example.com
+        $key = new Crypt_GPG_Key();
+        $expected_keys[] = $key;
+
+        $user_id = new Crypt_GPG_UserId();
+        $user_id->setName('No Passphrase Public and Private Test Key');
+        $user_id->setComment('do not encrypt important data with this key');
+        $user_id->setEmail('no-passphrase@example.com');
+        $key->addUserId($user_id);
+
+        $sub_key = new Crypt_GPG_SubKey();
+        $sub_key->setId('CB24072FEF665D17');
+        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $sub_key->setFingerprint('D729E804DD50012902232845CB24072FEF665D17');
+        $sub_key->setLength(1024);
+        $sub_key->setCreationDate(1200671161);
+        $sub_key->setExpirationDate(0);
+        $sub_key->setCanSign(true);
+        $sub_key->setCanEncrypt(false);
+        $key->addSubKey($sub_key);
+
+        $sub_key = new Crypt_GPG_SubKey();
+        $sub_key->setId('C8B1B63978A9794B');
+        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $sub_key->setFingerprint('1BB64D19DFC5DC1AFAB79C63C8B1B63978A9794B');
+        $sub_key->setLength(2048);
+        $sub_key->setCreationDate(1200671172);
+        $sub_key->setExpirationDate(0);
+        $sub_key->setCanSign(false);
+        $sub_key->setCanEncrypt(true);
+        $key->addSubKey($sub_key);
+        // }}}
+
         $keys = $this->_gpg->getPublicKeys();
+        $this->assertEquals($expected_keys, $keys);
     }
 
     // }}}

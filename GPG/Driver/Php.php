@@ -47,9 +47,19 @@ require_once 'Crypt/GPG.php';
 require_once 'Crypt/GPG/Signature.php';
 
 /**
- * GPG key helper class
+ * GPG key class
  */
 require_once 'Crypt/GPG/Key.php';
+
+/**
+ * GPG sub-key class
+ */
+require_once 'Crypt/GPG/SubKey.php';
+
+/**
+ * GPG user id class
+ */
+require_once 'Crypt/GPG/UserId.php';
 
 /**
  * GPG exception classes
@@ -337,11 +347,11 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * Calls GPG with the --export option.
      *
-     * @param string $key_id either the full uid of the public key, the email
-     *                       part of the uid of the public key or the key id of
-     *                       the public key. For example,
-     *                       "Test User (example) <test@example.com>",
-     *                       "test@example.com" or a hexidecimal string.
+     * @param string  $key_id either the full uid of the public key, the email
+     *                        part of the uid of the public key or the key id of
+     *                        the public key. For example,
+     *                        "Test User (example) <test@example.com>",
+     *                        "test@example.com" or a hexidecimal string.
      * @param boolean $armor  optional. If true, ASCII armored data is returned;
      *                        otherwise, binary data is returned. Defaults to
      *                        true.
@@ -1035,7 +1045,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         // get the response information
         $status = $this->_getStatus();
-        $resp = $this->_parseVerifyStatus($status);
+        $resp   = $this->_parseVerifyStatus($status);
 
         // create an object to return, and fill it with data
         $sig = new Crypt_GPG_Signature();
@@ -1130,59 +1140,59 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         );
 
         if ($public) {
-            $args[] = '--list-public-keys';
-            $type   = 'pub';
+            $args[]       = '--list-public-keys';
+            $primary_type = 'pub';
+            $sub_type     = 'sub';
         } else {
-            $args[] = '--list-secret-keys';
-            $type   = 'sec';
+            $args[]       = '--list-secret-keys';
+            $primary_type = 'sec';
+            $sub_type     = 'ssb';
         }
 
         $this->_openSubprocess($args);
 
         $keys = array();
 
-        $key = null; // current key
+        $key     = null; // current key
+        $sub_key = null; // current sub-key
+
         while (!feof($this->_pipes[self::FD_OUTPUT])) {
             $line = fgets($this->_pipes[self::FD_OUTPUT]);
             $exp_line = explode(':', $line);
 
-            if ($exp_line[0] == $type) {
-                // new key means last key should be added to the array
+            if ($exp_line[0] == $primary_type) {
+
+                // new primary key means last key should be added to the array
                 if ($key !== null) {
-                    $keys[$key->id] = $key;
+                    $keys[] = $key;
                 }
 
                 $key = new Crypt_GPG_Key();
 
-                $key_id  = $exp_line[4];
+                $sub_key = $this->_parseSubKey($exp_line);
+                $key->addSubKey($sub_key);
 
-                $key->id              = $exp_line[4];
-                $key->length          = intval($exp_line[2]);
-                $key->algorithm       = intval($exp_line[3]);
+            } elseif ($exp_line[0] == $sub_type) {
 
-                if (strpos($exp_line[5], 'T') === false) {
-                    $key->creation_date = intval($exp_line[5]);
-                } else {
-                    $key->creation_date = strtotime($exp_line[5]);
-                }
-
-                if (strpos($exp_line[6], 'T') === false) {
-                    $key->expiration_date = intval($exp_line[6]);
-                } else {
-                    $key->expiration_date = strtotime($exp_line[6]);
-                }
+                $sub_key = $this->_parseSubKey($exp_line);
+                $key->addSubKey($sub_key);
 
             } elseif ($exp_line[0] == 'fpr') {
-                // set current key fingerprint
-                $key->fingerprint     = $exp_line[9];
+
+                // set current sub-key fingerprint
+                $sub_key->setFingerprint($exp_line[9]);
+
             } elseif ($exp_line[0] == 'uid') {
-                // add user ids to the current key
-                $key->user_ids[]      = stripcslashes($exp_line[9]);
+
+                $string = stripcslashes($exp_line[9]); // as per documentation
+                $key->addUserId($this->_parseUserId($string));
+
             }
         }
+
         // add last key
         if ($key !== null) {
-            $keys[$key->id] = $key;
+            $keys[] = $key;
         }
 
         $code = $this->_closeSubprocess();
@@ -1192,6 +1202,94 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         }
 
         return $keys;
+    }
+
+    // }}}
+    // {{{ _parseUserId()
+
+    /**
+     * Parses a user id object from a user id string
+     *
+     * Used by {@link Crypt_GPG_Driver_Php::_getKeys()}.
+     *
+     * A user id string is of the form: 'name (comment) &lt;email-address&gt;'
+     * with the comment and email-address being optional.
+     *
+     * @param string $string the user id string to parse.
+     *
+     * @return Crypt_GPG_UserId the user id object parsed from the string.
+     */
+    private function _parseUserId($string)
+    {
+        $user_id = new Crypt_GPG_UserId();
+
+        $email   = '';
+        $comment = '';
+
+        $matches = array();
+        if (preg_match('/^(.+?) <([^>]+)>$/', $string, $matches) == 1) {
+            $string = $matches[1];
+            $email  = $matches[2];
+        }
+
+        $matches = array();
+        if (preg_match('/^(.+?) \(([^\)]+)\)$/', $string, $matches) == 1) {
+            $string  = $matches[1];
+            $comment = $matches[2];
+        }
+
+        $name = $string;
+
+        $user_id->setName($name);
+        $user_id->setComment($comment);
+        $user_id->setEmail($email);
+
+        return $user_id;
+    }
+
+    // }}}
+    // {{{ _parseSubKey()
+
+    /**
+     * Parses a sub-key object from sub-key string fields
+     *
+     * Used by {@link Crypt_GPG_Driver_Php::_getKeys()}. See doc/DETAILS in the
+     * {@link http://www.gnupg.org/download/ GPG distribution} for info on
+     * how the fields are parsed.
+     *
+     * @param string $exp_line the sub-key string fields.
+     *
+     * @return Crypt_GPG_SubKey the sub-key object parsed from the string parts.
+     */
+    private function _parseSubKey(array $exp_line)
+    {
+        $sub_key = new Crypt_GPG_SubKey();
+
+        $sub_key->setId($exp_line[4]);
+        $sub_key->setLength($exp_line[2]);
+        $sub_key->setAlgorithm($exp_line[3]);
+
+        if (strpos($exp_line[5], 'T') === false) {
+            $sub_key->setCreationDate($exp_line[5]);
+        } else {
+            $sub_key->setCreationDate(strtotime($exp_line[5]));
+        }
+
+        if (strpos($exp_line[6], 'T') === false) {
+            $sub_key->setExpirationDate($exp_line[6]);
+        } else {
+            $sub_key->setExpirationDate(strtotime($exp_line[6]));
+        }
+
+        if (strpos($exp_line[11], 's') !== false) {
+            $sub_key->setCanSign(true);
+        }
+
+        if (strpos($exp_line[11], 'e') !== false) {
+            $sub_key->setCanEncrypt(true);
+        }
+
+        return $sub_key;
     }
 
     // }}}
@@ -1320,7 +1418,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         if (is_resource($this->_process)) {
 
-            $error = $this->_getError();
+            $error  = $this->_getError();
             $status = $this->_getStatus();
 
             // close remaining open pipes

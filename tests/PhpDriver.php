@@ -68,9 +68,7 @@ require_once 'Crypt/GPG.php';
  *    A public key that does not initially exist in the keyring that can be
  *    imported.
  *
- * @todo Aassert delete tests worked.
- * @todo Assert sign tests worked.
- * @todo Assert verify tests worked.
+ * @todo Assert delete tests worked.
  * @todo Assert get private keys worked.
  * @todo Add tests for encrypt() Exception API.
  */
@@ -932,6 +930,9 @@ TEXT;
         $data = 'Hello, Alice! Goodbye, Bob!';
         $key_id = 'no-passphrase@example.com';
         $signed_data = $this->_gpg->sign($key_id, $data);
+
+        $signature = $this->_gpg->verify($signed_data);
+        $this->assertTrue($signature->isValid());
     }
 
     // }}}
@@ -943,6 +944,9 @@ TEXT;
         $key_id = 'public-and-private@example.com';
         $passphrase = 'test';
         $signed_data = $this->_gpg->sign($key_id, $data, $passphrase);
+
+        $signature = $this->_gpg->verify($signed_data);
+        $this->assertTrue($signature->isValid());
     }
 
     // }}}
@@ -955,6 +959,9 @@ TEXT;
         $passphrase = 'test';
         $signed_data = $this->_gpg->sign($key_id, $data, $passphrase,
             Crypt_GPG::SIGN_MODE_CLEAR);
+
+        $signature = $this->_gpg->verify($signed_data);
+        $this->assertTrue($signature->isValid());
     }
 
     // }}}
@@ -967,6 +974,9 @@ TEXT;
         $passphrase = 'test';
         $signature_data = $this->_gpg->sign($key_id, $data, $passphrase,
             Crypt_GPG::SIGN_MODE_DETACHED);
+
+        $signature = $this->_gpg->verify($data, $signature_data);
+        $this->assertTrue($signature->isValid());
     }
 
     // }}}
@@ -986,6 +996,22 @@ TEXT;
 
     public function testVerifyNormalSignedData()
     {
+        // {{{ expected signature
+        $expected_signature = new Crypt_GPG_Signature();
+        $expected_signature->setId('vQ2mozoe+N5TQhaFsRAJmNHhsB');
+        $expected_signature->setKeyFingerprint(
+            '5A58436F752BC80B3E992C1D300579D099645239');
+
+        $expected_signature->setCreationDate(1200674360);
+        $expected_signature->setExpirationDate(0);
+        $expected_signature->setIsValid(true);
+
+        $user_id = new Crypt_GPG_UserId();
+        $user_id->setName('Public and Private Test Key');
+        $user_id->setComment('do not encrypt important data with this key');
+        $user_id->setEmail('public-and-private@example.com');
+        $expected_signature->setUserId($user_id);
+        // }}}
         // {{{ normal signed data
         $normal_signed_data = <<<TEXT
 -----BEGIN PGP MESSAGE-----
@@ -1001,6 +1027,7 @@ TEXT;
         // }}}
 
         $signature = $this->_gpg->verify($normal_signed_data);
+        $this->assertEquals($expected_signature, $signature);
     }
 
     // }}}
@@ -1008,6 +1035,22 @@ TEXT;
 
     public function testVerifyClearsignedData()
     {
+        // {{{ expected signature
+        $expected_signature = new Crypt_GPG_Signature();
+        $expected_signature->setId('mvtJs/XKU5KwDQ91YH0efv6vA7');
+        $expected_signature->setKeyFingerprint(
+            '5A58436F752BC80B3E992C1D300579D099645239');
+
+        $expected_signature->setCreationDate(1200674325);
+        $expected_signature->setExpirationDate(0);
+        $expected_signature->setIsValid(true);
+
+        $user_id = new Crypt_GPG_UserId();
+        $user_id->setName('Public and Private Test Key');
+        $user_id->setComment('do not encrypt important data with this key');
+        $user_id->setEmail('public-and-private@example.com');
+        $expected_signature->setUserId($user_id);
+        // }}}
         // {{{ clearsigned data
         $clearsigned_data = <<<TEXT
 -----BEGIN PGP SIGNED MESSAGE-----
@@ -1027,6 +1070,7 @@ TEXT;
         // }}}
 
         $signature = $this->_gpg->verify($clearsigned_data);
+        $this->assertEquals($expected_signature, $signature);
     }
 
     // }}}
@@ -1036,6 +1080,22 @@ TEXT;
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
 
+        // {{{ expected signature
+        $expected_signature = new Crypt_GPG_Signature();
+        $expected_signature->setId('0Wyj4MWXtqzVT6nvgEQ+De2sV6');
+        $expected_signature->setKeyFingerprint(
+            '5A58436F752BC80B3E992C1D300579D099645239');
+
+        $expected_signature->setCreationDate(1200674279);
+        $expected_signature->setExpirationDate(0);
+        $expected_signature->setIsValid(true);
+
+        $user_id = new Crypt_GPG_UserId();
+        $user_id->setName('Public and Private Test Key');
+        $user_id->setComment('do not encrypt important data with this key');
+        $user_id->setEmail('public-and-private@example.com');
+        $expected_signature->setUserId($user_id);
+        // }}}
         // {{{ detached signature
         $detached_signature = <<<TEXT
 -----BEGIN PGP SIGNATURE-----
@@ -1051,6 +1111,7 @@ TEXT;
         // }}}
 
         $signature = $this->_gpg->verify($data, $detached_signature);
+        $this->assertEquals($expected_signature, $signature);
     }
 
     // }}}

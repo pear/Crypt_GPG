@@ -3,7 +3,7 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * A data class representing GPG signatures
+ * A class representing GPG signatures
  *
  * This file contains a data class representing a GPG signature.
  *
@@ -33,10 +33,15 @@
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
+/**
+ * User id class definition
+ */
+require_once 'Crypt/GPG/UserId.php';
+
 // {{{ class Crypt_GPG_Signature
 
 /**
- * A data class for GPG signature information
+ * A class for GPG signature information
  *
  * This class is used to store the results of the Crypt_GPG::verify() method.
  *
@@ -44,7 +49,7 @@
  * @package   Crypt_GPG
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2007 silverorange
+ * @copyright 2005-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @see       Crypt_GPG::verify()
@@ -54,22 +59,22 @@ class Crypt_GPG_Signature
     // {{{ class properties
 
     /**
-     * A base64 string containing the signature id for signatures
-     * of class 0 or 1 which have been verified ok
+     * A base64-encoded string containing a unique id for this signature if
+     * this signature has been verified as ok
      *
      * This id is used to prevent replay attacks and is not present for all
-     * signature types.
+     * types of signatures.
      *
      * @var string
      */
-    public $id = '';
+    private $_id = '';
 
     /**
-     * The signature fingerprint in hexidecimal
+     * The fingerprint of the key used to create the signature
      *
      * @var string
      */
-    public $fingerprint = '';
+    private $_key_fingerprint = '';
 
     /**
      * The creation date of this signature
@@ -78,38 +83,214 @@ class Crypt_GPG_Signature
      *
      * @var integer
      */
-    public $creation_date = 0;
+    private $_creation_date = 0;
 
     /**
      * The expiration date of the signature
      *
-     * This is a Unix timestamp. If this key does not expire, this will be
-     * zero.
+     * This is a Unix timestamp. If this signature does not expire, this will
+     * be zero.
      *
      * @var integer
      */
-    public $expiration_date = 0;
+    private $_expiration_date = 0;
 
     /**
-     * The id of the key used to create this signature
+     * The user id associated with this signature
      *
-     * @var string
+     * @var Crypt_GPG_UserId
      */
-    public $key_id = '';
-
-    /**
-     * The primary user associated with this signature
-     *
-     * @var string
-     */
-    public $user_id = '';
+    private $_user_id = null;
 
     /**
      * Whether or not this signature is valid
      *
      * @var boolean
      */
-    public $valid = false;
+    private $_is_valid = false;
+
+    // }}}
+    // {{{ getId()
+
+    /**
+     * Gets the id of this signature
+     *
+     * @return string a base64-encoded string containing a unique id for this
+     *                signature. This id is used to prevent replay attacks and
+     *                is not present for all types of signatures.
+     */
+    public function getId()
+    {
+        return $this->_id;
+    }
+
+    // }}}
+    // {{{ getKeyFingerprint()
+
+    /**
+     * Gets the fingerprint of the key used to create this signature
+     *
+     * @return string the fingerprint of the key used to create this signature.
+     */
+    public function getKeyFingerprint()
+    {
+        return $this->_key_fingerprint;
+    }
+
+    // }}}
+    // {{{ getCreationDate()
+
+    /**
+     * Gets the creation date of this signature
+     *
+     * @return integer the creation date of this signature. This is a Unix
+     *                 timestamp.
+     */
+    public function getCreationDate()
+    {
+        return $this->_creation_date;
+    }
+
+    // }}}
+    // {{{ getExpirationDate()
+
+    /**
+     * Gets the expiration date of the signature
+     *
+     * @return integer the expiration date of this signature. This is a Unix
+     *                 timestamp. If this signature does not expire, this will
+     *                 be zero.
+     */
+    public function getExpirationDate()
+    {
+        return $this->_expiration_date;
+    }
+
+    // }}}
+    // {{{ getUserId()
+
+    /**
+     * Gets the user id associated with this signature
+     *
+     * @return Crypt_GPG_UserId the user id associated with this signature.
+     */
+    public function getUserId()
+    {
+        return $this->_user_id;
+    }
+
+    // }}}
+    // {{{ isValid()
+
+    /**
+     * Gets whether or no this signature is valid
+     *
+     * @return boolean true if this signature is valid and false if it is not.
+     */
+    public function isValid()
+    {
+        return $this->_is_valid;
+    }
+
+    // }}}
+    // {{{ setId()
+
+    /**
+     * Sets the id of this signature
+     *
+     * @param string $id a base64-encoded string containing a unique id for
+     *                   this signature.
+     *
+     * @return void
+     *
+     * @see Crypt_GPG_Signature::getId()
+     */
+    public function setId($id)
+    {
+        $this->_id = strval($id);
+    }
+
+    // }}}
+    // {{{ setKeyFingerprint()
+
+    /**
+     * Sets the key fingerprint of this signature
+     *
+     * @param string $fingerprint the key fingerprint of this signature. This
+     *                            is the fingerprint of the primary key used to
+     *                            sign this signature.
+     *
+     * @return void
+     */
+    public function setKeyFingerprint($fingerprint)
+    {
+        $this->_key_fingerprint = strval($fingerprint);
+    }
+
+    // }}}
+    // {{{ setCreationDate()
+
+    /**
+     * Sets the creation date of this signature
+     *
+     * @param integer $creation_date the creation date of this signature. This
+     *                               is a Unix timestamp.
+     *
+     * @return void
+     */
+    public function setCreationDate($creation_date)
+    {
+        $this->_creation_date = intval($creation_date);
+    }
+
+    // }}}
+    // {{{ setExpirationDate()
+
+    /**
+     * Sets the expiration date of this signature
+     *
+     * @param integer $expiration_date the expiration date of this signature.
+     *                                 This is a Unix timestamp. Specify zero
+     *                                 if this signature does not expire.
+     *
+     * @return void
+     */
+    public function setExpirationDate($expiration_date)
+    {
+        $this->_expiration_date = intval($expiration_date);
+    }
+
+    // }}}
+    // {{{ setUserId()
+
+    /**
+     * Sets the user id associated with this signature
+     *
+     * @param Crypt_GPG_UserId $user_id the user id associated with this
+     *                                  signature.
+     *
+     * @return void
+     */
+    public function setUserId(Crypt_GPG_UserId $user_id)
+    {
+        $this->_user_id = $user_id;
+    }
+
+    // }}}
+    // {{{ setIsValid()
+
+    /**
+     * Sets whether or not this signature is valid
+     *
+     * @param boolean $is_valid true if this signature is valid and false if it
+     *                          is not.
+     *
+     * @return void
+     */
+    public function setIsValid($is_valid)
+    {
+        $this->_is_valid = ($is_valid) ? true : false;
+    }
 
     // }}}
 }

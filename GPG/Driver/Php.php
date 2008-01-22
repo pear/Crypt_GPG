@@ -1049,7 +1049,6 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         // create an object to return, and fill it with data
         $sig = new Crypt_GPG_Signature();
-        $sig->valid = false; // only VALIDSIG code will set valid to true
 
         // get key id and user id
         $return_codes = array('GOODSIG', 'EXPSIG', 'EXPKEYSIG', 'REVSIG',
@@ -1057,9 +1056,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         foreach ($return_codes as $code) {
             if (array_key_exists($code, $resp)) {
-                $pos          = strpos($resp[$code], ' ');
-                $sig->key_id  = substr($resp[$code], 0, $pos - 1);
-                $sig->user_id = substr($resp[$code], $pos + 1);
+                $pos    = strpos($resp[$code], ' ');
+                $string = substr($resp[$code], $pos + 1);
+                $string = rawurldecode($string);
+                $sig->setUserId($this->_parseUserId($string));
                 break;
             }
         }
@@ -1067,27 +1067,27 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         // get signature fingerprint, creation date and expiration date and
         // set signature as valid
         if (array_key_exists('VALIDSIG', $resp)) {
-            $resp_valid_exp   = explode(' ', $resp['VALIDSIG']);
-            $sig->valid       = true;
-            $sig->fingerprint = $resp_valid_exp[0];
+            $resp_valid_exp = explode(' ', $resp['VALIDSIG']);
+            $sig->setIsValid(true);
+            $sig->setKeyFingerprint($resp_valid_exp[0]);
 
             if (strpos($resp_valid_exp[2], 'T') === false) {
-                $sig->creation_date = intval($resp_valid_exp[2]);
+                $sig->setCreationDate($resp_valid_exp[2]);
             } else {
-                $sig->creation_date = strtotime($resp_valid_exp[2]);
+                $sig->setCreationDate(strtotime($resp_valid_exp[2]));
             }
 
             if (strpos($resp_valid_exp[3], 'T') === false) {
-                $sig->expiration_date = intval($resp_valid_exp[3]);
+                $sig->setExpirationDate($resp_valid_exp[3]);
             } else {
-                $sig->expiration_date = strtotime($resp_valid_exp[3]);
+                $sig->setExpirationDate(strtotime($resp_valid_exp[3]));
             }
         }
 
         // get signature id (may not exist for some signature types)
         if (array_key_exists('SIG_ID', $resp)) {
-            $pos     = strpos($resp['SIG_ID'], ' ');
-            $sig->id = substr($resp['SIG_ID'], 0, $pos - 1);
+            $pos = strpos($resp['SIG_ID'], ' ');
+            $sig->setId(substr($resp['SIG_ID'], 0, $pos - 1));
         }
 
         $code = $this->_closeSubprocess();

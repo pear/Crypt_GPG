@@ -661,11 +661,6 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * @throws Crypt_GPG_KeyNotFoundException if the a key with the given
      *         <i>$key_id</i> is not found.
      *
-     * @throws Crypt_GPG_UnsignedKeyException if specified key is not signed.
-     *
-     * @throws Crypt_GPG_MissingSelfSignatureException if specified key is not
-     *         self-signed (verified by the user).
-     *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
      *         exceptions occur.
@@ -700,23 +695,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         if ($code !== null) {
             switch ($code) {
-            case Crypt_GPG::ERROR_NOT_SELF_SIGNED:
-                throw new Crypt_GPG_MissingSelfSignatureException(
-                    'Data could not be encrypted because key may be missing '.
-                    'self-signature.', $code);
-
-                break;
             case Crypt_GPG::ERROR_KEY_NOT_FOUND:
                 throw new Crypt_GPG_KeyNotFoundException(
                     "Data could not be encrypted because key '" . $keyid .
                     "' was not found.", $code, $key_id);
-
-                break;
-            case Crypt_GPG::ERROR_UNSIGNED_KEY:
-                throw new Crypt_GPG_UnsignedKeyException(
-                    'There is no indication that the specified key really '.
-                    'belongs to the owner. Keys must be signed before '.
-                    'encryption is performed.', $code);
 
                 break;
             default:
@@ -1580,23 +1562,6 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             $pattern = '/no valid OpenPGP data found/';
             if (preg_match($pattern, $error) == 1) {
                 $error_code = Crypt_GPG::ERROR_NO_DATA;
-            }
-        }
-
-        if ($error_code == Crypt_GPG::ERROR_UNKNOWN) {
-            $pattern = '/There is no indication that this key really belongs '.
-                'to the owner/';
-
-            if (preg_match($pattern, $error) == 1) {
-                $error_code = Crypt_GPG::ERROR_UNSIGNED_KEY;
-            }
-        }
-
-
-        if ($error_code == Crypt_GPG::ERROR_UNKNOWN) {
-            $pattern = '/this may be caused by a missing self-signature/';
-            if (preg_match($pattern, $error) == 1) {
-                $error_code = Crypt_GPG::ERROR_NOT_SELF_SIGNED;
             }
         }
 

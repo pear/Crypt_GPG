@@ -70,7 +70,6 @@ require_once 'Crypt/GPG.php';
  *
  * @todo Assert delete tests worked.
  * @todo Assert get private keys worked.
- * @todo Add tests for encrypt() Exception API.
  */
 class PhpDriver extends PHPUnit_Framework_TestCase
 {
@@ -635,6 +634,19 @@ TEXT;
         $decrypted_data = $this->_gpg->decrypt($encrypted_data, $passphrase);
 
         $this->assertEquals($data, $decrypted_data);
+    }
+
+    //}}}
+    // {{{ testEncryptKeyNotFoundException()
+
+    /**
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     */
+    public function testEncryptNotFoundException()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        $key_id = 'non-existent-key@example.com';
+        $encrypted_data = $this->_gpg->encrypt($key_id, $data);
     }
 
     //}}}

@@ -450,11 +450,6 @@ abstract class Crypt_GPG
      * @throws Crypt_GPG_KeyNotFoundException if the a key with the given
      *         <i>$key_id</i> is not found.
      *
-     * @throws Crypt_GPG_UnsignedKeyException if specified key is not signed.
-     *
-     * @throws Crypt_GPG_MissingSelfSignatureException if specified key is not
-     *         self-signed (verified by the user).
-     *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
      *         exceptions occur.

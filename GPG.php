@@ -171,8 +171,8 @@ abstract class Crypt_GPG
     const FORMAT_NONE      = 1;
 
     /**
-     * Fingerprint is formatted in the format used by the default GnuPG gpg
-     * command's output.
+     * Fingerprint is formatted in the format used by the GnuPG gpg command's
+     * default output.
      *
      * Example: C3BC 615A D9C7 66E5 A85C  1F27 16D2 7458 B1BB A1C4
      *

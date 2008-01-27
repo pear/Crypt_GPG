@@ -511,47 +511,134 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     }
 
     // }}}
-    // {{{ getPublicKeys()
+    // {{{ getKeys()
 
     /**
-     * Gets the available public keys in the keyring
+     * Gets the available keys in the keyring
      *
-     * Calls GPG with the --list-public-keys option and grabs public keys.
+     * Calls GPG with the --list-keys option and grabs keys. See the first
+     * section of doc/DETAILS in the
+     * {@link http://www.gnupg.org/download/ GPG package} for a detailed
+     * description of how the GPG command output is parsed.
      *
-     * @return array an array of Crypt_GPG_Key objects.
+     * @param string $key_id optional. Only keys with that match the specified
+     *                       pattern are returned. The pattern may be part of
+     *                       a user id, a key id or a key fingerprint. If not
+     *                       specified, all keys are returned.
+     *
+     * @return array an array of {@link Crypt_GPG_Key} objects.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
      *         exceptions occur.
      *
      * @see Crypt_GPG_Key
-     * @see Crypt_GPG_Driver_Php::_getKeys()
      */
-    public function getPublicKeys()
+    public function getKeys($key_id = '')
     {
-        return $this->_getKeys(true);
-    }
+        // get private key fingerprints
+        $args = array(
+            '--with-colons',
+            '--with-fingerprint',
+            '--with-fingerprint',
+            '--fixed-list-mode'
+        );
 
-    // }}}
-    // {{{ getPrivateKeys()
+        if ($key_id == '') {
+            $args[] = '--list-secret-keys';
+        } else {
+            $args[] = '--list-secret-keys ' . escapeshellarg($key_id);
+        }
 
-    /**
-     * Gets the available private keys in the keyring
-     *
-     * Calls GPG with the --list-private-keys option and grabs private keys.
-     *
-     * @return array an array of Crypt_GPG_Key objects.
-     *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
-     *
-     * @see Crypt_GPG_Key
-     * @see Crypt_GPG_Driver_Php::_getKeys()
-     */
-    public function getPrivateKeys()
-    {
-        return $this->_getKeys(false);
+        $this->_openSubprocess($args);
+
+        $private_key_fingerprints = array();
+        while (!feof($this->_pipes[self::FD_OUTPUT])) {
+            $line = fgets($this->_pipes[self::FD_OUTPUT]);
+            $exp_line = explode(':', $line);
+
+            if ($exp_line[0] == 'fpr') {
+                $private_key_fingerprints[] = $exp_line[9];
+            }
+        }
+
+        $code = $this->_closeSubprocess();
+        // ignore not found key errors
+        if ($code !== null && $code !== Crypt_GPG::ERROR_KEY_NOT_FOUND) {
+            throw new Crypt_GPG_Exception(
+                'Unknown error getting keys.', $code);
+        }
+
+        // get public keys
+        array_pop($args);
+
+        if ($key_id == '') {
+            $args[] = '--list-public-keys';
+        } else {
+            $args[] = '--list-public-keys ' . escapeshellarg($key_id);
+        }
+
+        $this->_openSubprocess($args);
+
+        $keys = array();
+
+        $key     = null; // current key
+        $sub_key = null; // current sub-key
+
+        while (!feof($this->_pipes[self::FD_OUTPUT])) {
+            $line = fgets($this->_pipes[self::FD_OUTPUT]);
+            $exp_line = explode(':', $line);
+
+            if ($exp_line[0] == 'pub') {
+
+                // new primary key means last key should be added to the array
+                if ($key !== null) {
+                    $keys[] = $key;
+                }
+
+                $key = new Crypt_GPG_Key();
+
+                $sub_key = $this->_parseSubKey($exp_line);
+                $key->addSubKey($sub_key);
+
+            } elseif ($exp_line[0] == 'sub') {
+
+                $sub_key = $this->_parseSubKey($exp_line);
+                $key->addSubKey($sub_key);
+
+            } elseif ($exp_line[0] == 'fpr') {
+
+                $fingerprint = $exp_line[9];
+
+                // set current sub-key fingerprint
+                $sub_key->setFingerprint($fingerprint);
+
+                // if private key exists, set has private to true
+                if (in_array($fingerprint, $private_key_fingerprints)) {
+                    $sub_key->setHasPrivate(true);
+                }
+
+            } elseif ($exp_line[0] == 'uid') {
+
+                $string = stripcslashes($exp_line[9]); // as per documentation
+                $key->addUserId($this->_parseUserId($string));
+
+            }
+        }
+
+        // add last key
+        if ($key !== null) {
+            $keys[] = $key;
+        }
+
+        $code = $this->_closeSubprocess();
+        // ignore not found key errors
+        if ($code !== null && $code !== Crypt_GPG::ERROR_KEY_NOT_FOUND) {
+            throw new Crypt_GPG_Exception(
+                'Unknown error getting keys.', $code);
+        }
+
+        return $keys;
     }
 
     // }}}
@@ -1037,107 +1124,12 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     }
 
     // }}}
-    // {{{ _getKeys()
-
-    /**
-     * Helper method for getting public or private keys
-     *
-     * See the first section of doc/DETAILS in the
-     * {@link http://www.gnupg.org/download/ GPG package} for a detailed
-     * description of how the GPG output is parsed.
-     *
-     * @param boolean $public whether to get public or private keys. Pass true
-     *                        to get public keys and false to get private keys.
-     *
-     * @return array an array of Crypt_GPG_Key objects.
-     *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
-     *
-     * @see Crypt_GPG_Key
-     */
-    private function _getKeys($public)
-    {
-        $args = array(
-            '--with-colons',
-            '--with-fingerprint',
-            '--with-fingerprint',
-            '--fixed-list-mode'
-        );
-
-        if ($public) {
-            $args[]       = '--list-public-keys';
-            $primary_type = 'pub';
-            $sub_type     = 'sub';
-        } else {
-            $args[]       = '--list-secret-keys';
-            $primary_type = 'sec';
-            $sub_type     = 'ssb';
-        }
-
-        $this->_openSubprocess($args);
-
-        $keys = array();
-
-        $key     = null; // current key
-        $sub_key = null; // current sub-key
-
-        while (!feof($this->_pipes[self::FD_OUTPUT])) {
-            $line = fgets($this->_pipes[self::FD_OUTPUT]);
-            $exp_line = explode(':', $line);
-
-            if ($exp_line[0] == $primary_type) {
-
-                // new primary key means last key should be added to the array
-                if ($key !== null) {
-                    $keys[] = $key;
-                }
-
-                $key = new Crypt_GPG_Key();
-
-                $sub_key = $this->_parseSubKey($exp_line);
-                $key->addSubKey($sub_key);
-
-            } elseif ($exp_line[0] == $sub_type) {
-
-                $sub_key = $this->_parseSubKey($exp_line);
-                $key->addSubKey($sub_key);
-
-            } elseif ($exp_line[0] == 'fpr') {
-
-                // set current sub-key fingerprint
-                $sub_key->setFingerprint($exp_line[9]);
-
-            } elseif ($exp_line[0] == 'uid') {
-
-                $string = stripcslashes($exp_line[9]); // as per documentation
-                $key->addUserId($this->_parseUserId($string));
-
-            }
-        }
-
-        // add last key
-        if ($key !== null) {
-            $keys[] = $key;
-        }
-
-        $code = $this->_closeSubprocess();
-        if ($code !== null) {
-            throw new Crypt_GPG_Exception(
-                'Unknown error getting keys.', $code);
-        }
-
-        return $keys;
-    }
-
-    // }}}
     // {{{ _parseUserId()
 
     /**
      * Parses a user id object from a user id string
      *
-     * Used by {@link Crypt_GPG_Driver_Php::_getKeys()}.
+     * Used by {@link Crypt_GPG_Driver_Php::getKeys()}.
      *
      * A user id string is of the form: 'name (comment) &lt;email-address&gt;'
      * with the comment and email-address being optional.
@@ -1180,7 +1172,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     /**
      * Parses a sub-key object from sub-key string fields
      *
-     * Used by {@link Crypt_GPG_Driver_Php::_getKeys()}. See doc/DETAILS in the
+     * Used by {@link Crypt_GPG_Driver_Php::getKeys()}. See doc/DETAILS in the
      * {@link http://www.gnupg.org/download/ GPG distribution} for info on
      * how the fields are parsed.
      *

@@ -141,6 +141,13 @@ class Crypt_GPG_SubKey
      */
     private $_can_encrypt = false;
 
+    /**
+     * Whether or not the private key for this sub-key exists in the keyring
+     *
+     * @var boolean
+     */
+    private $_has_private = false;
+
     // }}}
     // {{{ getId()
 
@@ -253,6 +260,21 @@ class Crypt_GPG_SubKey
     public function canEncrypt()
     {
         return $this->_can_encrypt;
+    }
+
+    // }}}
+    // {{{ hasPrivate()
+
+    /**
+     * Gets whether or not the private key for this sub-key exists in the
+     * keyring
+     *
+     * @return boolean true the private key for this sub-key exists in the
+     *                 keyring and false if it does not.
+     */
+    public function hasPrivate()
+    {
+        return $this->_has_private;
     }
 
     // }}}
@@ -380,6 +402,24 @@ class Crypt_GPG_SubKey
     public function setCanEncrypt($can_encrypt)
     {
         $this->_can_encrypt = ($can_encrypt) ? true : false;
+    }
+
+    // }}}
+    // {{{ setHasPrivate()
+
+    /**
+     * Sets whether of not the private key for this sub-key exists in the
+     * keyring
+     *
+     * @param boolean $has_private true if the private key for this sub-key
+     *                             exists in the keyring and false if it does
+     *                             not.
+     *
+     * @return void
+     */
+    public function setHasPrivate($has_private)
+    {
+        $this->_has_private = ($has_private) ? true : false;
     }
 
     // }}}

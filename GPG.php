@@ -359,12 +359,17 @@ abstract class Crypt_GPG
     abstract public function deletePrivateKey($key_id);
 
     // }}}
-    // {{{ getPublicKeys()
+    // {{{ getKeys()
 
     /**
-     * Gets the available public keys in the keyring
+     * Gets the available keys in the keyring
      *
-     * @return array an array of Crypt_GPG_Key objects.
+     * @param string $key_id optional. Only keys with that match the specified
+     *                       pattern are returned. The pattern may be part of
+     *                       a user id, a key id or a key fingerprint. If not
+     *                       specified, all keys are returned.
+     *
+     * @return array an array of {@link Crypt_GPG_Key} objects.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
@@ -372,23 +377,7 @@ abstract class Crypt_GPG
      *
      * @see Crypt_GPG_Key
      */
-    abstract public function getPublicKeys();
-
-    // }}}
-    // {{{ getPrivateKeys()
-
-    /**
-     * Gets the available private keys in the keyring
-     *
-     * @return array an array of Crypt_GPG_Key objects.
-     *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
-     *
-     * @see Crypt_GPG_Key
-     */
-    abstract public function getPrivateKeys();
+    abstract public function getKeys($key_id = '');
 
     // }}}
     // {{{ getFingerprint()

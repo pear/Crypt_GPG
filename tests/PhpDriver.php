@@ -883,6 +883,18 @@ TEXT;
     }
 
     // }}}
+    // {{{ testDeletePrivateKeyNotFoundException_public_only()
+
+    /**
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     */
+    public function testDeletePrivateKeyNotFoundException_public_only()
+    {
+        $key_id = 'public-only@example.com';
+        $this->_gpg->deletePrivateKey($key_id);
+    }
+
+    // }}}
     // {{{ testSignKeyNotFoundException()
 
     /**
@@ -1231,24 +1243,53 @@ TEXT;
     }
 
     // }}}
-    // {{{ testGetPublicFingerprint()
+    // {{{ testGetFingerprint()
 
-    public function testGetPublicFingerprint()
+    public function testGetFingerprint()
     {
         $key_id = 'public-only@example.com';
         $expected_fingerprint = 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4';
-        $fingerprint = $this->_gpg->getPublicFingerprint($key_id);
+        $fingerprint = $this->_gpg->getFingerprint($key_id);
         $this->assertEquals($expected_fingerprint, $fingerprint);
     }
 
     // }}}
-    // {{{ testGetPrivateFingerprint()
+    // {{{ testGetFingerprintNull()
 
-    public function testGetPrivateFingerprint()
+    public function testGetFingerprintNull()
     {
-        $key_id = 'public-and-private@example.com';
-        $expected_fingerprint = '5A58436F752BC80B3E992C1D300579D099645239';
-        $fingerprint = $this->_gpg->getPrivateFingerprint($key_id);
+        $key_id = 'non-existent-key@example.com';
+        $fingerprint = $this->_gpg->getFingerprint($key_id);
+        $this->assertNull($fingerprint);
+    }
+
+    // }}}
+    // {{{ testGetFingerprintX509()
+
+    public function testGetFingerprintX509()
+    {
+        $key_id = 'public-only@example.com';
+        $expected_fingerprint =
+            'C3:BC:61:5A:D9:C7:66:E5:A8:5C:1F:27:16:D2:74:58:B1:BB:A1:C4';
+
+        $fingerprint = $this->_gpg->getFingerprint($key_id,
+            Crypt_GPG::FORMAT_X509);
+
+        $this->assertEquals($expected_fingerprint, $fingerprint);
+    }
+
+    // }}}
+    // {{{ testGetFingerprintCanonical()
+
+    public function testGetFingerprintCanonical()
+    {
+        $key_id = 'public-only@example.com';
+        $expected_fingerprint =
+            'C3BC 615A D9C7 66E5 A85C  1F27 16D2 7458 B1BB A1C4';
+
+        $fingerprint = $this->_gpg->getFingerprint($key_id,
+            Crypt_GPG::FORMAT_CANONICAL);
+
         $this->assertEquals($expected_fingerprint, $fingerprint);
     }
 

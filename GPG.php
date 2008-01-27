@@ -159,6 +159,36 @@ abstract class Crypt_GPG
     const SIGN_MODE_DETACHED = 3;
 
     // }}}
+    // {{{ class constants for fingerprint formats
+
+    /**
+     * No formatting is performed.
+     *
+     * Example: C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4
+     *
+     * @see Crypt_GPG::getFingerprint()
+     */
+    const FORMAT_NONE      = 1;
+
+    /**
+     * Fingerprint is formatted in the format used by the default GnuPG gpg
+     * command's output.
+     *
+     * Example: C3BC 615A D9C7 66E5 A85C  1F27 16D2 7458 B1BB A1C4
+     *
+     * @see Crypt_GPG::getFingerprint()
+     */
+    const FORMAT_CANONICAL = 2;
+    /**
+     * Fingerprint is formatted in the format used when displaying X.509
+     * certificates
+     *
+     * Example: C3:BC:61:5A:D9:C7:66:E5:A8:5C:1F:27:16:D2:74:58:B1:BB:A1:C4
+     *
+     */
+    const FORMAT_X509      = 3;
+
+    // }}}
     // {{{ factory()
 
     /**
@@ -361,72 +391,36 @@ abstract class Crypt_GPG
     abstract public function getPrivateKeys();
 
     // }}}
-    // {{{ getPublicFingerprint()
+    // {{{ getFingerprint()
 
     /**
-     * Gets a public key fingerprint from the keyring
+     * Gets a key fingerprint from the keyring
      *
-     * If more than one public key fingerprint is avaliable (for example, if
-     * you use a non-unique uid) only the first public key fingerprint is
-     * returned.
+     * If more than one key fingerprint is avaliable (for example, if you use
+     * a non-unique user id) only the first key fingerprint is returned.
      *
-     * Only public key fingerprints are returned. See
-     * {@link Crypt_GPG::getPrivateFingerprint()} to get the fingerprint of a
-     * private key.
+     * @param string  $key_id either the full user id of the key, the email
+     *                        part of the user id of the key, or the key id of
+     *                        the key. For example,
+     *                        "Test User (example) <test@example.com>",
+     *                        "test@example.com" or a hexidecimal string.
+     * @param integer $format optional. How the fingerprint should be formatted.
+     *                        Use {@link Crypt_GPG::FORMAT_X509} for X.509
+     *                        certificate format,
+     *                        {@link Crypt_GPG::FORMAT_CANONICAL} for the format
+     *                        used by GnuPG output and
+     *                        {@link Crypt_GPG::FORMAT_NONE} for no formatting.
+     *                        Defaults to Crypt_GPG::FORMAT_NONE.
      *
-     * @param string  $key_id    either the full uid of the public key, the
-     *                           email part of the uid of the public key or the
-     *                           key id of the public key. For example,
-     *                           "Test User (example) <test@example.com>",
-     *                           "test@example.com" or a hexidecimal string.
-     * @param boolean $separator optional. A string placed between the public
-     *                           key fingerprint components to make the
-     *                           fingerprint easier to read. If not specified,
-     *                           the components of the fingerprint are not
-     *                           separated.
-     *
-     * @return string the fingerprint of the public key, or null if no
-     *                fingerprint is found for the given public key identifier.
+     * @return string the fingerprint of the key, or null if no fingerprint
+     *                is found for the given <i>$key_id</i>.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
      *         exceptions occur.
      */
-    abstract public function getPublicFingerprint($key_id, $separator = '');
-
-    // }}}
-    // {{{ getPrivateFingerprint()
-
-    /**
-     * Gets a private key fingerprint from the keyring
-     *
-     * If more than one private key fingerprint is avaliable (for example, if
-     * you use a non-unique uid) only the first private key fingerprint is
-     * returned.
-     *
-     * Only private key fingerprints are returned. See
-     * {@link Crypt_GPG::getPublicFingerprint()} to get the fingerprint of a
-     * public key.
-     *
-     * @param string  $key_id    either the full uid of the public key, the
-     *                           email part of the uid of the public key or the
-     *                           key id of the public key. For example,
-     *                           "Test User (example) <test@example.com>",
-     *                           "test@example.com" or a hexidecimal string.
-     * @param boolean $separator optional. A string placed between the public
-     *                           key fingerprint components to make the
-     *                           fingerprint easier to read. If not specified,
-     *                           the components of the fingerprint are not
-     *                           separated.
-     *
-     * @return string the fingerprint of the private key, or null if no
-     *                fingerprint is found for the given private key identifier.
-     *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
-     */
-    abstract public function getPrivateFingerprint($key_id, $separator = '');
+    abstract public function getFingerprint($key_id,
+        $format = self::FORMAT_NONE);
 
     // }}}
     // {{{ encrypt()

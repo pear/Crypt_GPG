@@ -367,7 +367,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      */
     public function exportPublicKey($key_id, $armor = true)
     {
-        $fingerprint = $this->getPublicFingerprint($key_id);
+        $fingerprint = $this->getFingerprint($key_id);
 
         if ($fingerprint === null) {
             throw new Crypt_GPG_KeyNotFoundException(
@@ -428,7 +428,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      */
     public function deletePublicKey($key_id)
     {
-        $fingerprint = $this->getPublicFingerprint($key_id);
+        $fingerprint = $this->getFingerprint($key_id);
 
         if ($fingerprint === null) {
             throw new Crypt_GPG_KeyNotFoundException(
@@ -479,7 +479,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      */
     public function deletePrivateKey($key_id)
     {
-        $fingerprint = $this->getPrivateFingerprint($key_id);
+        $fingerprint = $this->getFingerprint($key_id);
 
         if ($fingerprint === null) {
             throw new Crypt_GPG_KeyNotFoundException(
@@ -496,8 +496,17 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         $this->_openSubprocess($args);
         $code = $this->_closeSubprocess();
         if ($code !== null) {
-            throw new Crypt_GPG_Exception(
-                'Unknown error deleting private key.', $code);
+            switch ($code) {
+            case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+                throw new Crypt_GPG_KeyNotFoundException(
+                    'Private key not found: ' . $key_id,
+                    $code, $key_id);
+
+                break;
+            default:
+                throw new Crypt_GPG_Exception(
+                    'Unknown error deleting private key.', $code);
+            }
         }
     }
 
@@ -546,41 +555,38 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     }
 
     // }}}
-    // {{{ getPublicFingerprint()
+    // {{{ getFingerprint()
 
     /**
-     * Gets a public key fingerprint from the keyring
+     * Gets a key fingerprint from the keyring
      *
-     * If more than one public key fingerprint is avaliable (for example, if
-     * you use a non-unique uid) only the first public key fingerprint is
-     * returned.
-     *
-     * Only public key fingerprints are returned. See
-     * {@link Crypt_GPG::getPrivateFingerprint()} to get the fingerprint of a
-     * private key.
+     * If more than one key fingerprint is avaliable (for example, if you use
+     * a non-unique user id) only the first key fingerprint is returned.
      *
      * Calls the GPG --list-keys command with the --with-fingerprint option to
      * retrieve a public key fingerprint.
      *
-     * @param string  $key_id    either the full uid of the public key, the
-     *                           email part of the uid of the public key or the
-     *                           key id of the public key. For example,
-     *                           "Test User (example) <test@example.com>",
-     *                           "test@example.com" or a hexidecimal string.
-     * @param boolean $separator optional. A string placed between the public
-     *                           key fingerprint components to make the
-     *                           fingerprint easier to read. If not specified,
-     *                           the components of the fingerprint are not
-     *                           separated.
+     * @param string  $key_id either the full user id of the key, the email
+     *                        part of the user id of the key, or the key id of
+     *                        the key. For example,
+     *                        "Test User (example) <test@example.com>",
+     *                        "test@example.com" or a hexidecimal string.
+     * @param integer $format optional. How the fingerprint should be formatted.
+     *                        Use {@link Crypt_GPG::FORMAT_X509} for X.509
+     *                        certificate format,
+     *                        {@link Crypt_GPG::FORMAT_CANONICAL} for the format
+     *                        used by GnuPG output and
+     *                        {@link Crypt_GPG::FORMAT_NONE} for no formatting.
+     *                        Defaults to Crypt_GPG::FORMAT_NONE.
      *
-     * @return string the fingerprint of the public key, or null if no
-     *                fingerprint is found for the given public key identifier.
+     * @return string the fingerprint of the key, or null if no fingerprint
+     *                is found for the given <i>$key_id</i>.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
      *         exceptions occur.
      */
-    public function getPublicFingerprint($key_id, $separator = '')
+    public function getFingerprint($key_id, $format = Crypt_GPG::FORMAT_NONE)
     {
         $args = array(
             '--with-colons',
@@ -597,89 +603,28 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             if (substr($line, 0, 3) == 'fpr') {
                 $line_exp = explode(':', $line);
                 $fingerprint = $line_exp[9];
-                if ($separator != '') {
-                    $fingerprint_exp = str_split($fingerprint, 4);
-                    $fingerprint = implode($separator, $fingerprint_exp);
-                }
                 break;
             }
+        }
+
+        switch ($format) {
+        case Crypt_GPG::FORMAT_CANONICAL:
+            $fingerprint_exp = str_split($fingerprint, 4);
+            $format = '%s %s %s %s %s  %s %s %s %s %s';
+            $fingerprint = vsprintf($format, $fingerprint_exp);
+            break;
+
+        case Crypt_GPG::FORMAT_X509:
+            $fingerprint_exp = str_split($fingerprint, 2);
+            $fingerprint = implode(':', $fingerprint_exp);
+            break;
         }
 
         $code = $this->_closeSubprocess();
         // ignore not found key errors
         if ($code !== null && $code !== Crypt_GPG::ERROR_KEY_NOT_FOUND) {
             throw new Crypt_GPG_Exception(
-                'Unknown error getting key public fingerprint.', $code);
-        }
-
-        return $fingerprint;
-    }
-
-    // }}}
-    // {{{ getPrivateFingerprint()
-
-    /**
-     * Gets a private key fingerprint from the keyring
-     *
-     * If more than one private key fingerprint is avaliable (for example, if
-     * you use a non-unique uid) only the first private key fingerprint is
-     * returned.
-     *
-     * Only private key fingerprints are returned. See
-     * {@link Crypt_GPG::getPublicFingerprint()} to get the fingerprint of a
-     * public key.
-     *
-     * Calls the GPG --list-secret-keys command with the --with-fingerprint
-     * option to retrieve a private key fingerprint.
-     *
-     * @param string  $key_id    either the full uid of the public key, the
-     *                           email part of the uid of the public key or the
-     *                           key id of the public key. For example,
-     *                           "Test User (example) <test@example.com>",
-     *                           "test@example.com" or a hexidecimal string.
-     * @param boolean $separator optional. A string placed between the public
-     *                           key fingerprint components to make the
-     *                           fingerprint easier to read. If not specified,
-     *                           the components of the fingerprint are not
-     *                           separated.
-     *
-     * @return string the fingerprint of the private key, or null if no
-     *                fingerprint is found for the given private key identifier.
-     *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
-     */
-    public function getPrivateFingerprint($key_id, $separator = '')
-    {
-        $args = array(
-            '--with-colons',
-            '--with-fingerprint',
-            '--list-secret-keys ' . escapeshellarg($key_id)
-        );
-
-        $this->_openSubprocess($args);
-
-        $fingerprint = null;
-
-        while (!feof($this->_pipes[self::FD_OUTPUT])) {
-            $line = fgets($this->_pipes[self::FD_OUTPUT]);
-            if (substr($line, 0, 3) == 'fpr') {
-                $line_exp = explode(':', $line);
-                $fingerprint = $line_exp[9];
-                if ($separator != '') {
-                    $fingerprint_exp = str_split($fingerprint, 4);
-                    $fingerprint = implode($separator, $fingerprint_exp);
-                }
-                break;
-            }
-        }
-
-        $code = $this->_closeSubprocess();
-        // ignore not found key errors
-        if ($code !== null && $code !== Crypt_GPG::ERROR_KEY_NOT_FOUND) {
-            throw new Crypt_GPG_Exception(
-                'Unknown error getting private key fingerprint.', $code);
+                'Unknown error getting key fingerprint.', $code);
         }
 
         return $fingerprint;
@@ -1607,6 +1552,13 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 case 'NODATA':
                     $error_code = Crypt_GPG::ERROR_NO_DATA;
                     break 2;
+
+                case 'DELETE_PROBLEM':
+                    if ($tokens[2] == '1') {
+                        $error_code = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+                        break 2;
+                    }
+                    break;
 
                 case 'NEED_PASSPHRASE':
                     $need_passphrase = true;

@@ -67,8 +67,6 @@ require_once 'Crypt/GPG.php';
  * 4) external-public@example.com - passphrase 'test'
  *    A public key that does not initially exist in the keyring that can be
  *    imported.
- *
- * @todo Assert delete tests worked.
  */
 class PhpDriver extends PHPUnit_Framework_TestCase
 {
@@ -858,6 +856,22 @@ TEXT;
     {
         $key_id = 'public-only@example.com';
         $this->_gpg->deletePublicKey($key_id);
+
+        $expected_keys = array();
+        $keys = $this->_gpg->getKeys($key_id);
+        $this->assertEquals($expected_keys, $keys);
+    }
+
+    // }}}
+    // {{{ testDeletePublicKeyDeletePrivateKeyException()
+
+    /**
+     * @expectedException Crypt_GPG_DeletePrivateKeyException
+     */
+    public function testDeletePublicKeyDeletePrivateKeyException()
+    {
+        $key_id = 'public-and-private@example.com';
+        $this->_gpg->deletePublicKey($key_id);
     }
 
     // }}}
@@ -879,6 +893,46 @@ TEXT;
     {
         $key_id = 'public-and-private@example.com';
         $this->_gpg->deletePrivateKey($key_id);
+
+        $expected_keys = array();
+
+        // {{{ public-and-private@example.com
+        $key = new Crypt_GPG_Key();
+        $expected_keys[] = $key;
+
+        $user_id = new Crypt_GPG_UserId();
+        $user_id->setName('Public and Private Test Key');
+        $user_id->setComment('do not encrypt important data with this key');
+        $user_id->setEmail('public-and-private@example.com');
+        $key->addUserId($user_id);
+
+        $sub_key = new Crypt_GPG_SubKey();
+        $sub_key->setId('300579D099645239');
+        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $sub_key->setFingerprint('5A58436F752BC80B3E992C1D300579D099645239');
+        $sub_key->setLength(1024);
+        $sub_key->setCreationDate(1200670392);
+        $sub_key->setExpirationDate(0);
+        $sub_key->setCanSign(true);
+        $sub_key->setCanEncrypt(false);
+        $sub_key->setHasPrivate(false);
+        $key->addSubKey($sub_key);
+
+        $sub_key = new Crypt_GPG_SubKey();
+        $sub_key->setId('EBEB1F9895953487');
+        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $sub_key->setFingerprint('DCC9E7AAB9248CB0541FADDAEBEB1F9895953487');
+        $sub_key->setLength(2048);
+        $sub_key->setCreationDate(1200670397);
+        $sub_key->setExpirationDate(0);
+        $sub_key->setCanSign(false);
+        $sub_key->setCanEncrypt(true);
+        $sub_key->setHasPrivate(false);
+        $key->addSubKey($sub_key);
+        // }}}
+
+        $keys = $this->_gpg->getKeys($key_id);
+        $this->assertEquals($expected_keys, $keys);
     }
 
     // }}}

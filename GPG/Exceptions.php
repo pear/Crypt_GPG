@@ -217,10 +217,7 @@ class Crypt_GPG_KeyNotFoundException extends Crypt_GPG_Exception
      *
      * @param string $message an error message.
      * @param int    $code    a user defined error code.
-     * @param string $key_id  the key identifier of the secret key that was
-     *                        attempted to delete.
-     *
-     * @see Crypt_GPG::_deleteSecretKey()
+     * @param string $key_id  the key identifier of the key.
      */
     public function __construct($message, $code = 0, $key_id= '')
     {
@@ -235,8 +232,6 @@ class Crypt_GPG_KeyNotFoundException extends Crypt_GPG_Exception
      * Returns the contents of the internal _key_id property
      *
      * @return string the key identifier of the key that was not found.
-     *
-     * @see Crypt_GPG_OpenSubprocessException::$_key_id
      */
     public function getKeyId()
     {
@@ -331,6 +326,66 @@ class Crypt_GPG_UnsignedKeyException extends Crypt_GPG_Exception
  */
 class Crypt_GPG_MissingSelfSignatureException extends Crypt_GPG_Exception
 {
+}
+
+// }}}
+// {{{ class Crypt_GPG_DeletePrivateKeyException
+
+/**
+ * An exception thrown when an attempt is made to delete public key that has an
+ * associated private key on the keyring
+ *
+ * @category  Encryption
+ * @package   Crypt_GPG
+ * @author    Michael Gauthier <mike@silverorange.com>
+ * @copyright 2008 silverorange
+ * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      http://pear.php.net/package/Crypt_GPG
+ */
+class Crypt_GPG_DeletePrivateKeyException extends Crypt_GPG_Exception
+{
+    // {{{ private class properties
+
+    /**
+     * The key identifier the deletion attempt was made upon
+     *
+     * @var string
+     */
+    private $_key_id = '';
+
+    // }}}
+    // {{{ __construct()
+
+    /**
+     * Creates a new Crypt_GPG_DeletePrivateKeyException
+     *
+     * @param string $message an error message.
+     * @param int    $code    a user defined error code.
+     * @param string $key_id  the key identifier of the public key that was
+     *                        attempted to delete.
+     *
+     * @see Crypt_GPG::deletePublicKey()
+     */
+    public function __construct($message, $code = 0, $key_id= '')
+    {
+        $this->_key_id = $key_id;
+        parent::__construct($message, $code);
+    }
+
+    // }}}
+    // {{{ getKeyId()
+
+    /**
+     * Returns the contents of the internal _key_id property
+     *
+     * @return string the key identifier of the key that was not found.
+     */
+    public function getKeyId()
+    {
+        return $this->_key_id;
+    }
+
+    // }}}
 }
 
 // }}}

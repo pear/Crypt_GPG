@@ -409,6 +409,9 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * public key is deleted.
      *
+     * The private key must be deleted first or an exception will be thrown.
+     * See {@link Crypt_GPG::deletePrivateKey()}.
+     *
      * Calls GPG with the --delete-key option.
      *
      * @param string $key_id either the full uid of the public key, the email
@@ -421,6 +424,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
      *         <i>$key_id</i> is not found.
+     *
+     * @throws Crypt_GPG_DeletePrivateKeyException if the specified public key
+     *         has an associated private key on the keyring. The private key
+     *         must be deleted first.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these
@@ -445,8 +452,17 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         $this->_openSubprocess($args);
         $code = $this->_closeSubprocess();
         if ($code !== null) {
-            throw new Crypt_GPG_Exception(
-                'Unknown error deleting public key.', $code);
+            switch ($code) {
+            case Crypt_GPG::ERROR_DELETE_PRIVATE_KEY:
+                throw new Crypt_GPG_DeletePrivateKeyException(
+                    'Private key must be deleted before public key can be ' .
+                    'deleted.', $code, $key_id);
+
+                break;
+            default:
+                throw new Crypt_GPG_Exception(
+                    'Unknown error deleting public key.', $code);
+            }
         }
     }
 
@@ -1530,6 +1546,9 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 case 'DELETE_PROBLEM':
                     if ($tokens[2] == '1') {
                         $error_code = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+                        break 2;
+                    } elseif ($tokens[2] == '2') {
+                        $error_code = Crypt_GPG::ERROR_DELETE_PRIVATE_KEY;
                         break 2;
                     }
                     break;

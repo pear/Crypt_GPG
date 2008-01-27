@@ -125,6 +125,12 @@ abstract class Crypt_GPG
      */
     const ERROR_KEY_NOT_FOUND      = 7;
 
+    /**
+     * Error code returned when an attempt to delete public key having a
+     * private key is made.
+     */
+    const ERROR_DELETE_PRIVATE_KEY = 8;
+
     // }}}
     // {{{ class constants for data signing modes
 
@@ -314,6 +320,9 @@ abstract class Crypt_GPG
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * public key is deleted.
      *
+     * The private key must be deleted first or an exception will be thrown.
+     * See {@link Crypt_GPG::deletePrivateKey()}.
+     *
      * @param string $key_id either the full uid of the public key, the email
      *                       part of the uid of the public key or the key id of
      *                       the public key. For example,
@@ -324,6 +333,10 @@ abstract class Crypt_GPG
      *
      * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
      *         <i>$key_id</i> is not found.
+     *
+     * @throws Crypt_GPG_DeletePrivateKeyException if the specified public key
+     *         has an associated private key on the keyring. The private key
+     *         must be deleted first.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG::$debug} and file a bug report if these

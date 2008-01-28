@@ -711,21 +711,22 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             if (substr($line, 0, 3) == 'fpr') {
                 $line_exp = explode(':', $line);
                 $fingerprint = $line_exp[9];
+
+                switch ($format) {
+                case Crypt_GPG::FORMAT_CANONICAL:
+                    $fingerprint_exp = str_split($fingerprint, 4);
+                    $format = '%s %s %s %s %s  %s %s %s %s %s';
+                    $fingerprint = vsprintf($format, $fingerprint_exp);
+                    break;
+
+                case Crypt_GPG::FORMAT_X509:
+                    $fingerprint_exp = str_split($fingerprint, 2);
+                    $fingerprint = implode(':', $fingerprint_exp);
+                    break;
+                }
+
                 break;
             }
-        }
-
-        switch ($format) {
-        case Crypt_GPG::FORMAT_CANONICAL:
-            $fingerprint_exp = str_split($fingerprint, 4);
-            $format = '%s %s %s %s %s  %s %s %s %s %s';
-            $fingerprint = vsprintf($format, $fingerprint_exp);
-            break;
-
-        case Crypt_GPG::FORMAT_X509:
-            $fingerprint_exp = str_split($fingerprint, 2);
-            $fingerprint = implode(':', $fingerprint_exp);
-            break;
         }
 
         $code = $this->_closeSubprocess();

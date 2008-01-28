@@ -34,19 +34,23 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$release_version = '0.3.11';
-$release_state   = 'alpha';
+$release_version = '0.4.0';
+$release_state   = 'beta';
 $release_notes   =
-    "API is alpha. Changes will be made to Key and Signature objects in ".
-    "future releases.\n\n".
-    "Changes in this release:\n".
-    " * Allow not specifying a passphrase for keys that don't need a ".
-    "passphrase,\n".
-    " * Make driver constructor protected to force use of factory method,\n".
-    " * Added exportPublicKeyMethod(),\n".
-    " * Set trust model to 'always', mirroring the model used by PECL gnupg,\n".
-    " * Fix detection of missing passphrases, and\n".
-    " * documentation and typo fixes.";
+    "API is beta. The native PHP driver is pretty much finished. A " .
+    "PECL-powered gnupg driver will be added in the future.\n\n" .
+    "Changes in this release:\n" .
+    " * cleaned up Key and Signature objects,\n" .
+    " * getPublicKeys() and getPrivateKeys become getKeys(),\n" .
+    " * getPublicFingerprint() and getPrivateFingerprint become " .
+    "getFingerprint(),\n" .
+    " * added ability to specify a key in getKeys(),\n" .
+    " * getFingerprint() can return fingerprint formatted in common " .
+    "formats,\n" .
+    " * throw an exception when you try to delete a public key that has a ".
+    "private key,\n" .
+    " * don't throw an exception when importing duplicate keys, and\n" .
+    " * unit tests are complete for PHP driver.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy ".
@@ -83,8 +87,8 @@ $package->setLicense('LGPL', 'http://www.gnu.org/copyleft/lesser.html');
 $package->setNotes($release_notes);
 $package->setReleaseVersion($release_version);
 $package->setReleaseStability($release_state);
-$package->setAPIVersion('0.3.0');
-$package->setAPIStability('alpha');
+$package->setAPIVersion('0.4.0');
+$package->setAPIStability('beta');
 
 $package->addIgnore('package.php');
 $package->addIgnore('package-2.0.xml');

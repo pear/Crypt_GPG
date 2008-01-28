@@ -358,6 +358,14 @@ TEXT;
 
     public function testImportKeyPrivateKey()
     {
+        $expected_result = array(
+            'fingerprint'       => 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4',
+            'public_imported'   => 0,
+            'public_unchanged'  => 1,
+            'private_imported'  => 1,
+            'private_unchanged' => 0
+        );
+
         // {{{ private key data
         $private_key_data = <<<TEXT
 -----BEGIN PGP PRIVATE KEY BLOCK-----
@@ -397,7 +405,9 @@ oI5UEei5MOBXWqSclNRONxPG8GL/
 
 TEXT;
         // }}}
-        $this->_gpg->importKey($private_key_data);
+
+        $result =  $this->_gpg->importKey($private_key_data);
+        $this->assertEquals($expected_result, $result);
     }
 
     // }}}
@@ -405,6 +415,14 @@ TEXT;
 
     public function testImportKeyPublicKey()
     {
+        $expected_result = array(
+            'fingerprint'       => '0E8920DF5E2F5FD15A3BC3F14636F589A551E85A',
+            'public_imported'   => 1,
+            'public_unchanged'  => 0,
+            'private_imported'  => 0,
+            'private_unchanged' => 0
+        );
+
         // {{{ public key data
         $public_key_data = <<<TEXT
 -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -442,16 +460,14 @@ Y0kAn0UNciBVQN54ii7SEg/LzJOyPbSS
 TEXT;
         // }}}
 
-        $this->_gpg->importKey($public_key_data);
+        $result = $this->_gpg->importKey($public_key_data);
+        $this->assertEquals($expected_result, $result);
     }
 
     // }}}
-    // {{{ testImportKeyDuplicateKeyImportException_public()
+    // {{{ testImportKeyPublicKeyAlreadyImported()
 
-    /**
-     * @expectedException Crypt_GPG_DuplicateKeyImportException
-     */
-    public function testImportKeyDuplicateKeyImportException_public()
+    public function testImportKeyPublicKeyAlreadyImported()
     {
         // {{{ public key data
         $public_key_data = <<<TEXT
@@ -490,17 +506,35 @@ Y0kAn0UNciBVQN54ii7SEg/LzJOyPbSS
 TEXT;
         // }}}
 
-        $this->_gpg->importKey($public_key_data);
-        $this->_gpg->importKey($public_key_data);
+        $result = $this->_gpg->importKey($public_key_data);
+
+        $expected_result = array(
+            'fingerprint'       => '0E8920DF5E2F5FD15A3BC3F14636F589A551E85A',
+            'public_imported'   => 1,
+            'public_unchanged'  => 0,
+            'private_imported'  => 0,
+            'private_unchanged' => 0
+        );
+
+        $this->assertEquals($expected_result, $result);
+
+        $result = $this->_gpg->importKey($public_key_data);
+
+        $expected_result = array(
+            'fingerprint'       => '0E8920DF5E2F5FD15A3BC3F14636F589A551E85A',
+            'public_imported'   => 0,
+            'public_unchanged'  => 1,
+            'private_imported'  => 0,
+            'private_unchanged' => 0
+        );
+
+        $this->assertEquals($expected_result, $result);
     }
 
     // }}}
-    // {{{ testImportKeyDuplicateKeyImportException_private()
+    // {{{ testImportKeyPrivateKeyAlreadyImported()
 
-    /**
-     * @expectedException Crypt_GPG_DuplicateKeyImportException
-     */
-    public function testImportKeyDuplicateKeyImportException_private()
+    public function testImportKeyPrivateKeyAlreadyImported()
     {
         // {{{ private key data
         $private_key_data = <<<TEXT
@@ -542,8 +576,29 @@ oI5UEei5MOBXWqSclNRONxPG8GL/
 TEXT;
         // }}}
 
-        $this->_gpg->importKey($private_key_data);
-        $this->_gpg->importKey($private_key_data);
+        $result = $this->_gpg->importKey($private_key_data);
+
+        $expected_result = array(
+            'fingerprint'       => 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4',
+            'public_imported'   => 0,
+            'public_unchanged'  => 1,
+            'private_imported'  => 1,
+            'private_unchanged' => 0
+        );
+
+        $this->assertEquals($expected_result, $result);
+
+        $result = $this->_gpg->importKey($private_key_data);
+
+        $expected_result = array(
+            'fingerprint'       => 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4',
+            'public_imported'   => 0,
+            'public_unchanged'  => 0,
+            'private_imported'  => 0,
+            'private_unchanged' => 1
+        );
+
+        $this->assertEquals($expected_result, $result);
     }
 
     // }}}
@@ -633,7 +688,7 @@ TEXT;
         $this->assertEquals($data, $decrypted_data);
     }
 
-    //}}}
+    // }}}
     // {{{ testEncryptKeyNotFoundException()
 
     /**
@@ -646,7 +701,7 @@ TEXT;
         $encrypted_data = $this->_gpg->encrypt($key_id, $data);
     }
 
-    //}}}
+    // }}}
     // {{{ testDecrypt()
 
     public function testDecrypt()

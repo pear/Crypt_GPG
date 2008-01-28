@@ -289,10 +289,12 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @param string $data the key data to be imported.
      *
-     * @return void
-     *
-     * @throws Crypt_GPG_DuplicateKeyImportException if key is already in the
-     *         keyring.
+     * @return array an associative array containing the following elements:
+     *               - fingerprint: the key fingerprint of the imported key,
+     *               - public_imported: the number of public keys imported,
+     *               - public_unchanged: the number of unchanged public keys,
+     *               - private_imported: the number of private keys imported,
+     *               - private_unchanged: the number of unchanged private keys.
      *
      * @throws Crypt_GPG_NoDataException if the key data is missing or if the
      *         data is is not valid key data.
@@ -309,15 +311,16 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         fwrite($this->_pipes[self::FD_INPUT], $data);
         $this->_closePipe(self::FD_INPUT);
 
+        $status = $this->_getStatus();
+        $this->_debug($status);
+
+        $result = $this->_parseImportStatus($status);
+
         $code = $this->_closeSubprocess();
 
-        if ($code !== null) {
+        // ignore duplicate key import errors
+        if ($code !== null && $code !== Crypt_GPG::ERROR_DUPLICATE_KEY) {
             switch ($code) {
-            case Crypt_GPG::ERROR_DUPLICATE_KEY:
-                throw new Crypt_GPG_DuplicateKeyImportException(
-                    'Trying to import a key that is already imported.', $code);
-
-                break;
             case Crypt_GPG::ERROR_NO_DATA:
                 throw new Crypt_GPG_NoDataException(
                     'No valid GPG key data found.', $code);
@@ -330,6 +333,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 break;
             }
         }
+
+        return $result;
     }
 
     // }}}
@@ -1410,10 +1415,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     // {{{ _parseVerifyStatus()
 
     /**
-     * Processes the output from GPG for the verifiy operation
+     * Processes the status output from GPG for the verifiy operation
      *
-     * Processes the output from GPG --verify, taking notice only of lines
-     * that begin with the magic [GNUPG:] prefix. See doc/DETAILS in the
+     * Processes the status output from GPG --verify, taking notice only of
+     * lines that begin with the magic [GNUPG:] prefix. See doc/DETAILS in the
      * {@link http://www.gnupg.org/download/ GPG distribution} for info on
      * GPG's output when --status-fd is specified.
      *
@@ -1440,6 +1445,55 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             }
         }
         return $resp;
+    }
+
+    // }}}
+    // {{{ _parseImportStatus()
+
+    /**
+     * Processes the status output from GPG for the import operation
+     *
+     * Processes the status output from GPG --import, taking notice only of
+     * lines that begin with the magic [GNUPG:] prefix. See doc/DETAILS in the
+     * {@link http://www.gnupg.org/download/ GPG distribution} for info on
+     * GPG's output when --status-fd is specified.
+     *
+     * @param string $status the status text to process.
+     *
+     * @return array an associative array containing the following elements:
+     *               - fingerprint: the key fingerprint of the imported key,
+     *               - public_imported: the number of public keys imported,
+     *               - public_unchanged: the number of unchanged public keys,
+     *               - private_imported: the number of private keys imported,
+     *               - private_unchanged: the number of unchanged private keys.
+     */
+    private function _parseImportStatus($status)
+    {
+        $result = array();
+
+        foreach (explode("\n", $status) as $line) {
+            $line = rtrim($line);
+            if (substr($line, 0, 9) == '[GNUPG:] ') {
+                $line    = substr($line, 9);
+                $values  = explode(' ', $line);
+                $keyword = $values[0];
+
+                switch ($keyword) {
+                case 'IMPORT_OK':
+                    $result['fingerprint'] = $values[2];
+                    break;
+
+                case 'IMPORT_RES':
+                    $result['public_imported']   = intval($values[3]);
+                    $result['public_unchanged']  = intval($values[5]);
+                    $result['private_imported']  = intval($values[11]);
+                    $result['private_unchanged'] = intval($values[12]);
+                    break;
+                }
+            }
+        }
+
+        return $result;
     }
 
     // }}}

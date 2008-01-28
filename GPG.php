@@ -263,10 +263,12 @@ abstract class Crypt_GPG
      *
      * @param string $data the key data to be imported.
      *
-     * @return void
-     *
-     * @throws Crypt_GPG_DuplicateKeyImportException if key is already in the
-     *         keyring.
+     * @return array an associative array containing the following elements:
+     *               - fingerprint: the key fingerprint of the imported key,
+     *               - public_imported: the number of public keys imported,
+     *               - public_unchanged: the number of unchanged public keys,
+     *               - private_imported: the number of private keys imported,
+     *               - private_unchanged: the number of unchanged private keys.
      *
      * @throws Crypt_GPG_NoDataException if the key data is missing or if the
      *         data is is not valid key data.

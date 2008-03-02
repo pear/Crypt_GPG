@@ -10,11 +10,6 @@
  * {@link http://www.phpunit.de/pocket_guide/3.2/en/installation.html manual}
  * for detailed installation instructions.
  *
- * To run these tests, use:
- * <code>
- * $ phpunit PhpDriver
- * </code>
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify
@@ -50,7 +45,17 @@ require_once 'PHPUnit/Framework.php';
 require_once 'Crypt/GPG.php';
 
 /**
- * Tests the native PHP implementation of the Crypt_GPG object.
+ * Key class definition
+ */
+require_once 'Crypt/GPG/Key.php';
+
+/**
+ * Signature class definition
+ */
+require_once 'Crypt/GPG/Signature.php';
+
+/**
+ * Abstract base class for testing an implementation of the Crypt_GPG object.
  *
  * Test keyring contains:
  *
@@ -68,7 +73,7 @@ require_once 'Crypt/GPG.php';
  *    A public key that does not initially exist in the keyring that can be
  *    imported.
  */
-class PhpDriver extends PHPUnit_Framework_TestCase
+abstract class DriverTestCase extends PHPUnit_Framework_TestCase
 {
     // {{{ class constants
 
@@ -321,8 +326,8 @@ TEXT;
 
         fclose($random_seed);
 
-        $this->_gpg = Crypt_GPG::factory('php',
-            array('homedir' => self::HOMEDIR));
+        $this->_gpg = Crypt_GPG::factory($this->getDriver(),
+            $this->getOptions());
     }
 
     // }}}
@@ -348,8 +353,27 @@ TEXT;
         unlink(self::HOMEDIR . '/secring.gpg');
         unlink(self::HOMEDIR . '/trustdb.gpg');
         unlink(self::HOMEDIR . '/random_seed');
+
+        // remove temporary process id files used by gpgme
+        $iterator = new DirectoryIterator(self::HOMEDIR);
+        foreach ($iterator as $file) {
+            if (strncmp($file->getFilename(), '.#', 2) == 0) {
+                unlink(self::HOMEDIR . '/' . $file->getFilename());
+            }
+        }
+
         rmdir(self::HOMEDIR);
     }
+
+    // }}}
+    // {{{ getDriver()
+
+    abstract protected function getDriver();
+
+    // }}}
+    // {{{ getOptions()
+
+    abstract protected function getOptions();
 
     // }}}
 

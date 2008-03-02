@@ -34,30 +34,19 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$release_version = '0.4.0';
+$release_version = '0.5.0';
 $release_state   = 'beta';
 $release_notes   =
-    "API is beta. The native PHP driver is pretty much finished. A " .
-    "PECL-powered gnupg driver will be added in the future.\n\n" .
-    "Changes in this release:\n" .
-    " * cleaned up Key and Signature objects,\n" .
-    " * getPublicKeys() and getPrivateKeys become getKeys(),\n" .
-    " * getPublicFingerprint() and getPrivateFingerprint become " .
-    "getFingerprint(),\n" .
-    " * added ability to specify a key in getKeys(),\n" .
-    " * getFingerprint() can return fingerprint formatted in common " .
-    "formats,\n" .
-    " * throw an exception when you try to delete a public key that has a ".
-    "private key,\n" .
-    " * don't throw an exception when importing duplicate keys, and\n" .
-    " * unit tests are complete for PHP driver.\n";
+    "API is beta. No API changes in this release. Changes in this release:\n" .
+    " * added PECL-powered gnupg driver,\n" .
+    " * added unit tests for new driver.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy ".
     "Guard (GPG). It requires the GPG executable to be on the system.\n\n".
     "Though GPG can support symmetric-key cryptography, this package is ".
     "intended only to facilitate public-key cryptography.\n\n".
-    "This package requires PHP version 5.";
+    "This package requires PHP version 5.1 or greater.";
 
 $package = new PEAR_PackageFileManager2();
 
@@ -87,7 +76,7 @@ $package->setLicense('LGPL', 'http://www.gnu.org/copyleft/lesser.html');
 $package->setNotes($release_notes);
 $package->setReleaseVersion($release_version);
 $package->setReleaseStability($release_state);
-$package->setAPIVersion('0.4.0');
+$package->setAPIVersion('0.5.0');
 $package->setAPIStability('beta');
 
 $package->addIgnore('package.php');

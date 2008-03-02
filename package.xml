@@ -10,7 +10,7 @@
 
 Though GPG can support symmetric-key cryptography, this package is intended only to facilitate public-key cryptography.
 
-This package requires PHP version 5.</description>
+This package requires PHP version 5.1 or greater.</description>
  <lead>
   <name>Mike Gauthier</name>
   <user>gauthierm</user>
@@ -23,33 +23,26 @@ This package requires PHP version 5.</description>
   <email>nathan@silverorange.com</email>
   <active>yes</active>
  </lead>
- <date>2008-01-28</date>
- <time>01:09:55</time>
+ <date>2008-03-02</date>
+ <time>17:28:45</time>
  <version>
-  <release>0.4.0</release>
-  <api>0.4.0</api>
+  <release>0.5.0</release>
+  <api>0.5.0</api>
  </version>
  <stability>
   <release>beta</release>
   <api>beta</api>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
- <notes>API is beta. The native PHP driver is pretty much finished. A PECL-powered gnupg driver will be added in the future.
-
-Changes in this release:
- * cleaned up Key and Signature objects,
- * getPublicKeys() and getPrivateKeys become getKeys(),
- * getPublicFingerprint() and getPrivateFingerprint become getFingerprint(),
- * added ability to specify a key in getKeys(),
- * getFingerprint() can return fingerprint formatted in common formats,
- * throw an exception when you try to delete a public key that has a private key,
- * don&apos;t throw an exception when importing duplicate keys, and
- * unit tests are complete for PHP driver.
+ <notes>API is beta. No API changes in this release. Changes in this release:
+ * added PECL-powered gnupg driver,
+ * added unit tests for new driver.
  </notes>
  <contents>
   <dir baseinstalldir="/Crypt" name="/">
    <dir name="GPG">
     <dir name="Driver">
+     <file name="GnuPG.php" role="php" />
      <file name="Php.php" role="php" />
     </dir> <!-- /GPG/Driver -->
     <file name="Exceptions.php" role="php" />
@@ -59,7 +52,9 @@ Changes in this release:
     <file name="UserId.php" role="php" />
    </dir> <!-- /GPG -->
    <dir name="tests">
-    <file name="PhpDriver.php" role="test" />
+    <file name="DriverTestCase.php" role="test" />
+    <file name="GnuPGDriverTestCase.php" role="test" />
+    <file name="PhpDriverTestCase.php" role="test" />
    </dir> <!-- /tests -->
    <file name="ChangeLog" role="data" />
    <file name="GPG.php" role="php" />
@@ -69,37 +64,34 @@ Changes in this release:
  <dependencies>
   <required>
    <php>
-    <min>5.0.5</min>
+    <min>5.1.0</min>
    </php>
    <pearinstaller>
     <min>1.4.0</min>
    </pearinstaller>
   </required>
+  <optional>
+   <extension>
+    <name>gnupg</name>
+   </extension>
+  </optional>
  </dependencies>
  <phprelease />
  <changelog>
   <release>
    <version>
-    <release>0.4.0</release>
-    <api>0.4.0</api>
+    <release>0.5.0</release>
+    <api>0.5.0</api>
    </version>
    <stability>
     <release>beta</release>
     <api>beta</api>
    </stability>
-   <date>2008-01-28</date>
+   <date>2008-03-02</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>API is beta. The native PHP driver is pretty much finished. A PECL-powered gnupg driver will be added in the future.
-
-Changes in this release:
- * cleaned up Key and Signature objects,
- * getPublicKeys() and getPrivateKeys become getKeys(),
- * getPublicFingerprint() and getPrivateFingerprint become getFingerprint(),
- * added ability to specify a key in getKeys(),
- * getFingerprint() can return fingerprint formatted in common formats,
- * throw an exception when you try to delete a public key that has a private key,
- * don&apos;t throw an exception when importing duplicate keys, and
- * unit tests are complete for PHP driver.
+   <notes>API is beta. No API changes in this release. Changes in this release:
+ * added PECL-powered gnupg driver,
+ * added unit tests for new driver.
    </notes>
   </release>
  </changelog>

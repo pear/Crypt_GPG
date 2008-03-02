@@ -100,7 +100,8 @@ $package->addMaintainer('lead', 'gauthierm', 'Mike Gauthier',
 $package->addMaintainer('lead', 'nrf', 'Nathan Fredrickson',
     'nathan@silverorange.com');
 
-$package->setPhpDep('5.0.5');
+$package->setPhpDep('5.1.0');
+$package->addExtensionDep('optional', 'gnupg');
 $package->setPearinstallerDep('1.4.0');
 $package->generateContents();
 

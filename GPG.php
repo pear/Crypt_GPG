@@ -292,11 +292,11 @@ abstract class Crypt_GPG
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * public key is exported.
      *
-     * @param string $key_id either the full uid of the public key, the email
-     *                       part of the uid of the public key or the key id of
-     *                       the public key. For example,
-     *                       "Test User (example) <test@example.com>",
-     *                       "test@example.com" or a hexidecimal string.
+     * @param string  $key_id either the full uid of the public key, the email
+     *                        part of the uid of the public key or the key id of
+     *                        the public key. For example,
+     *                        "Test User (example) <test@example.com>",
+     *                        "test@example.com" or a hexidecimal string.
      * @param boolean $armor  optional. If true, ASCII armored data is returned;
      *                        otherwise, binary data is returned. Defaults to
      *                        true.

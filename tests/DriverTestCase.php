@@ -630,7 +630,7 @@ TEXT;
     // {{{ testImportKeyNoDataException()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException()
+     * @expectedException Crypt_GPG_NoDataException
      */
     public function testImportKeyNoDataException()
     {

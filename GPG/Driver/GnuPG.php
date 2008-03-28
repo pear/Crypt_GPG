@@ -516,7 +516,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
             switch ($error) {
             case 'no key for encryption set':
                 throw new Crypt_GPG_KeyNotFoundException(
-                    "Data could not be encrypted because key '" . $keyid .
+                    "Data could not be encrypted because key '" . $key_id .
                     "' was not found.",
                     Crypt_GPG::ERROR_KEY_NOT_FOUND, $key_id);
 

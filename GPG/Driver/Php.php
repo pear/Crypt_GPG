@@ -807,7 +807,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             switch ($code) {
             case Crypt_GPG::ERROR_KEY_NOT_FOUND:
                 throw new Crypt_GPG_KeyNotFoundException(
-                    "Data could not be encrypted because key '" . $keyid .
+                    "Data could not be encrypted because key '" . $key_id .
                     "' was not found.", $code, $key_id);
 
                 break;

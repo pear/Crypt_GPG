@@ -85,11 +85,15 @@ abstract class DriverTestCase extends PHPUnit_Framework_TestCase
 
     private $_gpg;
 
+    private $_old_error_level;
+
     // }}}
     // {{{ setUp()
 
     public function setUp()
     {
+        $this->_old_error_level = error_reporting(E_ALL | E_STRICT);
+
         // {{{ pubring data
         $pubring_data = <<<TEXT
 mQGiBEeQxrgRBACsmocYdCV79P6fsNF+Bs8Xxmt/mmWpPWWH8RpguEdEqy57
@@ -364,6 +368,8 @@ TEXT;
         }
 
         rmdir(self::HOMEDIR);
+
+        error_reporting($this->_old_error_level);
     }
 
     // }}}

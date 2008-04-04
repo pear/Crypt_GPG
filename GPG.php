@@ -440,7 +440,7 @@ abstract class Crypt_GPG
      * public key needs to be signed. Keys may be manually signed using the
      * shell command:
      *
-     * <code>gpg --sign-key &lt;key-id&gt; &lt;named-user&gt;</code>
+     * <code>gpg --sign-key <key-id> <named-user></code>
      *
      * @param string  $key_id the full uid of the public key to use for
      *                        encryption. For example,

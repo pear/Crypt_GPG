@@ -652,10 +652,8 @@ TEXT;
         $key_id = 'public-only@example.com';
 
         // {{{ expected key data
+        // OpenPGP header is not included since it varies from system-to-system.
         $expected_key_data = <<<TEXT
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
 mQGiBEeQxv0RBAD+cWerD9h+b135x1/m5NWuwpUNpkE7Be4X8PxpwuAHDN2B2QK4
 fGF1XWP70RMcvKNx7xR/fbQ25jaHuWPxrxolUADJJwwUqpRZq/ObGo3NWhldVsm2
 iU5M2KMwc6D5XQICObyOe9WUJ7HNGKNPclNQzFyhaOA0JcQN+mTlnfwfGwCg2vuY
@@ -689,7 +687,10 @@ TEXT;
         // }}}
 
         $key_data = $this->_gpg->exportPublicKey($key_id);
-        $this->assertEquals($expected_key_data, $key_data);
+
+        // Check for containment rather than equality since the OpenPGP header
+        // varies from system to system.
+        $this->assertContains($expected_key_data, $key_data);
     }
 
     // }}}

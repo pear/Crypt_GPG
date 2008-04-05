@@ -81,8 +81,8 @@ require_once 'Crypt/GPG/Exceptions.php';
  *
  * If the operating system is Windows, this driver will use temporary files as
  * a fallback for file descriptors above 2. Windows cannot use file descriptors
- * above 2 with proc_open(). The {@link Crypt_GPG_Driver_PHP::STATUS_FD} and
- * {@link Crypt_GPG_Driver_PHP::MESSAGE_FD} file descriptors are emulated
+ * above 2 with proc_open(). The {@link Crypt_GPG_Driver_Php::FD_STATUS} and
+ * {@link Crypt_GPG_Driver_Php::FD_MESSAGE} file descriptors are emulated
  * using temporary files. All temporary files are deleted when a method call
  * finishes or when the {@link Crypt_GPG_Driver_Php::__destruct()} method is
  * called by PHP.
@@ -371,8 +371,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *         data is is not valid key data.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
+     *         if these exceptions occur.
      */
     public function importKey($data)
     {
@@ -443,8 +443,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *         <i>$key_id</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
+     *         if these exceptions occur.
      */
     public function exportPublicKey($key_id, $armor = true)
     {
@@ -511,8 +511,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *         must be deleted first.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
+     *         if these exceptions occur.
      */
     public function deletePublicKey($key_id)
     {
@@ -571,8 +571,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *         <i>$key_id</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
+     *         if these exceptions occur.
      */
     public function deletePrivateKey($key_id)
     {
@@ -626,8 +626,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * @return array an array of {@link Crypt_GPG_Key} objects.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
+     *         if these exceptions occur.
      *
      * @see Crypt_GPG_Key
      */
@@ -767,8 +767,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *                is found for the given <i>$key_id</i>.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
+     *         if these exceptions occur.
      */
     public function getFingerprint($key_id, $format = Crypt_GPG::FORMAT_NONE)
     {
@@ -828,7 +828,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * public key needs to be signed. Keys may be manually signed using the
      * shell command:
      *
-     * <code>gpg --sign-key &lt;key-id&gt; &lt;named-user&gt;</code>
+     * <code>gpg --sign-key <key-id> <named-user></code>
      * Encrypts data
      *
      * Calls GPG with the --encrypt command.
@@ -847,8 +847,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *         <i>$key_id</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
+     *         if these exceptions occur.
      *
      * @sensitive $data
      */
@@ -927,8 +927,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *         incorrect or if a required passphrase is not specified.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
+     *         if these exceptions occur.
      *
      * @sensitive $passphrase
      */
@@ -1035,8 +1035,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *         incorrect or if a required passphrase is not specified.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
+     *         if these exceptions occur.
      *
      * @sensitive $passphrase
      */
@@ -1137,8 +1137,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *         data.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
+     *         if these exceptions occur.
      *
      * @see Crypt_GPG_Signature
      */

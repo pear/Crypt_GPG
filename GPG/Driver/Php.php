@@ -1368,16 +1368,23 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 $this->_closePipe($pipe_number);
             }
 
-            $return_value = proc_close($this->_process);
+            $termination_status = proc_close($this->_process);
 
-            if ($return_value != 0) {
-                $this->_debug("Subprocess returned an unexpected value: " .
-                    $return_value);
+            // proc_close returns a termination status, not exit code
+            if (($termination_status & 0x7f) == 0) { // WIFEXITED
+                $exit_code = ($termination_status & 0xff) >> 8; // WEXITSTATUS
+            } else {
+                $exit_code = -1;
+            }
+
+            if ($exit_code != 0) {
+                $this->_debug('Subprocess returned an unexpected exit code: ' .
+                    $exit_code);
 
                 $this->_debug("Error text is:\n" . $error);
                 $this->_debug("Status text is:\n" . $status);
 
-                $return = $this->_getErrorCode($return_value, $error, $status);
+                $return = $this->_getErrorCode($exit_code, $error, $status);
             }
 
             $this->_process = null;
@@ -1560,17 +1567,17 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * {@link http://www.gnupg.org/download/ GPG distribution} for info on
      * GPG's output when --status-fd is specified.
      *
-     * @param integer $return_value the error code returned by the GPG
-     *                              subprocess.
-     * @param string  $error        the GPG subprocess output to stderr.
-     * @param string  $status       the GPG subprocess output to the
-     *                              --status-fd file descriptor.
+     * @param integer $exit_code the error code returned by the GPG
+     *                           subprocess.
+     * @param string  $error     the GPG subprocess output to stderr.
+     * @param string  $status    the GPG subprocess output to the --status-fd
+     *                           file descriptor.
      *
      * @return integer the specific error code for the GPG subprocess error.
      *                 If no specific exception is known,
      *                 {@link Crypt_GPG::ERROR_UNKNOWN} is returned.
      */
-    private function _getErrorCode($return_value, $error, $status)
+    private function _getErrorCode($exit_code, $error, $status)
     {
         $error_code = Crypt_GPG::ERROR_UNKNOWN;
 

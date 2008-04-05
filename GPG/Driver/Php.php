@@ -1438,6 +1438,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      */
     private function _parseVerifyStatus($status)
     {
+        $resp = array();
+
         foreach (explode("\n", $status) as $line) {
             $line = rtrim($line);
             if (substr($line, 0, 9) == '[GNUPG:] ') {
@@ -1453,6 +1455,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 }
             }
         }
+
         return $resp;
     }
 

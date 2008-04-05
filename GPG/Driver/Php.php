@@ -1368,15 +1368,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 $this->_closePipe($pipe_number);
             }
 
-            $termination_status = proc_close($this->_process);
-
-            // proc_close returns a termination status, not exit code
-            if (($termination_status & 0x7f) == 0) { // WIFEXITED
-                $exit_code = ($termination_status & 0xff) >> 8; // WEXITSTATUS
-            } else {
-                $exit_code = -1;
-            }
-
+            $exit_code = proc_close($this->_process);
             if ($exit_code != 0) {
                 $this->_debug('Subprocess returned an unexpected exit code: ' .
                     $exit_code);

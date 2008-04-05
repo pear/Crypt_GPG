@@ -30,7 +30,7 @@
  * @package   Crypt_GPG
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2007 silverorange
+ * @copyright 2005-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -67,7 +67,7 @@ require_once 'Crypt/GPG/UserId.php';
  */
 require_once 'Crypt/GPG/Exceptions.php';
 
-// {{{ class Crypt_GPG
+// {{{ class Crypt_GPG_Driver_Php
 
 /**
  * Native PHP Crypt_GPG driver
@@ -75,16 +75,23 @@ require_once 'Crypt/GPG/Exceptions.php';
  * This driver uses PHP's native process control functions to directly control
  * the GPG process. The GPG executable is required to be on the system.
  *
- * NOTE: Methods that require passphrases will not work on operating systems
- * (such as Windows) that do not support passing data to file descriptors
- * above number 2.  If you run into this problem, you will get an error
- * saying "gpg: failed to translate osfhandle 00000004"
+ * For most systems, all data is passed to the GPG subprocess using file
+ * descriptors. This is the most secure method of passing data to the GPG
+ * subprocess.
+ *
+ * If the operating system is Windows, this driver will use temporary files as
+ * a fallback for file descriptors above 2. Windows cannot use file descriptors
+ * above 2 with proc_open(). The {@link Crypt_GPG_Driver_PHP::STATUS_FD} and
+ * {@link Crypt_GPG_Driver_PHP::MESSAGE_FD} file descriptors are emulated
+ * using temporary files. All temporary files are deleted when a method call
+ * finishes or when the {@link Crypt_GPG_Driver_Php::__destruct()} method is
+ * called by PHP.
  *
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2007 silverorange
+ * @copyright 2005-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
@@ -100,23 +107,26 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     const FD_INPUT   = 0;
 
     /**
-     * Standard output file descirptor. This is used to receive normal output
+     * Standard output file descriptor. This is used to receive normal output
      * from the GPG process.
      */
     const FD_OUTPUT  = 1;
 
     /**
-     * Standard output file descirptor. This is used to receive error output
+     * Standard output file descriptor. This is used to receive error output
      * from the GPG process.
      */
     const FD_ERROR   = 2;
 
     /**
-     * GPG status output file descirptor. The status file descriptor outputs
+     * GPG status output file descriptor. The status file descriptor outputs
      * detailed information for many GPG commands. See the second section of
      * the file doc/DETAILS in the
      * {@link http://www.gnupg.org/download/ GPG package} for a detailed
      * description of GPG status output.
+     *
+     * If the operating system is Windows, the status file descriptor is
+     * emulated using a regular file.
      */
     const FD_STATUS  = 3;
 
@@ -124,6 +134,9 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * Extra message input file descriptor. This is used for methods requiring
      * a passphrase and for passing signed data when verifying a detached
      * signature.
+     *
+     * If the operating system is Windows, the message file descriptor is
+     * emulated using a regular file.
      */
     const FD_MESSAGE = 4;
 
@@ -152,8 +165,9 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @var string
      * @see Crypt_GPG::__construct()
+     * @see Crypt_GPG::_getBinary()
      */
-    private $_gpg_binary = '/usr/bin/gpg';
+    private $_gpg_binary = '';
 
     /**
      * Directory containing the GPG key files
@@ -189,6 +203,24 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     private $_open_pipes = array();
 
     /**
+     * Array of temporary file filenames
+     *
+     * This array is only populated when {@link Crypt_GPG_Driver_Php::$is_win}
+     * is true. Temporary files are used as a fallback for file descriptors
+     * above 2 in Windows. Windows cannot use file descriptors above 2 with
+     * proc_open(). The {@link Crypt_GPG_Driver_PHP::STATUS_FD} and
+     * {@link Crypt_GPG_Driver_PHP::MESSAGE_FD} file descriptors are emulated
+     * using temporary files. All temporary files are deleted when the
+     * subprocess is closed.
+     *
+     * @var array
+     *
+     * @see Crypt_GPG::_createTempFile()
+     * @see Crypt_GPG::_deleteTempFile()
+     */
+    private $_temp_files = array();
+
+    /**
      * Status output from the GPG subprocess
      *
      * Access this using {@link Crypt_GPG::_getStatus()}. If there is no status
@@ -219,6 +251,23 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      */
     private $_process = null;
 
+    /**
+     * Whether or not the operating system is Windows
+     *
+     * If Windows is detected, this driver falls back to a file-based
+     * implementation for some features.
+     *
+     * @var boolean
+     */
+    private $_is_win = false;
+
+    /**
+     * Whether or not the operating system is Darwin (OS X)
+     *
+     * @var boolean
+     */
+    private $_is_darwin = false;
+
     // }}}
     // {{{ __construct()
 
@@ -237,7 +286,9 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *                       specified when $HOME/.gnupg is inappropriate.
      *
      * - string  gpg_binary: The location of the GPG binary. If not specified,
-     *                       defaults to '/usr/bin/gpg'.
+     *                       the driver attempts to auto-detect the GPG binary
+     *                       location using a list of known default locations
+     *                       for the current operating system.
      *
      * - boolean debug:      Whether or not to use debug mode. See
      *                       {@link Crypt_GPG_Driver_Php::$debug}.
@@ -245,15 +296,29 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * @param array $options optional. An array of options used to create the
      *                       GPG object. All options must be optional and are
      *                       represented as key-value pairs.
+     *
+     * @throws PEAR_Exception if the provided 'gpg_binary' is invalid; or if no
+     *         'gpg_binary' is provided and no suitable binary could be found.
      */
     protected function __construct(array $options = array())
     {
+        $this->_is_win    = (strncmp(strtoupper(PHP_OS), 'WIN', 3) === 0);
+        $this->_is_darwin = (strncmp(strtoupper(PHP_OS), 'DARWIN', 6) === 0);
+
         if (array_key_exists('homedir', $options)) {
             $this->_homedir = (string)$options['homedir'];
         }
 
         if (array_key_exists('gpg_binary', $options)) {
             $this->_gpg_binary = (string)$options['gpg_binary'];
+        } else {
+            $this->_gpg_binary = $this->_getBinary();
+        }
+
+        if ($this->_gpg_binary == '' || !is_executable($this->_gpg_binary)) {
+            throw new PEAR_Exception('GPG binary not found. If you are sure '.
+                'the GPG binary is installed, please specify the location of '.
+                'the GPG binary using the \'gpg_binary\' driver option.');
         }
 
         if (array_key_exists('debug', $options)) {
@@ -273,6 +338,11 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     public function __destruct()
     {
         $this->_closeSubprocess();
+
+        // make sure temp files are deleted
+        foreach ($this->_temp_files as $key => $filename) {
+            $this->_deleteTempFile($key);
+        }
     }
 
     // }}}
@@ -312,12 +382,17 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         fwrite($this->_pipes[self::FD_INPUT], $data);
         $this->_closePipe(self::FD_INPUT);
 
-        $status = $this->_getStatus();
-        $this->_debug($status);
-
-        $result = $this->_parseImportStatus($status);
+        if (!$this->_is_win) {
+            $status = $this->_getStatus();
+        }
 
         $code = $this->_closeSubprocess();
+
+        if ($this->_is_win) {
+            $status = $this->_getStatus();
+        }
+
+        $result = $this->_parseImportStatus($status);
 
         // ignore duplicate key import errors
         if ($code !== null && $code !== Crypt_GPG::ERROR_DUPLICATE_KEY) {
@@ -861,8 +936,17 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     {
         $args = array();
 
+        if ($this->_is_win) {
+            $this->_writeMessageFile($passphrase);
+        }
+
         if ($passphrase !== null) {
-            $args[] = '--passphrase-fd ' . escapeshellarg(self::FD_MESSAGE);
+            if ($this->_is_win) {
+                $args[] = '--passphrase-file ' .
+                    escapeshellarg($this->_temp_files[self::FD_MESSAGE]);
+            } else {
+                $args[] = '--passphrase-fd ' . escapeshellarg(self::FD_MESSAGE);
+            }
         }
 
         $args[] = '--decrypt';
@@ -963,8 +1047,17 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             '--local-user ' . escapeshellarg($key_id)
         );
 
+        if ($this->_is_win) {
+            $this->_writeMessageFile($passphrase);
+        }
+
         if ($passphrase !== null) {
-            $args[] = '--passphrase-fd ' . escapeshellarg(self::FD_MESSAGE);
+            if ($this->_is_win) {
+                $args[] = '--passphrase-file ' .
+                    escapeshellarg($this->_temp_files[self::FD_MESSAGE]);
+            } else {
+                $args[] = '--passphrase-fd ' . escapeshellarg(self::FD_MESSAGE);
+            }
         }
 
         if ($armor) {
@@ -1054,17 +1147,28 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         if ($signature == '') {
             $args = array('--verify');
         } else {
-            // signed data goes in fd 4, detached signature data goes in stdin
-            $args = array(
-                '--enable-special-filenames',
-                '--verify - "-&4"'
-            );
+            if ($this->_is_win) {
+                $this->_writeMessageFile($signed_data);
+                $args = array(
+                    '--enable-special-filenames',
+                    '--verify - ' .
+                        escapeshellarg($this->_temp_files[self::FD_MESSAGE])
+                );
+            } else {
+                // signed data goes in fd 4, detached signature data goes in
+                // stdin
+                $args = array(
+                    '--enable-special-filenames',
+                    '--verify - "-&' . self::FD_MESSAGE . '"'
+                );
+            }
         }
 
         $this->_openSubprocess($args);
 
         if ($signature == '') {
             // signed or clearsigned data
+
             // write the signed data to the GPG subprocess in stdin
             fwrite($this->_pipes[self::FD_INPUT], $signed_data);
             $this->_closePipe(self::FD_INPUT);
@@ -1075,14 +1179,39 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             fwrite($this->_pipes[self::FD_INPUT], $signature);
             $this->_closePipe(self::FD_INPUT);
 
-            // write signed data to fd 4
-            fwrite($this->_pipes[self::FD_MESSAGE], $signed_data);
-            $this->_closePipe(self::FD_MESSAGE);
+            if (!$this->_is_win) {
+                // write signed data to fd 4
+                fwrite($this->_pipes[self::FD_MESSAGE], $signed_data);
+                $this->_closePipe(self::FD_MESSAGE);
+            }
+        }
+
+        if (!$this->_is_win) {
+            $status = $this->_getStatus();
+        }
+
+        $code = $this->_closeSubprocess();
+        if ($code !== null) {
+            switch ($code) {
+            case Crypt_GPG::ERROR_NO_DATA:
+                throw new Crypt_GPG_NoDataException(
+                    'No valid signature data found.', $code);
+
+                break;
+            default:
+                throw new Crypt_GPG_Exception(
+                    'Unknown error validating signature details.', $code);
+
+                break;
+            }
+        }
+
+        if ($this->_is_win) {
+            $status = $this->_getStatus();
         }
 
         // get the response information
-        $status = $this->_getStatus();
-        $resp   = $this->_parseVerifyStatus($status);
+        $resp = $this->_parseVerifyStatus($status);
 
         // create an object to return, and fill it with data
         $sig = new Crypt_GPG_Signature();
@@ -1127,21 +1256,6 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             $sig->setId(substr($resp['SIG_ID'], 0, $pos - 1));
         }
 
-        $code = $this->_closeSubprocess();
-        if ($code !== null) {
-            switch ($code) {
-            case Crypt_GPG::ERROR_NO_DATA:
-                throw new Crypt_GPG_NoDataException(
-                    'No valid signature data found.', $code);
-
-                break;
-            default:
-                throw new Crypt_GPG_Exception(
-                    'Unknown error validating signature details.', $code);
-
-                break;
-            }
-        }
 
         return $sig;
     }
@@ -1248,6 +1362,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * @param string $passphrase the passphrase of the user's private key.
      *
      * @return string the processed data.
+     *
+     * @sensitive $passphrase
      */
     private function _processWithPassphrase($data, $passphrase)
     {
@@ -1258,7 +1374,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             $this->_closePipe(self::FD_INPUT);
         }
 
-        if ($passphrase !== null) {
+        if (!$this->_is_win && $passphrase !== null) {
             fwrite($this->_pipes[self::FD_MESSAGE], $passphrase);
             $this->_closePipe(self::FD_MESSAGE);
         }
@@ -1302,12 +1418,21 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         $command = $this->_gpg_binary;
 
+        if ($this->_is_win) {
+            $this->_status = '';
+            $this->_createTempFile(self::FD_STATUS);
+            array_unshift($args, '--status-file ' .
+                escapeshellarg($this->_temp_files[self::FD_STATUS]));
+        } else {
+            array_unshift($args,
+                '--status-fd ' . escapeshellarg(self::FD_STATUS));
+        }
+
         $args = array_merge(array(
             '--no-secmem-warning',
             '--no-permission-warning',
             '--no-tty',
-            '--trust-model always',
-            '--status-fd ' . escapeshellarg(self::FD_STATUS)
+            '--trust-model always'
         ), $args);
 
         if ($this->_homedir) {
@@ -1321,11 +1446,16 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             self::FD_INPUT   => array('pipe', 'r'), // stdin
             self::FD_OUTPUT  => array('pipe', 'w'), // stdout
             self::FD_ERROR   => array('pipe', 'w'), // stderr
-            self::FD_STATUS  => array('pipe', 'w'), // extra output (status)
-            self::FD_MESSAGE => array('pipe', 'r')  // extra input
         );
 
-        $this->_debug("Opening subprocess with the following command:");
+        if (!$this->_is_win) {
+            // extra output (status)
+            $descriptor_spec[self::FD_STATUS]  = array('pipe', 'w');
+            // extra input
+            $descriptor_spec[self::FD_MESSAGE] = array('pipe', 'r');
+        }
+
+        $this->_debug('Opening subprocess with the following command:');
         $this->_debug($command);
 
         $this->_process = proc_open($command, $descriptor_spec, $this->_pipes,
@@ -1360,8 +1490,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         if (is_resource($this->_process)) {
 
-            $error  = $this->_getError();
-            $status = $this->_getStatus();
+            $error = $this->_getError();
+            if (!$this->_is_win) {
+                $status = $this->_getStatus();
+            }
 
             // close remaining open pipes
             foreach (array_keys($this->_open_pipes) as $pipe_number) {
@@ -1369,6 +1501,16 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             }
 
             $exit_code = proc_close($this->_process);
+
+            if ($this->_is_win) {
+                $status = $this->_getStatus();
+            }
+
+            // delete any remaining temp files
+            foreach (array_keys($this->_temp_files) as $file_number) {
+                $this->_deleteTempFile($file_number);
+            }
+
             if ($exit_code != 0) {
                 $this->_debug('Subprocess returned an unexpected exit code: ' .
                     $exit_code);
@@ -1379,10 +1521,14 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 $return = $this->_getErrorCode($exit_code, $error, $status);
             }
 
-            $this->_process = null;
-            $this->_pipes   = array();
-            $this->_error   = '';
-            $this->_status  = '';
+            $this->_process    = null;
+            $this->_pipes      = array();
+            $this->_temp_files = array();
+            $this->_error      = '';
+
+            if (!$this->_is_win) {
+                $this->_status = '';
+            }
         }
 
         return $return;
@@ -1506,8 +1652,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     /**
      * Gets the status output from the GPG subprocess
      *
-     * This helper method caches the content of the status file descriptor while
-     * the GPG subprocess is open.
+     * If the operating system is Windows, this reads and caches the contents
+     * of the status file after the subprocess has been closed. Otherwise, this
+     * caches the content of the status file descriptor while the GPG
+     * subprocess is open.
      *
      * @return string the status output from the open GPG subprocess. If there
      *                is no status output or there is no open GPG subprocess,
@@ -1515,10 +1663,16 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      */
     private function _getStatus()
     {
-        if ($this->_status == '' &&
-            array_key_exists(self::FD_STATUS, $this->_open_pipes)) {
-            while (!feof($this->_pipes[self::FD_STATUS])) {
-                $this->_status .= fread($this->_pipes[self::FD_STATUS], 8192);
+        if ($this->_status == '') {
+            if ($this->_is_win) {
+                $this->_status = $this->_readStatusFile();
+            } else {
+                if (array_key_exists(self::FD_STATUS, $this->_open_pipes)) {
+                    while (!feof($this->_pipes[self::FD_STATUS])) {
+                        $this->_status .= fread($this->_pipes[self::FD_STATUS],
+                            8192);
+                    }
+                }
             }
         }
 
@@ -1579,7 +1733,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         $status = explode("\n", $status);
         $need_passphrase = false;
         foreach ($status as $line) {
-            $tokens = explode(' ', $line);
+            $tokens = explode(' ', trim($line));
             if ($tokens[0] == '[GNUPG:]') {
                 switch ($tokens[1]) {
                 case 'BAD_PASSPHRASE':
@@ -1649,6 +1803,155 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         }
 
         return $error_code;
+    }
+
+    // }}}
+    // {{{ _writeMessageFile()
+
+    /**
+     * Writes a message to the temporary message file
+     *
+     * This method should be called before the subprocess is opened.
+     *
+     * This is used when the operating system is Windows and file-based
+     * fallbacks are used. A new temporary file is created by this method.
+     *
+     * @param string $message the message to write.
+     *
+     * @return void
+     *
+     * @sensitive $message
+     */
+    private function _writeMessageFile($message)
+    {
+        $this->_createTempFile(self::FD_MESSAGE);
+
+        $message_file = fopen($this->_temp_files[self::FD_MESSAGE], 'wb');
+        fwrite($message_file, $message);
+        fflush($message_file);
+        fclose($message_file);
+    }
+
+    // }}}
+    // {{{ _readStatusFile()
+
+    /**
+     * Reads the content of the temporary status file
+     *
+     * This method should be called after the subprocess is closed.
+     *
+     * This is used when the operating system is Windows and file-based
+     * fallbacks are used. After the temporary status file is read, it is
+     * deleted.
+     *
+     * @return string the contents of the temporary status file.
+     */
+    private function _readStatusFile()
+    {
+        $status = '';
+
+        $filename = $this->_temp_files[self::FD_STATUS];
+        if (file_exists($filename) && is_readable($filename)) {
+            $status = file_get_contents($filename);
+        }
+
+        $this->_deleteTempFile(self::FD_STATUS);
+
+        return $status;
+    }
+
+    // }}}
+    // {{{ _createTempFile()
+
+    /**
+     * Creates a temporary file
+     *
+     * If a temporary file for the given file number already exists, the old
+     * file is deleted before the new file is created.
+     *
+     * @param integer $file_number the file number. Should be one of the
+     *                             Crypt_GPG_Driver_Php::FD_* constants.
+     *
+     * @return void
+     *
+     * @see Crypt_GPG_Driver_Php::_deleteTemporaryFile()
+     */
+    private function _createTempFile($file_number)
+    {
+        $this->_deleteTempFile($file_number);
+        $filename = tempnam(sys_get_temp_dir(), 'Crypt_GPG-');
+        $this->_temp_files[$file_number] = $filename;
+    }
+
+    // }}}
+    // {{{ _deleteTempFile()
+
+    /**
+     * Deletes a temporary file
+     *
+     * If no temporary file exists for the given file number, nothing is done.
+     *
+     * @param integer $file_number the file number. Should be one of the
+     *                             Crypt_GPG_Driver_Php::FD_* constants.
+     *
+     * @return void
+     *
+     * @see Crypt_GPG_Driver_Php::_createTemporaryFile()
+     */
+    private function _deleteTempFile($file_number)
+    {
+        if (array_key_exists($file_number, $this->_temp_files)) {
+            $filename = $this->_temp_files[$file_number];
+            if (file_exists($filename) && is_writeable($filename)) {
+                unlink($filename);
+            }
+            unset($this->_temp_files[$file_number]);
+        }
+    }
+
+    // }}}
+    // {{{ _getBinary()
+
+    /**
+     * Gets the name of the GPG binary for the current operating system
+     *
+     * This method is called if the 'gpg_binary' option is <i>not</i> specified
+     * when creating this driver.
+     *
+     * @return string the name of the GPG binary for the current operating
+     *                system. If no suitable binary could be found, an empty
+     *                string is returned.
+     */
+    private function _getBinary()
+    {
+        $bin = '';
+
+        if ($this->_is_win) {
+            $bin_files = array(
+                'c:/progra~1/gnu/gnupg/gpg.exe'
+            );
+        } elseif ($this->_is_darwin) {
+            $bin_files = array(
+                '/opt/local/bin/gpg', // MacPorts
+                '/usr/local/bin/gpg', // Mac GPG
+                '/sw/bin/gpg',        // Fink
+                '/usr/bin/gpg'
+            );
+        } else {
+            $bin_files = array(
+                '/usr/bin/gpg',
+                '/usr/local/bin/gpg'
+            );
+        }
+
+        foreach ($bin_files as $bin_file) {
+            if (is_executable($bin_file)) {
+                $bin = $bin_file;
+                break;
+            }
+        }
+
+        return $bin_file;
     }
 
     // }}}

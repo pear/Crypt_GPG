@@ -35,12 +35,21 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$release_version = '0.5.0';
+$release_version = '0.6.0';
 $release_state   = 'beta';
 $release_notes   =
     "API is beta. No API changes in this release. Changes in this release:\n" .
-    " * added PECL-powered gnupg driver,\n" .
-    " * added unit tests for new driver.\n";
+    " * unit test - fail on E_NOTICE,\n" .
+    " * unit test - fixes for PHPUnit > 3.2.16,\n" .
+    " * unit test - fixes for systems other than Ubuntu 7.10,\n" .
+    " * PHP driver - added workarounds for Windows using temporary files,\n" .
+    " * PHP driver - added auto-detection of GPG binary, making it less " .
+    "likely that you need to specify the binary location,\n" .
+    " * PHP driver - documentation typo fixes,\n" .
+    " * PHP driver - fix bug parsing status output in Windows,\n" .
+    " * PHP driver - fix undefined array in _parseverifyStatus(),\n" .
+    " * PHP driver - throw an exception if the specified GPG binary is not ".
+    "valid.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy ".
@@ -90,7 +99,7 @@ $package->addMaintainer('lead', 'gauthierm', 'Mike Gauthier',
 $package->addMaintainer('lead', 'nrf', 'Nathan Fredrickson',
     'nathan@silverorange.com');
 
-$package->setPhpDep('5.1.0');
+$package->setPhpDep('5.2.1');
 $package->addExtensionDep('optional', 'gnupg');
 $package->setPearinstallerDep('1.4.0');
 $package->generateContents();

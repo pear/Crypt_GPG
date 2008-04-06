@@ -159,9 +159,10 @@ abstract class Crypt_GPG
      * Signing mode for creating a detached signature. When using detached
      * signatures, only the signature data is returned. The original message
      * text may be distributed separately from the signature data. This is
-     * useful for S/MIME email messages.
+     * useful for miltipart/signed email messages as per
+     * {@link http://www.ietf.org/rfc/rfc3156.txt RFC 3156}.
      *
-     * @see Crypt_GPG:sign()
+     * @see Crypt_GPG::sign()
      */
     const SIGN_MODE_DETACHED = 3;
 

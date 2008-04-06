@@ -355,7 +355,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * {@link Crypt_GPG::deletePublicKey()} or
      * {@link Crypt_GPG::deletePrivateKey()}.
      *
-     * Calls GPG with the --import option and provides GPG the key data to be
+     * Calls GPG with the --import command and provides GPG the key data to be
      * imported.
      *
      * @param string $data the key data to be imported.
@@ -422,17 +422,17 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * The exported key remains on the keyring. To delete the public key, use
      * {@link Crypt_GPG::deletePublicKey()}.
      *
-     * If more than one key fingerprint is avaliable for the specified
+     * If more than one key fingerprint is available for the specified
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * public key is exported.
      *
-     * Calls GPG with the --export option.
+     * Calls GPG with the --export command.
      *
      * @param string  $key_id either the full uid of the public key, the email
      *                        part of the uid of the public key or the key id of
      *                        the public key. For example,
      *                        "Test User (example) <test@example.com>",
-     *                        "test@example.com" or a hexidecimal string.
+     *                        "test@example.com" or a hexadecimal string.
      * @param boolean $armor  optional. If true, ASCII armored data is returned;
      *                        otherwise, binary data is returned. Defaults to
      *                        true.
@@ -486,20 +486,20 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     /**
      * Deletes a public key from the keyring
      *
-     * If more than one key fingerprint is avaliable for the specified
+     * If more than one key fingerprint is available for the specified
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * public key is deleted.
      *
      * The private key must be deleted first or an exception will be thrown.
      * See {@link Crypt_GPG::deletePrivateKey()}.
      *
-     * Calls GPG with the --delete-key option.
+     * Calls GPG with the --delete-key command.
      *
      * @param string $key_id either the full uid of the public key, the email
      *                       part of the uid of the public key or the key id of
      *                       the public key. For example,
      *                       "Test User (example) <test@example.com>",
-     *                       "test@example.com" or a hexidecimal string.
+     *                       "test@example.com" or a hexadecimal string.
      *
      * @return void
      *
@@ -553,17 +553,17 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     /**
      * Deletes a private key from the keyring
      *
-     * If more than one key fingerprint is avaliable for the specified
+     * If more than one key fingerprint is available for the specified
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * private key is deleted.
      *
-     * Calls GPG with the --delete-secret-key option.
+     * Calls GPG with the --delete-secret-key command.
      *
      * @param string $key_id either the full uid of the private key, the email
      *                       part of the uid of the private key or the key id of
      *                       the private key. For example,
      *                       "Test User (example) <test@example.com>",
-     *                       "test@example.com" or a hexidecimal string.
+     *                       "test@example.com" or a hexadecimal string.
      *
      * @return void
      *
@@ -613,7 +613,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     /**
      * Gets the available keys in the keyring
      *
-     * Calls GPG with the --list-keys option and grabs keys. See the first
+     * Calls GPG with the --list-keys command and grabs keys. See the first
      * section of doc/DETAILS in the
      * {@link http://www.gnupg.org/download/ GPG package} for a detailed
      * description of how the GPG command output is parsed.
@@ -744,7 +744,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     /**
      * Gets a key fingerprint from the keyring
      *
-     * If more than one key fingerprint is avaliable (for example, if you use
+     * If more than one key fingerprint is available (for example, if you use
      * a non-unique user id) only the first key fingerprint is returned.
      *
      * Calls the GPG --list-keys command with the --with-fingerprint option to
@@ -754,7 +754,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *                        part of the user id of the key, or the key id of
      *                        the key. For example,
      *                        "Test User (example) <test@example.com>",
-     *                        "test@example.com" or a hexidecimal string.
+     *                        "test@example.com" or a hexadecimal string.
      * @param integer $format optional. How the fingerprint should be formatted.
      *                        Use {@link Crypt_GPG::FORMAT_X509} for X.509
      *                        certificate format,
@@ -823,13 +823,6 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * Data is ASCII armored by default but may optionally be returned as
      * binary.
-     *
-     * If this method throws a Crypt_GPG_MissingSelfSignatureException, the
-     * public key needs to be signed. Keys may be manually signed using the
-     * shell command:
-     *
-     * <code>gpg --sign-key <key-id> <named-user></code>
-     * Encrypts data
      *
      * Calls GPG with the --encrypt command.
      *
@@ -1008,13 +1001,13 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *                            email part of the uid of the private key or
      *                            the key id of the private key. For example,
      *                            "Test User (example) <test@example.com>",
-     *                            "test@example.com" or a hexidecimal string.
+     *                            "test@example.com" or a hexadecimal string.
      * @param string  $data       the data to be signed.
      * @param string  $passphrase optional. The passphrase of the private key
      *                            used to sign the data. Only required if the
      *                            private key requires a passphrase. Specify
      *                            null for no passphrase.
-     * @param boolean $mode       otional. The data signing mode to use. Should
+     * @param boolean $mode       optional. The data signing mode to use. Should
      *                            be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
      *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or
      *                            {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
@@ -1121,7 +1114,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * message if the signed data is not clearsigned and does not have a
      * detached signature.
      *
-     * Calls GPG with the --verify option to verify signature data.
+     * Calls GPG with the --verify command to verify signature data.
      *
      * @param string $signed_data the signed data to be verified.
      * @param string $signature   optional. If verifying data signed using a

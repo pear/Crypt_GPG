@@ -245,7 +245,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * The exported key remains on the keyring. To delete the public key, use
      * {@link Crypt_GPG::deletePublicKey()}.
      *
-     * If more than one key fingerprint is avaliable for the specified
+     * If more than one key fingerprint is available for the specified
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * public key is exported.
      *
@@ -256,7 +256,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      *                        part of the uid of the public key or the key id of
      *                        the public key. For example,
      *                        "Test User (example) <test@example.com>",
-     *                        "test@example.com" or a hexidecimal string.
+     *                        "test@example.com" or a hexadecimal string.
      * @param boolean $armor  optional. If true, ASCII armored data is returned;
      *                        otherwise, binary data is returned. Defaults to
      *                        true.
@@ -280,7 +280,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
     /**
      * Deletes a public key from the keyring
      *
-     * If more than one key fingerprint is avaliable for the specified
+     * If more than one key fingerprint is available for the specified
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * public key is deleted.
      *
@@ -288,7 +288,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      *                       part of the uid of the public key or the key id of
      *                       the public key. For example,
      *                       "Test User (example) <test@example.com>",
-     *                       "test@example.com" or a hexidecimal string.
+     *                       "test@example.com" or a hexadecimal string.
      *
      * @return void
      *
@@ -335,7 +335,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
     /**
      * Deletes a private key from the keyring
      *
-     * If more than one key fingerprint is avaliable for the specified
+     * If more than one key fingerprint is available for the specified
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * private key is deleted.
      *
@@ -347,7 +347,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      *                       part of the uid of the private key or the key id of
      *                       the private key. For example,
      *                       "Test User (example) <test@example.com>",
-     *                       "test@example.com" or a hexidecimal string.
+     *                       "test@example.com" or a hexadecimal string.
      *
      * @return void
      *
@@ -423,14 +423,14 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
     /**
      * Gets a key fingerprint from the keyring
      *
-     * If more than one key fingerprint is avaliable (for example, if you use
+     * If more than one key fingerprint is available (for example, if you use
      * a non-unique user id) only the first key fingerprint is returned.
      *
      * @param string  $key_id either the full user id of the key, the email
      *                        part of the user id of the key, or the key id of
      *                        the key. For example,
      *                        "Test User (example) <test@example.com>",
-     *                        "test@example.com" or a hexidecimal string.
+     *                        "test@example.com" or a hexadecimal string.
      * @param integer $format optional. How the fingerprint should be formatted.
      *                        Use {@link Crypt_GPG::FORMAT_X509} for X.509
      *                        certificate format,
@@ -632,13 +632,13 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      *                            email part of the uid of the private key or
      *                            the key id of the private key. For example,
      *                            "Test User (example) <test@example.com>",
-     *                            "test@example.com" or a hexidecimal string.
+     *                            "test@example.com" or a hexadecimal string.
      * @param string  $data       the data to be signed.
      * @param string  $passphrase optional. The passphrase of the private key
      *                            used to sign the data. Only required if the
      *                            private key requires a passphrase. Specify
      *                            null for no passphrase.
-     * @param boolean $mode       otional. The data signing mode to use. Should
+     * @param boolean $mode       optional. The data signing mode to use. Should
      *                            be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
      *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or
      *                            {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not

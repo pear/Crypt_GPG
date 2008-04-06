@@ -201,7 +201,7 @@ abstract class Crypt_GPG
 
     /**
      * Static factory method to create a new GPG object using the specified
-     * backend driver
+     * back-end driver
      *
      * This allows developers to write code using a standard interface and
      * optionally switch to a PECL-based implementation with minimal fuss at a
@@ -217,7 +217,7 @@ abstract class Crypt_GPG
      *                        See documentation of a specific driver for
      *                        details on what options are available.
      *
-     * @return Crypt_GPG a GPG object powered by the speficied driver.
+     * @return Crypt_GPG a GPG object powered by the specified driver.
      */
     public static function factory($driver = 'php', array $options = array())
     {
@@ -290,7 +290,7 @@ abstract class Crypt_GPG
      * The exported key remains on the keyring. To delete the public key, use
      * {@link Crypt_GPG::deletePublicKey()}.
      *
-     * If more than one key fingerprint is avaliable for the specified
+     * If more than one key fingerprint is available for the specified
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * public key is exported.
      *
@@ -320,7 +320,7 @@ abstract class Crypt_GPG
     /**
      * Deletes a public key from the keyring
      *
-     * If more than one key fingerprint is avaliable for the specified
+     * If more than one key fingerprint is available for the specified
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * public key is deleted.
      *
@@ -354,7 +354,7 @@ abstract class Crypt_GPG
     /**
      * Deletes a private key from the keyring
      *
-     * If more than one key fingerprint is avaliable for the specified
+     * If more than one key fingerprint is available for the specified
      * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
      * private key is deleted.
      *
@@ -402,7 +402,7 @@ abstract class Crypt_GPG
     /**
      * Gets a key fingerprint from the keyring
      *
-     * If more than one key fingerprint is avaliable (for example, if you use
+     * If more than one key fingerprint is available (for example, if you use
      * a non-unique user id) only the first key fingerprint is returned.
      *
      * @param string  $key_id either the full user id of the key, the email
@@ -521,7 +521,7 @@ abstract class Crypt_GPG
      *                            used to sign the data. Only required if the
      *                            private key requires a passphrase. Specify
      *                            null for no passphrase.
-     * @param boolean $mode       otional. The data signing mode to use. Should
+     * @param boolean $mode       optional. The data signing mode to use. Should
      *                            be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
      *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or
      *                            {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not

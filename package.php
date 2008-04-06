@@ -47,7 +47,7 @@ $release_notes   =
     "likely that you need to specify the binary location,\n" .
     " * PHP driver - documentation typo fixes,\n" .
     " * PHP driver - fix bug parsing status output in Windows,\n" .
-    " * PHP driver - fix undefined array in _parseverifyStatus(),\n" .
+    " * PHP driver - fix undefined array in _parseVerifyStatus(),\n" .
     " * PHP driver - throw an exception if the specified GPG binary is not ".
     "valid.\n";
 
@@ -56,7 +56,7 @@ $description =
     "Guard (GPG). It requires the GPG executable to be on the system.\n\n".
     "Though GPG can support symmetric-key cryptography, this package is ".
     "intended only to facilitate public-key cryptography.\n\n".
-    "This package requires PHP version 5.1 or greater.";
+    "This package requires PHP version 5.2.1 or greater.";
 
 $package = new PEAR_PackageFileManager2();
 

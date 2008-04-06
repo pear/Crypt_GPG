@@ -10,7 +10,7 @@
 
 Though GPG can support symmetric-key cryptography, this package is intended only to facilitate public-key cryptography.
 
-This package requires PHP version 5.1 or greater.</description>
+This package requires PHP version 5.2.1 or greater.</description>
  <lead>
   <name>Mike Gauthier</name>
   <user>gauthierm</user>
@@ -23,10 +23,10 @@ This package requires PHP version 5.1 or greater.</description>
   <email>nathan@silverorange.com</email>
   <active>yes</active>
  </lead>
- <date>2008-03-02</date>
- <time>17:28:45</time>
+ <date>2008-04-05</date>
+ <time>19:28:55</time>
  <version>
-  <release>0.5.0</release>
+  <release>0.6.0</release>
   <api>0.5.0</api>
  </version>
  <stability>
@@ -35,8 +35,15 @@ This package requires PHP version 5.1 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>API is beta. No API changes in this release. Changes in this release:
- * added PECL-powered gnupg driver,
- * added unit tests for new driver.
+ * unit test - fail on E_NOTICE,
+ * unit test - fixes for PHPUnit &gt; 3.2.16,
+ * unit test - fixes for systems other than Ubuntu 7.10,
+ * PHP driver - added workarounds for Windows using temporary files,
+ * PHP driver - added auto-detection of GPG binary, making it less likely that you need to specify the binary location,
+ * PHP driver - documentation typo fixes,
+ * PHP driver - fix bug parsing status output in Windows,
+ * PHP driver - fix undefined array in _parseVerifyStatus(),
+ * PHP driver - throw an exception if the specified GPG binary is not valid.
  </notes>
  <contents>
   <dir baseinstalldir="/Crypt" name="/">
@@ -64,7 +71,7 @@ This package requires PHP version 5.1 or greater.</description>
  <dependencies>
   <required>
    <php>
-    <min>5.1.0</min>
+    <min>5.2.1</min>
    </php>
    <pearinstaller>
     <min>1.4.0</min>
@@ -80,18 +87,25 @@ This package requires PHP version 5.1 or greater.</description>
  <changelog>
   <release>
    <version>
-    <release>0.5.0</release>
+    <release>0.6.0</release>
     <api>0.5.0</api>
    </version>
    <stability>
     <release>beta</release>
     <api>beta</api>
    </stability>
-   <date>2008-03-02</date>
+   <date>2008-04-05</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>API is beta. No API changes in this release. Changes in this release:
- * added PECL-powered gnupg driver,
- * added unit tests for new driver.
+ * unit test - fail on E_NOTICE,
+ * unit test - fixes for PHPUnit &gt; 3.2.16,
+ * unit test - fixes for systems other than Ubuntu 7.10,
+ * PHP driver - added workarounds for Windows using temporary files,
+ * PHP driver - added auto-detection of GPG binary, making it less likely that you need to specify the binary location,
+ * PHP driver - documentation typo fixes,
+ * PHP driver - fix bug parsing status output in Windows,
+ * PHP driver - fix undefined array in _parseVerifyStatus(),
+ * PHP driver - throw an exception if the specified GPG binary is not valid.
    </notes>
   </release>
  </changelog>

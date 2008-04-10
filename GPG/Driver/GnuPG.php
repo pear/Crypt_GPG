@@ -72,6 +72,8 @@ require_once 'Crypt/GPG/Signature.php';
  */
 require_once 'Crypt/GPG/Exceptions.php';
 
+// {{{ class Crypt_GPG_Driver_GnuPG
+
 /**
  * PECL gnupg Crypt_GPG driver
  *
@@ -767,5 +769,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
 
     // }}}
 }
+
+// }}}
 
 ?>

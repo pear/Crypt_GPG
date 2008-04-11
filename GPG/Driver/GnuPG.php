@@ -754,8 +754,10 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
         $sig = new Crypt_GPG_Signature();
         $sig->setKeyFingerprint($gnupgSig[0]['fingerprint']);
         $sig->setCreationDate($gnupgSig[0]['timestamp']);
-        $sig->setIsValid(intval($gnupgSig[0]['summary']) |
-            gnupg::SIGSUM_VALID == gnupg::SIGSUM_VALID);
+
+        $summary = intval($gnupgSig[0]['summary']);
+        $sig->setIsValid(($summary | gnupg::SIGSUM_VALID) ===
+            gnupg::SIGSUM_VALID);
 
         $keys = $this->getKeys($sig->getKeyFingerprint());
         if (count($keys) > 0) {

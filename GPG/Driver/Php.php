@@ -1278,13 +1278,13 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         $comment = '';
 
         $matches = array();
-        if (preg_match('/^(.+?) <([^>]+)>$/', $string, $matches) == 1) {
+        if (preg_match('/^(.+?) <([^>]+)>$/', $string, $matches) === 1) {
             $string = $matches[1];
             $email  = $matches[2];
         }
 
         $matches = array();
-        if (preg_match('/^(.+?) \(([^\)]+)\)$/', $string, $matches) == 1) {
+        if (preg_match('/^(.+?) \(([^\)]+)\)$/', $string, $matches) === 1) {
             $string  = $matches[1];
             $comment = $matches[2];
         }
@@ -1741,7 +1741,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
                 case 'IMPORT_OK':
                     $pattern = '/already in secret keyring/';
-                    if (preg_match($pattern, $error) == 1) {
+                    if (preg_match($pattern, $error) === 1) {
                         $errorCode = Crypt_GPG::ERROR_DUPLICATE_KEY;
                     }
                     break 2;
@@ -1772,27 +1772,27 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             }
         }
 
-        if ($errorCode == Crypt_GPG::ERROR_UNKNOWN && $needPassphrase) {
+        if ($errorCode === Crypt_GPG::ERROR_UNKNOWN && $needPassphrase) {
             $errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
         }
 
-        if ($errorCode == Crypt_GPG::ERROR_UNKNOWN) {
+        if ($errorCode === Crypt_GPG::ERROR_UNKNOWN) {
             $pattern = '/no valid OpenPGP data found/';
-            if (preg_match($pattern, $error) == 1) {
+            if (preg_match($pattern, $error) === 1) {
                 $errorCode = Crypt_GPG::ERROR_NO_DATA;
             }
         }
 
-        if ($errorCode == Crypt_GPG::ERROR_UNKNOWN) {
+        if ($errorCode === Crypt_GPG::ERROR_UNKNOWN) {
             $pattern = '/secret key not available/';
-            if (preg_match($pattern, $error) == 1) {
+            if (preg_match($pattern, $error) === 1) {
                 $errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             }
         }
 
-        if ($errorCode == Crypt_GPG::ERROR_UNKNOWN) {
+        if ($errorCode === Crypt_GPG::ERROR_UNKNOWN) {
             $pattern = '/public key not found/';
-            if (preg_match($pattern, $error) == 1) {
+            if (preg_match($pattern, $error) === 1) {
                 $errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             }
         }

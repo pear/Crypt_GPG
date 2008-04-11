@@ -208,7 +208,7 @@ class Crypt_GPG_KeyNotFoundException extends Crypt_GPG_Exception
      *
      * @var string
      */
-    private $_key_id = '';
+    private $_keyId = '';
 
     // }}}
     // {{{ __construct()
@@ -218,11 +218,11 @@ class Crypt_GPG_KeyNotFoundException extends Crypt_GPG_Exception
      *
      * @param string $message an error message.
      * @param int    $code    a user defined error code.
-     * @param string $key_id  the key identifier of the key.
+     * @param string $keyId   the key identifier of the key.
      */
-    public function __construct($message, $code = 0, $key_id= '')
+    public function __construct($message, $code = 0, $keyId= '')
     {
-        $this->_key_id = $key_id;
+        $this->_keyId = $keyId;
         parent::__construct($message, $code);
     }
 
@@ -230,13 +230,13 @@ class Crypt_GPG_KeyNotFoundException extends Crypt_GPG_Exception
     // {{{ getKeyId()
 
     /**
-     * Returns the contents of the internal _key_id property
+     * Gets the key identifier of the key that was not found
      *
      * @return string the key identifier of the key that was not found.
      */
     public function getKeyId()
     {
-        return $this->_key_id;
+        return $this->_keyId;
     }
 
     // }}}
@@ -352,7 +352,7 @@ class Crypt_GPG_DeletePrivateKeyException extends Crypt_GPG_Exception
      *
      * @var string
      */
-    private $_key_id = '';
+    private $_keyId = '';
 
     // }}}
     // {{{ __construct()
@@ -362,14 +362,14 @@ class Crypt_GPG_DeletePrivateKeyException extends Crypt_GPG_Exception
      *
      * @param string $message an error message.
      * @param int    $code    a user defined error code.
-     * @param string $key_id  the key identifier of the public key that was
+     * @param string $keyId   the key identifier of the public key that was
      *                        attempted to delete.
      *
      * @see Crypt_GPG::deletePublicKey()
      */
-    public function __construct($message, $code = 0, $key_id= '')
+    public function __construct($message, $code = 0, $keyId = '')
     {
-        $this->_key_id = $key_id;
+        $this->_keyId = $keyId;
         parent::__construct($message, $code);
     }
 
@@ -377,13 +377,13 @@ class Crypt_GPG_DeletePrivateKeyException extends Crypt_GPG_Exception
     // {{{ getKeyId()
 
     /**
-     * Returns the contents of the internal _key_id property
+     * Gets the key identifier of the key that was not found
      *
      * @return string the key identifier of the key that was not found.
      */
     public function getKeyId()
     {
-        return $this->_key_id;
+        return $this->_keyId;
     }
 
     // }}}

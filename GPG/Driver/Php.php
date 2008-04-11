@@ -167,12 +167,12 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * @see Crypt_GPG::__construct()
      * @see Crypt_GPG::_getBinary()
      */
-    private $_gpg_binary = '';
+    private $_gpgBinary = '';
 
     /**
      * Directory containing the GPG key files
      *
-     * This property only contains the path when the <i>$homedir</i> parameter
+     * This property only contains the path when the <i>homedir</i> option
      * is specified in the constructor.
      *
      * @var string
@@ -200,12 +200,12 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * @var array
      * @see Crypt_GPG::_closePipe()
      */
-    private $_open_pipes = array();
+    private $_openPipes = array();
 
     /**
      * Array of temporary file filenames
      *
-     * This array is only populated when {@link Crypt_GPG_Driver_Php::$is_win}
+     * This array is only populated when {@link Crypt_GPG_Driver_Php::$_isWin}
      * is true. Temporary files are used as a fallback for file descriptors
      * above 2 in Windows. Windows cannot use file descriptors above 2 with
      * proc_open(). The {@link Crypt_GPG_Driver_PHP::STATUS_FD} and
@@ -218,7 +218,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * @see Crypt_GPG::_createTempFile()
      * @see Crypt_GPG::_deleteTempFile()
      */
-    private $_temp_files = array();
+    private $_tempFiles = array();
 
     /**
      * Status output from the GPG subprocess
@@ -259,14 +259,14 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @var boolean
      */
-    private $_is_win = false;
+    private $_isWin = false;
 
     /**
      * Whether or not the operating system is Darwin (OS X)
      *
      * @var boolean
      */
-    private $_is_darwin = false;
+    private $_isDarwin = false;
 
     // }}}
     // {{{ __construct()
@@ -285,10 +285,11 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *                       home directory. This option only needs to be
      *                       specified when $HOME/.gnupg is inappropriate.
      *
-     * - string  gpg_binary: The location of the GPG binary. If not specified,
+     * - string  gpgBinary:  The location of the GPG binary. If not specified,
      *                       the driver attempts to auto-detect the GPG binary
      *                       location using a list of known default locations
-     *                       for the current operating system.
+     *                       for the current operating system. The option
+     *                       'gpg_binary' is a deprecated alias for this option.
      *
      * - boolean debug:      Whether or not to use debug mode. See
      *                       {@link Crypt_GPG_Driver_Php::$debug}.
@@ -302,23 +303,26 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      */
     protected function __construct(array $options = array())
     {
-        $this->_is_win    = (strncmp(strtoupper(PHP_OS), 'WIN', 3) === 0);
-        $this->_is_darwin = (strncmp(strtoupper(PHP_OS), 'DARWIN', 6) === 0);
+        $this->_isWin    = (strncmp(strtoupper(PHP_OS), 'WIN', 3) === 0);
+        $this->_isDarwin = (strncmp(strtoupper(PHP_OS), 'DARWIN', 6) === 0);
 
         if (array_key_exists('homedir', $options)) {
             $this->_homedir = (string)$options['homedir'];
         }
 
-        if (array_key_exists('gpg_binary', $options)) {
-            $this->_gpg_binary = (string)$options['gpg_binary'];
+        if (array_key_exists('gpgBinary', $options)) {
+            $this->_gpgBinary = (string)$options['gpgBinary'];
+        } elseif (array_key_exists('gpg_binary', $options)) {
+            // support deprecated 'gpg_binary' option
+            $this->_gpgBinary = (string)$options['gpg_binary'];
         } else {
-            $this->_gpg_binary = $this->_getBinary();
+            $this->_gpgBinary = $this->_getBinary();
         }
 
-        if ($this->_gpg_binary == '' || !is_executable($this->_gpg_binary)) {
+        if ($this->_gpgBinary == '' || !is_executable($this->_gpgBinary)) {
             throw new PEAR_Exception('GPG binary not found. If you are sure '.
                 'the GPG binary is installed, please specify the location of '.
-                'the GPG binary using the \'gpg_binary\' driver option.');
+                'the GPG binary using the \'gpgBinary\' driver option.');
         }
 
         if (array_key_exists('debug', $options)) {
@@ -340,7 +344,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         $this->_closeSubprocess();
 
         // make sure temp files are deleted
-        foreach ($this->_temp_files as $key => $filename) {
+        foreach ($this->_tempFiles as $key => $filename) {
             $this->_deleteTempFile($key);
         }
     }
@@ -382,13 +386,13 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         fwrite($this->_pipes[self::FD_INPUT], $data);
         $this->_closePipe(self::FD_INPUT);
 
-        if (!$this->_is_win) {
+        if (!$this->_isWin) {
             $status = $this->_getStatus();
         }
 
         $code = $this->_closeSubprocess();
 
-        if ($this->_is_win) {
+        if ($this->_isWin) {
             $status = $this->_getStatus();
         }
 
@@ -423,37 +427,37 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * {@link Crypt_GPG::deletePublicKey()}.
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
+     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
      * public key is exported.
      *
      * Calls GPG with the --export command.
      *
-     * @param string  $key_id either the full uid of the public key, the email
-     *                        part of the uid of the public key or the key id of
-     *                        the public key. For example,
-     *                        "Test User (example) <test@example.com>",
-     *                        "test@example.com" or a hexadecimal string.
-     * @param boolean $armor  optional. If true, ASCII armored data is returned;
-     *                        otherwise, binary data is returned. Defaults to
-     *                        true.
+     * @param string  $keyId either the full uid of the public key, the email
+     *                       part of the uid of the public key or the key id of
+     *                       the public key. For example,
+     *                       "Test User (example) <test@example.com>",
+     *                       "test@example.com" or a hexadecimal string.
+     * @param boolean $armor optional. If true, ASCII armored data is returned;
+     *                       otherwise, binary data is returned. Defaults to
+     *                       true.
      *
      * @return string the public key data.
      *
      * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
      *         if these exceptions occur.
      */
-    public function exportPublicKey($key_id, $armor = true)
+    public function exportPublicKey($keyId, $armor = true)
     {
-        $fingerprint = $this->getFingerprint($key_id);
+        $fingerprint = $this->getFingerprint($keyId);
 
         if ($fingerprint === null) {
             throw new Crypt_GPG_KeyNotFoundException(
-                'Public key not found: ' . $key_id,
-                Crypt_GPG::ERROR_KEY_NOT_FOUND, $key_id);
+                'Public key not found: ' . $keyId,
+                Crypt_GPG::ERROR_KEY_NOT_FOUND, $keyId);
         }
 
         $args = array();
@@ -466,9 +470,9 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         $this->_openSubprocess($args);
 
-        $key_data = '';
+        $keyData = '';
         while (!feof($this->_pipes[self::FD_OUTPUT])) {
-            $key_data .= fread($this->_pipes[self::FD_OUTPUT], 1024);
+            $keyData .= fread($this->_pipes[self::FD_OUTPUT], 1024);
         }
 
         $code = $this->_closeSubprocess();
@@ -477,7 +481,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 'Unknown error exporting public key.', $code);
         }
 
-        return $key_data;
+        return $keyData;
     }
 
     // }}}
@@ -487,7 +491,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * Deletes a public key from the keyring
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
+     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
      * public key is deleted.
      *
      * The private key must be deleted first or an exception will be thrown.
@@ -495,16 +499,16 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * Calls GPG with the --delete-key command.
      *
-     * @param string $key_id either the full uid of the public key, the email
-     *                       part of the uid of the public key or the key id of
-     *                       the public key. For example,
-     *                       "Test User (example) <test@example.com>",
-     *                       "test@example.com" or a hexadecimal string.
+     * @param string $keyId either the full uid of the public key, the email
+     *                      part of the uid of the public key or the key id of
+     *                      the public key. For example,
+     *                      "Test User (example) <test@example.com>",
+     *                      "test@example.com" or a hexadecimal string.
      *
      * @return void
      *
      * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_DeletePrivateKeyException if the specified public key
      *         has an associated private key on the keyring. The private key
@@ -514,14 +518,14 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
      *         if these exceptions occur.
      */
-    public function deletePublicKey($key_id)
+    public function deletePublicKey($keyId)
     {
-        $fingerprint = $this->getFingerprint($key_id);
+        $fingerprint = $this->getFingerprint($keyId);
 
         if ($fingerprint === null) {
             throw new Crypt_GPG_KeyNotFoundException(
-                'Public key not found: ' . $key_id,
-                Crypt_GPG::ERROR_KEY_NOT_FOUND, $key_id);
+                'Public key not found: ' . $keyId,
+                Crypt_GPG::ERROR_KEY_NOT_FOUND, $keyId);
         }
 
         $args = array(
@@ -537,7 +541,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             case Crypt_GPG::ERROR_DELETE_PRIVATE_KEY:
                 throw new Crypt_GPG_DeletePrivateKeyException(
                     'Private key must be deleted before public key can be ' .
-                    'deleted.', $code, $key_id);
+                    'deleted.', $code, $keyId);
 
                 break;
             default:
@@ -554,34 +558,34 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * Deletes a private key from the keyring
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
+     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
      * private key is deleted.
      *
      * Calls GPG with the --delete-secret-key command.
      *
-     * @param string $key_id either the full uid of the private key, the email
-     *                       part of the uid of the private key or the key id of
-     *                       the private key. For example,
-     *                       "Test User (example) <test@example.com>",
-     *                       "test@example.com" or a hexadecimal string.
+     * @param string $keyId either the full uid of the private key, the email
+     *                      part of the uid of the private key or the key id of
+     *                      the private key. For example,
+     *                      "Test User (example) <test@example.com>",
+     *                      "test@example.com" or a hexadecimal string.
      *
      * @return void
      *
      * @throws Crypt_GPG_KeyNotFoundException if a private key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
      *         if these exceptions occur.
      */
-    public function deletePrivateKey($key_id)
+    public function deletePrivateKey($keyId)
     {
-        $fingerprint = $this->getFingerprint($key_id);
+        $fingerprint = $this->getFingerprint($keyId);
 
         if ($fingerprint === null) {
             throw new Crypt_GPG_KeyNotFoundException(
-                'Private key not found: ' . $key_id,
-                Crypt_GPG::ERROR_KEY_NOT_FOUND, $key_id);
+                'Private key not found: ' . $keyId,
+                Crypt_GPG::ERROR_KEY_NOT_FOUND, $keyId);
         }
 
         $args = array(
@@ -596,8 +600,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             switch ($code) {
             case Crypt_GPG::ERROR_KEY_NOT_FOUND:
                 throw new Crypt_GPG_KeyNotFoundException(
-                    'Private key not found: ' . $key_id,
-                    $code, $key_id);
+                    'Private key not found: ' . $keyId,
+                    $code, $keyId);
 
                 break;
             default:
@@ -618,10 +622,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * {@link http://www.gnupg.org/download/ GPG package} for a detailed
      * description of how the GPG command output is parsed.
      *
-     * @param string $key_id optional. Only keys with that match the specified
-     *                       pattern are returned. The pattern may be part of
-     *                       a user id, a key id or a key fingerprint. If not
-     *                       specified, all keys are returned.
+     * @param string $keyId optional. Only keys with that match the specified
+     *                      pattern are returned. The pattern may be part of
+     *                      a user id, a key id or a key fingerprint. If not
+     *                      specified, all keys are returned.
      *
      * @return array an array of {@link Crypt_GPG_Key} objects.
      *
@@ -631,7 +635,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @see Crypt_GPG_Key
      */
-    public function getKeys($key_id = '')
+    public function getKeys($keyId = '')
     {
         // get private key fingerprints
         $args = array(
@@ -641,21 +645,21 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             '--fixed-list-mode'
         );
 
-        if ($key_id == '') {
+        if ($keyId == '') {
             $args[] = '--list-secret-keys';
         } else {
-            $args[] = '--list-secret-keys ' . escapeshellarg($key_id);
+            $args[] = '--list-secret-keys ' . escapeshellarg($keyId);
         }
 
         $this->_openSubprocess($args);
 
-        $private_key_fingerprints = array();
+        $privateKeyFingerprints = array();
         while (!feof($this->_pipes[self::FD_OUTPUT])) {
-            $line = fgets($this->_pipes[self::FD_OUTPUT]);
-            $exp_line = explode(':', $line);
+            $line    = fgets($this->_pipes[self::FD_OUTPUT]);
+            $lineExp = explode(':', $line);
 
-            if ($exp_line[0] == 'fpr') {
-                $private_key_fingerprints[] = $exp_line[9];
+            if ($lineExp[0] == 'fpr') {
+                $privateKeyFingerprints[] = $lineExp[9];
             }
         }
 
@@ -669,24 +673,24 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         // get public keys
         array_pop($args);
 
-        if ($key_id == '') {
+        if ($keyId == '') {
             $args[] = '--list-public-keys';
         } else {
-            $args[] = '--list-public-keys ' . escapeshellarg($key_id);
+            $args[] = '--list-public-keys ' . escapeshellarg($keyId);
         }
 
         $this->_openSubprocess($args);
 
         $keys = array();
 
-        $key     = null; // current key
-        $sub_key = null; // current sub-key
+        $key    = null; // current key
+        $subKey = null; // current sub-key
 
         while (!feof($this->_pipes[self::FD_OUTPUT])) {
-            $line = fgets($this->_pipes[self::FD_OUTPUT]);
-            $exp_line = explode(':', $line);
+            $line    = fgets($this->_pipes[self::FD_OUTPUT]);
+            $lineExp = explode(':', $line);
 
-            if ($exp_line[0] == 'pub') {
+            if ($lineExp[0] == 'pub') {
 
                 // new primary key means last key should be added to the array
                 if ($key !== null) {
@@ -695,29 +699,29 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
                 $key = new Crypt_GPG_Key();
 
-                $sub_key = $this->_parseSubKey($exp_line);
-                $key->addSubKey($sub_key);
+                $subKey = $this->_parseSubKey($lineExp);
+                $key->addSubKey($subKey);
 
-            } elseif ($exp_line[0] == 'sub') {
+            } elseif ($lineExp[0] == 'sub') {
 
-                $sub_key = $this->_parseSubKey($exp_line);
-                $key->addSubKey($sub_key);
+                $subKey = $this->_parseSubKey($lineExp);
+                $key->addSubKey($subKey);
 
-            } elseif ($exp_line[0] == 'fpr') {
+            } elseif ($lineExp[0] == 'fpr') {
 
-                $fingerprint = $exp_line[9];
+                $fingerprint = $lineExp[9];
 
                 // set current sub-key fingerprint
-                $sub_key->setFingerprint($fingerprint);
+                $subKey->setFingerprint($fingerprint);
 
                 // if private key exists, set has private to true
-                if (in_array($fingerprint, $private_key_fingerprints)) {
-                    $sub_key->setHasPrivate(true);
+                if (in_array($fingerprint, $privateKeyFingerprints)) {
+                    $subKey->setHasPrivate(true);
                 }
 
-            } elseif ($exp_line[0] == 'uid') {
+            } elseif ($lineExp[0] == 'uid') {
 
-                $string = stripcslashes($exp_line[9]); // as per documentation
+                $string = stripcslashes($lineExp[9]); // as per documentation
                 $key->addUserId($this->_parseUserId($string));
 
             }
@@ -750,7 +754,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * Calls the GPG --list-keys command with the --with-fingerprint option to
      * retrieve a public key fingerprint.
      *
-     * @param string  $key_id either the full user id of the key, the email
+     * @param string  $keyId  either the full user id of the key, the email
      *                        part of the user id of the key, or the key id of
      *                        the key. For example,
      *                        "Test User (example) <test@example.com>",
@@ -764,18 +768,18 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *                        Defaults to Crypt_GPG::FORMAT_NONE.
      *
      * @return string the fingerprint of the key, or null if no fingerprint
-     *                is found for the given <i>$key_id</i>.
+     *                is found for the given <i>$keyId</i>.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
      *         if these exceptions occur.
      */
-    public function getFingerprint($key_id, $format = Crypt_GPG::FORMAT_NONE)
+    public function getFingerprint($keyId, $format = Crypt_GPG::FORMAT_NONE)
     {
         $args = array(
             '--with-colons',
             '--with-fingerprint',
-            '--list-keys ' . escapeshellarg($key_id)
+            '--list-keys ' . escapeshellarg($keyId)
         );
 
         $this->_openSubprocess($args);
@@ -785,19 +789,19 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         while (!feof($this->_pipes[self::FD_OUTPUT])) {
             $line = fgets($this->_pipes[self::FD_OUTPUT]);
             if (substr($line, 0, 3) == 'fpr') {
-                $line_exp = explode(':', $line);
-                $fingerprint = $line_exp[9];
+                $lineExp     = explode(':', $line);
+                $fingerprint = $lineExp[9];
 
                 switch ($format) {
                 case Crypt_GPG::FORMAT_CANONICAL:
-                    $fingerprint_exp = str_split($fingerprint, 4);
-                    $format = '%s %s %s %s %s  %s %s %s %s %s';
-                    $fingerprint = vsprintf($format, $fingerprint_exp);
+                    $fingerprintExp = str_split($fingerprint, 4);
+                    $format         = '%s %s %s %s %s  %s %s %s %s %s';
+                    $fingerprint    = vsprintf($format, $fingerprintExp);
                     break;
 
                 case Crypt_GPG::FORMAT_X509:
-                    $fingerprint_exp = str_split($fingerprint, 2);
-                    $fingerprint = implode(':', $fingerprint_exp);
+                    $fingerprintExp = str_split($fingerprint, 2);
+                    $fingerprint    = implode(':', $fingerprintExp);
                     break;
                 }
 
@@ -826,18 +830,18 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * Calls GPG with the --encrypt command.
      *
-     * @param string  $key_id the full uid of the public key to use for
-     *                        encryption. For example,
-     *                        "Test User (example) <test@example.com>".
-     * @param string  $data   the data to be encrypted.
-     * @param boolean $armor  optional. If true, ASCII armored data is returned;
-     *                        otherwise, binary data is returned. Defaults to
-     *                        true.
+     * @param string  $keyId the full uid of the public key to use for
+     *                       encryption. For example,
+     *                       "Test User (example) <test@example.com>".
+     * @param string  $data  the data to be encrypted.
+     * @param boolean $armor optional. If true, ASCII armored data is returned;
+     *                       otherwise, binary data is returned. Defaults to
+     *                       true.
      *
      * @return string the encrypted data.
      *
      * @throws Crypt_GPG_KeyNotFoundException if the a key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use {@link Crypt_GPG_Driver_Php::$debug} and file a bug report
@@ -845,12 +849,12 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @sensitive $data
      */
-    public function encrypt($key_id, $data, $armor = true)
+    public function encrypt($keyId, $data, $armor = true)
     {
         $data = (string)$data;
-        $encrypted_data = null;
+        $encryptedData = null;
 
-        $args = array('--recipient ' . escapeshellarg($key_id));
+        $args = array('--recipient ' . escapeshellarg($keyId));
 
         if ($armor) {
             $args[] = '--armor';
@@ -863,10 +867,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         fwrite($this->_pipes[self::FD_INPUT], $data);
         $this->_closePipe(self::FD_INPUT);
 
-        $encrypted_data = '';
+        $encryptedData = '';
 
         while (!feof($this->_pipes[self::FD_OUTPUT])) {
-            $encrypted_data .= fread($this->_pipes[self::FD_OUTPUT], 1024);
+            $encryptedData .= fread($this->_pipes[self::FD_OUTPUT], 1024);
         }
 
         $code = $this->_closeSubprocess();
@@ -875,8 +879,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             switch ($code) {
             case Crypt_GPG::ERROR_KEY_NOT_FOUND:
                 throw new Crypt_GPG_KeyNotFoundException(
-                    "Data could not be encrypted because key '" . $key_id .
-                    "' was not found.", $code, $key_id);
+                    "Data could not be encrypted because key '" . $keyId .
+                    "' was not found.", $code, $keyId);
 
                 break;
             default:
@@ -885,7 +889,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             }
         }
 
-        return $encrypted_data;
+        return $encryptedData;
     }
 
     // }}}
@@ -902,11 +906,11 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * Calls GPG with the --decrypt command and passes the passphrase and
      * encrypted data.
      *
-     * @param string $encrypted_data the data to be decrypted.
-     * @param string $passphrase     optional. The passphrase of the private
-     *                               key used to encrypt the data. Only
-     *                               required if the private key requires a
-     *                               passphrase.
+     * @param string $encryptedData the data to be decrypted.
+     * @param string $passphrase    optional. The passphrase of the private
+     *                              key used to encrypt the data. Only
+     *                              required if the private key requires a
+     *                              passphrase.
      *
      * @return string the decrypted data.
      *
@@ -925,18 +929,18 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @sensitive $passphrase
      */
-    public function decrypt($encrypted_data, $passphrase = null)
+    public function decrypt($encryptedData, $passphrase = null)
     {
         $args = array();
 
-        if ($this->_is_win) {
+        if ($this->_isWin) {
             $this->_writeMessageFile($passphrase);
         }
 
         if ($passphrase !== null) {
-            if ($this->_is_win) {
+            if ($this->_isWin) {
                 $args[] = '--passphrase-file ' .
-                    escapeshellarg($this->_temp_files[self::FD_MESSAGE]);
+                    escapeshellarg($this->_tempFiles[self::FD_MESSAGE]);
             } else {
                 $args[] = '--passphrase-fd ' . escapeshellarg(self::FD_MESSAGE);
             }
@@ -946,7 +950,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         $this->_openSubprocess($args);
 
-        $data = $this->_processWithPassphrase($encrypted_data, $passphrase);
+        $data = $this->_processWithPassphrase($encryptedData, $passphrase);
 
         $code = $this->_closeSubprocess();
         if ($code !== null) {
@@ -997,7 +1001,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * Calls GPGP with the --sign, --clearsign or --detach-sign commands.
      *
-     * @param string  $key_id     either the full uid of the private key, the
+     * @param string  $keyId      either the full uid of the private key, the
      *                            email part of the uid of the private key or
      *                            the key id of the private key. For example,
      *                            "Test User (example) <test@example.com>",
@@ -1033,21 +1037,21 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @sensitive $passphrase
      */
-    public function sign($key_id, $data, $passphrase = null,
+    public function sign($keyId, $data, $passphrase = null,
         $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true)
     {
         $args = array(
-            '--local-user ' . escapeshellarg($key_id)
+            '--local-user ' . escapeshellarg($keyId)
         );
 
-        if ($this->_is_win) {
+        if ($this->_isWin) {
             $this->_writeMessageFile($passphrase);
         }
 
         if ($passphrase !== null) {
-            if ($this->_is_win) {
+            if ($this->_isWin) {
                 $args[] = '--passphrase-file ' .
-                    escapeshellarg($this->_temp_files[self::FD_MESSAGE]);
+                    escapeshellarg($this->_tempFiles[self::FD_MESSAGE]);
             } else {
                 $args[] = '--passphrase-fd ' . escapeshellarg(self::FD_MESSAGE);
             }
@@ -1072,7 +1076,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         $this->_openSubprocess($args);
 
-        $signed_data = $this->_processWithPassphrase($data, $passphrase);
+        $signedData = $this->_processWithPassphrase($data, $passphrase);
 
         $code = $this->_closeSubprocess();
         if ($code !== null) {
@@ -1101,7 +1105,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             }
         }
 
-        return $signed_data;
+        return $signedData;
     }
 
     // }}}
@@ -1116,11 +1120,11 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * Calls GPG with the --verify command to verify signature data.
      *
-     * @param string $signed_data the signed data to be verified.
-     * @param string $signature   optional. If verifying data signed using a
-     *                            detached signature, this must be the detached
-     *                            signature data. The data that was signed is
-     *                            specified in <i>$signed_data</i>.
+     * @param string $signedData the signed data to be verified.
+     * @param string $signature  optional. If verifying data signed using a
+     *                           detached signature, this must be the detached
+     *                           signature data. The data that was signed is
+     *                           specified in <i>$signedData</i>.
      *
      * @return Crypt_GPG_Signature the signature details of the signed data. If
      *                             the signature is valid, the <i>$valid</i>
@@ -1135,17 +1139,17 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * @see Crypt_GPG_Signature
      */
-    public function verify($signed_data, $signature = '')
+    public function verify($signedData, $signature = '')
     {
         if ($signature == '') {
             $args = array('--verify');
         } else {
-            if ($this->_is_win) {
-                $this->_writeMessageFile($signed_data);
+            if ($this->_isWin) {
+                $this->_writeMessageFile($signedData);
                 $args = array(
                     '--enable-special-filenames',
                     '--verify - ' .
-                        escapeshellarg($this->_temp_files[self::FD_MESSAGE])
+                        escapeshellarg($this->_tempFiles[self::FD_MESSAGE])
                 );
             } else {
                 // signed data goes in fd 4, detached signature data goes in
@@ -1163,7 +1167,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             // signed or clearsigned data
 
             // write the signed data to the GPG subprocess in stdin
-            fwrite($this->_pipes[self::FD_INPUT], $signed_data);
+            fwrite($this->_pipes[self::FD_INPUT], $signedData);
             $this->_closePipe(self::FD_INPUT);
         } else {
             // detached signature
@@ -1172,14 +1176,14 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             fwrite($this->_pipes[self::FD_INPUT], $signature);
             $this->_closePipe(self::FD_INPUT);
 
-            if (!$this->_is_win) {
+            if (!$this->_isWin) {
                 // write signed data to fd 4
-                fwrite($this->_pipes[self::FD_MESSAGE], $signed_data);
+                fwrite($this->_pipes[self::FD_MESSAGE], $signedData);
                 $this->_closePipe(self::FD_MESSAGE);
             }
         }
 
-        if (!$this->_is_win) {
+        if (!$this->_isWin) {
             $status = $this->_getStatus();
         }
 
@@ -1199,7 +1203,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             }
         }
 
-        if ($this->_is_win) {
+        if ($this->_isWin) {
             $status = $this->_getStatus();
         }
 
@@ -1210,10 +1214,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         $sig = new Crypt_GPG_Signature();
 
         // get key id and user id
-        $return_codes = array('GOODSIG', 'EXPSIG', 'EXPKEYSIG', 'REVSIG',
+        $returnCodes = array('GOODSIG', 'EXPSIG', 'EXPKEYSIG', 'REVSIG',
             'BADSIG');
 
-        foreach ($return_codes as $code) {
+        foreach ($returnCodes as $code) {
             if (array_key_exists($code, $resp)) {
                 $pos    = strpos($resp[$code], ' ');
                 $string = substr($resp[$code], $pos + 1);
@@ -1226,20 +1230,20 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         // get signature fingerprint, creation date and expiration date and
         // set signature as valid
         if (array_key_exists('VALIDSIG', $resp)) {
-            $resp_valid_exp = explode(' ', $resp['VALIDSIG']);
+            $respValidExp = explode(' ', $resp['VALIDSIG']);
             $sig->setIsValid(true);
-            $sig->setKeyFingerprint($resp_valid_exp[0]);
+            $sig->setKeyFingerprint($respValidExp[0]);
 
-            if (strpos($resp_valid_exp[2], 'T') === false) {
-                $sig->setCreationDate($resp_valid_exp[2]);
+            if (strpos($respValidExp[2], 'T') === false) {
+                $sig->setCreationDate($respValidExp[2]);
             } else {
-                $sig->setCreationDate(strtotime($resp_valid_exp[2]));
+                $sig->setCreationDate(strtotime($respValidExp[2]));
             }
 
-            if (strpos($resp_valid_exp[3], 'T') === false) {
-                $sig->setExpirationDate($resp_valid_exp[3]);
+            if (strpos($respValidExp[3], 'T') === false) {
+                $sig->setExpirationDate($respValidExp[3]);
             } else {
-                $sig->setExpirationDate(strtotime($resp_valid_exp[3]));
+                $sig->setExpirationDate(strtotime($respValidExp[3]));
             }
         }
 
@@ -1248,7 +1252,6 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             $pos = strpos($resp['SIG_ID'], ' ');
             $sig->setId(substr($resp['SIG_ID'], 0, $pos - 1));
         }
-
 
         return $sig;
     }
@@ -1270,8 +1273,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      */
     private function _parseUserId($string)
     {
-        $user_id = new Crypt_GPG_UserId();
-
+        $userId  = new Crypt_GPG_UserId();
         $email   = '';
         $comment = '';
 
@@ -1289,11 +1291,11 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         $name = $string;
 
-        $user_id->setName($name);
-        $user_id->setComment($comment);
-        $user_id->setEmail($email);
+        $userId->setName($name);
+        $userId->setComment($comment);
+        $userId->setEmail($email);
 
-        return $user_id;
+        return $userId;
     }
 
     // }}}
@@ -1306,39 +1308,39 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * {@link http://www.gnupg.org/download/ GPG distribution} for info on
      * how the fields are parsed.
      *
-     * @param string $exp_line the sub-key string fields.
+     * @param string $lineExp the sub-key string fields.
      *
      * @return Crypt_GPG_SubKey the sub-key object parsed from the string parts.
      */
-    private function _parseSubKey(array $exp_line)
+    private function _parseSubKey(array $lineExp)
     {
-        $sub_key = new Crypt_GPG_SubKey();
+        $subKey = new Crypt_GPG_SubKey();
 
-        $sub_key->setId($exp_line[4]);
-        $sub_key->setLength($exp_line[2]);
-        $sub_key->setAlgorithm($exp_line[3]);
+        $subKey->setId($lineExp[4]);
+        $subKey->setLength($lineExp[2]);
+        $subKey->setAlgorithm($lineExp[3]);
 
-        if (strpos($exp_line[5], 'T') === false) {
-            $sub_key->setCreationDate($exp_line[5]);
+        if (strpos($lineExp[5], 'T') === false) {
+            $subKey->setCreationDate($lineExp[5]);
         } else {
-            $sub_key->setCreationDate(strtotime($exp_line[5]));
+            $subKey->setCreationDate(strtotime($lineExp[5]));
         }
 
-        if (strpos($exp_line[6], 'T') === false) {
-            $sub_key->setExpirationDate($exp_line[6]);
+        if (strpos($lineExp[6], 'T') === false) {
+            $subKey->setExpirationDate($lineExp[6]);
         } else {
-            $sub_key->setExpirationDate(strtotime($exp_line[6]));
+            $subKey->setExpirationDate(strtotime($lineExp[6]));
         }
 
-        if (strpos($exp_line[11], 's') !== false) {
-            $sub_key->setCanSign(true);
+        if (strpos($lineExp[11], 's') !== false) {
+            $subKey->setCanSign(true);
         }
 
-        if (strpos($exp_line[11], 'e') !== false) {
-            $sub_key->setCanEncrypt(true);
+        if (strpos($lineExp[11], 'e') !== false) {
+            $subKey->setCanEncrypt(true);
         }
 
-        return $sub_key;
+        return $subKey;
     }
 
     // }}}
@@ -1367,7 +1369,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             $this->_closePipe(self::FD_INPUT);
         }
 
-        if (!$this->_is_win && $passphrase !== null) {
+        if (!$this->_isWin && $passphrase !== null) {
             fwrite($this->_pipes[self::FD_MESSAGE], $passphrase);
             $this->_closePipe(self::FD_MESSAGE);
         }
@@ -1409,13 +1411,13 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             $env = $_ENV;
         }
 
-        $command = $this->_gpg_binary;
+        $command = $this->_gpgBinary;
 
-        if ($this->_is_win) {
+        if ($this->_isWin) {
             $this->_status = '';
             $this->_createTempFile(self::FD_STATUS);
             array_unshift($args, '--status-file ' .
-                escapeshellarg($this->_temp_files[self::FD_STATUS]));
+                escapeshellarg($this->_tempFiles[self::FD_STATUS]));
         } else {
             array_unshift($args,
                 '--status-fd ' . escapeshellarg(self::FD_STATUS));
@@ -1435,23 +1437,23 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         $command .= ' ' . implode(' ', $args);
 
-        $descriptor_spec = array(
+        $descriptorSpec = array(
             self::FD_INPUT   => array('pipe', 'r'), // stdin
             self::FD_OUTPUT  => array('pipe', 'w'), // stdout
             self::FD_ERROR   => array('pipe', 'w'), // stderr
         );
 
-        if (!$this->_is_win) {
+        if (!$this->_isWin) {
             // extra output (status)
-            $descriptor_spec[self::FD_STATUS]  = array('pipe', 'w');
+            $descriptorSpec[self::FD_STATUS]  = array('pipe', 'w');
             // extra input
-            $descriptor_spec[self::FD_MESSAGE] = array('pipe', 'r');
+            $descriptorSpec[self::FD_MESSAGE] = array('pipe', 'r');
         }
 
         $this->_debug('Opening subprocess with the following command:');
         $this->_debug($command);
 
-        $this->_process = proc_open($command, $descriptor_spec, $this->_pipes,
+        $this->_process = proc_open($command, $descriptorSpec, $this->_pipes,
             null, $env);
 
         if (!is_resource($this->_process)) {
@@ -1459,7 +1461,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 'Unable to open GPG subprocess.', 0, $command);
         }
 
-        $this->_open_pipes = $this->_pipes;
+        $this->_openPipes = $this->_pipes;
     }
 
     // }}}
@@ -1484,42 +1486,42 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
         if (is_resource($this->_process)) {
 
             $error = $this->_getError();
-            if (!$this->_is_win) {
+            if (!$this->_isWin) {
                 $status = $this->_getStatus();
             }
 
             // close remaining open pipes
-            foreach (array_keys($this->_open_pipes) as $pipe_number) {
-                $this->_closePipe($pipe_number);
+            foreach (array_keys($this->_openPipes) as $pipeNumber) {
+                $this->_closePipe($pipeNumber);
             }
 
-            $exit_code = proc_close($this->_process);
+            $exitCode = proc_close($this->_process);
 
-            if ($this->_is_win) {
+            if ($this->_isWin) {
                 $status = $this->_getStatus();
             }
 
             // delete any remaining temp files
-            foreach (array_keys($this->_temp_files) as $file_number) {
-                $this->_deleteTempFile($file_number);
+            foreach (array_keys($this->_tempFiles) as $fileNumber) {
+                $this->_deleteTempFile($fileNumber);
             }
 
-            if ($exit_code != 0) {
+            if ($exitCode != 0) {
                 $this->_debug('Subprocess returned an unexpected exit code: ' .
-                    $exit_code);
+                    $exitCode);
 
                 $this->_debug("Error text is:\n" . $error);
                 $this->_debug("Status text is:\n" . $status);
 
-                $return = $this->_getErrorCode($exit_code, $error, $status);
+                $return = $this->_getErrorCode($exitCode, $error, $status);
             }
 
-            $this->_process    = null;
-            $this->_pipes      = array();
-            $this->_temp_files = array();
-            $this->_error      = '';
+            $this->_process   = null;
+            $this->_pipes     = array();
+            $this->_tempFiles = array();
+            $this->_error     = '';
 
-            if (!$this->_is_win) {
+            if (!$this->_isWin) {
                 $this->_status = '';
             }
         }
@@ -1536,18 +1538,18 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * If the pipe is already closed, it is ignored. If the pipe is open, it
      * is flushed and then closed.
      *
-     * @param integer $pipe_number the file descriptor number of the pipe to
-     *                             close.
+     * @param integer $pipeNumber the file descriptor number of the pipe to
+     *                            close.
      *
      * @return void
      */
-    private function _closePipe($pipe_number)
+    private function _closePipe($pipeNumber)
     {
-        $pipe_number = intval($pipe_number);
-        if (array_key_exists($pipe_number, $this->_open_pipes)) {
-            fflush($this->_open_pipes[$pipe_number]);
-            fclose($this->_open_pipes[$pipe_number]);
-            unset($this->_open_pipes[$pipe_number]);
+        $pipeNumber = intval($pipeNumber);
+        if (array_key_exists($pipeNumber, $this->_openPipes)) {
+            fflush($this->_openPipes[$pipeNumber]);
+            fclose($this->_openPipes[$pipeNumber]);
+            unset($this->_openPipes[$pipeNumber]);
         }
     }
 
@@ -1657,10 +1659,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     private function _getStatus()
     {
         if ($this->_status == '') {
-            if ($this->_is_win) {
+            if ($this->_isWin) {
                 $this->_status = $this->_readStatusFile();
             } else {
-                if (array_key_exists(self::FD_STATUS, $this->_open_pipes)) {
+                if (array_key_exists(self::FD_STATUS, $this->_openPipes)) {
                     while (!feof($this->_pipes[self::FD_STATUS])) {
                         $this->_status .= fread($this->_pipes[self::FD_STATUS],
                             8192);
@@ -1688,7 +1690,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     private function _getError()
     {
         if ($this->_error == '' &&
-            array_key_exists(self::FD_ERROR, $this->_open_pipes)) {
+            array_key_exists(self::FD_ERROR, $this->_openPipes)) {
             while (!feof($this->_pipes[self::FD_ERROR])) {
                 $this->_error .= fread($this->_pipes[self::FD_ERROR], 8192);
             }
@@ -1709,93 +1711,93 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * {@link http://www.gnupg.org/download/ GPG distribution} for info on
      * GPG's output when --status-fd is specified.
      *
-     * @param integer $exit_code the error code returned by the GPG
-     *                           subprocess.
-     * @param string  $error     the GPG subprocess output to stderr.
-     * @param string  $status    the GPG subprocess output to the --status-fd
-     *                           file descriptor.
+     * @param integer $exitCode the error code returned by the GPG
+     *                          subprocess.
+     * @param string  $error    the GPG subprocess output to stderr.
+     * @param string  $status   the GPG subprocess output to the --status-fd
+     *                          file descriptor.
      *
      * @return integer the specific error code for the GPG subprocess error.
      *                 If no specific exception is known,
      *                 {@link Crypt_GPG::ERROR_UNKNOWN} is returned.
      */
-    private function _getErrorCode($exit_code, $error, $status)
+    private function _getErrorCode($exitCode, $error, $status)
     {
-        $error_code = Crypt_GPG::ERROR_UNKNOWN;
+        $errorCode = Crypt_GPG::ERROR_UNKNOWN;
 
         $status = explode("\n", $status);
-        $need_passphrase = false;
+        $needPassphrase = false;
         foreach ($status as $line) {
             $tokens = explode(' ', trim($line));
             if ($tokens[0] == '[GNUPG:]') {
                 switch ($tokens[1]) {
                 case 'BAD_PASSPHRASE':
-                    $error_code = Crypt_GPG::ERROR_BAD_PASSPHRASE;
+                    $errorCode = Crypt_GPG::ERROR_BAD_PASSPHRASE;
                     break 2;
 
                 case 'MISSING_PASSPHRASE':
-                    $error_code = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+                    $errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
                     break 2;
 
                 case 'IMPORT_OK':
                     $pattern = '/already in secret keyring/';
                     if (preg_match($pattern, $error) == 1) {
-                        $error_code = Crypt_GPG::ERROR_DUPLICATE_KEY;
+                        $errorCode = Crypt_GPG::ERROR_DUPLICATE_KEY;
                     }
                     break 2;
 
                 case 'NODATA':
-                    $error_code = Crypt_GPG::ERROR_NO_DATA;
+                    $errorCode = Crypt_GPG::ERROR_NO_DATA;
                     break 2;
 
                 case 'DELETE_PROBLEM':
                     if ($tokens[2] == '1') {
-                        $error_code = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+                        $errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
                         break 2;
                     } elseif ($tokens[2] == '2') {
-                        $error_code = Crypt_GPG::ERROR_DELETE_PRIVATE_KEY;
+                        $errorCode = Crypt_GPG::ERROR_DELETE_PRIVATE_KEY;
                         break 2;
                     }
                     break;
 
                 case 'NEED_PASSPHRASE':
-                    $need_passphrase = true;
+                    $needPassphrase = true;
                     break;
 
                 case 'GOOD_PASSPHRASE':
-                    $need_passphrase = false;
+                    $needPassphrase = false;
                     break;
 
                 }
             }
         }
 
-        if ($error_code == Crypt_GPG::ERROR_UNKNOWN && $need_passphrase) {
-            $error_code = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+        if ($errorCode == Crypt_GPG::ERROR_UNKNOWN && $needPassphrase) {
+            $errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
         }
 
-        if ($error_code == Crypt_GPG::ERROR_UNKNOWN) {
+        if ($errorCode == Crypt_GPG::ERROR_UNKNOWN) {
             $pattern = '/no valid OpenPGP data found/';
             if (preg_match($pattern, $error) == 1) {
-                $error_code = Crypt_GPG::ERROR_NO_DATA;
+                $errorCode = Crypt_GPG::ERROR_NO_DATA;
             }
         }
 
-        if ($error_code == Crypt_GPG::ERROR_UNKNOWN) {
+        if ($errorCode == Crypt_GPG::ERROR_UNKNOWN) {
             $pattern = '/secret key not available/';
             if (preg_match($pattern, $error) == 1) {
-                $error_code = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+                $errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             }
         }
 
-        if ($error_code == Crypt_GPG::ERROR_UNKNOWN) {
+        if ($errorCode == Crypt_GPG::ERROR_UNKNOWN) {
             $pattern = '/public key not found/';
             if (preg_match($pattern, $error) == 1) {
-                $error_code = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+                $errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             }
         }
 
-        return $error_code;
+        return $errorCode;
     }
 
     // }}}
@@ -1819,10 +1821,10 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     {
         $this->_createTempFile(self::FD_MESSAGE);
 
-        $message_file = fopen($this->_temp_files[self::FD_MESSAGE], 'wb');
-        fwrite($message_file, $message);
-        fflush($message_file);
-        fclose($message_file);
+        $messageFile = fopen($this->_tempFiles[self::FD_MESSAGE], 'wb');
+        fwrite($messageFile, $message);
+        fflush($messageFile);
+        fclose($messageFile);
     }
 
     // }}}
@@ -1843,7 +1845,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
     {
         $status = '';
 
-        $filename = $this->_temp_files[self::FD_STATUS];
+        $filename = $this->_tempFiles[self::FD_STATUS];
         if (file_exists($filename) && is_readable($filename)) {
             $status = file_get_contents($filename);
         }
@@ -1862,18 +1864,18 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * If a temporary file for the given file number already exists, the old
      * file is deleted before the new file is created.
      *
-     * @param integer $file_number the file number. Should be one of the
-     *                             Crypt_GPG_Driver_Php::FD_* constants.
+     * @param integer $fileNumber the file number. Should be one of the
+     *                            Crypt_GPG_Driver_Php::FD_* constants.
      *
      * @return void
      *
      * @see Crypt_GPG_Driver_Php::_deleteTemporaryFile()
      */
-    private function _createTempFile($file_number)
+    private function _createTempFile($fileNumber)
     {
-        $this->_deleteTempFile($file_number);
+        $this->_deleteTempFile($fileNumber);
         $filename = tempnam(sys_get_temp_dir(), 'Crypt_GPG-');
-        $this->_temp_files[$file_number] = $filename;
+        $this->_tempFiles[$fileNumber] = $filename;
     }
 
     // }}}
@@ -1884,21 +1886,21 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      *
      * If no temporary file exists for the given file number, nothing is done.
      *
-     * @param integer $file_number the file number. Should be one of the
-     *                             Crypt_GPG_Driver_Php::FD_* constants.
+     * @param integer $fileNumber the file number. Should be one of the
+     *                            Crypt_GPG_Driver_Php::FD_* constants.
      *
      * @return void
      *
      * @see Crypt_GPG_Driver_Php::_createTemporaryFile()
      */
-    private function _deleteTempFile($file_number)
+    private function _deleteTempFile($fileNumber)
     {
-        if (array_key_exists($file_number, $this->_temp_files)) {
-            $filename = $this->_temp_files[$file_number];
+        if (array_key_exists($fileNumber, $this->_tempFiles)) {
+            $filename = $this->_tempFiles[$fileNumber];
             if (file_exists($filename) && is_writeable($filename)) {
                 unlink($filename);
             }
-            unset($this->_temp_files[$file_number]);
+            unset($this->_tempFiles[$fileNumber]);
         }
     }
 
@@ -1917,34 +1919,34 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      */
     private function _getBinary()
     {
-        $bin = '';
+        $binary = '';
 
-        if ($this->_is_win) {
-            $bin_files = array(
+        if ($this->_isWin) {
+            $binaryFiles = array(
                 'c:/progra~1/gnu/gnupg/gpg.exe'
             );
-        } elseif ($this->_is_darwin) {
-            $bin_files = array(
+        } elseif ($this->_isDarwin) {
+            $binaryFiles = array(
                 '/opt/local/bin/gpg', // MacPorts
                 '/usr/local/bin/gpg', // Mac GPG
                 '/sw/bin/gpg',        // Fink
                 '/usr/bin/gpg'
             );
         } else {
-            $bin_files = array(
+            $binaryFiles = array(
                 '/usr/bin/gpg',
                 '/usr/local/bin/gpg'
             );
         }
 
-        foreach ($bin_files as $bin_file) {
-            if (is_executable($bin_file)) {
-                $bin = $bin_file;
+        foreach ($binaryFiles as $binaryFile) {
+            if (is_executable($binaryFile)) {
+                $binary = $binaryFile;
                 break;
             }
         }
 
-        return $bin_file;
+        return $binary;
     }
 
     // }}}

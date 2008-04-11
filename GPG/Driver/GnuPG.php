@@ -137,7 +137,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      *
      * @var Crypt_GPG_Driver_Php
      */
-    private $_gpg_helper;
+    private $_gpgHelper;
 
     // }}}
     // {{{ __construct()
@@ -181,8 +181,8 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
 
         $this->_gnupg = new gnupg();
 
-        $helper_options = array_intersect_key($options, array('homedir' => ''));
-        $this->_gpg_helper = Crypt_GPG::factory('php', $helper_options);
+        $helperOptions = array_intersect_key($options, array('homedir' => ''));
+        $this->_gpgHelper = Crypt_GPG::factory('php', $helperOptions);
     }
 
     // }}}
@@ -248,32 +248,32 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * {@link Crypt_GPG::deletePublicKey()}.
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
+     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
      * public key is exported.
      *
      * Since the gnupg PECL extension does not support exporting keys, this
      * method is handed off to the native PHP GPG driver.
      *
-     * @param string  $key_id either the full uid of the public key, the email
-     *                        part of the uid of the public key or the key id of
-     *                        the public key. For example,
-     *                        "Test User (example) <test@example.com>",
-     *                        "test@example.com" or a hexadecimal string.
-     * @param boolean $armor  optional. If true, ASCII armored data is returned;
-     *                        otherwise, binary data is returned. Defaults to
-     *                        true.
+     * @param string  $keyId either the full uid of the public key, the email
+     *                       part of the uid of the public key or the key id of
+     *                       the public key. For example,
+     *                       "Test User (example) <test@example.com>",
+     *                       "test@example.com" or a hexadecimal string.
+     * @param boolean $armor optional. If true, ASCII armored data is returned;
+     *                       otherwise, binary data is returned. Defaults to
+     *                       true.
      *
      * @return string the public key data.
      *
      * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         File a bug report if these exceptions occur.
      */
-    public function exportPublicKey($key_id, $armor = true)
+    public function exportPublicKey($keyId, $armor = true)
     {
-        return $this->_gpg_helper->exportPublicKey($key_id, $armor);
+        return $this->_gpgHelper->exportPublicKey($keyId, $armor);
     }
 
     // }}}
@@ -283,10 +283,10 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * Deletes a public key from the keyring
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
+     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
      * public key is deleted.
      *
-     * @param string $key_id either the full uid of the public key, the email
+     * @param string $keyId either the full uid of the public key, the email
      *                       part of the uid of the public key or the key id of
      *                       the public key. For example,
      *                       "Test User (example) <test@example.com>",
@@ -295,7 +295,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * @return void
      *
      * @throws Crypt_GPG_KeyNotFoundException if a private key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_DeletePrivateKeyException if the specified public key
      *         has an associated private key on the keyring. The private key
@@ -304,22 +304,22 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         File a bug report if these exceptions occur.
      */
-    public function deletePublicKey($key_id)
+    public function deletePublicKey($keyId)
     {
-        $fingerprint = $this->getFingerprint($key_id);
-        if ($this->_gnupg->deletekey($key_id) === false) {
+        $fingerprint = $this->getFingerprint($keyId);
+        if ($this->_gnupg->deletekey($keyId) === false) {
             $error = $this->_gnupg->geterror();
             switch ($error) {
             case 'delete failed':
                 throw new Crypt_GPG_DeletePrivateKeyException(
                     'Private key must be deleted before public key can be ' .
-                    'deleted.', Crypt_GPG::ERROR_DELETE_PRIVATE_KEY, $key_id);
+                    'deleted.', Crypt_GPG::ERROR_DELETE_PRIVATE_KEY, $keyId);
 
                 break;
             case 'get_key failed':
                 throw new Crypt_GPG_KeyNotFoundException(
-                    'Public key not found: ' . $key_id,
-                    Crypt_GPG::ERROR_KEY_NOT_FOUND, $key_id);
+                    'Public key not found: ' . $keyId,
+                    Crypt_GPG::ERROR_KEY_NOT_FOUND, $keyId);
 
                 break;
             default:
@@ -338,14 +338,14 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * Deletes a private key from the keyring
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
+     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
      * private key is deleted.
      *
      * Since the gnupg PECL extension does not support deleting private keys
      * without also deleting the associated public keys, this method is handed
      * off to the native PHP GPG driver.
      *
-     * @param string $key_id either the full uid of the private key, the email
+     * @param string $keyId either the full uid of the private key, the email
      *                       part of the uid of the private key or the key id of
      *                       the private key. For example,
      *                       "Test User (example) <test@example.com>",
@@ -354,14 +354,14 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * @return void
      *
      * @throws Crypt_GPG_KeyNotFoundException if a private key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         File a bug report if these exceptions occur.
      */
-    public function deletePrivateKey($key_id)
+    public function deletePrivateKey($keyId)
     {
-        return $this->_gpg_helper->deletePrivateKey($key_id);
+        return $this->_gpgHelper->deletePrivateKey($keyId);
     }
 
     // }}}
@@ -370,7 +370,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
     /**
      * Gets the available keys in the keyring
      *
-     * @param string $key_id optional. Only keys with that match the specified
+     * @param string $keyId optional. Only keys with that match the specified
      *                       pattern are returned. The pattern may be part of
      *                       a user id, a key id or a key fingerprint. If not
      *                       specified, all keys are returned.
@@ -382,36 +382,36 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      *
      * @see Crypt_GPG_Key
      */
-    public function getKeys($key_id = '')
+    public function getKeys($keyId = '')
     {
         $keys = array();
 
-        $info = $this->_gnupg->keyinfo($key_id);
+        $info = $this->_gnupg->keyinfo($keyId);
 
         if ($info === false) {
             throw new Crypt_GPG_Exception('Unknown error getting keys: ' .
                 $this->_gnupg->geterror());
         }
 
-        foreach ($info as $key_info) {
+        foreach ($info as $keyInfo) {
             $key = new Crypt_GPG_Key();
-            foreach ($key_info['uids'] as $key_user_id) {
-                $user_id = new Crypt_GPG_UserId();
-                $user_id->setName($key_user_id['name']);
-                $user_id->setComment($key_user_id['comment']);
-                $user_id->setEmail($key_user_id['email']);
-                $user_id->setRevoked($key_user_id['revoked']);
-                $user_id->setValid(!$key_user_id['invalid']);
-                $key->addUserId($user_id);
+            foreach ($keyInfo['uids'] as $keyUserId) {
+                $userId = new Crypt_GPG_UserId();
+                $userId->setName($keyUserId['name']);
+                $userId->setComment($keyUserId['comment']);
+                $userId->setEmail($keyUserId['email']);
+                $userId->setRevoked($keyUserId['revoked']);
+                $userId->setValid(!$keyUserId['invalid']);
+                $key->addUserId($userId);
             }
-            foreach ($key_info['subkeys'] as $key_sub_key) {
-                $sub_key = new Crypt_GPG_SubKey();
-                $sub_key->setId($key_sub_key['keyid']);
-                $sub_key->setFingerprint($key_sub_key['fingerprint']);
-                $sub_key->setCreationDate(intval($key_sub_key['timestamp']));
-                $sub_key->setCanSign($key_sub_key['can_sign']);
-                $sub_key->setCanEncrypt($key_sub_key['can_encrypt']);
-                $key->addSubKey($sub_key);
+            foreach ($keyInfo['subkeys'] as $keySubKey) {
+                $subKey = new Crypt_GPG_SubKey();
+                $subKey->setId($keySubKey['keyid']);
+                $subKey->setFingerprint($keySubKey['fingerprint']);
+                $subKey->setCreationDate(intval($keySubKey['timestamp']));
+                $subKey->setCanSign($keySubKey['can_sign']);
+                $subKey->setCanEncrypt($keySubKey['can_encrypt']);
+                $key->addSubKey($subKey);
             }
             $keys[] = $key;
         }
@@ -428,7 +428,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * If more than one key fingerprint is available (for example, if you use
      * a non-unique user id) only the first key fingerprint is returned.
      *
-     * @param string  $key_id either the full user id of the key, the email
+     * @param string  $keyId  either the full user id of the key, the email
      *                        part of the user id of the key, or the key id of
      *                        the key. For example,
      *                        "Test User (example) <test@example.com>",
@@ -442,16 +442,16 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      *                        Defaults to Crypt_GPG::FORMAT_NONE.
      *
      * @return string the fingerprint of the key, or null if no fingerprint
-     *                is found for the given <i>$key_id</i>.
+     *                is found for the given <i>$keyId</i>.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         File a bug report if these exceptions occur.
      */
-    public function getFingerprint($key_id, $format = Crypt_GPG::FORMAT_NONE)
+    public function getFingerprint($keyId, $format = Crypt_GPG::FORMAT_NONE)
     {
         $fingerprint = null;
 
-        $info = $this->_gnupg->keyinfo($key_id);
+        $info = $this->_gnupg->keyinfo($keyId);
 
         if ($info === false) {
             throw new Crypt_GPG_Exception(
@@ -464,14 +464,14 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
 
             switch ($format) {
             case Crypt_GPG::FORMAT_CANONICAL:
-                $fingerprint_exp = str_split($fingerprint, 4);
-                $format          = '%s %s %s %s %s  %s %s %s %s %s';
-                $fingerprint     = vsprintf($format, $fingerprint_exp);
+                $fingerprintExp = str_split($fingerprint, 4);
+                $format         = '%s %s %s %s %s  %s %s %s %s %s';
+                $fingerprint    = vsprintf($format, $fingerprintExp);
                 break;
 
             case Crypt_GPG::FORMAT_X509:
-                $fingerprint_exp = str_split($fingerprint, 2);
-                $fingerprint     = implode(':', $fingerprint_exp);
+                $fingerprintExp = str_split($fingerprint, 2);
+                $fingerprint    = implode(':', $fingerprintExp);
                 break;
             }
         }
@@ -488,39 +488,39 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * Data is ASCII armored by default but may optionally be returned as
      * binary.
      *
-     * @param string  $key_id the full uid of the public key to use for
-     *                        encryption. For example,
-     *                        "Test User (example) <test@example.com>".
-     * @param string  $data   the data to be encrypted.
-     * @param boolean $armor  optional. If true, ASCII armored data is returned;
-     *                        otherwise, binary data is returned. Defaults to
-     *                        true.
+     * @param string  $keyId the full uid of the public key to use for
+     *                       encryption. For example,
+     *                       "Test User (example) <test@example.com>".
+     * @param string  $data  the data to be encrypted.
+     * @param boolean $armor optional. If true, ASCII armored data is returned;
+     *                       otherwise, binary data is returned. Defaults to
+     *                       true.
      *
      * @return string the encrypted data.
      *
      * @throws Crypt_GPG_KeyNotFoundException if the a key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         File a bug report if these exceptions occur.
      *
      * @sensitive $data
      */
-    public function encrypt($key_id, $data, $armor = true)
+    public function encrypt($keyId, $data, $armor = true)
     {
-        $this->_gnupg->addencryptkey($key_id);
+        $this->_gnupg->addencryptkey($keyId);
         $this->_gnupg->setarmor($armor);
-        $encrypted_data = $this->_gnupg->encrypt($data);
+        $encryptedData = $this->_gnupg->encrypt($data);
         $this->_gnupg->clearencryptkeys();
 
-        if ($encrypted_data === false) {
+        if ($encryptedData === false) {
             $error = $this->_gnupg->geterror();
             switch ($error) {
             case 'no key for encryption set':
                 throw new Crypt_GPG_KeyNotFoundException(
-                    "Data could not be encrypted because key '" . $key_id .
+                    "Data could not be encrypted because key '" . $keyId .
                     "' was not found.",
-                    Crypt_GPG::ERROR_KEY_NOT_FOUND, $key_id);
+                    Crypt_GPG::ERROR_KEY_NOT_FOUND, $keyId);
 
                 break;
             default:
@@ -531,7 +531,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
             }
         }
 
-        return $encrypted_data;
+        return $encryptedData;
     }
 
     // }}}
@@ -545,11 +545,11 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * private key to the keyring, use the {@link Crypt_GPG::importKey()}
      * method.
      *
-     * @param string $encrypted_data the data to be decrypted.
-     * @param string $passphrase     optional. The passphrase of the private
-     *                               key used to encrypt the data. Only
-     *                               required if the private key requires a
-     *                               passphrase.
+     * @param string $encryptedData the data to be decrypted.
+     * @param string $passphrase    optional. The passphrase of the private
+     *                              key used to encrypt the data. Only
+     *                              required if the private key requires a
+     *                              passphrase.
      *
      * @return string the decrypted data.
      *
@@ -567,7 +567,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      *
      * @sensitive $passphrase
      */
-    public function decrypt($encrypted_data, $passphrase = null)
+    public function decrypt($encryptedData, $passphrase = null)
     {
         // try to decrypt using all available encryption keys
         foreach ($this->_gnupg->keyinfo('') as $key) {
@@ -581,11 +581,11 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
             }
         }
 
-        $decrypted_data = $this->_gnupg->decrypt($encrypted_data);
+        $decryptedData = $this->_gnupg->decrypt($encryptedData);
 
         $this->_gnupg->cleardecryptkeys();
 
-        if ($decrypted_data === false) {
+        if ($decryptedData === false) {
             $error = $this->_gnupg->geterror();
             switch ($error) {
             case 'get_key failed':
@@ -616,7 +616,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
             }
         }
 
-        return $decrypted_data;
+        return $decryptedData;
     }
 
     // }}}
@@ -630,7 +630,7 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
      * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
      *
-     * @param string  $key_id     either the full uid of the private key, the
+     * @param string  $keyId      either the full uid of the private key, the
      *                            email part of the uid of the private key or
      *                            the key id of the private key. For example,
      *                            "Test User (example) <test@example.com>",
@@ -665,23 +665,23 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      *
      * @sensitive $passphrase
      */
-    public function sign($key_id, $data, $passphrase = null,
+    public function sign($keyId, $data, $passphrase = null,
         $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true)
     {
-        $this->_gnupg->addsignkey($key_id, $passphrase);
+        $this->_gnupg->addsignkey($keyId, $passphrase);
 
-        $mode_map = array(
+        $modeMap = array(
             Crypt_GPG::SIGN_MODE_NORMAL   => gnupg::SIG_MODE_NORMAL,
             Crypt_GPG::SIGN_MODE_CLEAR    => gnupg::SIG_MODE_CLEAR,
             Crypt_GPG::SIGN_MODE_DETACHED => gnupg::SIG_MODE_DETACH
         );
 
         $this->_gnupg->setarmor($armor);
-        $this->_gnupg->setsignmode($mode_map[$mode]);
-        $signed_data = $this->_gnupg->sign($data);
+        $this->_gnupg->setsignmode($modeMap[$mode]);
+        $signedData = $this->_gnupg->sign($data);
         $this->_gnupg->clearsignkeys();
 
-        if ($signed_data === false) {
+        if ($signedData === false) {
             $error = $this->_gnupg->geterror();
             switch ($error) {
             case 'no passphrase set':
@@ -710,8 +710,9 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
             }
         }
 
-        return $signed_data;
+        return $signedData;
     }
+
     // }}}
     // {{{ verify()
 
@@ -722,11 +723,11 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      * message if the signed data is not clearsigned and does not have a
      * detached signature.
      *
-     * @param string $signed_data the signed data to be verified.
-     * @param string $signature   optional. If verifying data signed using a
-     *                            detached signature, this must be the detached
-     *                            signature data. The data that was signed is
-     *                            specified in <i>$signed_data</i>.
+     * @param string $signedData the signed data to be verified.
+     * @param string $signature  optional. If verifying data signed using a
+     *                           detached signature, this must be the detached
+     *                           signature data. The data that was signed is
+     *                           specified in <i>$signedData</i>.
      *
      * @return Crypt_GPG_Signature the signature details of the signed data. If
      *                             the signature is valid, the <i>$valid</i>
@@ -737,30 +738,30 @@ class Crypt_GPG_Driver_GnuPG extends Crypt_GPG
      *
      * @see Crypt_GPG_Signature
      */
-    public function verify($signed_data, $signature = '')
+    public function verify($signedData, $signature = '')
     {
         if ($signature == '') {
-            $gnupg_sig = $this->_gnupg->verify($signed_data, false);
+            $gnupgSig = $this->_gnupg->verify($signedData, false);
         } else {
-            $gnupg_sig = $this->_gnupg->verify($signed_data, $signature);
+            $gnupgSig = $this->_gnupg->verify($signedData, $signature);
         }
 
-        if ($gnupg_sig === false) {
+        if ($gnupgSig === false) {
             throw new Crypt_GPG_NoDataException(
                 'No valid signature data found.', Crypt_GPG::ERROR_NO_DATA);
         }
 
         $sig = new Crypt_GPG_Signature();
-        $sig->setKeyFingerprint($gnupg_sig[0]['fingerprint']);
-        $sig->setCreationDate($gnupg_sig[0]['timestamp']);
-        $sig->setIsValid(intval($gnupg_sig[0]['summary']) |
+        $sig->setKeyFingerprint($gnupgSig[0]['fingerprint']);
+        $sig->setCreationDate($gnupgSig[0]['timestamp']);
+        $sig->setIsValid(intval($gnupgSig[0]['summary']) |
             gnupg::SIGSUM_VALID == gnupg::SIGSUM_VALID);
 
         $keys = $this->getKeys($sig->getKeyFingerprint());
         if (count($keys) > 0) {
-            $user_ids = $keys[0]->getUserIds();
-            if (count($user_ids) > 0) {
-                $sig->setUserId($user_ids[0]);
+            $userIds = $keys[0]->getUserIds();
+            if (count($userIds) > 0) {
+                $sig->setUserId($userIds[0]);
             }
         }
 

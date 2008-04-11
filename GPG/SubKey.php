@@ -116,7 +116,7 @@ class Crypt_GPG_SubKey
      *
      * @var integer
      */
-    private $_creation_date = 0;
+    private $_creationDate = 0;
 
     /**
      * Date this sub-key expires
@@ -126,7 +126,7 @@ class Crypt_GPG_SubKey
      *
      * @var integer
      */
-    private $_expiration_date = 0;
+    private $_expirationDate = 0;
 
     /**
      * Whether or not this sub-key can sign data
@@ -147,7 +147,7 @@ class Crypt_GPG_SubKey
      *
      * @var boolean
      */
-    private $_has_private = false;
+    private $_hasPrivate = false;
 
     // }}}
     // {{{ getId()
@@ -190,7 +190,7 @@ class Crypt_GPG_SubKey
      */
     public function getCreationDate()
     {
-        return $this->_creation_date;
+        return $this->_creationDate;
     }
 
     // }}}
@@ -206,7 +206,7 @@ class Crypt_GPG_SubKey
      */
     public function getExpirationDate()
     {
-        return $this->_expiration_date;
+        return $this->_expirationDate;
     }
 
     // }}}
@@ -275,7 +275,7 @@ class Crypt_GPG_SubKey
      */
     public function hasPrivate()
     {
-        return $this->_has_private;
+        return $this->_hasPrivate;
     }
 
     // }}}
@@ -286,13 +286,13 @@ class Crypt_GPG_SubKey
      *
      * The creation date is a Unix timestamp.
      *
-     * @param integer $creation_date the creation date of this sub-key.
+     * @param integer $creationDate the creation date of this sub-key.
      *
      * @return void
      */
-    public function setCreationDate($creation_date)
+    public function setCreationDate($creationDate)
     {
-        $this->_creation_date = intval($creation_date);
+        $this->_creationDate = intval($creationDate);
     }
 
     // }}}
@@ -304,13 +304,13 @@ class Crypt_GPG_SubKey
      * The expiration date is a Unix timestamp. Specify zero if this sub-key
      * does not expire.
      *
-     * @param integer $expiration_date the expiration date of this sub-key.
+     * @param integer $expirationDate the expiration date of this sub-key.
      *
      * @return void
      */
-    public function setExpirationDate($expiration_date)
+    public function setExpirationDate($expirationDate)
     {
-        $this->_expiration_date = intval($expiration_date);
+        $this->_expirationDate = intval($expirationDate);
     }
 
     // }}}
@@ -412,15 +412,15 @@ class Crypt_GPG_SubKey
      * Sets whether of not the private key for this sub-key exists in the
      * keyring
      *
-     * @param boolean $has_private true if the private key for this sub-key
-     *                             exists in the keyring and false if it does
-     *                             not.
+     * @param boolean $hasPrivate true if the private key for this sub-key
+     *                            exists in the keyring and false if it does
+     *                            not.
      *
      * @return void
      */
-    public function setHasPrivate($has_private)
+    public function setHasPrivate($hasPrivate)
     {
-        $this->_has_private = ($has_private) ? true : false;
+        $this->_hasPrivate = ($hasPrivate) ? true : false;
     }
 
     // }}}

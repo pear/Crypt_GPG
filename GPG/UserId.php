@@ -79,14 +79,14 @@ class Crypt_GPG_UserId
      *
      * @var boolean
      */
-    private $_is_revoked = false;
+    private $_isRevoked = false;
 
     /**
      * Whether or not this user id is valid
      *
      * @var boolean
      */
-    private $_is_valid = true;
+    private $_isValid = true;
 
     // }}}
     // {{{ getName()
@@ -137,7 +137,7 @@ class Crypt_GPG_UserId
      */
     public function isRevoked()
     {
-        return $this->_is_revoked;
+        return $this->_isRevoked;
     }
 
     // }}}
@@ -150,7 +150,7 @@ class Crypt_GPG_UserId
      */
     public function isValid()
     {
-        return $this->_is_valid;
+        return $this->_isValid;
     }
 
     // }}}
@@ -233,13 +233,13 @@ class Crypt_GPG_UserId
     /**
      * Sets whether or not this user id is revoked
      *
-     * @param boolean $is_revoked whether or not this user id is revoked.
+     * @param boolean $isRevoked whether or not this user id is revoked.
      *
      * @return void
      */
-    public function setRevoked($is_revoked)
+    public function setRevoked($isRevoked)
     {
-        $this->_is_revoked = ($is_revoked) ? true : false;
+        $this->_isRevoked = ($isRevoked) ? true : false;
     }
 
     // }}}
@@ -248,13 +248,13 @@ class Crypt_GPG_UserId
     /**
      * Sets whether or not this user id is valid
      *
-     * @param boolean $is_valid whether or not this user id is valid.
+     * @param boolean $isValid whether or not this user id is valid.
      *
      * @return void
      */
-    public function setValid($is_valid)
+    public function setValid($isValid)
     {
-        $this->_is_valid = ($is_valid) ? true : false;
+        $this->_isValid = ($isValid) ? true : false;
     }
 
     // }}}

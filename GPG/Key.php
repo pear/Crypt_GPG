@@ -72,7 +72,7 @@ class Crypt_GPG_Key
      * @see Crypt_GPG_Key::addUserId()
      * @see Crypt_GPG_Key::getUserIds()
      */
-    private $_user_ids = array();
+    private $_userIds = array();
 
     /**
      * The subkeys of this key
@@ -84,7 +84,7 @@ class Crypt_GPG_Key
      * @see Crypt_GPG_Key::addSubKey()
      * @see Crypt_GPG_Key::getSubKeys()
      */
-    private $_sub_keys = array();
+    private $_subKeys = array();
 
     // }}}
     // {{{ getSubKeys()
@@ -98,7 +98,7 @@ class Crypt_GPG_Key
      */
     public function getSubKeys()
     {
-        return $this->_sub_keys;
+        return $this->_subKeys;
     }
 
     // }}}
@@ -113,7 +113,7 @@ class Crypt_GPG_Key
      */
     public function getUserIds()
     {
-        return $this->_user_ids;
+        return $this->_userIds;
     }
 
     // }}}
@@ -129,8 +129,8 @@ class Crypt_GPG_Key
     public function getPrimaryKey()
     {
         $primary_key = null;
-        if (count($this->_sub_keys) > 0) {
-            $primary_key = $this->_sub_keys[0];
+        if (count($this->_subKeys) > 0) {
+            $primary_key = $this->_subKeys[0];
         }
         return $primary_key;
     }
@@ -148,14 +148,14 @@ class Crypt_GPG_Key
      */
     public function canSign()
     {
-        $can_sign = false;
-        foreach ($this->_sub_keys as $sub_key) {
-            if ($sub_key->canSign()) {
-                $can_sign = true;
+        $canSign = false;
+        foreach ($this->_subKeys as $subKey) {
+            if ($subKey->canSign()) {
+                $canSign = true;
                 break;
             }
         }
-        return $can_sign;
+        return $canSign;
     }
 
     // }}}
@@ -171,14 +171,14 @@ class Crypt_GPG_Key
      */
     public function canEncrypt()
     {
-        $can_encrypt = false;
-        foreach ($this->_sub_keys as $sub_key) {
-            if ($sub_key->canEncrypt()) {
-                $can_encrypt = true;
+        $canEncrypt = false;
+        foreach ($this->_subKeys as $subKey) {
+            if ($subKey->canEncrypt()) {
+                $canEncrypt = true;
                 break;
             }
         }
-        return $can_encrypt;
+        return $canEncrypt;
     }
 
     // }}}
@@ -189,13 +189,13 @@ class Crypt_GPG_Key
      *
      * The first added sub-key will be the primary key of this key.
      *
-     * @param Crypt_GPG_SubKey $sub_key the sub-key to add.
+     * @param Crypt_GPG_SubKey $subKey the sub-key to add.
      *
      * @return void
      */
-    public function addSubKey(Crypt_GPG_SubKey $sub_key)
+    public function addSubKey(Crypt_GPG_SubKey $subKey)
     {
-        $this->_sub_keys[] = $sub_key;
+        $this->_subKeys[] = $subKey;
     }
 
     // }}}
@@ -204,13 +204,13 @@ class Crypt_GPG_Key
     /**
      * Adds a user id to this key
      *
-     * @param Crypt_GPG_UserId $user_id the user id to add.
+     * @param Crypt_GPG_UserId $userId the user id to add.
      *
      * @return void
      */
-    public function addUserId(Crypt_GPG_UserId $user_id)
+    public function addUserId(Crypt_GPG_UserId $userId)
     {
-        $this->_user_ids[] = $user_id;
+        $this->_userIds[] = $userId;
     }
 
     // }}}

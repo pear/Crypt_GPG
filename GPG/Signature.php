@@ -75,7 +75,7 @@ class Crypt_GPG_Signature
      *
      * @var string
      */
-    private $_key_fingerprint = '';
+    private $_keyFingerprint = '';
 
     /**
      * The creation date of this signature
@@ -84,7 +84,7 @@ class Crypt_GPG_Signature
      *
      * @var integer
      */
-    private $_creation_date = 0;
+    private $_creationDate = 0;
 
     /**
      * The expiration date of the signature
@@ -94,21 +94,21 @@ class Crypt_GPG_Signature
      *
      * @var integer
      */
-    private $_expiration_date = 0;
+    private $_expirationDate = 0;
 
     /**
      * The user id associated with this signature
      *
      * @var Crypt_GPG_UserId
      */
-    private $_user_id = null;
+    private $_userId = null;
 
     /**
      * Whether or not this signature is valid
      *
      * @var boolean
      */
-    private $_is_valid = false;
+    private $_isValid = false;
 
     // }}}
     // {{{ getId()
@@ -135,7 +135,7 @@ class Crypt_GPG_Signature
      */
     public function getKeyFingerprint()
     {
-        return $this->_key_fingerprint;
+        return $this->_keyFingerprint;
     }
 
     // }}}
@@ -149,7 +149,7 @@ class Crypt_GPG_Signature
      */
     public function getCreationDate()
     {
-        return $this->_creation_date;
+        return $this->_creationDate;
     }
 
     // }}}
@@ -164,7 +164,7 @@ class Crypt_GPG_Signature
      */
     public function getExpirationDate()
     {
-        return $this->_expiration_date;
+        return $this->_expirationDate;
     }
 
     // }}}
@@ -177,7 +177,7 @@ class Crypt_GPG_Signature
      */
     public function getUserId()
     {
-        return $this->_user_id;
+        return $this->_userId;
     }
 
     // }}}
@@ -190,7 +190,7 @@ class Crypt_GPG_Signature
      */
     public function isValid()
     {
-        return $this->_is_valid;
+        return $this->_isValid;
     }
 
     // }}}
@@ -225,7 +225,7 @@ class Crypt_GPG_Signature
      */
     public function setKeyFingerprint($fingerprint)
     {
-        $this->_key_fingerprint = strval($fingerprint);
+        $this->_keyFingerprint = strval($fingerprint);
     }
 
     // }}}
@@ -234,14 +234,14 @@ class Crypt_GPG_Signature
     /**
      * Sets the creation date of this signature
      *
-     * @param integer $creation_date the creation date of this signature. This
-     *                               is a Unix timestamp.
+     * @param integer $creationDate the creation date of this signature. This
+     *                              is a Unix timestamp.
      *
      * @return void
      */
-    public function setCreationDate($creation_date)
+    public function setCreationDate($creationDate)
     {
-        $this->_creation_date = intval($creation_date);
+        $this->_creationDate = intval($creationDate);
     }
 
     // }}}
@@ -250,15 +250,15 @@ class Crypt_GPG_Signature
     /**
      * Sets the expiration date of this signature
      *
-     * @param integer $expiration_date the expiration date of this signature.
-     *                                 This is a Unix timestamp. Specify zero
-     *                                 if this signature does not expire.
+     * @param integer $expirationDate the expiration date of this signature.
+     *                                This is a Unix timestamp. Specify zero if
+     *                                this signature does not expire.
      *
      * @return void
      */
-    public function setExpirationDate($expiration_date)
+    public function setExpirationDate($expirationDate)
     {
-        $this->_expiration_date = intval($expiration_date);
+        $this->_expirationDate = intval($expirationDate);
     }
 
     // }}}
@@ -267,14 +267,14 @@ class Crypt_GPG_Signature
     /**
      * Sets the user id associated with this signature
      *
-     * @param Crypt_GPG_UserId $user_id the user id associated with this
-     *                                  signature.
+     * @param Crypt_GPG_UserId $userId the user id associated with this
+     *                                 signature.
      *
      * @return void
      */
-    public function setUserId(Crypt_GPG_UserId $user_id)
+    public function setUserId(Crypt_GPG_UserId $userId)
     {
-        $this->_user_id = $user_id;
+        $this->_userId = $userId;
     }
 
     // }}}
@@ -283,14 +283,14 @@ class Crypt_GPG_Signature
     /**
      * Sets whether or not this signature is valid
      *
-     * @param boolean $is_valid true if this signature is valid and false if it
-     *                          is not.
+     * @param boolean $isValid true if this signature is valid and false if it
+     *                         is not.
      *
      * @return void
      */
-    public function setIsValid($is_valid)
+    public function setIsValid($isValid)
     {
-        $this->_is_valid = ($is_valid) ? true : false;
+        $this->_isValid = ($isValid) ? true : false;
     }
 
     // }}}

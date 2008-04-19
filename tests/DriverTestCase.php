@@ -85,17 +85,17 @@ abstract class DriverTestCase extends PHPUnit_Framework_TestCase
 
     private $_gpg;
 
-    private $_old_error_level;
+    private $_oldErrorLevel;
 
     // }}}
     // {{{ setUp()
 
     public function setUp()
     {
-        $this->_old_error_level = error_reporting(E_ALL | E_STRICT);
+        $this->_oldErrorLevel = error_reporting(E_ALL | E_STRICT);
 
         // {{{ pubring data
-        $pubring_data = <<<TEXT
+        $pubringData = <<<TEXT
 mQGiBEeQxrgRBACsmocYdCV79P6fsNF+Bs8Xxmt/mmWpPWWH8RpguEdEqy57
 Frj91Ugj1bJKAkNPFyfjrCn4c8wsNQabNszuR99rFl6wXI1JYbbbomZdxRIt
 VV6AAmxYMU5LQEEI7T98lMhkHgdIwnl+DxAHj71Y/wbYw9D0APLygo5r2lm/
@@ -183,7 +183,7 @@ ALpDXpcmW7C6yHrUbWmUsAIAAw==
 TEXT;
         // }}}
         // {{{ secring data
-        $secring_data = <<<TEXT
+        $secringData = <<<TEXT
 lQHhBEeQxrgRBACsmocYdCV79P6fsNF+Bs8Xxmt/mmWpPWWH8RpguEdEqy57
 Frj91Ugj1bJKAkNPFyfjrCn4c8wsNQabNszuR99rFl6wXI1JYbbbomZdxRIt
 VV6AAmxYMU5LQEEI7T98lMhkHgdIwnl+DxAHj71Y/wbYw9D0APLygo5r2lm/
@@ -249,7 +249,7 @@ bgVPsAIAAA==
 TEXT;
         // }}}
         // {{{ trustdb data
-        $trustdb_data = <<<TEXT
+        $trustdbData = <<<TEXT
 AWdwZwMDAQUBAAAAR5DK0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQoAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAACgAAAAAAAAAAAAAAAAAA
@@ -292,7 +292,7 @@ AAAAAAAAAAAAAAAAAAAA
 TEXT;
         // }}}
         // {{{ random_seed data
-        $random_seed_data = <<<TEXT
+        $randomSeedData = <<<TEXT
 p1KYXATR1wfjZgXqGMBG9Wb3fQ7ExENWKnXNVzQP/1W+IYB8KDyEYsY4VgD0
 CaG0jSFERkTCMR2CX1nTIyaQqVlPvLLjEzLIcjcESz+wXBP7An0+wGt+EzgP
 wxqz1WNw5baZuNjVEcV4k56xNt25LL4IX7K3KFljBGuII5qS0ESJid94qgKU
@@ -314,22 +314,22 @@ TEXT;
         mkdir(self::HOMEDIR);
 
         $pubring = fopen(self::HOMEDIR . '/pubring.gpg', 'wb');
-        fwrite($pubring, base64_decode(str_replace("\n", '', $pubring_data)));
+        fwrite($pubring, base64_decode(str_replace("\n", '', $pubringData)));
         fclose($pubring);
 
         $secring = fopen(self::HOMEDIR . '/secring.gpg', 'wb');
-        fwrite($secring, base64_decode(str_replace("\n", '', $secring_data)));
+        fwrite($secring, base64_decode(str_replace("\n", '', $secringData)));
         fclose($secring);
 
         $trustdb = fopen(self::HOMEDIR . '/trustdb.gpg', 'wb');
-        fwrite($trustdb, base64_decode(str_replace("\n", '', $trustdb_data)));
+        fwrite($trustdb, base64_decode(str_replace("\n", '', $trustdbData)));
         fclose($trustdb);
 
-        $random_seed = fopen(self::HOMEDIR . '/random_seed', 'wb');
-        fwrite($random_seed, base64_decode(
-            str_replace("\n", '', $random_seed_data)));
+        $randomSeed = fopen(self::HOMEDIR . '/random_seed', 'wb');
+        fwrite($randomSeed, base64_decode(
+            str_replace("\n", '', $randomSeedData)));
 
-        fclose($random_seed);
+        fclose($randomSeed);
 
         $this->_gpg = Crypt_GPG::factory($this->getDriver(),
             $this->getOptions());
@@ -369,7 +369,7 @@ TEXT;
 
         rmdir(self::HOMEDIR);
 
-        error_reporting($this->_old_error_level);
+        error_reporting($this->_oldErrorLevel);
     }
 
     // }}}
@@ -384,12 +384,15 @@ TEXT;
 
     // }}}
 
-    // tests
+    // group import
     // {{{ testImportKeyPrivateKey()
 
+    /**
+     * @group import
+     */
     public function testImportKeyPrivateKey()
     {
-        $expected_result = array(
+        $expectedResult = array(
             'fingerprint'       => 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4',
             'public_imported'   => 0,
             'public_unchanged'  => 1,
@@ -398,7 +401,7 @@ TEXT;
         );
 
         // {{{ private key data
-        $private_key_data = <<<TEXT
+        $privateKeyData = <<<TEXT
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
@@ -437,16 +440,19 @@ oI5UEei5MOBXWqSclNRONxPG8GL/
 TEXT;
         // }}}
 
-        $result =  $this->_gpg->importKey($private_key_data);
-        $this->assertEquals($expected_result, $result);
+        $result =  $this->_gpg->importKey($privateKeyData);
+        $this->assertEquals($expectedResult, $result);
     }
 
     // }}}
     // {{{ testImportKeyPublicKey()
 
+    /**
+     * @group import
+     */
     public function testImportKeyPublicKey()
     {
-        $expected_result = array(
+        $expectedResult = array(
             'fingerprint'       => '0E8920DF5E2F5FD15A3BC3F14636F589A551E85A',
             'public_imported'   => 1,
             'public_unchanged'  => 0,
@@ -455,7 +461,7 @@ TEXT;
         );
 
         // {{{ public key data
-        $public_key_data = <<<TEXT
+        $publicKeyData = <<<TEXT
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
@@ -491,17 +497,20 @@ Y0kAn0UNciBVQN54ii7SEg/LzJOyPbSS
 TEXT;
         // }}}
 
-        $result = $this->_gpg->importKey($public_key_data);
-        $this->assertEquals($expected_result, $result);
+        $result = $this->_gpg->importKey($publicKeyData);
+        $this->assertEquals($expectedResult, $result);
     }
 
     // }}}
     // {{{ testImportKeyPublicKeyAlreadyImported()
 
+    /**
+     * @group import
+     */
     public function testImportKeyPublicKeyAlreadyImported()
     {
         // {{{ public key data
-        $public_key_data = <<<TEXT
+        $publicKeyData = <<<TEXT
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
@@ -537,9 +546,9 @@ Y0kAn0UNciBVQN54ii7SEg/LzJOyPbSS
 TEXT;
         // }}}
 
-        $result = $this->_gpg->importKey($public_key_data);
+        $result = $this->_gpg->importKey($publicKeyData);
 
-        $expected_result = array(
+        $expectedResult = array(
             'fingerprint'       => '0E8920DF5E2F5FD15A3BC3F14636F589A551E85A',
             'public_imported'   => 1,
             'public_unchanged'  => 0,
@@ -547,11 +556,11 @@ TEXT;
             'private_unchanged' => 0
         );
 
-        $this->assertEquals($expected_result, $result);
+        $this->assertEquals($expectedResult, $result);
 
-        $result = $this->_gpg->importKey($public_key_data);
+        $result = $this->_gpg->importKey($publicKeyData);
 
-        $expected_result = array(
+        $expectedResult = array(
             'fingerprint'       => '0E8920DF5E2F5FD15A3BC3F14636F589A551E85A',
             'public_imported'   => 0,
             'public_unchanged'  => 1,
@@ -559,16 +568,19 @@ TEXT;
             'private_unchanged' => 0
         );
 
-        $this->assertEquals($expected_result, $result);
+        $this->assertEquals($expectedResult, $result);
     }
 
     // }}}
     // {{{ testImportKeyPrivateKeyAlreadyImported()
 
+    /**
+     * @group import
+     */
     public function testImportKeyPrivateKeyAlreadyImported()
     {
         // {{{ private key data
-        $private_key_data = <<<TEXT
+        $privateKeyData = <<<TEXT
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
@@ -607,9 +619,9 @@ oI5UEei5MOBXWqSclNRONxPG8GL/
 TEXT;
         // }}}
 
-        $result = $this->_gpg->importKey($private_key_data);
+        $result = $this->_gpg->importKey($privateKeyData);
 
-        $expected_result = array(
+        $expectedResult = array(
             'fingerprint'       => 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4',
             'public_imported'   => 0,
             'public_unchanged'  => 1,
@@ -617,11 +629,11 @@ TEXT;
             'private_unchanged' => 0
         );
 
-        $this->assertEquals($expected_result, $result);
+        $this->assertEquals($expectedResult, $result);
 
-        $result = $this->_gpg->importKey($private_key_data);
+        $result = $this->_gpg->importKey($privateKeyData);
 
-        $expected_result = array(
+        $expectedResult = array(
             'fingerprint'       => 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4',
             'public_imported'   => 0,
             'public_unchanged'  => 0,
@@ -629,7 +641,7 @@ TEXT;
             'private_unchanged' => 1
         );
 
-        $this->assertEquals($expected_result, $result);
+        $this->assertEquals($expectedResult, $result);
     }
 
     // }}}
@@ -637,23 +649,30 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_NoDataException
+     *
+     * @group import
      */
     public function testImportKeyNoDataException()
     {
-        $key_data = 'Invalid OpenPGP data.';
-        $this->_gpg->importKey($key_data);
+        $keyData = 'Invalid OpenPGP data.';
+        $this->_gpg->importKey($keyData);
     }
 
     // }}}
+
+    // group export
     // {{{ testExportPublicKey()
 
+    /**
+     * @group export
+     */
     public function testExportPublicKey()
     {
-        $key_id = 'public-only@example.com';
+        $keyId = 'public-only@example.com';
 
         // {{{ expected key data
         // OpenPGP header is not included since it varies from system-to-system.
-        $expected_key_data = <<<TEXT
+        $expectedKeyData = <<<TEXT
 mQGiBEeQxv0RBAD+cWerD9h+b135x1/m5NWuwpUNpkE7Be4X8PxpwuAHDN2B2QK4
 fGF1XWP70RMcvKNx7xR/fbQ25jaHuWPxrxolUADJJwwUqpRZq/ObGo3NWhldVsm2
 iU5M2KMwc6D5XQICObyOe9WUJ7HNGKNPclNQzFyhaOA0JcQN+mTlnfwfGwCg2vuY
@@ -686,11 +705,11 @@ y3QoEP81yikT6GomYuIiWA==
 TEXT;
         // }}}
 
-        $key_data = $this->_gpg->exportPublicKey($key_id);
+        $keyData = $this->_gpg->exportPublicKey($keyId);
 
         // Check for containment rather than equality since the OpenPGP header
         // varies from system to system.
-        $this->assertContains($expected_key_data, $key_data);
+        $this->assertContains($expectedKeyData, $keyData);
     }
 
     // }}}
@@ -698,26 +717,33 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_KeyNotFoundException
+     *
+     * @group export
      */
     public function testExportPublicKeyNotFoundException()
     {
-        $key_id = 'non-existent-key@example.com';
-        $key_data = $this->_gpg->exportPublicKey($key_id);
+        $keyId = 'non-existent-key@example.com';
+        $keyData = $this->_gpg->exportPublicKey($keyId);
     }
 
     // }}}
+
+    // group encrypt
     // {{{ testEncrypt()
 
+    /**
+     * @group encrypt
+     */
     public function testEncrypt()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $key_id = 'public-and-private@example.com';
+        $keyId = 'public-and-private@example.com';
         $passphrase = 'test';
 
-        $encrypted_data = $this->_gpg->encrypt($key_id, $data);
-        $decrypted_data = $this->_gpg->decrypt($encrypted_data, $passphrase);
+        $encryptedData = $this->_gpg->encrypt($keyId, $data);
+        $decryptedData = $this->_gpg->decrypt($encryptedData, $passphrase);
 
-        $this->assertEquals($data, $decrypted_data);
+        $this->assertEquals($data, $decryptedData);
     }
 
     // }}}
@@ -725,26 +751,33 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_KeyNotFoundException
+     *
+     * @group encrypt
      */
     public function testEncryptNotFoundException()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $key_id = 'non-existent-key@example.com';
-        $encrypted_data = $this->_gpg->encrypt($key_id, $data);
+        $keyId = 'non-existent-key@example.com';
+        $encryptedData = $this->_gpg->encrypt($keyId, $data);
     }
 
     // }}}
+
+    // group decrypt
     // {{{ testDecrypt()
 
+    /**
+     * @group decrypt
+     */
     public function testDecrypt()
     {
         $passphrase = 'test';
-        $expected_decrypted_data = 'Hello, Alice! Goodbye, Bob!';
+        $expectedDecryptedData = 'Hello, Alice! Goodbye, Bob!';
 
         // encrypted with public-and-private@example.com
         // {{{ encrypted data
 
-        $encrypted_data = <<<TEXT
+        $encryptedData = <<<TEXT
 -----BEGIN PGP MESSAGE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
@@ -767,21 +800,24 @@ DVwDqUg1J7qphaE1J7B4HvOKWS/OPcp6/g1cqc0rJde6mpVsq/rorxk=
 TEXT;
         // }}}
 
-        $decrypted_data = $this->_gpg->decrypt($encrypted_data, $passphrase);
-        $this->assertEquals($expected_decrypted_data, $decrypted_data);
+        $decryptedData = $this->_gpg->decrypt($encryptedData, $passphrase);
+        $this->assertEquals($expectedDecryptedData, $decryptedData);
     }
 
     // }}}
     // {{{ testDecryptNoPassphrase()
 
+    /**
+     * @group decrypt
+     */
     public function testDecryptNoPassphrase()
     {
-        $expected_decrypted_data = 'Hello, Alice! Goodbye, Bob!';
+        $expectedDecryptedData = 'Hello, Alice! Goodbye, Bob!';
 
         // encrypted with no-passphrase@example.com
         // {{{ encrypted data
 
-        $encrypted_data = <<<TEXT
+        $encryptedData = <<<TEXT
 -----BEGIN PGP MESSAGE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
@@ -804,8 +840,8 @@ FEt7GdVwA0ryp3/f0V4E3JylrLdTHF1aQ7VwzPoRPH8i5b7znucreD0=
 TEXT;
         // }}}
 
-        $decrypted_data = $this->_gpg->decrypt($encrypted_data);
-        $this->assertEquals($expected_decrypted_data, $decrypted_data);
+        $decryptedData = $this->_gpg->decrypt($encryptedData);
+        $this->assertEquals($expectedDecryptedData, $decryptedData);
     }
 
     // }}}
@@ -813,6 +849,8 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_KeyNotFoundException
+     *
+     * @group decrypt
      */
     public function testDecryptKeyNotFoundException()
     {
@@ -821,7 +859,7 @@ TEXT;
         // was encrypted with test@example.com
         // {{{ encrypted data
 
-        $encrypted_data = <<<TEXT
+        $encryptedData = <<<TEXT
 -----BEGIN PGP MESSAGE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
@@ -844,7 +882,7 @@ HQpCFn/UK5EjrXyd9DHdYHGRL2n8O3xjhu1GVuuA4sb3B46nKzxXzcU=
 TEXT;
         // }}}
 
-        $decrypted_data = $this->_gpg->decrypt($encrypted_data, $passphrase);
+        $decryptedData = $this->_gpg->decrypt($encryptedData, $passphrase);
     }
 
     // }}}
@@ -852,12 +890,14 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_NoDataException
+     *
+     * @group decrypt
      */
     public function testDecryptNoDataException()
     {
         $passphrase = 'test';
-        $encrypted_data = 'Invalid OpenPGP data.';
-        $decrypted_data = $this->_gpg->decrypt($encrypted_data, $passphrase);
+        $encryptedData = 'Invalid OpenPGP data.';
+        $decryptedData = $this->_gpg->decrypt($encryptedData, $passphrase);
     }
 
     // }}}
@@ -865,13 +905,15 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_BadPassphraseException
+     *
+     * @group decrypt
      */
     public function testDecryptBadPassphraseException_missing()
     {
         // encrypted with public-and-private@example.com
         // {{{ encrypted data
 
-        $encrypted_data = <<<TEXT
+        $encryptedData = <<<TEXT
 -----BEGIN PGP MESSAGE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
@@ -894,7 +936,7 @@ DVwDqUg1J7qphaE1J7B4HvOKWS/OPcp6/g1cqc0rJde6mpVsq/rorxk=
 TEXT;
         // }}}
 
-        $decrypted_data = $this->_gpg->decrypt($encrypted_data);
+        $decryptedData = $this->_gpg->decrypt($encryptedData);
     }
 
     // }}}
@@ -902,6 +944,8 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_BadPassphraseException
+     *
+     * @group decrypt
      */
     public function testDecryptBadPassphraseException_bad()
     {
@@ -910,7 +954,7 @@ TEXT;
         // encrypted with public-and-private@example.com
         // {{{ encrypted data
 
-        $encrypted_data = <<<TEXT
+        $encryptedData = <<<TEXT
 -----BEGIN PGP MESSAGE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
@@ -933,20 +977,25 @@ DVwDqUg1J7qphaE1J7B4HvOKWS/OPcp6/g1cqc0rJde6mpVsq/rorxk=
 TEXT;
         // }}}
 
-        $decrypted_data = $this->_gpg->decrypt($encrypted_data, $passphrase);
+        $decryptedData = $this->_gpg->decrypt($encryptedData, $passphrase);
     }
 
     // }}}
+
+    // group delete-public
     // {{{ testDeletePublicKey()
 
+    /**
+     * @group delete-public
+     */
     public function testDeletePublicKey()
     {
-        $key_id = 'public-only@example.com';
-        $this->_gpg->deletePublicKey($key_id);
+        $keyId = 'public-only@example.com';
+        $this->_gpg->deletePublicKey($keyId);
 
-        $expected_keys = array();
-        $keys = $this->_gpg->getKeys($key_id);
-        $this->assertEquals($expected_keys, $keys);
+        $expectedKeys = array();
+        $keys = $this->_gpg->getKeys($keyId);
+        $this->assertEquals($expectedKeys, $keys);
     }
 
     // }}}
@@ -954,11 +1003,13 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_DeletePrivateKeyException
+     *
+     * @group delete-public
      */
     public function testDeletePublicKeyDeletePrivateKeyException()
     {
-        $key_id = 'public-and-private@example.com';
-        $this->_gpg->deletePublicKey($key_id);
+        $keyId = 'public-and-private@example.com';
+        $this->_gpg->deletePublicKey($keyId);
     }
 
     // }}}
@@ -966,60 +1017,67 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_KeyNotFoundException
+     *
+     * @group delete-public
      */
     public function testDeletePublicKeyNotFoundException()
     {
-        $key_id = 'non-existent-key@example.com';
-        $this->_gpg->deletePublicKey($key_id);
+        $keyId = 'non-existent-key@example.com';
+        $this->_gpg->deletePublicKey($keyId);
     }
 
     // }}}
+
+    // group delete-private
     // {{{ testDeletePrivateKey()
 
+    /**
+     * @group delete-private
+     */
     public function testDeletePrivateKey()
     {
-        $key_id = 'public-and-private@example.com';
-        $this->_gpg->deletePrivateKey($key_id);
+        $keyId = 'public-and-private@example.com';
+        $this->_gpg->deletePrivateKey($keyId);
 
-        $expected_keys = array();
+        $expectedKeys = array();
 
         // {{{ public-and-private@example.com
         $key = new Crypt_GPG_Key();
-        $expected_keys[] = $key;
+        $expectedKeys[] = $key;
 
-        $user_id = new Crypt_GPG_UserId();
-        $user_id->setName('Public and Private Test Key');
-        $user_id->setComment('do not encrypt important data with this key');
-        $user_id->setEmail('public-and-private@example.com');
-        $key->addUserId($user_id);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('Public and Private Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('public-and-private@example.com');
+        $key->addUserId($userId);
 
-        $sub_key = new Crypt_GPG_SubKey();
-        $sub_key->setId('300579D099645239');
-        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
-        $sub_key->setFingerprint('5A58436F752BC80B3E992C1D300579D099645239');
-        $sub_key->setLength(1024);
-        $sub_key->setCreationDate(1200670392);
-        $sub_key->setExpirationDate(0);
-        $sub_key->setCanSign(true);
-        $sub_key->setCanEncrypt(false);
-        $sub_key->setHasPrivate(false);
-        $key->addSubKey($sub_key);
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('300579D099645239');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey->setFingerprint('5A58436F752BC80B3E992C1D300579D099645239');
+        $subKey->setLength(1024);
+        $subKey->setCreationDate(1200670392);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(true);
+        $subKey->setCanEncrypt(false);
+        $subKey->setHasPrivate(false);
+        $key->addSubKey($subKey);
 
-        $sub_key = new Crypt_GPG_SubKey();
-        $sub_key->setId('EBEB1F9895953487');
-        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
-        $sub_key->setFingerprint('DCC9E7AAB9248CB0541FADDAEBEB1F9895953487');
-        $sub_key->setLength(2048);
-        $sub_key->setCreationDate(1200670397);
-        $sub_key->setExpirationDate(0);
-        $sub_key->setCanSign(false);
-        $sub_key->setCanEncrypt(true);
-        $sub_key->setHasPrivate(false);
-        $key->addSubKey($sub_key);
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('EBEB1F9895953487');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey->setFingerprint('DCC9E7AAB9248CB0541FADDAEBEB1F9895953487');
+        $subKey->setLength(2048);
+        $subKey->setCreationDate(1200670397);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(false);
+        $subKey->setCanEncrypt(true);
+        $subKey->setHasPrivate(false);
+        $key->addSubKey($subKey);
         // }}}
 
-        $keys = $this->_gpg->getKeys($key_id);
-        $this->assertEquals($expected_keys, $keys);
+        $keys = $this->_gpg->getKeys($keyId);
+        $this->assertEquals($expectedKeys, $keys);
     }
 
     // }}}
@@ -1027,11 +1085,13 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_KeyNotFoundException
+     *
+     * @group delete-private
      */
     public function testDeletePrivateKeyNotFoundException()
     {
-        $key_id = 'non-existent-key@example.com';
-        $this->_gpg->deletePrivateKey($key_id);
+        $keyId = 'non-existent-key@example.com';
+        $this->_gpg->deletePrivateKey($keyId);
     }
 
     // }}}
@@ -1039,24 +1099,30 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_KeyNotFoundException
+     *
+     * @group delete-private
      */
     public function testDeletePrivateKeyNotFoundException_public_only()
     {
-        $key_id = 'public-only@example.com';
-        $this->_gpg->deletePrivateKey($key_id);
+        $keyId = 'public-only@example.com';
+        $this->_gpg->deletePrivateKey($keyId);
     }
 
     // }}}
+
+    // group sign
     // {{{ testSignKeyNotFoundException()
 
     /**
      * @expectedException Crypt_GPG_KeyNotFoundException
+     *
+     * @group sign
      */
     public function testSignKeyNotFoundException()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $key_id = 'non-existent-key@example.com';
-        $signed_data = $this->_gpg->sign($key_id, $data);
+        $keyId = 'non-existent-key@example.com';
+        $signedData = $this->_gpg->sign($keyId, $data);
     }
 
     // }}}
@@ -1064,12 +1130,14 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_BadPassphraseException
+     *
+     * @group sign
      */
     public function testSignBadPassphraseException_missing()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $key_id = 'public-and-private@example.com';
-        $signed_data = $this->_gpg->sign($key_id, $data);
+        $keyId = 'public-and-private@example.com';
+        $signedData = $this->_gpg->sign($keyId, $data);
     }
 
     // }}}
@@ -1077,107 +1145,128 @@ TEXT;
 
     /**
      * @expectedException Crypt_GPG_BadPassphraseException
+     *
+     * @group sign
      */
     public function testSignBadPassphraseException_bad()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $key_id = 'public-and-private@example.com';
+        $keyId = 'public-and-private@example.com';
         $passphrase = 'incorrect';
-        $signed_data = $this->_gpg->sign($key_id, $data, $passphrase);
+        $signedData = $this->_gpg->sign($keyId, $data, $passphrase);
     }
 
     // }}}
     // {{{ testSignNoPassphrase()
 
+    /**
+     * @group sign
+     */
     public function testSignNoPassphrase()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $key_id = 'no-passphrase@example.com';
-        $signed_data = $this->_gpg->sign($key_id, $data);
+        $keyId = 'no-passphrase@example.com';
+        $signedData = $this->_gpg->sign($keyId, $data);
 
-        $signature = $this->_gpg->verify($signed_data);
+        $signature = $this->_gpg->verify($signedData);
         $this->assertTrue($signature->isValid());
     }
 
     // }}}
     // {{{ testSignNormal()
 
+    /**
+     * @group sign
+     */
     public function testSignNormal()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $key_id = 'public-and-private@example.com';
+        $keyId = 'public-and-private@example.com';
         $passphrase = 'test';
-        $signed_data = $this->_gpg->sign($key_id, $data, $passphrase);
+        $signedData = $this->_gpg->sign($keyId, $data, $passphrase);
 
-        $signature = $this->_gpg->verify($signed_data);
+        $signature = $this->_gpg->verify($signedData);
         $this->assertTrue($signature->isValid());
     }
 
     // }}}
     // {{{ testSignClear()
 
+    /**
+     * @group sign
+     */
     public function testSignClear()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $key_id = 'public-and-private@example.com';
+        $keyId = 'public-and-private@example.com';
         $passphrase = 'test';
-        $signed_data = $this->_gpg->sign($key_id, $data, $passphrase,
+        $signedData = $this->_gpg->sign($keyId, $data, $passphrase,
             Crypt_GPG::SIGN_MODE_CLEAR);
 
-        $signature = $this->_gpg->verify($signed_data);
+        $signature = $this->_gpg->verify($signedData);
         $this->assertTrue($signature->isValid());
     }
 
     // }}}
     // {{{ testSignDetached()
 
+    /**
+     * @group sign
+     */
     public function testSignDetached()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $key_id = 'public-and-private@example.com';
+        $keyId = 'public-and-private@example.com';
         $passphrase = 'test';
-        $signature_data = $this->_gpg->sign($key_id, $data, $passphrase,
+        $signatureData = $this->_gpg->sign($keyId, $data, $passphrase,
             Crypt_GPG::SIGN_MODE_DETACHED);
 
-        $signature = $this->_gpg->verify($data, $signature_data);
+        $signature = $this->_gpg->verify($data, $signatureData);
         $this->assertTrue($signature->isValid());
     }
 
     // }}}
+
+    // group verify
     // {{{ testVerifyNoDataException()
 
     /**
      * @expectedException Crypt_GPG_NoDataException
+     *
+     * @group verify
      */
     public function testVerifyNoDataException()
     {
-        $signed_data = 'Invalid OpenPGP data.';
-        $signature = $this->_gpg->verify($signed_data);
+        $signedData = 'Invalid OpenPGP data.';
+        $signature = $this->_gpg->verify($signedData);
     }
 
     // }}}
     // {{{ testVerifyNormalSignedData()
 
+    /**
+     * @group verify
+     */
     public function testVerifyNormalSignedData()
     {
         // {{{ expected signature
-        $expected_signature = new Crypt_GPG_Signature();
-        $expected_signature->setId('vQ2mozoe+N5TQhaFsRAJmNHhsB');
-        $expected_signature->setKeyFingerprint(
+        $expectedSignature = new Crypt_GPG_Signature();
+        $expectedSignature->setId('vQ2mozoe+N5TQhaFsRAJmNHhsB');
+        $expectedSignature->setKeyFingerprint(
             '5A58436F752BC80B3E992C1D300579D099645239');
 
-        $expected_signature->setCreationDate(1200674360);
-        $expected_signature->setExpirationDate(0);
-        $expected_signature->setIsValid(true);
+        $expectedSignature->setCreationDate(1200674360);
+        $expectedSignature->setExpirationDate(0);
+        $expectedSignature->setIsValid(true);
 
-        $user_id = new Crypt_GPG_UserId();
-        $user_id->setName('Public and Private Test Key');
-        $user_id->setComment('do not encrypt important data with this key');
-        $user_id->setEmail('public-and-private@example.com');
-        $expected_signature->setUserId($user_id);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('Public and Private Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('public-and-private@example.com');
+        $expectedSignature->setUserId($userId);
         // }}}
         // {{{ normal signed data
-        $normal_signed_data = <<<TEXT
+        $normalSignedData = <<<TEXT
 -----BEGIN PGP MESSAGE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
@@ -1190,33 +1279,36 @@ ZOALdV5uO8dv5ewQ9XOp6bsA
 TEXT;
         // }}}
 
-        $signature = $this->_gpg->verify($normal_signed_data);
-        $this->assertEquals($expected_signature, $signature);
+        $signature = $this->_gpg->verify($normalSignedData);
+        $this->assertEquals($expectedSignature, $signature);
     }
 
     // }}}
     // {{{ testVerifyClearsignedData()
 
+    /**
+     * @group verify
+     */
     public function testVerifyClearsignedData()
     {
         // {{{ expected signature
-        $expected_signature = new Crypt_GPG_Signature();
-        $expected_signature->setId('mvtJs/XKU5KwDQ91YH0efv6vA7');
-        $expected_signature->setKeyFingerprint(
+        $expectedSignature = new Crypt_GPG_Signature();
+        $expectedSignature->setId('mvtJs/XKU5KwDQ91YH0efv6vA7');
+        $expectedSignature->setKeyFingerprint(
             '5A58436F752BC80B3E992C1D300579D099645239');
 
-        $expected_signature->setCreationDate(1200674325);
-        $expected_signature->setExpirationDate(0);
-        $expected_signature->setIsValid(true);
+        $expectedSignature->setCreationDate(1200674325);
+        $expectedSignature->setExpirationDate(0);
+        $expectedSignature->setIsValid(true);
 
-        $user_id = new Crypt_GPG_UserId();
-        $user_id->setName('Public and Private Test Key');
-        $user_id->setComment('do not encrypt important data with this key');
-        $user_id->setEmail('public-and-private@example.com');
-        $expected_signature->setUserId($user_id);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('Public and Private Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('public-and-private@example.com');
+        $expectedSignature->setUserId($userId);
         // }}}
         // {{{ clearsigned data
-        $clearsigned_data = <<<TEXT
+        $clearsignedData = <<<TEXT
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
@@ -1233,35 +1325,38 @@ TEXT;
 
         // }}}
 
-        $signature = $this->_gpg->verify($clearsigned_data);
-        $this->assertEquals($expected_signature, $signature);
+        $signature = $this->_gpg->verify($clearsignedData);
+        $this->assertEquals($expectedSignature, $signature);
     }
 
     // }}}
     // {{{ testVerifyDetachedSignature()
 
+    /**
+     * @group verify
+     */
     public function testVerifyDetachedSignature()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
 
         // {{{ expected signature
-        $expected_signature = new Crypt_GPG_Signature();
-        $expected_signature->setId('0Wyj4MWXtqzVT6nvgEQ+De2sV6');
-        $expected_signature->setKeyFingerprint(
+        $expectedSignature = new Crypt_GPG_Signature();
+        $expectedSignature->setId('0Wyj4MWXtqzVT6nvgEQ+De2sV6');
+        $expectedSignature->setKeyFingerprint(
             '5A58436F752BC80B3E992C1D300579D099645239');
 
-        $expected_signature->setCreationDate(1200674279);
-        $expected_signature->setExpirationDate(0);
-        $expected_signature->setIsValid(true);
+        $expectedSignature->setCreationDate(1200674279);
+        $expectedSignature->setExpirationDate(0);
+        $expectedSignature->setIsValid(true);
 
-        $user_id = new Crypt_GPG_UserId();
-        $user_id->setName('Public and Private Test Key');
-        $user_id->setComment('do not encrypt important data with this key');
-        $user_id->setEmail('public-and-private@example.com');
-        $expected_signature->setUserId($user_id);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('Public and Private Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('public-and-private@example.com');
+        $expectedSignature->setUserId($userId);
         // }}}
         // {{{ detached signature
-        $detached_signature = <<<TEXT
+        $detachedSignature = <<<TEXT
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
@@ -1274,231 +1369,256 @@ TEXT;
 
         // }}}
 
-        $signature = $this->_gpg->verify($data, $detached_signature);
-        $this->assertEquals($expected_signature, $signature);
+        $signature = $this->_gpg->verify($data, $detachedSignature);
+        $this->assertEquals($expectedSignature, $signature);
     }
 
     // }}}
+
+    // group get-keys
     // {{{ testGetKeys()
 
+    /**
+     * @group get-keys
+     */
     public function testGetKeys()
     {
-        $expected_keys = array();
+        $expectedKeys = array();
 
         // {{{ public-and-private@example.com
         $key = new Crypt_GPG_Key();
-        $expected_keys[] = $key;
+        $expectedKeys[] = $key;
 
-        $user_id = new Crypt_GPG_UserId();
-        $user_id->setName('Public and Private Test Key');
-        $user_id->setComment('do not encrypt important data with this key');
-        $user_id->setEmail('public-and-private@example.com');
-        $key->addUserId($user_id);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('Public and Private Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('public-and-private@example.com');
+        $key->addUserId($userId);
 
-        $sub_key = new Crypt_GPG_SubKey();
-        $sub_key->setId('300579D099645239');
-        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
-        $sub_key->setFingerprint('5A58436F752BC80B3E992C1D300579D099645239');
-        $sub_key->setLength(1024);
-        $sub_key->setCreationDate(1200670392);
-        $sub_key->setExpirationDate(0);
-        $sub_key->setCanSign(true);
-        $sub_key->setCanEncrypt(false);
-        $sub_key->setHasPrivate(true);
-        $key->addSubKey($sub_key);
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('300579D099645239');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey->setFingerprint('5A58436F752BC80B3E992C1D300579D099645239');
+        $subKey->setLength(1024);
+        $subKey->setCreationDate(1200670392);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(true);
+        $subKey->setCanEncrypt(false);
+        $subKey->setHasPrivate(true);
+        $key->addSubKey($subKey);
 
-        $sub_key = new Crypt_GPG_SubKey();
-        $sub_key->setId('EBEB1F9895953487');
-        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
-        $sub_key->setFingerprint('DCC9E7AAB9248CB0541FADDAEBEB1F9895953487');
-        $sub_key->setLength(2048);
-        $sub_key->setCreationDate(1200670397);
-        $sub_key->setExpirationDate(0);
-        $sub_key->setCanSign(false);
-        $sub_key->setCanEncrypt(true);
-        $sub_key->setHasPrivate(true);
-        $key->addSubKey($sub_key);
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('EBEB1F9895953487');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey->setFingerprint('DCC9E7AAB9248CB0541FADDAEBEB1F9895953487');
+        $subKey->setLength(2048);
+        $subKey->setCreationDate(1200670397);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(false);
+        $subKey->setCanEncrypt(true);
+        $subKey->setHasPrivate(true);
+        $key->addSubKey($subKey);
         // }}}
         // {{{ public-only@example.com
         $key = new Crypt_GPG_Key();
-        $expected_keys[] = $key;
+        $expectedKeys[] = $key;
 
-        $user_id = new Crypt_GPG_UserId();
-        $user_id->setName('Public Only Test Key');
-        $user_id->setComment('do not encrypt important data with this key');
-        $user_id->setEmail('public-only@example.com');
-        $key->addUserId($user_id);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('Public Only Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('public-only@example.com');
+        $key->addUserId($userId);
 
-        $sub_key = new Crypt_GPG_SubKey();
-        $sub_key->setId('16D27458B1BBA1C4');
-        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
-        $sub_key->setFingerprint('C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4');
-        $sub_key->setLength(1024);
-        $sub_key->setCreationDate(1200670461);
-        $sub_key->setExpirationDate(0);
-        $sub_key->setCanSign(true);
-        $sub_key->setCanEncrypt(false);
-        $sub_key->setHasPrivate(false);
-        $key->addSubKey($sub_key);
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('16D27458B1BBA1C4');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey->setFingerprint('C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4');
+        $subKey->setLength(1024);
+        $subKey->setCreationDate(1200670461);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(true);
+        $subKey->setCanEncrypt(false);
+        $subKey->setHasPrivate(false);
+        $key->addSubKey($subKey);
 
-        $sub_key = new Crypt_GPG_SubKey();
-        $sub_key->setId('045B7FC31C7C4644');
-        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
-        $sub_key->setFingerprint('0DC192B106773BC9B4D40AAC045B7FC31C7C4644');
-        $sub_key->setLength(2048);
-        $sub_key->setCreationDate(1200670470);
-        $sub_key->setExpirationDate(0);
-        $sub_key->setCanSign(false);
-        $sub_key->setCanEncrypt(true);
-        $sub_key->setHasPrivate(false);
-        $key->addSubKey($sub_key);
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('045B7FC31C7C4644');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey->setFingerprint('0DC192B106773BC9B4D40AAC045B7FC31C7C4644');
+        $subKey->setLength(2048);
+        $subKey->setCreationDate(1200670470);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(false);
+        $subKey->setCanEncrypt(true);
+        $subKey->setHasPrivate(false);
+        $key->addSubKey($subKey);
         // }}}
         // {{{ no-passphrase@example.com
         $key = new Crypt_GPG_Key();
-        $expected_keys[] = $key;
+        $expectedKeys[] = $key;
 
-        $user_id = new Crypt_GPG_UserId();
-        $user_id->setName('No Passphrase Public and Private Test Key');
-        $user_id->setComment('do not encrypt important data with this key');
-        $user_id->setEmail('no-passphrase@example.com');
-        $key->addUserId($user_id);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('No Passphrase Public and Private Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('no-passphrase@example.com');
+        $key->addUserId($userId);
 
-        $sub_key = new Crypt_GPG_SubKey();
-        $sub_key->setId('CB24072FEF665D17');
-        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
-        $sub_key->setFingerprint('D729E804DD50012902232845CB24072FEF665D17');
-        $sub_key->setLength(1024);
-        $sub_key->setCreationDate(1200671161);
-        $sub_key->setExpirationDate(0);
-        $sub_key->setCanSign(true);
-        $sub_key->setCanEncrypt(false);
-        $sub_key->setHasPrivate(true);
-        $key->addSubKey($sub_key);
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('CB24072FEF665D17');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey->setFingerprint('D729E804DD50012902232845CB24072FEF665D17');
+        $subKey->setLength(1024);
+        $subKey->setCreationDate(1200671161);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(true);
+        $subKey->setCanEncrypt(false);
+        $subKey->setHasPrivate(true);
+        $key->addSubKey($subKey);
 
-        $sub_key = new Crypt_GPG_SubKey();
-        $sub_key->setId('C8B1B63978A9794B');
-        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
-        $sub_key->setFingerprint('1BB64D19DFC5DC1AFAB79C63C8B1B63978A9794B');
-        $sub_key->setLength(2048);
-        $sub_key->setCreationDate(1200671172);
-        $sub_key->setExpirationDate(0);
-        $sub_key->setCanSign(false);
-        $sub_key->setCanEncrypt(true);
-        $sub_key->setHasPrivate(true);
-        $key->addSubKey($sub_key);
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('C8B1B63978A9794B');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey->setFingerprint('1BB64D19DFC5DC1AFAB79C63C8B1B63978A9794B');
+        $subKey->setLength(2048);
+        $subKey->setCreationDate(1200671172);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(false);
+        $subKey->setCanEncrypt(true);
+        $subKey->setHasPrivate(true);
+        $key->addSubKey($subKey);
         // }}}
 
         $keys = $this->_gpg->getKeys();
-        $this->assertEquals($expected_keys, $keys);
+        $this->assertEquals($expectedKeys, $keys);
     }
 
     // }}}
     // {{{ testGetKeysWithKeyId()
 
+    /**
+     * @group get-keys
+     */
     public function testGetKeysWithKeyId()
     {
-        $key_id = 'public-and-private@example.com';
-        $expected_keys = array();
+        $keyId = 'public-and-private@example.com';
+        $expectedKeys = array();
 
         // {{{ public-and-private@example.com
         $key = new Crypt_GPG_Key();
-        $expected_keys[] = $key;
+        $expectedKeys[] = $key;
 
-        $user_id = new Crypt_GPG_UserId();
-        $user_id->setName('Public and Private Test Key');
-        $user_id->setComment('do not encrypt important data with this key');
-        $user_id->setEmail('public-and-private@example.com');
-        $key->addUserId($user_id);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('Public and Private Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('public-and-private@example.com');
+        $key->addUserId($userId);
 
-        $sub_key = new Crypt_GPG_SubKey();
-        $sub_key->setId('300579D099645239');
-        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
-        $sub_key->setFingerprint('5A58436F752BC80B3E992C1D300579D099645239');
-        $sub_key->setLength(1024);
-        $sub_key->setCreationDate(1200670392);
-        $sub_key->setExpirationDate(0);
-        $sub_key->setCanSign(true);
-        $sub_key->setCanEncrypt(false);
-        $sub_key->setHasPrivate(true);
-        $key->addSubKey($sub_key);
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('300579D099645239');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey->setFingerprint('5A58436F752BC80B3E992C1D300579D099645239');
+        $subKey->setLength(1024);
+        $subKey->setCreationDate(1200670392);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(true);
+        $subKey->setCanEncrypt(false);
+        $subKey->setHasPrivate(true);
+        $key->addSubKey($subKey);
 
-        $sub_key = new Crypt_GPG_SubKey();
-        $sub_key->setId('EBEB1F9895953487');
-        $sub_key->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
-        $sub_key->setFingerprint('DCC9E7AAB9248CB0541FADDAEBEB1F9895953487');
-        $sub_key->setLength(2048);
-        $sub_key->setCreationDate(1200670397);
-        $sub_key->setExpirationDate(0);
-        $sub_key->setCanSign(false);
-        $sub_key->setCanEncrypt(true);
-        $sub_key->setHasPrivate(true);
-        $key->addSubKey($sub_key);
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('EBEB1F9895953487');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey->setFingerprint('DCC9E7AAB9248CB0541FADDAEBEB1F9895953487');
+        $subKey->setLength(2048);
+        $subKey->setCreationDate(1200670397);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(false);
+        $subKey->setCanEncrypt(true);
+        $subKey->setHasPrivate(true);
+        $key->addSubKey($subKey);
         // }}}
 
-        $keys = $this->_gpg->getKeys($key_id);
-        $this->assertEquals($expected_keys, $keys);
+        $keys = $this->_gpg->getKeys($keyId);
+        $this->assertEquals($expectedKeys, $keys);
     }
 
     // }}}
     // {{{ testGetKeysNone()
 
+    /**
+     * @group get-keys
+     */
     public function testGetKeysNone()
     {
-        $key_id = 'non-existent-key@example.com';
-        $expected_keys = array();
-        $keys = $this->_gpg->getKeys($key_id);
-        $this->assertEquals($expected_keys, $keys);
+        $keyId = 'non-existent-key@example.com';
+        $expectedKeys = array();
+        $keys = $this->_gpg->getKeys($keyId);
+        $this->assertEquals($expectedKeys, $keys);
     }
 
     // }}}
+
+    // group get-fingerprint
     // {{{ testGetFingerprint()
 
+    /**
+     * @group get-fingerprint
+     */
     public function testGetFingerprint()
     {
-        $key_id = 'public-only@example.com';
-        $expected_fingerprint = 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4';
-        $fingerprint = $this->_gpg->getFingerprint($key_id);
-        $this->assertEquals($expected_fingerprint, $fingerprint);
+        $keyId = 'public-only@example.com';
+        $expectedFingerprint = 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4';
+        $fingerprint = $this->_gpg->getFingerprint($keyId);
+        $this->assertEquals($expectedFingerprint, $fingerprint);
     }
 
     // }}}
     // {{{ testGetFingerprintNull()
 
+    /**
+     * @group get-fingerprint
+     */
     public function testGetFingerprintNull()
     {
-        $key_id = 'non-existent-key@example.com';
-        $fingerprint = $this->_gpg->getFingerprint($key_id);
+        $keyId = 'non-existent-key@example.com';
+        $fingerprint = $this->_gpg->getFingerprint($keyId);
         $this->assertNull($fingerprint);
     }
 
     // }}}
     // {{{ testGetFingerprintX509()
 
+    /**
+     * @group get-fingerprint
+     */
     public function testGetFingerprintX509()
     {
-        $key_id = 'public-only@example.com';
-        $expected_fingerprint =
+        $keyId = 'public-only@example.com';
+        $expectedFingerprint =
             'C3:BC:61:5A:D9:C7:66:E5:A8:5C:1F:27:16:D2:74:58:B1:BB:A1:C4';
 
-        $fingerprint = $this->_gpg->getFingerprint($key_id,
+        $fingerprint = $this->_gpg->getFingerprint($keyId,
             Crypt_GPG::FORMAT_X509);
 
-        $this->assertEquals($expected_fingerprint, $fingerprint);
+        $this->assertEquals($expectedFingerprint, $fingerprint);
     }
 
     // }}}
     // {{{ testGetFingerprintCanonical()
 
+    /**
+     * @group get-fingerprint
+     */
     public function testGetFingerprintCanonical()
     {
-        $key_id = 'public-only@example.com';
-        $expected_fingerprint =
+        $keyId = 'public-only@example.com';
+        $expectedFingerprint =
             'C3BC 615A D9C7 66E5 A85C  1F27 16D2 7458 B1BB A1C4';
 
-        $fingerprint = $this->_gpg->getFingerprint($key_id,
+        $fingerprint = $this->_gpg->getFingerprint($keyId,
             Crypt_GPG::FORMAT_CANONICAL);
 
-        $this->assertEquals($expected_fingerprint, $fingerprint);
+        $this->assertEquals($expectedFingerprint, $fingerprint);
     }
 
     // }}}

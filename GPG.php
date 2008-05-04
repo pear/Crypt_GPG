@@ -20,7 +20,7 @@
  * <?php
  * // encrypt some data
  * $gpg = Crypt_GPG::factory('php');
- * $encrypted_data = $gpg->encrypt($my_secret_key_id, $data);
+ * $encryptedData = $gpg->encrypt($mySecretKeyId, $data);
  * ?>
  * </code>
  *
@@ -233,8 +233,8 @@ abstract class Crypt_GPG
 
         include_once 'Crypt/GPG/Driver/' . $drivers[$driver] . '.php';
 
-        $class_name = 'Crypt_GPG_Driver_' . $drivers[$driver];
-        $object = new $class_name($options);
+        $className = 'Crypt_GPG_Driver_' . $drivers[$driver];
+        $object = new $className($options);
         return $object;
     }
 
@@ -291,28 +291,27 @@ abstract class Crypt_GPG
      * {@link Crypt_GPG::deletePublicKey()}.
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
+     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
      * public key is exported.
      *
-     * @param string  $key_id either the full uid of the public key, the email
-     *                        part of the uid of the public key or the key id of
-     *                        the public key. For example,
-     *                        "Test User (example) <test@example.com>",
-     *                        "test@example.com" or a hexidecimal string.
-     * @param boolean $armor  optional. If true, ASCII armored data is returned;
-     *                        otherwise, binary data is returned. Defaults to
-     *                        true.
+     * @param string  $keyId either the full uid of the public key, the email
+     *                       part of the uid of the public key or the key id of
+     *                       the public key. For example,
+     *                       "Test User (example) <test@example.com>",
+     *                       "test@example.com" or a hexidecimal string.
+     * @param boolean $armor optional. If true, ASCII armored data is returned;
+     *                       otherwise, binary data is returned. Defaults to
+     *                       true.
      *
      * @return string the public key data.
      *
      * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         File a bug report if these exceptions occur.
      */
-    abstract public function exportPublicKey($key_id, $armor = true);
+    abstract public function exportPublicKey($keyId, $armor = true);
 
     // }}}
     // {{{ deletePublicKey()
@@ -321,32 +320,31 @@ abstract class Crypt_GPG
      * Deletes a public key from the keyring
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
+     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
      * public key is deleted.
      *
      * The private key must be deleted first or an exception will be thrown.
      * See {@link Crypt_GPG::deletePrivateKey()}.
      *
-     * @param string $key_id either the full uid of the public key, the email
-     *                       part of the uid of the public key or the key id of
-     *                       the public key. For example,
-     *                       "Test User (example) <test@example.com>",
-     *                       "test@example.com" or a hexidecimal string.
+     * @param string $keyId either the full uid of the public key, the email
+     *                      part of the uid of the public key or the key id of
+     *                      the public key. For example,
+     *                      "Test User (example) <test@example.com>",
+     *                      "test@example.com" or a hexidecimal string.
      *
      * @return void
      *
      * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_DeletePrivateKeyException if the specified public key
      *         has an associated private key on the keyring. The private key
      *         must be deleted first.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         File a bug report if these exceptions occur.
      */
-    abstract public function deletePublicKey($key_id);
+    abstract public function deletePublicKey($keyId);
 
     // }}}
     // {{{ deletePrivateKey()
@@ -355,25 +353,24 @@ abstract class Crypt_GPG
      * Deletes a private key from the keyring
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$key_id</i> (for example, if you use a non-unique uid) only the first
+     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
      * private key is deleted.
      *
-     * @param string $key_id either the full uid of the private key, the email
-     *                       part of the uid of the private key or the key id of
-     *                       the private key. For example,
-     *                       "Test User (example) <test@example.com>",
-     *                       "test@example.com" or a hexidecimal string.
+     * @param string $keyId either the full uid of the private key, the email
+     *                      part of the uid of the private key or the key id of
+     *                      the private key. For example,
+     *                      "Test User (example) <test@example.com>",
+     *                      "test@example.com" or a hexidecimal string.
      *
      * @return void
      *
      * @throws Crypt_GPG_KeyNotFoundException if a private key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         File a bug report if these exceptions occur.
      */
-    abstract public function deletePrivateKey($key_id);
+    abstract public function deletePrivateKey($keyId);
 
     // }}}
     // {{{ getKeys()
@@ -381,10 +378,10 @@ abstract class Crypt_GPG
     /**
      * Gets the available keys in the keyring
      *
-     * @param string $key_id optional. Only keys with that match the specified
-     *                       pattern are returned. The pattern may be part of
-     *                       a user id, a key id or a key fingerprint. If not
-     *                       specified, all keys are returned.
+     * @param string $keyId optional. Only keys with that match the specified
+     *                      pattern are returned. The pattern may be part of
+     *                      a user id, a key id or a key fingerprint. If not
+     *                      specified, all keys are returned.
      *
      * @return array an array of {@link Crypt_GPG_Key} objects.
      *
@@ -394,7 +391,7 @@ abstract class Crypt_GPG
      *
      * @see Crypt_GPG_Key
      */
-    abstract public function getKeys($key_id = '');
+    abstract public function getKeys($keyId = '');
 
     // }}}
     // {{{ getFingerprint()
@@ -405,7 +402,7 @@ abstract class Crypt_GPG
      * If more than one key fingerprint is available (for example, if you use
      * a non-unique user id) only the first key fingerprint is returned.
      *
-     * @param string  $key_id either the full user id of the key, the email
+     * @param string  $keyId  either the full user id of the key, the email
      *                        part of the user id of the key, or the key id of
      *                        the key. For example,
      *                        "Test User (example) <test@example.com>",
@@ -419,13 +416,12 @@ abstract class Crypt_GPG
      *                        Defaults to Crypt_GPG::FORMAT_NONE.
      *
      * @return string the fingerprint of the key, or null if no fingerprint
-     *                is found for the given <i>$key_id</i>.
+     *                is found for the given <i>$keyId</i>.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         File a bug report if these exceptions occur.
      */
-    abstract public function getFingerprint($key_id,
+    abstract public function getFingerprint($keyId,
         $format = self::FORMAT_NONE);
 
     // }}}
@@ -443,26 +439,25 @@ abstract class Crypt_GPG
      *
      * <code>gpg --sign-key <key-id> <named-user></code>
      *
-     * @param string  $key_id the full uid of the public key to use for
-     *                        encryption. For example,
-     *                        "Test User (example) <test@example.com>".
-     * @param string  $data   the data to be encrypted.
-     * @param boolean $armor  optional. If true, ASCII armored data is returned;
-     *                        otherwise, binary data is returned. Defaults to
-     *                        true.
+     * @param string  $keyId the full uid of the public key to use for
+     *                       encryption. For example,
+     *                       "Test User (example) <test@example.com>".
+     * @param string  $data  the data to be encrypted.
+     * @param boolean $armor optional. If true, ASCII armored data is returned;
+     *                       otherwise, binary data is returned. Defaults to
+     *                       true.
      *
      * @return string the encrypted data.
      *
      * @throws Crypt_GPG_KeyNotFoundException if the a key with the given
-     *         <i>$key_id</i> is not found.
+     *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         File a bug report if these exceptions occur.
      *
      * @sensitive $data
      */
-    abstract public function encrypt($key_id, $data, $armor = true);
+    abstract public function encrypt($keyId, $data, $armor = true);
 
     // }}}
     // {{{ decrypt()
@@ -475,11 +470,11 @@ abstract class Crypt_GPG
      * private key to the keyring, use the {@link Crypt_GPG::importKey()}
      * method.
      *
-     * @param string $encrypted_data the data to be decrypted.
-     * @param string $passphrase     optional. The passphrase of the private
-     *                               key used to encrypt the data. Only
-     *                               required if the private key requires a
-     *                               passphrase.
+     * @param string $encryptedData the data to be decrypted.
+     * @param string $passphrase    optional. The passphrase of the private
+     *                              key used to encrypt the data. Only
+     *                              required if the private key requires a
+     *                              passphrase.
      *
      * @return string the decrypted data.
      *
@@ -493,12 +488,11 @@ abstract class Crypt_GPG
      *         incorrect or if a required passphrase is not specified.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         File a bug report if these exceptions occur.
      *
      * @sensitive $passphrase
      */
-    abstract public function decrypt($encrypted_data, $passphrase = null);
+    abstract public function decrypt($encryptedData, $passphrase = null);
 
     // }}}
     // {{{ sign()
@@ -511,7 +505,7 @@ abstract class Crypt_GPG
      * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
      * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
      *
-     * @param string  $key_id     either the full uid of the private key, the
+     * @param string  $keyId      either the full uid of the private key, the
      *                            email part of the uid of the private key or
      *                            the key id of the private key. For example,
      *                            "Test User (example) <test@example.com>",
@@ -542,12 +536,11 @@ abstract class Crypt_GPG
      *         incorrect or if a required passphrase is not specified.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         File a bug report if these exceptions occur.
      *
      * @sensitive $passphrase
      */
-    abstract public function sign($key_id, $data, $passphrase = null,
+    abstract public function sign($keyId, $data, $passphrase = null,
         $mode = self::SIGN_MODE_NORMAL, $armor = true);
 
     // }}}
@@ -560,11 +553,11 @@ abstract class Crypt_GPG
      * message if the signed data is not clearsigned and does not have a
      * detached signature.
      *
-     * @param string $signed_data the signed data to be verified.
-     * @param string $signature   optional. If verifying data signed using a
-     *                            detached signature, this must be the detached
-     *                            signature data. The data that was signed is
-     *                            specified in <i>$signed_data</i>.
+     * @param string $signedData the signed data to be verified.
+     * @param string $signature  optional. If verifying data signed using a
+     *                           detached signature, this must be the detached
+     *                           signature data. The data that was signed is
+     *                           specified in <i>$signedData</i>.
      *
      * @return Crypt_GPG_Signature the signature details of the signed data. If
      *                             the signature is valid, the <i>$valid</i>
@@ -574,12 +567,11 @@ abstract class Crypt_GPG
      *         data.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use {@link Crypt_GPG::$debug} and file a bug report if these
-     *         exceptions occur.
+     *         File a bug report if these exceptions occur.
      *
      * @see Crypt_GPG_Signature
      */
-    abstract public function verify($signed_data, $signature = '');
+    abstract public function verify($signedData, $signature = '');
 
     // }}}
 }

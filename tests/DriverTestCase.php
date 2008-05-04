@@ -85,17 +85,17 @@ abstract class DriverTestCase extends PHPUnit_Framework_TestCase
 
     private $_gpg;
 
-    private $_oldErrorLevel;
+    private $_old_error_level;
 
     // }}}
     // {{{ setUp()
 
     public function setUp()
     {
-        $this->_oldErrorLevel = error_reporting(E_ALL | E_STRICT);
+        $this->_old_error_level = error_reporting(E_ALL | E_STRICT);
 
         // {{{ pubring data
-        $pubringData = <<<TEXT
+        $pubring_data = <<<TEXT
 mQGiBEeQxrgRBACsmocYdCV79P6fsNF+Bs8Xxmt/mmWpPWWH8RpguEdEqy57
 Frj91Ugj1bJKAkNPFyfjrCn4c8wsNQabNszuR99rFl6wXI1JYbbbomZdxRIt
 VV6AAmxYMU5LQEEI7T98lMhkHgdIwnl+DxAHj71Y/wbYw9D0APLygo5r2lm/
@@ -183,7 +183,7 @@ ALpDXpcmW7C6yHrUbWmUsAIAAw==
 TEXT;
         // }}}
         // {{{ secring data
-        $secringData = <<<TEXT
+        $secring_data = <<<TEXT
 lQHhBEeQxrgRBACsmocYdCV79P6fsNF+Bs8Xxmt/mmWpPWWH8RpguEdEqy57
 Frj91Ugj1bJKAkNPFyfjrCn4c8wsNQabNszuR99rFl6wXI1JYbbbomZdxRIt
 VV6AAmxYMU5LQEEI7T98lMhkHgdIwnl+DxAHj71Y/wbYw9D0APLygo5r2lm/
@@ -249,7 +249,7 @@ bgVPsAIAAA==
 TEXT;
         // }}}
         // {{{ trustdb data
-        $trustdbData = <<<TEXT
+        $trustdb_data = <<<TEXT
 AWdwZwMDAQUBAAAAR5DK0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQoAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAACgAAAAAAAAAAAAAAAAAA
@@ -292,7 +292,7 @@ AAAAAAAAAAAAAAAAAAAA
 TEXT;
         // }}}
         // {{{ random_seed data
-        $randomSeedData = <<<TEXT
+        $random_seed_data = <<<TEXT
 p1KYXATR1wfjZgXqGMBG9Wb3fQ7ExENWKnXNVzQP/1W+IYB8KDyEYsY4VgD0
 CaG0jSFERkTCMR2CX1nTIyaQqVlPvLLjEzLIcjcESz+wXBP7An0+wGt+EzgP
 wxqz1WNw5baZuNjVEcV4k56xNt25LL4IX7K3KFljBGuII5qS0ESJid94qgKU
@@ -314,22 +314,22 @@ TEXT;
         mkdir(self::HOMEDIR);
 
         $pubring = fopen(self::HOMEDIR . '/pubring.gpg', 'wb');
-        fwrite($pubring, base64_decode(str_replace("\n", '', $pubringData)));
+        fwrite($pubring, base64_decode(str_replace("\n", '', $pubring_data)));
         fclose($pubring);
 
         $secring = fopen(self::HOMEDIR . '/secring.gpg', 'wb');
-        fwrite($secring, base64_decode(str_replace("\n", '', $secringData)));
+        fwrite($secring, base64_decode(str_replace("\n", '', $secring_data)));
         fclose($secring);
 
         $trustdb = fopen(self::HOMEDIR . '/trustdb.gpg', 'wb');
-        fwrite($trustdb, base64_decode(str_replace("\n", '', $trustdbData)));
+        fwrite($trustdb, base64_decode(str_replace("\n", '', $trustdb_data)));
         fclose($trustdb);
 
-        $randomSeed = fopen(self::HOMEDIR . '/random_seed', 'wb');
-        fwrite($randomSeed, base64_decode(
-            str_replace("\n", '', $randomSeedData)));
+        $random_seed = fopen(self::HOMEDIR . '/random_seed', 'wb');
+        fwrite($random_seed, base64_decode(
+            str_replace("\n", '', $random_seed_data)));
 
-        fclose($randomSeed);
+        fclose($random_seed);
 
         $this->_gpg = Crypt_GPG::factory($this->getDriver(),
             $this->getOptions());
@@ -369,7 +369,7 @@ TEXT;
 
         rmdir(self::HOMEDIR);
 
-        error_reporting($this->_oldErrorLevel);
+        error_reporting($this->_old_error_level);
     }
 
     // }}}

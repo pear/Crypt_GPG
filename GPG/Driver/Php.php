@@ -326,8 +326,8 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         // populate mbstring overloading cache if not set
         if (self::$_mbStringOverload === null) {
-            self::$_mbStringOverload = (extension_loaded('mbstring') &&
-            ini_get('mbstring.func_overload') & 0x02 === 0x02);
+            self::$_mbStringOverload = (extension_loaded('mbstring')
+                && (ini_get('mbstring.func_overload') & 0x02) === 0x02);
         }
 
         if (array_key_exists('homedir', $options)) {
@@ -428,9 +428,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             }
         }
 
-        $result = $this->_parseImportStatus($this->_getStatus());
-
-        return $result;
+        return $this->_parseImportStatus($this->_getStatus());
     }
 
     // }}}
@@ -1376,11 +1374,11 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * operations that require input or output but do not require a passphrase
      * or detached signature data
      *
-     * @param string|resource $input   the input source. This is data to send
-     *                                 to GPG. If there is no data to send to
-     *                                 GPG, specify null.
-     * @param string|resource $output  the output location. This is where the
-     *                                 output of GPG is sent.
+     * @param string|resource $input  the input source. This is data to send
+     *                                to GPG. If there is no data to send to
+     *                                GPG, specify null.
+     * @param string|resource $output the output location. This is where the
+     *                                output of GPG is sent.
      *
      * @return void
      *
@@ -1466,35 +1464,40 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             $inputByteLength = self::_byteLength($input);
         }
 
-        if (is_string($message)) {
+        if (is_string($message) && !$this->_isWin) {
             $messagePosition   = 0;
             $messageByteLength = self::_byteLength($message);
         }
 
-        $pipeInput   = $this->_pipes[self::FD_INPUT];
-        $pipeOutput  = $this->_pipes[self::FD_OUTPUT];
-        $pipeError   = $this->_pipes[self::FD_ERROR];
-        $pipeStatus  = $this->_pipes[self::FD_STATUS];
-        $pipeMessage = $this->_pipes[self::FD_MESSAGE];
-
+        $pipeInput  = $this->_pipes[self::FD_INPUT];
+        $pipeOutput = $this->_pipes[self::FD_OUTPUT];
+        $pipeError  = $this->_pipes[self::FD_ERROR];
         stream_set_blocking($pipeInput, 0);
-        stream_set_blocking($pipeMessage, 0);
-        stream_set_blocking($pipeError, 0);
-        stream_set_blocking($pipeMessage, 0);
         stream_set_blocking($pipeOutput, 0);
+        stream_set_blocking($pipeError, 0);
+
+        if (!$this->_isWin) {
+            $pipeStatus  = $this->_pipes[self::FD_STATUS];
+            $pipeMessage = $this->_pipes[self::FD_MESSAGE];
+            stream_set_blocking($pipeMessage, 0);
+            stream_set_blocking($pipeStatus, 0);
+        }
 
         // set up input stream array
         $openInputStreams = array(
             'pipe' . self::FD_OUTPUT => $pipeOutput,
-            'pipe' . self::FD_ERROR  => $pipeError,
-            'pipe' . self::FD_STATUS => $pipeStatus
+            'pipe' . self::FD_ERROR  => $pipeError
         );
+
+        if (!$this->_isWin) {
+            $openInputStreams['pipe' . self::FD_STATUS] = $pipeStatus;
+        }
 
         if (is_resource($input)) {
             $openInputStreams['input'] = $input;
         }
 
-        if (is_resource($message)) {
+        if (is_resource($message) && !$this->_isWin) {
             $openInputStreams['message'] = $message;
         }
 
@@ -1505,7 +1508,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
             $openOutputStreams['pipe' . self::FD_INPUT] = $pipeInput;
         }
 
-        if (isset($message)) {
+        if (isset($message) && !$this->_isWin) {
             $openOutputStreams['pipe' . self::FD_MESSAGE] = $pipeMessage;
         }
 
@@ -1544,7 +1547,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 // input
                 if (in_array($pipeInput, $outputStreams)) {
                     if (is_string($input)) {
-                        $idle = false;
+                        $idle  = false;
                         $chunk = substr($input, $inputPosition,
                             self::CHUNK_SIZE);
 
@@ -1553,7 +1556,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                         $inputPosition += $length;
                     } else {
                         if (in_array($input, $inputStreams)) {
-                            $idle = false;
+                            $idle  = false;
                             $chunk = fread($input, self::CHUNK_SIZE);
                             fwrite($pipeInput, $chunk,
                                 self::_byteLength($chunk));
@@ -1562,9 +1565,9 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 }
 
                 // message
-                if (in_array($pipeMessage, $outputStreams)) {
+                if (!$this->_isWin && in_array($pipeMessage, $outputStreams)) {
                     if (is_string($message)) {
-                        $idle = false;
+                        $idle  = false;
                         $chunk = substr($message, $messagePosition,
                             self::CHUNK_SIZE);
 
@@ -1573,7 +1576,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                         $messagePosition += $length;
                     } else {
                         if (in_array($message, $inputStreams)) {
-                            $idle = false;
+                            $idle  = false;
                             $chunk = fread($message, self::CHUNK_SIZE);
                             fwrite($pipeMessage, $chunk,
                                 self::_byteLength($chunk));
@@ -1584,12 +1587,12 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 // output
                 if (in_array($pipeOutput, $inputStreams)) {
                     if (is_string($output)) {
-                        $idle = false;
+                        $idle  = false;
                         $chunk = fread($pipeOutput, self::CHUNK_SIZE);
                         $output .= $chunk;
                     } else {
                         if (in_array($output, $outputStreams)) {
-                            $idle = false;
+                            $idle  = false;
                             $chunk = fread($pipeOutput, self::CHUNK_SIZE);
                             fwrite($output, $chunk, self::_byteLength($chunk));
                         }
@@ -1599,12 +1602,12 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 // error
                 if (in_array($pipeError, $inputStreams)) {
                     if (is_string($error)) {
-                        $idle = false;
+                        $idle  = false;
                         $chunk = fread($pipeError, self::CHUNK_SIZE);
                         $error .= $chunk;
                     } else {
                         if (in_array($error, $errorStreams)) {
-                            $idle = false;
+                            $idle  = false;
                             $chunk = fread($pipeError, self::CHUNK_SIZE);
                             fwrite($error, $chunk, self::_byteLength($chunk));
                         }
@@ -1612,14 +1615,14 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 }
 
                 // status
-                if (in_array($pipeStatus, $inputStreams)) {
+                if (!$this->_isWin && in_array($pipeStatus, $inputStreams)) {
                     if (is_string($status)) {
-                        $idle = false;
+                        $idle  = false;
                         $chunk = fread($pipeStatus, self::CHUNK_SIZE);
                         $status .= $chunk;
                     } else {
                         if (in_array($status, $statusStreams)) {
-                            $idle = false;
+                            $idle  = false;
                             $chunk = fread($pipeStatus, self::CHUNK_SIZE);
                             fwrite($status, $chunk, self::_byteSize($chunk));
                         }
@@ -1649,19 +1652,21 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 }
 
                 // message
-                if (is_string($message)) {
-                    if ($messagePosition >= $messageByteLength) {
-                        $this->_closePipe(self::FD_MESSAGE);
-                        unset($openOutputStreams['pipe' . self::FD_MESSAGE]);
-                    }
-                } else {
-                    if (   in_array($message, $openInputStreams)
-                        && feof($message)
-                    ) {
-                        fclose($message);
-                        unset($openInputStreams['message']);
-                        $this->_closePipe(self::FD_MESSAGE);
-                        unset($openOutputStreams['pipe' . self::FD_MESSAGE]);
+                if (!$this->_isWin) {
+                    if (is_string($message)) {
+                        if ($messagePosition >= $messageByteLength) {
+                            $this->_closePipe(self::FD_MESSAGE);
+                            unset($openOutputStreams['pipe' . self::FD_MESSAGE]);
+                        }
+                    } else {
+                        if (   in_array($message, $openInputStreams)
+                            && feof($message)
+                        ) {
+                            fclose($message);
+                            unset($openInputStreams['message']);
+                            $this->_closePipe(self::FD_MESSAGE);
+                            unset($openOutputStreams['pipe' . self::FD_MESSAGE]);
+                        }
                     }
                 }
 
@@ -1692,15 +1697,17 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
                 }
 
                 // status
-                if (   in_array($pipeStatus, $openInputStreams)
-                    && feof($pipeStatus)
-                ) {
-                    $this->_closePipe(self::FD_STATUS);
-                    unset($openInputStreams['pipe' . self::FD_STATUS]);
-                    if (is_resource($status)) {
-                        fflush($status);
-                        fclose($status);
-                        unset($openOutputStreams['status']);
+                if (!$this->_isWin) {
+                    if (   in_array($pipeStatus, $openInputStreams)
+                        && feof($pipeStatus)
+                    ) {
+                        $this->_closePipe(self::FD_STATUS);
+                        unset($openInputStreams['pipe' . self::FD_STATUS]);
+                        if (is_resource($status)) {
+                            fflush($status);
+                            fclose($status);
+                            unset($openOutputStreams['status']);
+                        }
                     }
                 }
             } // end if not idle
@@ -1788,17 +1795,21 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
         $command .= ' ' . implode(' ', $args);
 
+        // binary operations will not work on Windows with PHP < 5.2.6
+        $rb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'r' : 'rb';
+        $wb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'w' : 'wb';
+
         $descriptorSpec = array(
-            self::FD_INPUT   => array('pipe', 'r'), // stdin
-            self::FD_OUTPUT  => array('pipe', 'w'), // stdout
-            self::FD_ERROR   => array('pipe', 'w'), // stderr
+            self::FD_INPUT  => array('pipe', $rb), // stdin
+            self::FD_OUTPUT => array('pipe', $wb), // stdout
+            self::FD_ERROR  => array('pipe', $wb), // stderr
         );
 
         if (!$this->_isWin) {
             // extra output (status)
-            $descriptorSpec[self::FD_STATUS]  = array('pipe', 'w');
+            $descriptorSpec[self::FD_STATUS]  = array('pipe', $wb);
             // extra input
-            $descriptorSpec[self::FD_MESSAGE] = array('pipe', 'r');
+            $descriptorSpec[self::FD_MESSAGE] = array('pipe', $rb);
         }
 
         $this->_debug('Opening subprocess with the following command:');
@@ -1843,13 +1854,13 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
 
             $exitCode = proc_close($this->_process);
 
+            $error  = $this->_getError();
+            $status = $this->_getStatus();
+
             // delete any remaining temp files
             foreach (array_keys($this->_tempFiles) as $fileNumber) {
                 $this->_deleteTempFile($fileNumber);
             }
-
-            $error  = $this->_getError();
-            $status = $this->_getStatus();
 
             if ($exitCode != 0) {
                 $this->_debug('Subprocess returned an unexpected exit code: ' .
@@ -1988,9 +1999,7 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      * Gets the status output from the GPG subprocess
      *
      * If the operating system is Windows, this reads and caches the contents
-     * of the status file after the subprocess has been closed. Otherwise, this
-     * caches the content of the status file descriptor while the GPG
-     * subprocess is open.
+     * of the status file after the subprocess has been closed.
      *
      * @return string the status output from the open GPG subprocess. If there
      *                is no status output or there is no open GPG subprocess,
@@ -2000,18 +2009,9 @@ class Crypt_GPG_Driver_Php extends Crypt_GPG
      */
     private function _getStatus()
     {
-/*        if ($this->_status == '') {
-            if ($this->_isWin) {
-                $this->_status = $this->_readStatusFile();
-            } else {
-                if (array_key_exists(self::FD_STATUS, $this->_openPipes)) {
-                    while (!feof($this->_pipes[self::FD_STATUS])) {
-                        $this->_status .= fread($this->_pipes[self::FD_STATUS],
-                            8192);
-                    }
-                }
-            }
-        }*/
+        if ($this->_status == '' && $this->_isWin) {
+            $this->_status = $this->_readStatusFile();
+        }
 
         return $this->_status;
     }

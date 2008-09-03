@@ -133,14 +133,14 @@ class Crypt_GPG_SubKey
      *
      * @var boolean
      */
-    private $_can_sign = false;
+    private $_canSign = false;
 
     /**
      * Whether or not this sub-key can encrypt data
      *
      * @var boolean
      */
-    private $_can_encrypt = false;
+    private $_canEncrypt = false;
 
     /**
      * Whether or not the private key for this sub-key exists in the keyring
@@ -246,7 +246,7 @@ class Crypt_GPG_SubKey
      */
     public function canSign()
     {
-        return $this->_can_sign;
+        return $this->_canSign;
     }
 
     // }}}
@@ -260,7 +260,7 @@ class Crypt_GPG_SubKey
      */
     public function canEncrypt()
     {
-        return $this->_can_encrypt;
+        return $this->_canEncrypt;
     }
 
     // }}}
@@ -379,14 +379,14 @@ class Crypt_GPG_SubKey
     /**
      * Sets whether of not this sub-key can sign data
      *
-     * @param boolean $can_sign true if this sub-key can sign data and false if
-     *                          it can not.
+     * @param boolean $canSign true if this sub-key can sign data and false if
+     *                         it can not.
      *
      * @return void
      */
-    public function setCanSign($can_sign)
+    public function setCanSign($canSign)
     {
-        $this->_can_sign = ($can_sign) ? true : false;
+        $this->_canSign = ($canSign) ? true : false;
     }
 
     // }}}
@@ -395,14 +395,14 @@ class Crypt_GPG_SubKey
     /**
      * Sets whether of not this sub-key can encrypt data
      *
-     * @param boolean $can_encrypt true if this sub-key can encrypt data and
-     *                             false if it can not.
+     * @param boolean $canEncrypt true if this sub-key can encrypt data and
+     *                            false if it can not.
      *
      * @return void
      */
-    public function setCanEncrypt($can_encrypt)
+    public function setCanEncrypt($canEncrypt)
     {
-        $this->_can_encrypt = ($can_encrypt) ? true : false;
+        $this->_canEncrypt = ($canEncrypt) ? true : false;
     }
 
     // }}}

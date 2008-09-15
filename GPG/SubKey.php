@@ -424,6 +424,53 @@ class Crypt_GPG_SubKey
     }
 
     // }}}
+    // {{{ parse()
+
+    /**
+     * Parses a sub-key object from a sub-key string
+     *
+     * See doc/DETAILS in the
+     * {@link http://www.gnupg.org/download/ GPG distribution} for info on
+     * how the string is parsed.
+     *
+     * @param string $string the string containing the sub-key.
+     *
+     * @return Crypt_GPG_SubKey the sub-key object parsed from the string.
+     */
+    public static function parse($string)
+    {
+        $tokens = explode(':', $string);
+
+        $subKey = new Crypt_GPG_SubKey();
+
+        $subKey->setId($tokens[4]);
+        $subKey->setLength($tokens[2]);
+        $subKey->setAlgorithm($tokens[3]);
+
+        if (strpos($tokens[5], 'T') === false) {
+            $subKey->setCreationDate($tokens[5]);
+        } else {
+            $subKey->setCreationDate(strtotime($tokens[5]));
+        }
+
+        if (strpos($tokens[6], 'T') === false) {
+            $subKey->setExpirationDate($tokens[6]);
+        } else {
+            $subKey->setExpirationDate(strtotime($tokens[6]));
+        }
+
+        if (strpos($tokens[11], 's') !== false) {
+            $subKey->setCanSign(true);
+        }
+
+        if (strpos($tokens[11], 'e') !== false) {
+            $subKey->setCanEncrypt(true);
+        }
+
+        return $subKey;
+    }
+
+    // }}}
 }
 
 // }}}

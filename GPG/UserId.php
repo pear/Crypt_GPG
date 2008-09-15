@@ -258,6 +258,47 @@ class Crypt_GPG_UserId
     }
 
     // }}}
+    // {{{ parse()
+
+    /**
+     * Parses a user id object from a user id string
+     *
+     * A user id string is of the form:
+     * <code>name (comment) &lt;email-address&gt;</code> with the
+     * <i>comment</i> and <i>email-address</i> being optional.
+     *
+     * @param string $string the user id string to parse.
+     *
+     * @return Crypt_GPG_UserId the user id object parsed from the string.
+     */
+    public static function parse($string)
+    {
+        $userId  = new Crypt_GPG_UserId();
+        $email   = '';
+        $comment = '';
+
+        $matches = array();
+        if (preg_match('/^(.+?) <([^>]+)>$/', $string, $matches) === 1) {
+            $string = $matches[1];
+            $email  = $matches[2];
+        }
+
+        $matches = array();
+        if (preg_match('/^(.+?) \(([^\)]+)\)$/', $string, $matches) === 1) {
+            $string  = $matches[1];
+            $comment = $matches[2];
+        }
+
+        $name = $string;
+
+        $userId->setName($name);
+        $userId->setComment($comment);
+        $userId->setEmail($email);
+
+        return $userId;
+    }
+
+    // }}}
 }
 
 // }}}

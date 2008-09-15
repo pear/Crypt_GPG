@@ -93,9 +93,9 @@ class Crypt_GPG_FileException extends Crypt_GPG_Exception
     /**
      * Creates a new Crypt_GPG_FileException
      *
-     * @param string $message  an error message.
-     * @param int    $code     a user defined error code.
-     * @param string $filename the name of the file that caused this exception.
+     * @param string  $message  an error message.
+     * @param integer $code     a user defined error code.
+     * @param string  $filename the name of the file that caused this exception.
      */
     public function __construct($message, $code = 0, $filename = '')
     {
@@ -154,10 +154,10 @@ class Crypt_GPG_OpenSubprocessException extends Crypt_GPG_Exception
     /**
      * Creates a new Crypt_GPG_OpenSubprocessException
      *
-     * @param string $message an error message.
-     * @param int    $code    a user defined error code.
-     * @param string $command the command that was called to open the
-     *                        new subprocess.
+     * @param string  $message an error message.
+     * @param integer $code    a user defined error code.
+     * @param string  $command the command that was called to open the
+     *                         new subprocess.
      *
      * @see Crypt_GPG::_openSubprocess()
      */
@@ -180,6 +180,64 @@ class Crypt_GPG_OpenSubprocessException extends Crypt_GPG_Exception
     public function getCommand()
     {
         return $this->_command;
+    }
+
+    // }}}
+}
+
+// }}}
+// {{{ class Crypt_GPG_InvalidOperationException
+
+/**
+ * An exception class thrown when an invalid GPG operation is attempted
+ *
+ * @category  Encryption
+ * @package   Crypt_GPG
+ * @author    Michael Gauthier <mike@silverorange.com>
+ * @copyright 2008 silverorange
+ * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      http://pear.php.net/package/Crypt_GPG
+ */
+class Crypt_GPG_InvalidOperationException extends Crypt_GPG_Exception
+{
+    // {{{ private class properties
+
+    /**
+     * The attempted operation
+     *
+     * @var string
+     */
+    private $_operation = '';
+
+    // }}}
+    // {{{ __construct()
+
+    /**
+     * Creates a new Crypt_GPG_OpenSubprocessException
+     *
+     * @param string  $message   an error message.
+     * @param integer $code      a user defined error code.
+     * @param string  $operation the operation.
+     */
+    public function __construct($message, $code = 0, $operation = '')
+    {
+        $this->_operation = $operation;
+        parent::__construct($message, $code);
+    }
+
+    // }}}
+    // {{{ getOperation()
+
+    /**
+     * Returns the contents of the internal _operation property
+     *
+     * @return string the attempted operation.
+     *
+     * @see Crypt_GPG_InvalidOperationException::$_operation
+     */
+    public function getOperation()
+    {
+        return $this->_operation;
     }
 
     // }}}
@@ -216,9 +274,9 @@ class Crypt_GPG_KeyNotFoundException extends Crypt_GPG_Exception
     /**
      * Creates a new Crypt_GPG_KeyNotFoundException
      *
-     * @param string $message an error message.
-     * @param int    $code    a user defined error code.
-     * @param string $keyId   the key identifier of the key.
+     * @param string  $message an error message.
+     * @param integer $code    a user defined error code.
+     * @param string  $keyId   the key identifier of the key.
      */
     public function __construct($message, $code = 0, $keyId= '')
     {
@@ -360,10 +418,10 @@ class Crypt_GPG_DeletePrivateKeyException extends Crypt_GPG_Exception
     /**
      * Creates a new Crypt_GPG_DeletePrivateKeyException
      *
-     * @param string $message an error message.
-     * @param int    $code    a user defined error code.
-     * @param string $keyId   the key identifier of the public key that was
-     *                        attempted to delete.
+     * @param string  $message an error message.
+     * @param integer $code    a user defined error code.
+     * @param string  $keyId   the key identifier of the public key that was
+     *                         attempted to delete.
      *
      * @see Crypt_GPG::deletePublicKey()
      */

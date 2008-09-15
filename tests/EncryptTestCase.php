@@ -3,7 +3,7 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * PHPUnit3.2 test framework script for the Crypt_GPG package.
+ * Encryption tests for the Crypt_GPG package.
  *
  * These tests require the PHPUnit 3.2 package to be installed. PHPUnit is
  * installable using PEAR. See the
@@ -12,7 +12,7 @@
  *
  * To run these tests, use:
  * <code>
- * $ phpunit PhpDriverTestCase
+ * $ phpunit EncryptTestCase
  * </code>
  *
  * LICENSE:
@@ -34,35 +34,65 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2005-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
 /**
- * Unit tests
+ * Base test case.
  */
-require_once 'DriverTestCase.php';
+require_once 'TestCase.php';
 
 /**
- * Tests the native PHP implementation of the Crypt_GPG object.
+ * Tests encryption abilities of Crypt_GPG.
+ *
+ * @category  Encryption
+ * @package   Crypt_GPG
+ * @author    Michael Gauthier <mike@silverorange.com>
+ * @copyright 2005-2008 silverorange
+ * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      http://pear.php.net/package/Crypt_GPG
  */
-class PhpDriverTestCase extends DriverTestCase
+class EncryptTestCase extends TestCase
 {
-    // {{{ getDriver()
+    // {{{ testEncrypt()
 
-    protected function getDriver()
+    /**
+     * @group encrypt
+     */
+    public function testEncrypt()
     {
-        return 'php';
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        $keyId = 'public-and-private@example.com';
+        $passphrase = 'test';
+
+        $this->gpg->addEncryptKey($keyId);
+        $encryptedData = $this->gpg->encrypt($data);
+
+        $this->gpg->addDecryptKey($keyId, $passphrase);
+        $decryptedData = $this->gpg->decrypt($encryptedData);
+
+        $this->assertEquals($data, $decryptedData);
     }
 
     // }}}
-    // {{{ getOptions()
+    // {{{ testEncryptKeyNotFoundException()
 
-    protected function getOptions()
+    /**
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     *
+     * @group encrypt
+     */
+    public function testEncryptNotFoundException()
     {
-        return array('homedir' => DriverTestCase::HOMEDIR);
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        $keyId = 'non-existent-key@example.com';
+
+        $this->gpg->addEncryptKey($keyId);
+
+        $encryptedData = $this->gpg->encrypt($data);
     }
 
     // }}}

@@ -47,8 +47,16 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 require_once 'PHPUnit/Framework/TestSuite.php';
 require_once 'PHPUnit/TextUI/TestRunner.php';
 
-require_once 'PhpDriverTestCase.php';
-
+require_once 'DecryptTestCase.php';
+require_once 'DeletePublicKeyTestCase.php';
+require_once 'DeletePrivateKeyTestCase.php';
+require_once 'EncryptTestCase.php';
+require_once 'ExportPublicKeyTestCase.php';
+require_once 'GetFingerprintTestCase.php';
+require_once 'GetKeysTestCase.php';
+require_once 'ImportKeyTestCase.php';
+require_once 'SignTestCase.php';
+require_once 'VerifyTestCase.php';
 
 /**
  * AllTests suite testing Crypt_GPG
@@ -75,7 +83,16 @@ class Crypt_GPG_AllTests
     public static function suite()
     {
         $suite = new PHPUnit_Framework_TestSuite('Crypt_GPG Tests');
-        $suite->addTestSuite('PhpDriverTestCase');
+        $suite->addTestSuite('DecryptTestCase');
+        $suite->addTestSuite('DeletePublicKeyTestCase');
+        $suite->addTestSuite('DeletePrivateKeyTestCase');
+        $suite->addTestSuite('EncryptTestCase');
+        $suite->addTestSuite('ExportPublicKeyTestCase');
+        $suite->addTestSuite('GetFingerprintTestCase');
+        $suite->addTestSuite('GetKeysTestCase');
+        $suite->addTestSuite('ImportKeyTestCase');
+        $suite->addTestSuite('SignTestCase');
+        $suite->addTestSuite('VerifyTestCase');
         return $suite;
     }
 

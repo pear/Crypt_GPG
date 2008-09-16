@@ -399,6 +399,78 @@ class Crypt_GPG
     }
 
     // }}}
+    // {{{ importKeyFile()
+
+    /**
+     * Imports a public or private key file into the keyring
+     *
+     * Keys may be removed from the keyring using
+     * {@link Crypt_GPG::deletePublicKey()} or
+     * {@link Crypt_GPG::deletePrivateKey()}.
+     *
+     * @param string $filename the key file to be imported.
+     *
+     * @return array an associative array containing the following elements:
+     *               - <code>fingerprint</code>       - the fingerprint of the
+     *                                                  imported key,
+     *               - <code>public_imported</code>   - the number of public
+     *                                                  keys imported,
+     *               - <code>public_unchanged</code>  - the number of unchanged
+     *                                                  public keys,
+     *               - <code>private_imported</code>  - the number of private
+     *                                                  keys imported,
+     *               - <code>private_unchanged</code> - the number of unchanged
+     *                                                  private keys.
+     *
+     * @throws Crypt_GPG_NoDataException if the key data is missing or if the
+     *         data is is not valid key data.
+     *
+     * @throws Crypt_GPG_FileException if the key file is not readable.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <i>debug</i> option and file a bug report if these
+     *         exceptions occur.
+     */
+    public function importKeyFile($filename)
+    {
+        $result = array();
+
+        $file = fopen($filename, 'rw');
+
+        if ($file === false) {
+            throw new Crypt_GPG_FileException('Could not open key file "' .
+                $filename . '" for importing.', 0, $filename);
+        }
+
+        $this->engine->reset();
+        $this->engine->addStatusHandler(array($this, 'handleImportKeyStatus'),
+            array(&$result));
+
+        $this->engine->setOperation('--import');
+        $this->engine->setInput($file);
+        $this->engine->run();
+
+        fclose($file);
+
+        $code = $this->engine->getErrorCode();
+
+        switch ($code) {
+        case Crypt_GPG::ERROR_DUPLICATE_KEY:
+        case Crypt_GPG::ERROR_NONE:
+            // ignore duplicate key import errors
+            break;
+        case Crypt_GPG::ERROR_NO_DATA:
+            throw new Crypt_GPG_NoDataException(
+                'No valid GPG key data found.', $code);
+        default:
+            throw new Crypt_GPG_Exception(
+                'Unknown error importing GPG key.', $code);
+        }
+
+        return $result;
+    }
+
+    // }}}
     // {{{ exportPublicKey()
 
     /**

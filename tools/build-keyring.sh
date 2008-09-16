@@ -16,12 +16,20 @@ DATA="Hello, Alice! Goodbye, Bob!"
 echo "Creating key homedir"
 mkdir $HOMEDIR
 
-cp clearsigned-data        $HOMEDIR/clearsigned-data
-cp detached-signature      $HOMEDIR/detached-signature
-cp normal-signed-data      $HOMEDIR/normal-signed-data
-cp dual-clearsigned-data   $HOMEDIR/dual-clearsigned-data
-cp dual-detached-signature $HOMEDIR/dual-detached-signature
-cp dual-normal-signed-data $HOMEDIR/dual-normal-signed-data
+# create temp files for signing
+cp test-file-small $HOMEDIR/clearsigned-data
+cp test-file-small $HOMEDIR/detached-signature
+cp test-file-small $HOMEDIR/normal-signed-data
+cp test-file-small $HOMEDIR/dual-clearsigned-data
+cp test-file-small $HOMEDIR/dual-detached-signature
+cp test-file-small $HOMEDIR/dual-normal-signed-data
+
+# create temp files for encrypting
+cp test-file-medium $HOMEDIR/encrypted-data-file
+cp test-file-medium $HOMEDIR/encrypted-data-no-passphrase-file
+cp test-file-medium $HOMEDIR/encrypted-data-missing-key-file
+cp test-file-medium $HOMEDIR/dual-encrypted-data-file
+cp test-file-medium $HOMEDIR/dual-encrypted-data-one-passphrase-file
 
 # BUILDING KEYS
 
@@ -176,16 +184,39 @@ $GPG \
 	--armor \
 	--export public-only@example.com > $HOMEDIR/public-only-pub.asc
 
+# delete public-only@example.com secret key
 echo "deleting secret key for public-only@example.com"
 echo "y" | $GPG \
 	--command-fd 0 \
 	--delete-secret-key public-only@example.com
 
+# encrypted-data.asc
+echo "generating encrypted-data.asc"
+echo -n $DATA | $GPG \
+	--recipient first-keypair@example.com \
+	--armor \
+	--encrypt > $HOMEDIR/encrypted-data.asc
+
+# encrypted-data-file.asc
+echo "generating encrypted-data-file.asc"
+$GPG \
+	--recipient first-keypair@example.com \
+	--armor \
+	--encrypt $HOMEDIR/encrypted-data-file
+
 # encrypted-data-no-passphrase.asc
 echo "generating encrypted-data-no-passphrase.asc"
 echo -n $DATA | $GPG \
 	--recipient no-passphrase@example.com \
-	--armor --encrypt > $HOMEDIR/encrypted-data-no-passphrase.asc
+	--armor \
+	--encrypt > $HOMEDIR/encrypted-data-no-passphrase.asc
+
+# encrypted-data-no-passphrase-file.asc
+echo "generating encrypted-data-no-passphrase-file.asc"
+$GPG \
+	--recipient no-passphrase@example.com \
+	--armor \
+	--encrypt $HOMEDIR/encrypted-data-no-passphrase-file
 
 # dual-encrypted-data-one-passphrase.asc
 echo "generating dual-encrypted-data-one-passphrase.asc"
@@ -195,6 +226,15 @@ echo -n $DATA | $GPG \
 	--armor \
 	--encrypt > $HOMEDIR/dual-encrypted-data-one-passphrase.asc
 
+# dual-encrypted-data-one-passphrase-file.asc
+echo "generating dual-encrypted-data-one-passphrase-file.asc"
+$GPG \
+	--recipient first-keypair@example.com \
+	--recipient no-passphrase@example.com \
+	--armor \
+	--encrypt $HOMEDIR/dual-encrypted-data-one-passphrase-file
+
+# delete external-public@example.com secret key
 echo "deleting secret key for external-public@example.com"
 echo "y" | $GPG \
 	--command-fd 0 \
@@ -206,6 +246,7 @@ $GPG \
 	--armor \
 	--export external-public@example.com > $HOMEDIR/external-public-pub.asc
 
+# delete external-public@example.com key
 echo "deleting key external-public@example.com"
 echo "y" | $GPG \
 	--command-fd 0 \
@@ -218,6 +259,14 @@ echo -n $DATA | $GPG \
 	--armor \
 	--encrypt > $HOMEDIR/encrypted-data-missing-key.asc
 
+# encrypted-data-missing-key-file.asc
+echo "generating encrypted-data-missing-key-file.asc"
+$GPG \
+	--recipient missing-key@example.com \
+	--armor \
+	--encrypt $HOMEDIR/encrypted-data-missing-key-file
+
+# delete missing-key@example.com key
 echo "deleting key missing-key@example.com"
 echo "y" | $GPG \
 	--command-fd 0 \

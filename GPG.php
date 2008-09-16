@@ -968,12 +968,12 @@ class Crypt_GPG
      * Encrypted data is ASCII armored by default but may optionally be saved
      * as binary.
      *
-     * @param string  $inputFile  the filename of the file to encrypt. The file
-     *                            must be readable by PHP.
-     * @param string  $outputFile the filename of the file in which to store
-     *                            the encrypted data. The file must be
-     *                            writeable by PHP.
-     * @param boolean $armor      optional.
+     * @param string  $filename      the filename of the file to encrypt.
+     * @param string  $encryptedFile the filename of the file in which to store
+     *                               the encrypted data.
+     * @param boolean $armor         optional. If true, ASCII armored data is
+     *                               returned; otherwise, binary data is
+     *                               returned. Defaults to true.
      *
      * @return void
      *
@@ -987,24 +987,25 @@ class Crypt_GPG
      *         Use the <i>debug</i> option and file a bug report if these
      *         exceptions occur.
      */
-    public function encryptFile($inputFile, $outputFile, $armor = true)
+    public function encryptFile($filename, $encryptedFile, $armor = true)
     {
         if (count($this->encryptKeys) === 0) {
             throw new Crypt_GPG_KeyNotFoundException(
                 'No encryption keys specified.');
         }
 
-        $inputFile  = fopen($inputFile, 'rb');
-        $outputFile = fopen($outputFile, 'wb');
+        $inputFile  = fopen($filename, 'rb');
+        $outputFile = fopen($encryptedFile, 'wb');
 
         if ($inputFile === false) {
             throw new Crypt_GPG_FileException('Could not open input file "' .
-                $inputFile . '" for encryption.', 0, $inputFile);
+                $filename . '" for encryption.', 0, $filename);
         }
 
         if ($outputFile === false) {
             throw new Crypt_GPG_FileException('Could not open output file "' .
-                $outputFile . '" for storing encrypted data.', 0, $outputFile);
+                $encryptedFile . '" for storing encrypted data.', 0,
+                $encryptedFile);
         }
 
         $arguments = ($armor) ? array('--armor') : array();
@@ -1040,12 +1041,12 @@ class Crypt_GPG
     // {{{ decrypt()
 
     /**
-     * Decrypts string data using the given passphrase
+     * Decrypts string data
      *
      * This method assumes the required private key is available in the keyring
      * and throws an exception if the private key is not available. To add a
-     * private key to the keyring, use the {@link Crypt_GPG::importKey()}
-     * method.
+     * private key to the keyring, use the {@link Crypt_GPG::importKey()} or
+     * {@link Crypt_GPG::importKeyFile()} methods.
      *
      * @param string $encryptedData the data to be decrypted.
      *
@@ -1074,6 +1075,92 @@ class Crypt_GPG
         $this->engine->setOperation('--decrypt');
         $this->engine->setInput($encryptedData);
         $this->engine->setOutput($data);
+        $this->engine->run();
+
+        $code = $this->engine->getErrorCode();
+
+        switch ($code) {
+        case Crypt_GPG::ERROR_NONE:
+            break;
+        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+            throw new Crypt_GPG_KeyNotFoundException(
+                'Cannot decrypt data. Private key required for decryption '.
+                'is not in the keyring. Import the private key before '.
+                'trying to decrypt this data.', $code);
+        case Crypt_GPG::ERROR_NO_DATA:
+            throw new Crypt_GPG_NoDataException(
+                'Cannot decrypt data. No GPG encrypted data was found in '.
+                'the provided data.', $code);
+        case Crypt_GPG::ERROR_BAD_PASSPHRASE:
+            throw new Crypt_GPG_BadPassphraseException(
+                'Cannot decrypt data. Incorrect passphrase provided.', $code);
+        case Crypt_GPG::ERROR_MISSING_PASSPHRASE:
+            throw new Crypt_GPG_BadPassphraseException(
+                'Cannot decrypt data. No passphrase provided.', $code);
+        default:
+            throw new Crypt_GPG_Exception(
+                'Unknown error decrypting data.', $code);
+        }
+
+        return $data;
+    }
+
+    // }}}
+    // {{{ decryptFile()
+
+    /**
+     * Decrypts a file
+     *
+     * This method assumes the required private key is available in the keyring
+     * and throws an exception if the private key is not available. To add a
+     * private key to the keyring, use the {@link Crypt_GPG::importKey()} or
+     * {@link Crypt_GPG::importKeyFile()} methods.
+     *
+     * @param string $encryptedFile the name of the encrypted file data to
+     *                              decrypt.
+     * @param string $decryptedFile the name of the file to which the decrypted
+     *                              data should be written.
+     *
+     * @return void
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
+     *         decrypt the data is not in the user's keyring.
+     *
+     * @throws Crypt_GPG_NoDataException if specified data does not contain
+     *         GPG encrypted data.
+     *
+     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     *         incorrect or if a required passphrase is not specified. See
+     *         {@link Crypt_GPG::addDecryptKey()}.
+     *
+     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     *         if the input file is not readable.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <i>debug</i> option and file a bug report if these
+     *         exceptions occur.
+     */
+    public function decryptFile($encryptedFile, $decryptedFile)
+    {
+        $inputFile  = fopen($encryptedFile, 'rb');
+        $outputFile = fopen($decryptedFile, 'wb');
+
+        if ($inputFile === false) {
+            throw new Crypt_GPG_FileException('Could not open input file "' .
+                $encryptedFile . '" for decryption.', 0, $encryptedFile);
+        }
+
+        if ($outputFile === false) {
+            throw new Crypt_GPG_FileException('Could not open output file "' .
+                $decryptedFile . '" for storing decrypted data.', 0,
+                $decryptedFile);
+        }
+
+        $this->engine->reset();
+        $this->engine->addStatusHandler(array($this, 'handleDecryptStatus'));
+        $this->engine->setOperation('--decrypt');
+        $this->engine->setInput($inputFile);
+        $this->engine->setOutput($outputFile);
         $this->engine->run();
 
         $code = $this->engine->getErrorCode();

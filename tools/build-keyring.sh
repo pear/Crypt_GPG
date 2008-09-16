@@ -10,7 +10,7 @@
 #
 
 HOMEDIR=`pwd`"/test-keyring"
-GPG="gpg --homedir $HOMEDIR --no-secmem --no-permission-warning"
+GPG="gpg --homedir $HOMEDIR --no-secmem --no-permission-warning --quiet --no-greeting"
 DATA="Hello, Alice! Goodbye, Bob!"
 FILE=temp-file
 
@@ -24,7 +24,7 @@ cp dual-clearsigned-data   $HOMEDIR/dual-clearsigned-data
 cp dual-detached-signature $HOMEDIR/dual-detached-signature
 cp dual-normal-signed-data $HOMEDIR/dual-normal-signed-data
 
-echo $DATA > $HOMEDIR/$FILE
+echo -n $DATA > $HOMEDIR/$FILE
 
 # BUILDING KEYS
 
@@ -100,7 +100,7 @@ test
 
 # encrypted-data.asc
 echo "generating encrypted-data.asc"
-echo $DATA | $GPG \
+echo -n $DATA | $GPG \
 	--recipient first-keypair@example.com \
 	--armor \
 	--encrypt > $HOMEDIR/encrypted-data.asc
@@ -131,7 +131,7 @@ echo "test1" | $GPG \
 
 # dual-encrypted-data@example.com
 echo "generating dual-encrypted-data.asc"
-echo $DATA | $GPG \
+echo -n $DATA | $GPG \
 	--recipient first-keypair@example.com \
 	--recipient second-keypair@example.com \
 	--armor \
@@ -186,13 +186,13 @@ echo "y" | $GPG \
 
 # encrypted-data-no-passphrase.asc
 echo "generating encrypted-data-no-passphrase.asc"
-echo $DATA | $GPG \
+echo -n $DATA | $GPG \
 	--recipient no-passphrase@example.com \
 	--armor --encrypt > $HOMEDIR/encrypted-data-no-passphrase.asc
 
 # dual-encrypted-data-one-passphrase.asc
 echo "generating dual-encrypted-data-one-passphrase.asc"
-echo $DATA | $GPG \
+echo -n $DATA | $GPG \
 	--recipient first-keypair@example.com \
 	--recipient no-passphrase@example.com \
 	--armor \
@@ -216,7 +216,7 @@ echo "y" | $GPG \
 
 # encrypted-data-missing-key.asc
 echo "generating encrypted-data-missing-key.asc"
-echo $DATA | $GPG \
+echo -n $DATA | $GPG \
 	--recipient missing-key@example.com \
 	--armor \
 	--encrypt > $HOMEDIR/encrypted-data-missing-key.asc

@@ -12,7 +12,6 @@
 HOMEDIR=`pwd`"/test-keyring"
 GPG="gpg --homedir $HOMEDIR --no-secmem --no-permission-warning --quiet --no-greeting"
 DATA="Hello, Alice! Goodbye, Bob!"
-FILE=temp-file
 
 echo "Creating key homedir"
 mkdir $HOMEDIR
@@ -23,8 +22,6 @@ cp normal-signed-data      $HOMEDIR/normal-signed-data
 cp dual-clearsigned-data   $HOMEDIR/dual-clearsigned-data
 cp dual-detached-signature $HOMEDIR/dual-detached-signature
 cp dual-normal-signed-data $HOMEDIR/dual-normal-signed-data
-
-echo -n $DATA > $HOMEDIR/$FILE
 
 # BUILDING KEYS
 

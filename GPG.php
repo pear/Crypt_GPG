@@ -435,7 +435,7 @@ class Crypt_GPG
     {
         $result = array();
 
-        $file = fopen($filename, 'rw');
+        $file = fopen($filename, 'rb');
 
         if ($file === false) {
             throw new Crypt_GPG_FileException('Could not open key file "' .

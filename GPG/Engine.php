@@ -874,8 +874,8 @@ class Crypt_GPG_Engine
                 $this->_debug('=> about to read ' . self::CHUNK_SIZE .
                     'bytes from input stream');
 
-                $chunk = fread($this->_input, self::CHUNK_SIZE);
-                $length = self::_byteLength($chunk);
+                $chunk        = fread($this->_input, self::CHUNK_SIZE);
+                $length       = self::_byteLength($chunk);
                 $inputBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -911,8 +911,8 @@ class Crypt_GPG_Engine
                 $this->_debug('=> about to read ' . self::CHUNK_SIZE .
                     ' bytes from message stream');
 
-                $chunk = fread($this->_message, self::CHUNK_SIZE);
-                $length = self::_byteLength($chunk);
+                $chunk          = fread($this->_message, self::CHUNK_SIZE);
+                $length         = self::_byteLength($chunk);
                 $messageBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -924,8 +924,8 @@ class Crypt_GPG_Engine
                 $this->_debug('=> about to read ' . self::CHUNK_SIZE .
                     ' bytes from GPG output');
 
-                $chunk = fread($fdOutput, self::CHUNK_SIZE);
-                $length = self::_byteLength($chunk);
+                $chunk         = fread($fdOutput, self::CHUNK_SIZE);
+                $length        = self::_byteLength($chunk);
                 $outputBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -956,8 +956,8 @@ class Crypt_GPG_Engine
                 $this->_debug('=> about to read ' . self::CHUNK_SIZE .
                     ' bytes from GPG error');
 
-                $chunk = fread($fdError, self::CHUNK_SIZE);
-                $length = self::_byteLength($chunk);
+                $chunk        = fread($fdError, self::CHUNK_SIZE);
+                $length       = self::_byteLength($chunk);
                 $errorBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -983,8 +983,8 @@ class Crypt_GPG_Engine
                 $this->_debug('=> about to read ' . self::CHUNK_SIZE .
                     ' bytes from GPG status');
 
-                $chunk = fread($fdStatus, self::CHUNK_SIZE);
-                $length = self::_byteLength($chunk);
+                $chunk         = fread($fdStatus, self::CHUNK_SIZE);
+                $length        = self::_byteLength($chunk);
                 $statusBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');

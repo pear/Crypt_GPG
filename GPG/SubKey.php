@@ -58,17 +58,17 @@ class Crypt_GPG_SubKey
     /**
      * RSA encryption algorithm.
      */
-    const ALGORITHM_RSA             = 1;
+    const ALGORITHM_RSA = 1;
 
     /**
      * Elgamal encryption algorithm (encryption only).
      */
-    const ALGORITHM_ELGAMAL_ENC     = 16;
+    const ALGORITHM_ELGAMAL_ENC = 16;
 
     /**
      * DSA encryption algorithm (sometimes called DH, sign only).
      */
-    const ALGORITHM_DSA             = 17;
+    const ALGORITHM_DSA = 17;
 
     /**
      * Elgamal encryption algorithm (signage and encryption - should not be

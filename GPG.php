@@ -111,17 +111,17 @@ class Crypt_GPG
     /**
      * Error code returned when there is no error.
      */
-    const ERROR_NONE               = 0;
+    const ERROR_NONE = 0;
 
     /**
      * Error code returned when an unknown or unhandled error occurs.
      */
-    const ERROR_UNKNOWN            = 1;
+    const ERROR_UNKNOWN = 1;
 
     /**
      * Error code returned when a bad passphrase is used.
      */
-    const ERROR_BAD_PASSPHRASE     = 2;
+    const ERROR_BAD_PASSPHRASE = 2;
 
     /**
      * Error code returned when a required passphrase is missing.
@@ -132,7 +132,7 @@ class Crypt_GPG
      * Error code returned when a key that is already in the keyring is
      * imported.
      */
-    const ERROR_DUPLICATE_KEY      = 4;
+    const ERROR_DUPLICATE_KEY = 4;
 
     /**
      * Error code returned the required data is missing for an operation.
@@ -140,23 +140,23 @@ class Crypt_GPG
      * This could be missing key data, missing encrypted data or missing
      * signature data.
      */
-    const ERROR_NO_DATA            = 5;
+    const ERROR_NO_DATA = 5;
 
     /**
      * Error code returned when an unsigned key is used.
      */
-    const ERROR_UNSIGNED_KEY       = 6;
+    const ERROR_UNSIGNED_KEY = 6;
 
     /**
      * Error code returned when a key that is not self-signed is used.
      */
-    const ERROR_NOT_SELF_SIGNED    = 7;
+    const ERROR_NOT_SELF_SIGNED = 7;
 
     /**
      * Error code returned when a public or private key that is not in the
      * keyring is used.
      */
-    const ERROR_KEY_NOT_FOUND      = 8;
+    const ERROR_KEY_NOT_FOUND = 8;
 
     /**
      * Error code returned when an attempt to delete public key having a
@@ -176,7 +176,7 @@ class Crypt_GPG
      * @see Crypt_GPG::sign()
      * @see Crypt_GPG::signFile()
      */
-    const SIGN_MODE_NORMAL   = 1;
+    const SIGN_MODE_NORMAL = 1;
 
     /**
      * Signing mode for clearsigning data. Clearsigned signatures are ASCII
@@ -187,7 +187,7 @@ class Crypt_GPG
      * @see Crypt_GPG::sign()
      * @see Crypt_GPG::signFile()
      */
-    const SIGN_MODE_CLEAR    = 2;
+    const SIGN_MODE_CLEAR = 2;
 
     /**
      * Signing mode for creating a detached signature. When using detached
@@ -211,7 +211,7 @@ class Crypt_GPG
      *
      * @see Crypt_GPG::getFingerprint()
      */
-    const FORMAT_NONE      = 1;
+    const FORMAT_NONE = 1;
 
     /**
      * Fingerprint is formatted in the format used by the GnuPG gpg command's
@@ -231,7 +231,7 @@ class Crypt_GPG
      *
      * @see Crypt_GPG::getFingerprint()
      */
-    const FORMAT_X509      = 3;
+    const FORMAT_X509 = 3;
 
     // }}}
     // {{{ protected class properties

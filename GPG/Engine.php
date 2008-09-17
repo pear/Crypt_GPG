@@ -92,19 +92,19 @@ class Crypt_GPG_Engine
      * Standard input file descriptor. This is used to pass data to the GPG
      * process.
      */
-    const FD_INPUT   = 0;
+    const FD_INPUT = 0;
 
     /**
      * Standard output file descriptor. This is used to receive normal output
      * from the GPG process.
      */
-    const FD_OUTPUT  = 1;
+    const FD_OUTPUT = 1;
 
     /**
      * Standard output file descriptor. This is used to receive error output
      * from the GPG process.
      */
-    const FD_ERROR   = 2;
+    const FD_ERROR = 2;
 
     /**
      * GPG status output file descriptor. The status file descriptor outputs
@@ -113,7 +113,7 @@ class Crypt_GPG_Engine
      * {@link http://www.gnupg.org/download/ GPG package} for a detailed
      * description of GPG's status output.
      */
-    const FD_STATUS  = 3;
+    const FD_STATUS = 3;
 
     /**
      * Command input file descriptor. This is used for methods requiring

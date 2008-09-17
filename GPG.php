@@ -1455,11 +1455,13 @@ class Crypt_GPG
      * @param string $signature  optional. If verifying data signed using a
      *                           detached signature, this must be the detached
      *                           signature data. The data that was signed is
-     *                           specified in <i>$signedData</i>.
+     *                           specified in <code>$signedData</code>.
      *
      * @return Crypt_GPG_Signature the signature details of the signed data. If
-     *                             the signature is valid, the <i>$valid</i>
-     *                             property of the returned object will be true.
+     *                             the signature is valid, the
+     *                             {@link Crypt_GPG_Signature::isValid()}
+     *                             method of the returned object will return
+     *                             true.
      *
      * @throws Crypt_GPG_NoDataException if the provided data is not signed
      *         data.
@@ -1501,6 +1503,94 @@ class Crypt_GPG
 
         $this->engine->setOperation($operation, $arguments);
         $this->engine->run();
+
+        $code = $this->engine->getErrorCode();
+
+        switch ($code) {
+        case Crypt_GPG::ERROR_NONE:
+            break;
+        case Crypt_GPG::ERROR_NO_DATA:
+            throw new Crypt_GPG_NoDataException(
+                'No valid signature data found.', $code);
+        default:
+            throw new Crypt_GPG_Exception(
+                'Unknown error validating signature details.', $code);
+        }
+
+        return $sigObj;
+    }
+
+    // }}}
+    // {{{ verifyFile()
+
+    /**
+     * Verifies a signed file
+     *
+     * The {@link Crypt_GPG::decryptFile()} method may be used to get the
+     * original message if the signed data is not clearsigned and does not use
+     * a detached signature.
+     *
+     * @param string $filename  the signed file to be verified.
+     * @param string $signature optional. If verifying a file signed using a
+     *                          detached signature, this must be the detached
+     *                          signature data. The file that was signed is
+     *                          specified in <code>$filename</code>.
+     *
+     * @return Crypt_GPG_Signature the signature details of the signed file. If
+     *                             the signature is valid, the
+     *                             {@link Crypt_GPG_Signature::isValid()}
+     *                             method of the returned object will return
+     *                             true.
+     *
+     * @throws Crypt_GPG_NoDataException if the provided data is not signed
+     *         data.
+     *
+     * @throws Crypt_GPG_FileException if the input file is not readable.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <i>debug</i> option and file a bug report if these
+     *         exceptions occur.
+     *
+     * @see Crypt_GPG_Signature
+     */
+    public function verifyFile($filename, $signature = '')
+    {
+        if ($signature == '') {
+            $operation = '--verify';
+            $arguments = array();
+        } else {
+            // Signed data goes in FD_MESSAGE, detached signature data goes in
+            // FD_INPUT.
+            $operation = '--verify - "-&' . Crypt_GPG_Engine::FD_MESSAGE. '"';
+            $arguments = array('--enable-special-filenames');
+        }
+
+        // create an object to return, and fill it with data
+        $sigObj = new Crypt_GPG_Signature();
+
+        $input = fopen($filename, 'rb');
+        if ($input === false) {
+            throw new Crypt_GPG_FileException('Could not open input file "' .
+                $filename . '" for verifying.', 0, $filename);
+        }
+
+        $this->engine->reset();
+        $this->engine->addStatusHandler(array($this, 'handleVerifyStatus'),
+            array($sigObj));
+
+        if ($signature == '') {
+            // signed or clearsigned data
+            $this->engine->setInput($input);
+        } else {
+            // detached signature
+            $this->engine->setInput($input);
+            $this->engine->setMessage($signedData);
+        }
+
+        $this->engine->setOperation($operation, $arguments);
+        $this->engine->run();
+
+        fclose($input);
 
         $code = $this->engine->getErrorCode();
 

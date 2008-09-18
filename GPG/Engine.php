@@ -297,26 +297,34 @@ class Crypt_GPG_Engine
      *
      * Available options:
      *
-     * - string  homedir:    The directory where the GPG keyring files are
-     *                       stored. If not specified, GPG uses the default of
-     *                       $HOME/.gnupg, where $HOME is the present user's
-     *                       home directory. This option only needs to be
-     *                       specified when $HOME/.gnupg is inappropriate.
-     *
-     * - string  gpgBinary:  The location of the GPG binary. If not specified,
-     *                       the driver attempts to auto-detect the GPG binary
-     *                       location using a list of known default locations
-     *                       for the current operating system.
-     *
-     * - boolean debug:      Whether or not to use debug mode. See
-     *                       {@link Crypt_GPG_Engine::$_debug}.
+     * - <code>string  homedir</code>   - the directory where the GPG keyring
+     *                                    files are stored. If not specified,
+     *                                    Crypt_GPG uses the default of
+     *                                    <code>~/.gnupg</code>.
+     * - <code>string  gpgBinary</code> - the location of the GPG binary. If not
+     *                                    specified, the driver attempts to
+     *                                    auto-detect the GPG binary location
+     *                                    using a list of known default
+     *                                    locations for the current operating
+     *                                    system.
+     * - <code>boolean debug</code>     - whether or not to use debug mode. When
+     *                                    debug mode is on, all communication
+     *                                    to and from the GPG subprocess is
+     *                                    logged. This can be useful to diagnose
+     *                                    errors when using Crypt_GPG.
      *
      * @param array $options optional. An array of options used to create the
      *                       GPG object. All options must be optional and are
      *                       represented as key-value pairs.
      *
-     * @throws PEAR_Exception if the provided 'gpgBinary' is invalid; or if no
-     *         'gpgBinary' is provided and no suitable binary could be found.
+     * @throws Crypt_GPG_FileException if the <code>homedir</code> does not
+     *         exist and cannot be created. This can happen if
+     *         <code>homedir</code> is not specified, Crypt_GPG is run as the
+     *         web user, and the web user has no home directory.
+     *
+     * @throws PEAR_Exception if the provided <code>gpgBinary</code> is invalid,
+     *         or if no <code>gpgBinary</code> is provided and no suitable
+     *         binary could be found.
      */
     public function __construct(array $options = array())
     {
@@ -328,10 +336,32 @@ class Crypt_GPG_Engine
                 && (ini_get('mbstring.func_overload') & 0x02) === 0x02);
         }
 
+        // get homedir
         if (array_key_exists('homedir', $options)) {
             $this->_homedir = (string)$options['homedir'];
+        } else {
+            // note: this requires the package OS dep exclude 'windows'
+            $info = posix_getpwuid(posix_getuid());
+            $this->_homedir = $info['dir'].'/.gnupg';
         }
 
+        // attempt to create homedir if it does not exist
+        if (!is_dir($this->_homedir)) {
+            if (mkdir($this->_homedir, 0777, true)) {
+                // Set permissions on homedir. Parent directories are created
+                // with 0777, homedir is set to 0700.
+                chmod($this->_homedir, 0700);
+            } else {
+                throw new Crypt_GPG_FileException('The \'homedir\' "' .
+                    $this->_homedir . '" does not exist and cannot be ' .
+                    'created. This can happen if \'homedir\' is not ' .
+                    'specified in the Crypt_GPG options, Crypt_GPG is run as ' .
+                    'the web user, and the web user has no home directory.',
+                    0, $this->_homedir);
+            }
+        }
+
+        // get binary
         if (array_key_exists('gpgBinary', $options)) {
             $this->_gpgBinary = (string)$options['gpgBinary'];
         } else {
@@ -731,6 +761,10 @@ class Crypt_GPG_Engine
      * the main I/O loop would be siginficantly slower for large streams.
      *
      * @return void
+     *
+     * @throws Crypt_GPG_Exception if there is an error selecting streams for
+     *         reading or writing. If this occurs, please file a bug report at
+     *         http://pear.php.net/bugs/report.php?package=Crypt_GPG.
      */
     private function _process()
     {
@@ -834,12 +868,15 @@ class Crypt_GPG_Engine
             if ($ready === false) {
                 throw new Crypt_GPG_Exception(
                     'Error selecting stream for communication with GPG ' .
-                        'subprocess.');
+                    'subprocess. Please file a bug report at: ' .
+                    'http://pear.php.net/bugs/report.php?package=Crypt_GPG');
             }
 
             if ($ready === 0) {
                 throw new Crypt_GPG_Exception(
-                    'stream_select() returned 0. This can not happen!');
+                    'stream_select() returned 0. This can not happen! Please ' .
+                    'file a bug report at: ' .
+                    'http://pear.php.net/bugs/report.php?package=Crypt_GPG');
             }
 
             // write input (to GPG)
@@ -1140,9 +1177,6 @@ class Crypt_GPG_Engine
             if ($exitCode != 0) {
                 $this->_debug('=> subprocess returned an unexpected exit ' .
                     'code: ' . $exitCode);
-
-                // $this->_debug("Error text is:\n" . $error);
-                // $this->_debug("Status text is:\n" . $status);
 
                 if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
                     if ($this->_needPassphrase > 0) {

@@ -308,29 +308,34 @@ class Crypt_GPG
      *
      * Available options are:
      *
-     * - string  <code>homedir</code>   - The directory where the GPG keyring
+     * - <code>string  homedir</code>   - the directory where the GPG keyring
      *                                    files are stored. If not specified,
-     *                                    GPG uses the default value of
-     *                                    <code>$HOME/.gnupg</code>, where
-     *                                    <i>$HOME</i> is the present user's
-     *                                    home directory. This option only needs
-     *                                    to be specified when the default
-     *                                    value is inappropriate.
-     * - string  <code>gpgBinary</code> - The location of the GPG binary. If not
-     *                                    specified, the engine attempts to
+     *                                    Crypt_GPG uses the default of
+     *                                    <code>~/.gnupg</code>.
+     * - <code>string  gpgBinary</code> - the location of the GPG binary. If not
+     *                                    specified, the driver attempts to
      *                                    auto-detect the GPG binary location
      *                                    using a list of known default
      *                                    locations for the current operating
      *                                    system.
-     * - boolean <code>debug</code>     - Whether or not to use debug mode.
+     * - <code>boolean debug</code>     - whether or not to use debug mode. When
+     *                                    debug mode is on, all communication
+     *                                    to and from the GPG subprocess is
+     *                                    logged. This can be useful to diagnose
+     *                                    errors when using Crypt_GPG.
      *
      * @param array $options optional. An array of options used to create the
      *                       GPG object. All options must be optional and are
      *                       represented as key-value pairs.
      *
-     * @throws PEAR_Exception if the provided <i>gpgBinary</i> is invalid; or
-     *         if no <i>gpgBinary</i> is provided and no suitable binary could
-     *         be found.
+     * @throws Crypt_GPG_FileException if the <code>homedir</code> does not
+     *         exist and cannot be created. This can happen if
+     *         <code>homedir</code> is not specified, Crypt_GPG is run as the
+     *         web user, and the web user has no home directory.
+     *
+     * @throws PEAR_Exception if the provided <code>gpgBinary</code> is invalid,
+     *         or if no <code>gpgBinary</code> is provided and no suitable
+     *         binary could be found.
      */
     public function __construct(array $options = array())
     {
@@ -1069,7 +1074,7 @@ class Crypt_GPG
      *         Use the <i>debug</i> option and file a bug report if these
      *         exceptions occur.
      */
-    public function sign($filename, $signedFile = null,
+    public function signFile($filename, $signedFile = null,
         $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true)
     {
         return $this->_sign($filename, true, $signedFile, $mode, $armor);

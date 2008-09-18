@@ -72,7 +72,7 @@ class Crypt_GPG_Exception extends PEAR_Exception
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2007 silverorange
+ * @copyright 2007-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -119,6 +119,24 @@ class Crypt_GPG_FileException extends Crypt_GPG_Exception
     }
 
     // }}}
+}
+
+// }}}
+// {{{ class Crypt_GPG_PermissionException
+
+/**
+ * This exception is thrown when the Crypt_GPG cannot read or write the
+ * keychain
+ *
+ * @category  Encryption
+ * @package   Crypt_GPG
+ * @author    Michael Gauthier <mike@silverorange.com>
+ * @copyright 2008 silverorange
+ * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      http://pear.php.net/package/Crypt_GPG
+ */
+class Crypt_GPG_PermissionException extends Crypt_GPG_Exception
+{
 }
 
 // }}}

@@ -1662,14 +1662,7 @@ class Crypt_GPG
 
         $code = $this->engine->getErrorCode();
 
-        switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
-            break;
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
-            throw new Crypt_GPG_KeyNotFoundException(
-                "Data could not be encrypted because key '" . $keyId .
-                "' was not found.", $code, $keyId); // TODO
-        default:
+        if ($code !== Crypt_GPG::ERROR_NONE) {
             throw new Crypt_GPG_Exception(
                 'Unknown error encrypting data.', $code);
         }

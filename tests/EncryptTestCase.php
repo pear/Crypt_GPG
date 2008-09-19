@@ -57,16 +57,17 @@ require_once 'TestCase.php';
  */
 class EncryptTestCase extends TestCase
 {
+    // string
     // {{{ testEncrypt()
 
     /**
-     * @group encrypt
+     * @group string
      */
     public function testEncrypt()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $keyId = 'public-and-private@example.com';
-        $passphrase = 'test';
+        $keyId = 'first-keypair@example.com';
+        $passphrase = 'test1';
 
         $this->gpg->addEncryptKey($keyId);
         $encryptedData = $this->gpg->encrypt($data);
@@ -78,12 +79,38 @@ class EncryptTestCase extends TestCase
     }
 
     // }}}
+    // {{{ testEncryptDual()
+
+    /**
+     * @group string
+     */
+    public function testEncryptDual()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
+
+        $firstKeyId       = 'first-keypair@example.com';
+        $firstPassphrase  = 'test1';
+        $secondKeyId      = 'second-keypair@example.com';
+        $secondPassphrase = 'test2';
+
+        $this->gpg->addEncryptKey($firstKeyId);
+        $this->gpg->addEncryptKey($secondKeyId);
+        $encryptedData = $this->gpg->encrypt($data);
+
+        $this->gpg->addDecryptKey($firstKeyId, $firstPassphrase);
+        $this->gpg->addDecryptKey($secondKeyId, $secondPassphrase);
+        $decryptedData = $this->gpg->decrypt($encryptedData);
+
+        $this->assertEquals($data, $decryptedData);
+    }
+
+    // }}}
     // {{{ testEncryptKeyNotFoundException()
 
     /**
      * @expectedException Crypt_GPG_KeyNotFoundException
      *
-     * @group encrypt
+     * @group string
      */
     public function testEncryptNotFoundException()
     {
@@ -93,6 +120,113 @@ class EncryptTestCase extends TestCase
         $this->gpg->addEncryptKey($keyId);
 
         $encryptedData = $this->gpg->encrypt($data);
+    }
+
+    // }}}
+
+    // file
+    // {{{ testEncryptFile()
+
+    /**
+     * @group file
+     */
+    public function testEncryptFile()
+    {
+        $expectedMd5Sum    = 'f96267d87551ee09bfcac16921e351c1';
+        $originalFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $encryptedFilename = TestCase::TEMPDIR . '/testEncryptFile.asc';
+        $decryptedFilename = TestCase::TEMPDIR . '/testEncryptFile.plain';
+
+        $this->gpg->addEncryptKey('first-keypair@example.com');
+        $this->gpg->encryptFile($originalFilename, $encryptedFilename);
+
+        $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
+        $this->gpg->decryptFile($encryptedFilename, $decryptedFilename);
+
+        $md5Sum = $this->getMd5Sum($decryptedFilename);
+        $this->assertEquals($expectedMd5Sum, $md5Sum);
+    }
+
+    // }}}
+    // {{{ testEncryptFileDual()
+
+    /**
+     * @group file
+     */
+    public function testEncryptFileDual()
+    {
+        $expectedMd5Sum    = 'f96267d87551ee09bfcac16921e351c1';
+        $originalFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $encryptedFilename = TestCase::TEMPDIR . '/testEncryptFile.asc';
+        $decryptedFilename = TestCase::TEMPDIR . '/testEncryptFile.plain';
+
+        $this->gpg->addEncryptKey('first-keypair@example.com');
+        $this->gpg->addEncryptKey('second-keypair@example.com');
+        $this->gpg->encryptFile($originalFilename, $encryptedFilename);
+
+        $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
+        $this->gpg->addEncryptKey('second-keypair@example.com', 'test2');
+        $this->gpg->decryptFile($encryptedFilename, $decryptedFilename);
+
+        $md5Sum = $this->getMd5Sum($decryptedFilename);
+        $this->assertEquals($expectedMd5Sum, $md5Sum);
+    }
+
+    // }}}
+    // {{{ testEncryptFileToString()
+
+    /**
+     * @group file
+     */
+    public function testEncryptFileToString()
+    {
+        $expectedData     = 'Hello, Alice! Goodbye, Bob!';
+        $originalFilename = TestCase::DATADIR . '/testFileSmall.plain';
+
+        $this->gpg->addEncryptKey('first-keypair@example.com');
+        $encryptedData = $this->gpg->encryptFile($originalFilename);
+
+        $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
+        $decryptedData = $this->gpg->decrypt($encryptedData);
+
+        $this->assertEquals($expectedData, $decryptedData);
+    }
+
+    // }}}
+    // {{{ testEncryptFileFileException_input()
+
+    /**
+     * @group file
+     *
+     * @expectedException Crypt_GPG_FileException
+     */
+    public function testEncryptFileFileException_input()
+    {
+        // input file does not exist
+        $filename = TestCase::DATADIR .
+            '/testEncryptFileFileException_input.plain';
+
+        $this->gpg->addEncryptKey('first-keypair@example.com');
+        $this->gpg->encryptFile($filename);
+    }
+
+    // }}}
+    // {{{ testEncryptFileFileException_output()
+
+    /**
+     * @group file
+     *
+     * @expectedException Crypt_GPG_FileException
+     */
+    public function testEncryptFileFileException_output()
+    {
+        // output file does not exist
+        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $outputFilename = './non-existent' .
+            '/testEncryptFileFileException_output.asc';
+
+        $this->gpg->addEncryptKey('first-keypair@example.com');
+        $this->gpg->encryptFile($inputFilename, $outputFilename);
     }
 
     // }}}

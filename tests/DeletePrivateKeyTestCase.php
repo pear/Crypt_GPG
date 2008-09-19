@@ -64,27 +64,27 @@ class DeletePrivateKeyTestCase extends TestCase
      */
     public function testDeletePrivateKey()
     {
-        $keyId = 'public-and-private@example.com';
+        $keyId = 'first-keypair@example.com';
         $this->gpg->deletePrivateKey($keyId);
 
         $expectedKeys = array();
 
-        // {{{ public-and-private@example.com
+        // {{{ first-keypair@example.com
         $key = new Crypt_GPG_Key();
         $expectedKeys[] = $key;
 
         $userId = new Crypt_GPG_UserId();
-        $userId->setName('Public and Private Test Key');
+        $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
-        $userId->setEmail('public-and-private@example.com');
+        $userId->setEmail('first-keypair@example.com');
         $key->addUserId($userId);
 
         $subKey = new Crypt_GPG_SubKey();
-        $subKey->setId('300579D099645239');
+        $subKey->setId('C097D9EC94C06363');
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
-        $subKey->setFingerprint('5A58436F752BC80B3E992C1D300579D099645239');
+        $subKey->setFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
         $subKey->setLength(1024);
-        $subKey->setCreationDate(1200670392);
+        $subKey->setCreationDate(1221785805);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(true);
         $subKey->setCanEncrypt(false);
@@ -92,11 +92,11 @@ class DeletePrivateKeyTestCase extends TestCase
         $key->addSubKey($subKey);
 
         $subKey = new Crypt_GPG_SubKey();
-        $subKey->setId('EBEB1F9895953487');
+        $subKey->setId('9F93F9116728EF12');
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
-        $subKey->setFingerprint('DCC9E7AAB9248CB0541FADDAEBEB1F9895953487');
+        $subKey->setFingerprint('C9C65B3BBF040E40D0EA27B79F93F9116728EF12');
         $subKey->setLength(2048);
-        $subKey->setCreationDate(1200670397);
+        $subKey->setCreationDate(1221785821);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(false);
         $subKey->setCanEncrypt(true);

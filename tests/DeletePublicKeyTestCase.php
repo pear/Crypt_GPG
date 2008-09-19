@@ -82,7 +82,7 @@ class DeletePublicKeyTestCase extends TestCase
      */
     public function testDeletePublicKeyDeletePrivateKeyException()
     {
-        $keyId = 'public-and-private@example.com';
+        $keyId = 'first-keypair@example.com';
         $this->gpg->deletePublicKey($keyId);
     }
 

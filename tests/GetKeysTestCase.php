@@ -66,22 +66,22 @@ class GetKeysTestCase extends TestCase
     {
         $expectedKeys = array();
 
-        // {{{ public-and-private@example.com
+        // {{{ first-keypair@example.com
         $key = new Crypt_GPG_Key();
         $expectedKeys[] = $key;
 
         $userId = new Crypt_GPG_UserId();
-        $userId->setName('Public and Private Test Key');
+        $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
-        $userId->setEmail('public-and-private@example.com');
+        $userId->setEmail('first-keypair@example.com');
         $key->addUserId($userId);
 
         $subKey = new Crypt_GPG_SubKey();
-        $subKey->setId('300579D099645239');
+        $subKey->setId('C097D9EC94C06363');
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
-        $subKey->setFingerprint('5A58436F752BC80B3E992C1D300579D099645239');
+        $subKey->setFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
         $subKey->setLength(1024);
-        $subKey->setCreationDate(1200670392);
+        $subKey->setCreationDate(1221785805);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(true);
         $subKey->setCanEncrypt(false);
@@ -89,11 +89,45 @@ class GetKeysTestCase extends TestCase
         $key->addSubKey($subKey);
 
         $subKey = new Crypt_GPG_SubKey();
-        $subKey->setId('EBEB1F9895953487');
+        $subKey->setId('9F93F9116728EF12');
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
-        $subKey->setFingerprint('DCC9E7AAB9248CB0541FADDAEBEB1F9895953487');
+        $subKey->setFingerprint('C9C65B3BBF040E40D0EA27B79F93F9116728EF12');
         $subKey->setLength(2048);
-        $subKey->setCreationDate(1200670397);
+        $subKey->setCreationDate(1221785821);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(false);
+        $subKey->setCanEncrypt(true);
+        $subKey->setHasPrivate(true);
+        $key->addSubKey($subKey);
+        // }}}
+        // {{{ second-keypair@example.com
+        $key = new Crypt_GPG_Key();
+        $expectedKeys[] = $key;
+
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('Second Keypair Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('second-keypair@example.com');
+        $key->addUserId($userId);
+
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('03CC890AFA1DAD4B');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey->setFingerprint('880922DBEA733E906693E4A903CC890AFA1DAD4B');
+        $subKey->setLength(1024);
+        $subKey->setCreationDate(1221785821);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(true);
+        $subKey->setCanEncrypt(false);
+        $subKey->setHasPrivate(true);
+        $key->addSubKey($subKey);
+
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('B2F54E4757E22450');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey->setFingerprint('C641EE162B46B810E8089153B2F54E4757E22450');
+        $subKey->setLength(2048);
+        $subKey->setCreationDate(1221785825);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(false);
         $subKey->setCanEncrypt(true);
@@ -111,11 +145,11 @@ class GetKeysTestCase extends TestCase
         $key->addUserId($userId);
 
         $subKey = new Crypt_GPG_SubKey();
-        $subKey->setId('16D27458B1BBA1C4');
+        $subKey->setId('ABA81EF54E8C0DEB');
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
-        $subKey->setFingerprint('C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4');
+        $subKey->setFingerprint('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB');
         $subKey->setLength(1024);
-        $subKey->setCreationDate(1200670461);
+        $subKey->setCreationDate(1221785826);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(true);
         $subKey->setCanEncrypt(false);
@@ -123,11 +157,11 @@ class GetKeysTestCase extends TestCase
         $key->addSubKey($subKey);
 
         $subKey = new Crypt_GPG_SubKey();
-        $subKey->setId('045B7FC31C7C4644');
+        $subKey->setId('BA4984433CDF4169');
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
-        $subKey->setFingerprint('0DC192B106773BC9B4D40AAC045B7FC31C7C4644');
+        $subKey->setFingerprint('B68C9DB020181C798047A6E7BA4984433CDF4169');
         $subKey->setLength(2048);
-        $subKey->setCreationDate(1200670470);
+        $subKey->setCreationDate(1221785832);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(false);
         $subKey->setCanEncrypt(true);
@@ -145,11 +179,11 @@ class GetKeysTestCase extends TestCase
         $key->addUserId($userId);
 
         $subKey = new Crypt_GPG_SubKey();
-        $subKey->setId('CB24072FEF665D17');
+        $subKey->setId('94563FB398ADA6B2');
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
-        $subKey->setFingerprint('D729E804DD50012902232845CB24072FEF665D17');
+        $subKey->setFingerprint('1EC9C5DBF239DD0A3A4FCD0D94563FB398ADA6B2');
         $subKey->setLength(1024);
-        $subKey->setCreationDate(1200671161);
+        $subKey->setCreationDate(1221785833);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(true);
         $subKey->setCanEncrypt(false);
@@ -157,11 +191,11 @@ class GetKeysTestCase extends TestCase
         $key->addSubKey($subKey);
 
         $subKey = new Crypt_GPG_SubKey();
-        $subKey->setId('C8B1B63978A9794B');
+        $subKey->setId('24BF380700C14B4F');
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
-        $subKey->setFingerprint('1BB64D19DFC5DC1AFAB79C63C8B1B63978A9794B');
+        $subKey->setFingerprint('86DD46AC210531EE5A37567824BF380700C14B4F');
         $subKey->setLength(2048);
-        $subKey->setCreationDate(1200671172);
+        $subKey->setCreationDate(1221785845);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(false);
         $subKey->setCanEncrypt(true);
@@ -181,25 +215,25 @@ class GetKeysTestCase extends TestCase
      */
     public function testGetKeysWithKeyId()
     {
-        $keyId = 'public-and-private@example.com';
+        $keyId = 'first-keypair@example.com';
         $expectedKeys = array();
 
-        // {{{ public-and-private@example.com
+        // {{{ first-keypair@example.com
         $key = new Crypt_GPG_Key();
         $expectedKeys[] = $key;
 
         $userId = new Crypt_GPG_UserId();
-        $userId->setName('Public and Private Test Key');
+        $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
-        $userId->setEmail('public-and-private@example.com');
+        $userId->setEmail('first-keypair@example.com');
         $key->addUserId($userId);
 
         $subKey = new Crypt_GPG_SubKey();
-        $subKey->setId('300579D099645239');
+        $subKey->setId('C097D9EC94C06363');
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
-        $subKey->setFingerprint('5A58436F752BC80B3E992C1D300579D099645239');
+        $subKey->setFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
         $subKey->setLength(1024);
-        $subKey->setCreationDate(1200670392);
+        $subKey->setCreationDate(1221785805);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(true);
         $subKey->setCanEncrypt(false);
@@ -207,11 +241,11 @@ class GetKeysTestCase extends TestCase
         $key->addSubKey($subKey);
 
         $subKey = new Crypt_GPG_SubKey();
-        $subKey->setId('EBEB1F9895953487');
+        $subKey->setId('9F93F9116728EF12');
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
-        $subKey->setFingerprint('DCC9E7AAB9248CB0541FADDAEBEB1F9895953487');
+        $subKey->setFingerprint('C9C65B3BBF040E40D0EA27B79F93F9116728EF12');
         $subKey->setLength(2048);
-        $subKey->setCreationDate(1200670397);
+        $subKey->setCreationDate(1221785821);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(false);
         $subKey->setCanEncrypt(true);

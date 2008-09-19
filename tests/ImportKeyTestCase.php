@@ -57,15 +57,16 @@ require_once 'TestCase.php';
  */
 class ImportKeyTestCase extends TestCase
 {
-    // {{{ testImportKeyPrivateKey()
+    // string
+    // {{{ testImportKey_private()
 
     /**
-     * @group import
+     * @group string
      */
-    public function testImportKeyPrivateKey()
+    public function testImportKey_private()
     {
         $expectedResult = array(
-            'fingerprint'       => 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4',
+            'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 1,
@@ -77,55 +78,55 @@ class ImportKeyTestCase extends TestCase
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
-lQHhBEeQxv0RBAD+cWerD9h+b135x1/m5NWuwpUNpkE7Be4X8PxpwuAHDN2B2QK4
-fGF1XWP70RMcvKNx7xR/fbQ25jaHuWPxrxolUADJJwwUqpRZq/ObGo3NWhldVsm2
-iU5M2KMwc6D5XQICObyOe9WUJ7HNGKNPclNQzFyhaOA0JcQN+mTlnfwfGwCg2vuY
-PzLDcmnyQCdggKLZDy4uARsEALmZFCQQ4SIvLR7IXI+GzhsRkMcNZdqUPLjPhCgl
-Fsfigt+o8AGG7wqmkSnqyf+387RYaUB1b7FAZBecYLjnHPC1JCaZ9QZpklibCN9G
-3Mii2jF3nogX+OsCJK0q0MFTBjxp1xkqeBoERf9ZUMEw+/j9oCbETTUjzKtTH/MU
-YHH/BADKIsdTvwrmkoMXaRIpzGT8UjHwcb8Ao1DrqWxXtaGmf7IJaMiS5bHu2Mv4
-0B76G3nEqz6vtSCDsMKH8W5VwDLxnqRe4Tz23gkaKA0fR3PtJw8iuMwGREgEssEM
-IJ+Ox7Lc6anHrMqmEafTgsszuO7Y6KMgJ9W6yz+D68OIFlDimf4DAwLzRN+MlalC
-IGAgIiUrV+3rD9PkemIkao2URO2ScPYSntabQ1Pv9YDDpzLEki+40/7m+F6hpBtP
-PF/mALRcUHVibGljIE9ubHkgVGVzdCBLZXkgKGRvIG5vdCBlbmNyeXB0IGltcG9y
+lQHhBEjS+OIRBACPl023p+jInWiUtc7zSBU1D4mv42zSOwPdC37Pn/4x9FyhIOXE
+LCRTpsnAw9rT6R3BvAC4uO68fxjxFCwTpsa60RsHw4bwpSAYuf0t5Xg+GQIritlm
+XHVYwku3Hkh4Svv0quemooGuJ9lLwIHacL/4W1dTHLB2rzon0T4kx7ExZwCg/XKl
+RD9zbbnQOgjn0EaS8fcSm+ED/1IMfkCz5ac9Y3jBUlcArOZcOlTrzxst+iMZm4f0
+fh8dFCCaRN0iaVLSdCNaFvbKbJYZad1w3jFAMU9bX83flqgV1wMPO/NenfMidBIq
+sKzgttaQo5VmjWPtwyOJXODR2lHKQR2hFCkIKlHMPLV3awCGV8iTyiTZMJirdtvf
+s26oA/9STYro+yB9yrHufdfjM1u8SbSIhK6jUoq2ajLPHaLF2nRZZyv1gnkzRFd+
+/Vxcx6cwp8Qd6L4z+0sU3pMS4X8rt2vqilK2msg1VrHnjGgFIfmfIvY5EmrhNzEx
+6X82fbR9f8lwLy5N/gPm326e0xSw1rWdR15VukJPbmK6nf/pL/4DAwIZF3WLmXaM
+DGCHa6b36T1VZ+bgYYcoQUanh3OSfLO0NwJ5ywFiML26DYZ7M3aivlfXj/8lOKy0
+8tcg/rRcUHVibGljIE9ubHkgVGVzdCBLZXkgKGRvIG5vdCBlbmNyeXB0IGltcG9y
 dGFudCBkYXRhIHdpdGggdGhpcyBrZXkpIDxwdWJsaWMtb25seUBleGFtcGxlLmNv
-bT6IYAQTEQIAIAUCR5DG/QIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJEBbS
-dFixu6HEKq8An2DtKGLVqZ8dzP5MQRq/qw8Zc38eAKCa4g5Z5qckRTm5GunPDPMw
-54P/5Z0CYwRHkMcGEAgAok+tFuvdGK4HHDKGDHCy7VSUNGibyy04YFOdOHyx+doj
-OVroeCeKIgWhOGIEFGpfmHf3PwUvD0MD91Co1kifTm0LMvUSFNgqW2/5wgfzgmKN
-vqQbxwHuVAzwKdqxJJRDWNusQAif8Ch8q8jTeGmCJJM84xZoduaMKz/wKP2XAgKf
-701CC9nh0XJzaB6Nc8CO6lBMRf/wzKcGFPy0wiTiuwIC9vSt4yfkwmz0SgndTJtI
-JjBrTRSF+gEtkjECIO7U1mCUnjcnn/vm60Ij1r/xlttfkkeML/Hmlj2HNQ8sk2qF
-qRpf3oVggovyYt6/Xm2/j0iIQm5aQ3793sb1DfXrSwADBgf9G5D9rUdOQauoCxK0
-oXPpqbohC3vLpiEzN2qEjqdt5NVQB/vsPG/4Dzt0Jr5gcRt6DzJ9rDvNY6saTmv1
-T2LSTm4a6mDoZk2+LGl0qWCiMvkKlyLTXR61LGIypX2175yzkDEs9KfY+pExZBd/
-WnkN3xrhTXWgY/i5Ul4CpU6sE5Kx4cGvioNDE80tMnAI/5mg1Q++fPs8w0Nh1ZGD
-PHVkyNJpureBWVkMDQ5zLn89UMm7wMeNBCNksvt5m5+JzA0t70Dp87khJtbfjADd
-3MlfX/Fu3w1kfIM6C9j+xfyAdk/UtMEmEJiYOLziamHI90TZdHXQgV+/b8BLjgYA
-CGQG6P4DAwLzRN+MlalCIGCm+u6eYnTE4oBCsQBnknxohqmrSc7MrJXSATR5hStG
-iAhpmQUtqZgtbFKm7SjfaMlNVo7mvs89GuMFp1DH3iElZEh05wULfHiQiEkEGBEC
-AAkFAkeQxwYCGwwACgkQFtJ0WLG7ocTOTgCfXR4Ycnkz9Pa4/IOCryHUmDD06kAA
-oI5UEei5MOBXWqSclNRONxPG8GL/
-=b5iz
+bT6IYAQTEQIAIAUCSNL44gIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJEKuo
+HvVOjA3r8DYAn1/DrF5jw31P3L6MlWdelLuR4POnAJ9It7IynfJalYIHoAWtY2xk
+kTsT+p0CYgRI0vjoEAgAp65R578Es8qtASDAgIbYfJlJTwMovEnA4KJ69mpVt3mz
+cFWMtJCvuilvwSQQ+VfKxjemtbe/IbMe9ssj4nTSLw/mweUB89tRj8ZzaS+/9312
+AS8ra/xIDr6kTSfKcRKjXgMzkJ+A13rYwG5LFWnyumg36xglmzXKhecEkRVPfWn3
+ISoq3zirZlQOWcKYdyA2Z685SKJC/N+3nUqKOJ7qrA7eT608LFksytBHeOfNf5m7
+CC4wAE3RAz+ZkJvWRbE2G5pUalZktq8uKMT5WQgvuFP3hnvku5yilpo2ELTnYkO3
+ltc3NHCc9v+jhikayPr7RvUdVPbaITT80yYKBPygCwADBggApzR1vW/fvzmrO5pW
+zAvd4umVh/Yp34n3vWyXMu+JIHA7s08rkTzlMXzamICQmkjwAuCwJt0t7BA28Lny
+goh2joxo8tE/OowFk+IzbeA2Vrz71d/T5SMDtC2mePE0m3bmCOLBscu5aJIfgi1X
+/fzr44f4i+6hqVDCuOOmnVtbL4xBBnS6KXdcWP7QbVhxG3SpH9Agd/QXvSQm0Obz
+9iKZ11FEXzgnVZGXaCM0GBsFE9JuNY5+hi6A72rccjhC0V1Cy43veeIhOE+v3pK0
+a/BGUlgDSdgVopE9zUSQwzuo87UbY3EoDWBqDRSRCRMfmv8S2b9VJIRPdCOHZGCI
+R49/0f4DAwIZF3WLmXaMDGCvSMKxFAt3zGZVEsfwS67ilWw0kq9wgmDpTmbrz1pe
+8tUgmHxgiVc3Xo86ItXGr69udzSODYw2wO6JGdgOKsZDKAv7zJHi+3GISAQYEQIA
+CQUCSNL46AIbDAAKCRCrqB71TowN6zbAAJ4qBrdmAYuAbY5txsc+Tmv9quOpzwCW
+NN5B7Vl2JdxBuwWJrdfUb9UQzw==
+=51qc
 -----END PGP PRIVATE KEY BLOCK-----
 
 TEXT;
         // }}}
 
-        $result =  $this->gpg->importKey($privateKeyData);
+        $result = $this->gpg->importKey($privateKeyData);
         $this->assertEquals($expectedResult, $result);
     }
 
     // }}}
-    // {{{ testImportKeyPublicKey()
+    // {{{ testImportKey_public()
 
     /**
-     * @group import
+     * @group string
      */
-    public function testImportKeyPublicKey()
+    public function testImportKey_public()
     {
         $expectedResult = array(
-            'fingerprint'       => '0E8920DF5E2F5FD15A3BC3F14636F589A551E85A',
+            'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
             'public_imported'   => 1,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
@@ -137,33 +138,33 @@ TEXT;
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
-mQGiBEeQynIRBACeQvsqqxtU7gnWGIhFCl//KOjSeWe9iwuj1KkXR9yu2I17/YHi
-fU7StVH3wTSw+kPvBJfQlDrYafqD1KUogakl9IN6bnnfDVUnUFZ00PNj9VGrCGR/
-IRxM2DZpy2KvFq0MDfo5yqtFBOol1bi2NgHu3gEXafqbAP7kzScjPv93ZwCg6Fad
-vOBSOHq8wCcJ32531EkCGKUEAJozX9Gsj9y/1zKMdc4ZrdciemseiZ8Ua/GSIBUM
-eC8FcaDcfjSvv9yiA3+CsYkiJZv0et6xnsnW5/cnCBdLck0mciRIWf9/0U6eM30W
-ElsWUfL4xdA/g28EdJSU16n0KpJzZx77gL2dGFz9M4GoG654JfFTXz4ins9iiZs2
-+rCrA/4tkhtc7lp3Y2zlE4nZyXM+fA6mupAkPGsAK/yk61zXfk6LvxCSyO6kgOMn
-E2RHrt4MG16OfNO/Ak7zPtlLRQmkmV2OZFZ5r5uiRMfXBCgYeSjdWAXueCCCGIdF
-dp4y7zlIrsTYZ3VUXq3Zho8Ah37smEJvfgkO4bccex+YUUVwfLRkRXh0ZXJuYWwg
-UHVibGljIFRlc3QgS2V5IChkbyBub3QgZW5jcnlwdCBpbXBvcnRhbnQgZGF0YSB3
-aXRoIHRoaXMga2V5KSA8ZXh0ZXJuYWwtcHVibGljQGV4YW1wbGUuY29tPohgBBMR
-AgAgBQJHkMpyAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQRjb1iaVR6FqL
-dQCfdCsfRccq5b6/DuyOyykOe8QGgRQAn3jb39ySfFcKq1TenPWkVRxeaW4ruQIN
-BEeQyncQCACNaHdyLnWsHEh66fN+RLL7WxGVEcBIeD4zOiORExfpDb0TieYy9UfF
-VC7JNRWjXqz0eSwfbnJqz6RmW9RZKN59FEJ9LHUamTYJNtktCymjjgbA9ilBDuLC
-dY64/0HwRsl01cJCYMXZrsTj3KUFoMMQdIT7KXclOiEEbqjL7YyprdZK8mEaZyOa
-disDoghi4lrMqjN17ULk+Zfp9cmyi23EWnNDpIvLEorj5C+CYCvKnfhCYlPDUreX
-ZPt2wCPqFzF3iCs63j51IYLFdtQqvH8zfCYR/KcbahR8h5HuQAuf2NSFeffqw1f/
-iHKSvr9vkDlXCD3ZNjNe6HkehxKrcmAPAAMFB/4lMO+zGQ9fOLsfR5wiI0u4g1xO
-Cb7ay4nmKvQAkgkrp+j713cc/3TjftcxjAmsB3Ns4Sux6iZsKH45HsfTNab4TBfE
-PMrA+lS7nvleEsI/W94sIEOVB9EjXW5//bNx54Nm5AHgioLPHYSQPv40fKKRuWEj
-r/hg2HgZrccYLhxOLNrR3vKKV8jCqIp1cjn5LdbWsacvGoPsiBRQFBDBhvlAbe6W
-4sYky1XmFkI6LgYnqMJxNuBV50B/IgK32CPXqsGDu9rUcmJQAvSvr0RKBJYwOE5I
-ij9I0i6vNrPnAOqih0xABq9E8RYHnGYg3Vnww2z9/crLvN2jJ2Ow8ubM3RyGiEkE
-GBECAAkFAkeQyncCGwwACgkQRjb1iaVR6FoX2ACgnfXsfawe5Ys2Zp3b0/H+zkFa
-Y0kAn0UNciBVQN54ii7SEg/LzJOyPbSS
-=QT0F
+mQGiBEjS+PgRBADbDdRN9iwESSyJvjnfgk7ZWUYKdHdSER7yJ0aM4LQjVDdw9y/f
+QGidipXxVD2lW28gRtzcmLufxv3DzjZp83VaXvlJs9jbTtHDIYFyDW9kH1HTRbZT
+WKWfuInd0AXzHy5o77qQ+mW0AIXbyke5suSHdvcmv1hiWI9OnXcIHpmavwCgt4Hm
++j3FpRo9qs4fJM887c796qUD/iPkStU9sM/0KCJFZNaPCGBaamCEi7UoAHNlim+B
+dv3rfSQ2VcDRq9/3GoCEJ2c62XpgQxt79mojJLdWZsTWvr6ESnWOm7W6GIjv/Zc3
++OXgi7QdH5nwpZl6kBMkuzZxczFuwh9dqlXml+bND0JawS38MvQpDUkwMb592v5U
+i9WIBADBacg6nixiTR+4kaHFE1Ww8QxT+vQ4S1SOx47cm8R6FxTRQA7FvK+vMxCt
+Ps9GOzhjrCgIoF/6X10IZ7qB5jCYIH+kvHrp90ZbNwJ4pIa7phCPhqUF9mEyMbC2
+AEIGp/Aw26yXKskQJJ3vFji+VaeCui21sXjg5EHfoayt79xT8bRfRXh0ZXJuYWwg
+UHVibGljIEtleSAoZG8gbm90IGVuY3J5cHQgaW1wb3J0YW50IGRhdGEgd2l0aCB0
+aGlzIGtleSkgPGV4dGVybmFsLXB1YmxpY0BleGFtcGxlLmNvbT6IYAQTEQIAIAUC
+SNL4+AIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJECaKtxA0NeZdqHwAn3AF
+EEhX1Tyba0ovCV2DwUytKM0CAKCnu6VzRy1Y8jp9fiy3ScwmaCI3FbkCDQRI0vj8
+EAgArBRh0YpPhE1vvKoPuhGDa//96YqrYt9rmBo3AR1WmF3CKtspjXdOK2bCqdJh
+H6kaoNi+0Ors00n2NfPj9Am2cTV3h2/KpAWOxQGfkmpzU3xXTVCUo/HoKDXIfWqk
+/TPXRqbwFV489GRBtVov4IoZM0KqZXhaFD6cXBsEl/BVSvVdBqmBzUoJ2bOzYiSW
+eg/ml65jbtxjDYMbxTLi7xRcTSAsareoN6/PcbAvcCE5UeCMu8p52wxHOTrAkI4/
+6elpziVpIGn07zJb//4qIoZdhIzwfsMl73tPfdoL9jEC66SiWAN+BEDxceGR5E15
+2WsT5tkxuz/pQUC1L3JW4WCC/wADBwf8CsevcPsk2XxT2XZj0lfmAOuhXxuqBczW
+TXCimnRxvC8+uAacv1RgVRH6emW3BVjt0dr9vwRT0n54JA+7ZwXVMOo4/tqNwmJs
+C6SThBXGBQxEaZwv19WC58DjblbvYa81cUaXrUdHi1OyoHwgalx0xZQ57IUXW6+7
+qdLRfzyqbDBph9ogB0ta3AhSikAqqYImTrI650v/KWBLjrI+N925r0TvnfSOsru7
+JrftccY2LntVnQUcXjuaFViZ7y8ocW8f92zmGj2zUN8z2GsMKiGQtNNmoX51TcQl
+sJPsZF0RKduVkNUQa9cfzSIMjjhUSzspA2qHLUKafrS3e38s2Y4CNIhJBBgRAgAJ
+BQJI0vj8AhsMAAoJECaKtxA0NeZdOFQAn15X+eYzFgVERrFkddsHvAE00OnSAJ9h
+A7Lcv7M+9WeZ6cjeHkZfLB6LLA==
+=AV/P
 -----END PGP PUBLIC KEY BLOCK-----
 
 TEXT;
@@ -174,118 +175,48 @@ TEXT;
     }
 
     // }}}
-    // {{{ testImportKeyPublicKeyAlreadyImported()
+    // {{{ testImportKeyAlreadyImported_private()
 
     /**
-     * @group import
+     * @group string
      */
-    public function testImportKeyPublicKeyAlreadyImported()
-    {
-        // {{{ public key data
-        $publicKeyData = <<<TEXT
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-mQGiBEeQynIRBACeQvsqqxtU7gnWGIhFCl//KOjSeWe9iwuj1KkXR9yu2I17/YHi
-fU7StVH3wTSw+kPvBJfQlDrYafqD1KUogakl9IN6bnnfDVUnUFZ00PNj9VGrCGR/
-IRxM2DZpy2KvFq0MDfo5yqtFBOol1bi2NgHu3gEXafqbAP7kzScjPv93ZwCg6Fad
-vOBSOHq8wCcJ32531EkCGKUEAJozX9Gsj9y/1zKMdc4ZrdciemseiZ8Ua/GSIBUM
-eC8FcaDcfjSvv9yiA3+CsYkiJZv0et6xnsnW5/cnCBdLck0mciRIWf9/0U6eM30W
-ElsWUfL4xdA/g28EdJSU16n0KpJzZx77gL2dGFz9M4GoG654JfFTXz4ins9iiZs2
-+rCrA/4tkhtc7lp3Y2zlE4nZyXM+fA6mupAkPGsAK/yk61zXfk6LvxCSyO6kgOMn
-E2RHrt4MG16OfNO/Ak7zPtlLRQmkmV2OZFZ5r5uiRMfXBCgYeSjdWAXueCCCGIdF
-dp4y7zlIrsTYZ3VUXq3Zho8Ah37smEJvfgkO4bccex+YUUVwfLRkRXh0ZXJuYWwg
-UHVibGljIFRlc3QgS2V5IChkbyBub3QgZW5jcnlwdCBpbXBvcnRhbnQgZGF0YSB3
-aXRoIHRoaXMga2V5KSA8ZXh0ZXJuYWwtcHVibGljQGV4YW1wbGUuY29tPohgBBMR
-AgAgBQJHkMpyAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQRjb1iaVR6FqL
-dQCfdCsfRccq5b6/DuyOyykOe8QGgRQAn3jb39ySfFcKq1TenPWkVRxeaW4ruQIN
-BEeQyncQCACNaHdyLnWsHEh66fN+RLL7WxGVEcBIeD4zOiORExfpDb0TieYy9UfF
-VC7JNRWjXqz0eSwfbnJqz6RmW9RZKN59FEJ9LHUamTYJNtktCymjjgbA9ilBDuLC
-dY64/0HwRsl01cJCYMXZrsTj3KUFoMMQdIT7KXclOiEEbqjL7YyprdZK8mEaZyOa
-disDoghi4lrMqjN17ULk+Zfp9cmyi23EWnNDpIvLEorj5C+CYCvKnfhCYlPDUreX
-ZPt2wCPqFzF3iCs63j51IYLFdtQqvH8zfCYR/KcbahR8h5HuQAuf2NSFeffqw1f/
-iHKSvr9vkDlXCD3ZNjNe6HkehxKrcmAPAAMFB/4lMO+zGQ9fOLsfR5wiI0u4g1xO
-Cb7ay4nmKvQAkgkrp+j713cc/3TjftcxjAmsB3Ns4Sux6iZsKH45HsfTNab4TBfE
-PMrA+lS7nvleEsI/W94sIEOVB9EjXW5//bNx54Nm5AHgioLPHYSQPv40fKKRuWEj
-r/hg2HgZrccYLhxOLNrR3vKKV8jCqIp1cjn5LdbWsacvGoPsiBRQFBDBhvlAbe6W
-4sYky1XmFkI6LgYnqMJxNuBV50B/IgK32CPXqsGDu9rUcmJQAvSvr0RKBJYwOE5I
-ij9I0i6vNrPnAOqih0xABq9E8RYHnGYg3Vnww2z9/crLvN2jJ2Ow8ubM3RyGiEkE
-GBECAAkFAkeQyncCGwwACgkQRjb1iaVR6FoX2ACgnfXsfawe5Ys2Zp3b0/H+zkFa
-Y0kAn0UNciBVQN54ii7SEg/LzJOyPbSS
-=QT0F
------END PGP PUBLIC KEY BLOCK-----
-
-TEXT;
-        // }}}
-
-        $result = $this->gpg->importKey($publicKeyData);
-
-        $expectedResult = array(
-            'fingerprint'       => '0E8920DF5E2F5FD15A3BC3F14636F589A551E85A',
-            'public_imported'   => 1,
-            'public_unchanged'  => 0,
-            'private_imported'  => 0,
-            'private_unchanged' => 0
-        );
-
-        $this->assertEquals($expectedResult, $result);
-
-        $result = $this->gpg->importKey($publicKeyData);
-
-        $expectedResult = array(
-            'fingerprint'       => '0E8920DF5E2F5FD15A3BC3F14636F589A551E85A',
-            'public_imported'   => 0,
-            'public_unchanged'  => 1,
-            'private_imported'  => 0,
-            'private_unchanged' => 0
-        );
-
-        $this->assertEquals($expectedResult, $result);
-    }
-
-    // }}}
-    // {{{ testImportKeyPrivateKeyAlreadyImported()
-
-    /**
-     * @group import
-     */
-    public function testImportKeyPrivateKeyAlreadyImported()
+    public function testImportKeyAlreadyImported_private()
     {
         // {{{ private key data
         $privateKeyData = <<<TEXT
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
-lQHhBEeQxv0RBAD+cWerD9h+b135x1/m5NWuwpUNpkE7Be4X8PxpwuAHDN2B2QK4
-fGF1XWP70RMcvKNx7xR/fbQ25jaHuWPxrxolUADJJwwUqpRZq/ObGo3NWhldVsm2
-iU5M2KMwc6D5XQICObyOe9WUJ7HNGKNPclNQzFyhaOA0JcQN+mTlnfwfGwCg2vuY
-PzLDcmnyQCdggKLZDy4uARsEALmZFCQQ4SIvLR7IXI+GzhsRkMcNZdqUPLjPhCgl
-Fsfigt+o8AGG7wqmkSnqyf+387RYaUB1b7FAZBecYLjnHPC1JCaZ9QZpklibCN9G
-3Mii2jF3nogX+OsCJK0q0MFTBjxp1xkqeBoERf9ZUMEw+/j9oCbETTUjzKtTH/MU
-YHH/BADKIsdTvwrmkoMXaRIpzGT8UjHwcb8Ao1DrqWxXtaGmf7IJaMiS5bHu2Mv4
-0B76G3nEqz6vtSCDsMKH8W5VwDLxnqRe4Tz23gkaKA0fR3PtJw8iuMwGREgEssEM
-IJ+Ox7Lc6anHrMqmEafTgsszuO7Y6KMgJ9W6yz+D68OIFlDimf4DAwLzRN+MlalC
-IGAgIiUrV+3rD9PkemIkao2URO2ScPYSntabQ1Pv9YDDpzLEki+40/7m+F6hpBtP
-PF/mALRcUHVibGljIE9ubHkgVGVzdCBLZXkgKGRvIG5vdCBlbmNyeXB0IGltcG9y
+lQHhBEjS+OIRBACPl023p+jInWiUtc7zSBU1D4mv42zSOwPdC37Pn/4x9FyhIOXE
+LCRTpsnAw9rT6R3BvAC4uO68fxjxFCwTpsa60RsHw4bwpSAYuf0t5Xg+GQIritlm
+XHVYwku3Hkh4Svv0quemooGuJ9lLwIHacL/4W1dTHLB2rzon0T4kx7ExZwCg/XKl
+RD9zbbnQOgjn0EaS8fcSm+ED/1IMfkCz5ac9Y3jBUlcArOZcOlTrzxst+iMZm4f0
+fh8dFCCaRN0iaVLSdCNaFvbKbJYZad1w3jFAMU9bX83flqgV1wMPO/NenfMidBIq
+sKzgttaQo5VmjWPtwyOJXODR2lHKQR2hFCkIKlHMPLV3awCGV8iTyiTZMJirdtvf
+s26oA/9STYro+yB9yrHufdfjM1u8SbSIhK6jUoq2ajLPHaLF2nRZZyv1gnkzRFd+
+/Vxcx6cwp8Qd6L4z+0sU3pMS4X8rt2vqilK2msg1VrHnjGgFIfmfIvY5EmrhNzEx
+6X82fbR9f8lwLy5N/gPm326e0xSw1rWdR15VukJPbmK6nf/pL/4DAwIZF3WLmXaM
+DGCHa6b36T1VZ+bgYYcoQUanh3OSfLO0NwJ5ywFiML26DYZ7M3aivlfXj/8lOKy0
+8tcg/rRcUHVibGljIE9ubHkgVGVzdCBLZXkgKGRvIG5vdCBlbmNyeXB0IGltcG9y
 dGFudCBkYXRhIHdpdGggdGhpcyBrZXkpIDxwdWJsaWMtb25seUBleGFtcGxlLmNv
-bT6IYAQTEQIAIAUCR5DG/QIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJEBbS
-dFixu6HEKq8An2DtKGLVqZ8dzP5MQRq/qw8Zc38eAKCa4g5Z5qckRTm5GunPDPMw
-54P/5Z0CYwRHkMcGEAgAok+tFuvdGK4HHDKGDHCy7VSUNGibyy04YFOdOHyx+doj
-OVroeCeKIgWhOGIEFGpfmHf3PwUvD0MD91Co1kifTm0LMvUSFNgqW2/5wgfzgmKN
-vqQbxwHuVAzwKdqxJJRDWNusQAif8Ch8q8jTeGmCJJM84xZoduaMKz/wKP2XAgKf
-701CC9nh0XJzaB6Nc8CO6lBMRf/wzKcGFPy0wiTiuwIC9vSt4yfkwmz0SgndTJtI
-JjBrTRSF+gEtkjECIO7U1mCUnjcnn/vm60Ij1r/xlttfkkeML/Hmlj2HNQ8sk2qF
-qRpf3oVggovyYt6/Xm2/j0iIQm5aQ3793sb1DfXrSwADBgf9G5D9rUdOQauoCxK0
-oXPpqbohC3vLpiEzN2qEjqdt5NVQB/vsPG/4Dzt0Jr5gcRt6DzJ9rDvNY6saTmv1
-T2LSTm4a6mDoZk2+LGl0qWCiMvkKlyLTXR61LGIypX2175yzkDEs9KfY+pExZBd/
-WnkN3xrhTXWgY/i5Ul4CpU6sE5Kx4cGvioNDE80tMnAI/5mg1Q++fPs8w0Nh1ZGD
-PHVkyNJpureBWVkMDQ5zLn89UMm7wMeNBCNksvt5m5+JzA0t70Dp87khJtbfjADd
-3MlfX/Fu3w1kfIM6C9j+xfyAdk/UtMEmEJiYOLziamHI90TZdHXQgV+/b8BLjgYA
-CGQG6P4DAwLzRN+MlalCIGCm+u6eYnTE4oBCsQBnknxohqmrSc7MrJXSATR5hStG
-iAhpmQUtqZgtbFKm7SjfaMlNVo7mvs89GuMFp1DH3iElZEh05wULfHiQiEkEGBEC
-AAkFAkeQxwYCGwwACgkQFtJ0WLG7ocTOTgCfXR4Ycnkz9Pa4/IOCryHUmDD06kAA
-oI5UEei5MOBXWqSclNRONxPG8GL/
-=b5iz
+bT6IYAQTEQIAIAUCSNL44gIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJEKuo
+HvVOjA3r8DYAn1/DrF5jw31P3L6MlWdelLuR4POnAJ9It7IynfJalYIHoAWtY2xk
+kTsT+p0CYgRI0vjoEAgAp65R578Es8qtASDAgIbYfJlJTwMovEnA4KJ69mpVt3mz
+cFWMtJCvuilvwSQQ+VfKxjemtbe/IbMe9ssj4nTSLw/mweUB89tRj8ZzaS+/9312
+AS8ra/xIDr6kTSfKcRKjXgMzkJ+A13rYwG5LFWnyumg36xglmzXKhecEkRVPfWn3
+ISoq3zirZlQOWcKYdyA2Z685SKJC/N+3nUqKOJ7qrA7eT608LFksytBHeOfNf5m7
+CC4wAE3RAz+ZkJvWRbE2G5pUalZktq8uKMT5WQgvuFP3hnvku5yilpo2ELTnYkO3
+ltc3NHCc9v+jhikayPr7RvUdVPbaITT80yYKBPygCwADBggApzR1vW/fvzmrO5pW
+zAvd4umVh/Yp34n3vWyXMu+JIHA7s08rkTzlMXzamICQmkjwAuCwJt0t7BA28Lny
+goh2joxo8tE/OowFk+IzbeA2Vrz71d/T5SMDtC2mePE0m3bmCOLBscu5aJIfgi1X
+/fzr44f4i+6hqVDCuOOmnVtbL4xBBnS6KXdcWP7QbVhxG3SpH9Agd/QXvSQm0Obz
+9iKZ11FEXzgnVZGXaCM0GBsFE9JuNY5+hi6A72rccjhC0V1Cy43veeIhOE+v3pK0
+a/BGUlgDSdgVopE9zUSQwzuo87UbY3EoDWBqDRSRCRMfmv8S2b9VJIRPdCOHZGCI
+R49/0f4DAwIZF3WLmXaMDGCvSMKxFAt3zGZVEsfwS67ilWw0kq9wgmDpTmbrz1pe
+8tUgmHxgiVc3Xo86ItXGr69udzSODYw2wO6JGdgOKsZDKAv7zJHi+3GISAQYEQIA
+CQUCSNL46AIbDAAKCRCrqB71TowN6zbAAJ4qBrdmAYuAbY5txsc+Tmv9quOpzwCW
+NN5B7Vl2JdxBuwWJrdfUb9UQzw==
+=51qc
 -----END PGP PRIVATE KEY BLOCK-----
 
 TEXT;
@@ -294,7 +225,7 @@ TEXT;
         $result = $this->gpg->importKey($privateKeyData);
 
         $expectedResult = array(
-            'fingerprint'       => 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4',
+            'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 1,
@@ -306,11 +237,81 @@ TEXT;
         $result = $this->gpg->importKey($privateKeyData);
 
         $expectedResult = array(
-            'fingerprint'       => 'C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4',
+            'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
             'public_imported'   => 0,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
             'private_unchanged' => 1
+        );
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    // }}}
+    // {{{ testImportKeyAlreadyImported_public()
+
+    /**
+     * @group string
+     */
+    public function testImportKeyAlreadyImported_public()
+    {
+        // {{{ public key data
+        $publicKeyData = <<<TEXT
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+mQGiBEjS+PgRBADbDdRN9iwESSyJvjnfgk7ZWUYKdHdSER7yJ0aM4LQjVDdw9y/f
+QGidipXxVD2lW28gRtzcmLufxv3DzjZp83VaXvlJs9jbTtHDIYFyDW9kH1HTRbZT
+WKWfuInd0AXzHy5o77qQ+mW0AIXbyke5suSHdvcmv1hiWI9OnXcIHpmavwCgt4Hm
++j3FpRo9qs4fJM887c796qUD/iPkStU9sM/0KCJFZNaPCGBaamCEi7UoAHNlim+B
+dv3rfSQ2VcDRq9/3GoCEJ2c62XpgQxt79mojJLdWZsTWvr6ESnWOm7W6GIjv/Zc3
++OXgi7QdH5nwpZl6kBMkuzZxczFuwh9dqlXml+bND0JawS38MvQpDUkwMb592v5U
+i9WIBADBacg6nixiTR+4kaHFE1Ww8QxT+vQ4S1SOx47cm8R6FxTRQA7FvK+vMxCt
+Ps9GOzhjrCgIoF/6X10IZ7qB5jCYIH+kvHrp90ZbNwJ4pIa7phCPhqUF9mEyMbC2
+AEIGp/Aw26yXKskQJJ3vFji+VaeCui21sXjg5EHfoayt79xT8bRfRXh0ZXJuYWwg
+UHVibGljIEtleSAoZG8gbm90IGVuY3J5cHQgaW1wb3J0YW50IGRhdGEgd2l0aCB0
+aGlzIGtleSkgPGV4dGVybmFsLXB1YmxpY0BleGFtcGxlLmNvbT6IYAQTEQIAIAUC
+SNL4+AIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJECaKtxA0NeZdqHwAn3AF
+EEhX1Tyba0ovCV2DwUytKM0CAKCnu6VzRy1Y8jp9fiy3ScwmaCI3FbkCDQRI0vj8
+EAgArBRh0YpPhE1vvKoPuhGDa//96YqrYt9rmBo3AR1WmF3CKtspjXdOK2bCqdJh
+H6kaoNi+0Ors00n2NfPj9Am2cTV3h2/KpAWOxQGfkmpzU3xXTVCUo/HoKDXIfWqk
+/TPXRqbwFV489GRBtVov4IoZM0KqZXhaFD6cXBsEl/BVSvVdBqmBzUoJ2bOzYiSW
+eg/ml65jbtxjDYMbxTLi7xRcTSAsareoN6/PcbAvcCE5UeCMu8p52wxHOTrAkI4/
+6elpziVpIGn07zJb//4qIoZdhIzwfsMl73tPfdoL9jEC66SiWAN+BEDxceGR5E15
+2WsT5tkxuz/pQUC1L3JW4WCC/wADBwf8CsevcPsk2XxT2XZj0lfmAOuhXxuqBczW
+TXCimnRxvC8+uAacv1RgVRH6emW3BVjt0dr9vwRT0n54JA+7ZwXVMOo4/tqNwmJs
+C6SThBXGBQxEaZwv19WC58DjblbvYa81cUaXrUdHi1OyoHwgalx0xZQ57IUXW6+7
+qdLRfzyqbDBph9ogB0ta3AhSikAqqYImTrI650v/KWBLjrI+N925r0TvnfSOsru7
+JrftccY2LntVnQUcXjuaFViZ7y8ocW8f92zmGj2zUN8z2GsMKiGQtNNmoX51TcQl
+sJPsZF0RKduVkNUQa9cfzSIMjjhUSzspA2qHLUKafrS3e38s2Y4CNIhJBBgRAgAJ
+BQJI0vj8AhsMAAoJECaKtxA0NeZdOFQAn15X+eYzFgVERrFkddsHvAE00OnSAJ9h
+A7Lcv7M+9WeZ6cjeHkZfLB6LLA==
+=AV/P
+-----END PGP PUBLIC KEY BLOCK-----
+
+TEXT;
+        // }}}
+
+        $result = $this->gpg->importKey($publicKeyData);
+
+        $expectedResult = array(
+            'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
+            'public_imported'   => 1,
+            'public_unchanged'  => 0,
+            'private_imported'  => 0,
+            'private_unchanged' => 0
+        );
+
+        $this->assertEquals($expectedResult, $result);
+
+        $result = $this->gpg->importKey($publicKeyData);
+
+        $expectedResult = array(
+            'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
+            'public_imported'   => 0,
+            'public_unchanged'  => 1,
+            'private_imported'  => 0,
+            'private_unchanged' => 0
         );
 
         $this->assertEquals($expectedResult, $result);
@@ -322,12 +323,143 @@ TEXT;
     /**
      * @expectedException Crypt_GPG_NoDataException
      *
-     * @group import
+     * @group string
      */
     public function testImportKeyNoDataException()
     {
         $keyData = 'Invalid OpenPGP data.';
         $this->gpg->importKey($keyData);
+    }
+
+    // }}}
+
+    // file
+    // {{{ testImportKeyFile_private()
+
+    /**
+     * @group file
+     */
+    public function testImportKeyFile_private()
+    {
+        $expectedResult = array(
+            'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
+            'public_imported'   => 0,
+            'public_unchanged'  => 1,
+            'private_imported'  => 1,
+            'private_unchanged' => 0
+        );
+
+        $result = $this->gpg->importKeyFile('./data-files/' .
+            'testImportKeyFile_private.asc');
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    // }}}
+    // {{{ testImportKeyFile_public()
+
+    /**
+     * @group file
+     */
+    public function testImportKeyFile_public()
+    {
+        $expectedResult = array(
+            'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
+            'public_imported'   => 1,
+            'public_unchanged'  => 0,
+            'private_imported'  => 0,
+            'private_unchanged' => 0
+        );
+
+        $result = $this->gpg->importKeyFile('./data-files/' .
+            'testImportKeyFile_public.asc');
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    // }}}
+    // {{{ testImportKeyFileAlreadyImported_private()
+
+    /**
+     * @group file
+     */
+    public function testImportKeyFileAlreadyImported_private()
+    {
+        $result = $this->gpg->importKeyFile('./data-files/' .
+            'testImportKeyFile_private.asc');
+
+        $expectedResult = array(
+            'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
+            'public_imported'   => 0,
+            'public_unchanged'  => 1,
+            'private_imported'  => 1,
+            'private_unchanged' => 0
+        );
+
+        $this->assertEquals($expectedResult, $result);
+
+        $result = $this->gpg->importKeyFile('./data-files/' .
+            'testImportKeyFile_private.asc');
+
+        $expectedResult = array(
+            'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
+            'public_imported'   => 0,
+            'public_unchanged'  => 0,
+            'private_imported'  => 0,
+            'private_unchanged' => 1
+        );
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    // }}}
+    // {{{ testImportKeyFileAlreadyImported_public()
+
+    /**
+     * @group file
+     */
+    public function testImportKeyFileAlreadyImported_public()
+    {
+        $result = $this->gpg->importKeyFile('./data-files/' .
+            'testImportKeyFile_public.asc');
+
+        $expectedResult = array(
+            'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
+            'public_imported'   => 1,
+            'public_unchanged'  => 0,
+            'private_imported'  => 0,
+            'private_unchanged' => 0
+        );
+
+        $this->assertEquals($expectedResult, $result);
+
+        $result = $this->gpg->importKeyFile('./data-files/' .
+            'testImportKeyFile_public.asc');
+
+        $expectedResult = array(
+            'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
+            'public_imported'   => 0,
+            'public_unchanged'  => 1,
+            'private_imported'  => 0,
+            'private_unchanged' => 0
+        );
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    // }}}
+    // {{{ testImportKeyFileFileException()
+
+    /**
+     * @expectedException Crypt_GPG_FileException
+     *
+     * @group file
+     */
+    public function testImportKeyFileFileException()
+    {
+        // input file does not exist
+        $this->gpg->importKeyFile('./data-files/' .
+            'testImportKeyFileFileException.asc');
     }
 
     // }}}

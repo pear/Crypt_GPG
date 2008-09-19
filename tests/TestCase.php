@@ -82,6 +82,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     const TEMPDIR = './temp-files';
 
+    const DATADIR = './data-files';
+
     // }}}
     // {{{ protected properties
 

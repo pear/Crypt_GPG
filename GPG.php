@@ -1661,7 +1661,7 @@ class Crypt_GPG
             fclose($input);
         }
 
-        if ($encryptedFile !== null) {
+        if ($outputFile !== null) {
             fclose($output);
         }
 

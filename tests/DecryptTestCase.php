@@ -468,7 +468,7 @@ TEXT;
         // output file does not exist
         $inputFilename  = TestCase::DATADIR . '/testDecryptFile.asc';
         $outputFilename = './non-existent' .
-            '/testDecryptFileFileException_output.asc';
+            '/testDecryptFileFileException_output.plain';
 
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
         $this->gpg->decryptFile($inputFilename, $outputFilename);

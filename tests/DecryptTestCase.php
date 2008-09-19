@@ -384,7 +384,7 @@ TEXT;
      */
     public function testDecryptFile()
     {
-        $expectedMd5Sum = '76ef02a8f6f749c26d73c2ba769c45a6';
+        $expectedMd5Sum = 'f96267d87551ee09bfcac16921e351c1';
         $outputFilename = TestCase::TEMPDIR . '/testDecryptFile.plain';
 
         // file is encrypted with first-keypair@example.com
@@ -423,7 +423,7 @@ TEXT;
      */
     public function testDecryptFileNoPassphrase()
     {
-        $expectedMd5Sum = '76ef02a8f6f749c26d73c2ba769c45a6';
+        $expectedMd5Sum = 'f96267d87551ee09bfcac16921e351c1';
         $outputFilename = TestCase::TEMPDIR .
             '/testDecryptFileNoPassphrase.plain';
 
@@ -483,6 +483,51 @@ TEXT;
         $this->gpg->decryptFile(
             './data-files/testDecryptFileKeyNotFoundException.asc',
             TestCase::TEMPDIR . '/testDecryptFileKeyNotFoundException.plain');
+    }
+
+    // }}}
+    // {{{ testDecryptFileDual()
+
+    /**
+     * @group string
+     */
+    public function testDecryptFileDual()
+    {
+        $expectedMd5Sum = 'f96267d87551ee09bfcac16921e351c1';
+        $outputFilename = TestCase::TEMPDIR . '/testDecryptFileDual.plain';
+
+        // file is encrypted with both first-keypair@example.com and
+        // second-keypair@example.com
+        $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
+        $this->gpg->addDecryptKey('second-keypair@example.com', 'test2');
+        $this->gpg->decryptFile(
+            './data-files/testDecryptFileDual.asc',
+            $outputFilename);
+
+        $md5Sum = $this->getMd5Sum($outputFilename);
+        $this->assertEquals($expectedMd5Sum, $md5Sum);
+    }
+
+    // }}}
+    // {{{ testDecryptFileDualOnePassphrase()
+
+    /**
+     * @group string
+     */
+    public function testDecryptFileDualOnePassphrase()
+    {
+        $expectedMd5Sum = 'f96267d87551ee09bfcac16921e351c1';
+        $outputFilename = TestCase::TEMPDIR . '/testDecryptFileDual.plain';
+
+        // file is encrypted with both first-keypair@example.com and
+        // no-passphrase@example.com
+        $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
+        $this->gpg->decryptFile(
+            './data-files/testDecryptFileDualOnePassphrase.asc',
+            $outputFilename);
+
+        $md5Sum = $this->getMd5Sum($outputFilename);
+        $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
 
     // }}}

@@ -1552,7 +1552,7 @@ class Crypt_GPG
         $result = array();
 
         if ($isFile) {
-            $input = fopen($key, 'rb');
+            $input = @fopen($key, 'rb');
             if ($input === false) {
                 throw new Crypt_GPG_FileException('Could not open key file "' .
                     $key . '" for importing.', 0, $key);
@@ -1626,7 +1626,7 @@ class Crypt_GPG
         }
 
         if ($isFile) {
-            $input = fopen($data, 'rb');
+            $input = @fopen($data, 'rb');
             if ($input === false) {
                 throw new Crypt_GPG_FileException('Could not open input file "' .
                     $data . '" for encryption.', 0, $data);
@@ -1638,7 +1638,7 @@ class Crypt_GPG
         if ($outputFile === null) {
             $output = '';
         } else {
-            $output = fopen($outputFile, 'wb');
+            $output = @fopen($outputFile, 'wb');
             if ($output === false) {
                 throw new Crypt_GPG_FileException('Could not open output ' .
                     'file "' . $outputFile . '" for storing encrypted data.',
@@ -1712,7 +1712,7 @@ class Crypt_GPG
     private function _decrypt($data, $isFile, $outputFile)
     {
         if ($isFile) {
-            $input = fopen($data, 'rb');
+            $input = @fopen($data, 'rb');
             if ($input === false) {
                 throw new Crypt_GPG_FileException('Could not open input file "' .
                     $data . '" for decryption.', 0, $data);
@@ -1724,7 +1724,7 @@ class Crypt_GPG
         if ($outputFile === null) {
             $output = '';
         } else {
-            $output = fopen($outputFile, 'wb');
+            $output = @fopen($outputFile, 'wb');
             if ($output === false) {
                 throw new Crypt_GPG_FileException('Could not open output ' .
                     'file "' . $outputFile . '" for storing decrypted data.',
@@ -1824,7 +1824,7 @@ class Crypt_GPG
         }
 
         if ($isFile) {
-            $input = fopen($data, 'rb');
+            $input = @fopen($data, 'rb');
             if ($input === false) {
                 throw new Crypt_GPG_FileException('Could not open input ' .
                     'file "' . $data . '" for signing.', 0, $data);
@@ -1834,7 +1834,7 @@ class Crypt_GPG
         if ($outputFile === null) {
             $output = '';
         } else {
-            $output = fopen($outputFile, 'wb');
+            $output = @fopen($outputFile, 'wb');
             if ($output=== false) {
                 throw new Crypt_GPG_FileException('Could not open output ' .
                     'file "' . $outputFile . '" for storing signed ' .
@@ -1944,7 +1944,7 @@ class Crypt_GPG
         $sigObj = new Crypt_GPG_Signature();
 
         if ($isFile) {
-            $input = fopen($data, 'rb');
+            $input = @fopen($data, 'rb');
             if ($input === false) {
                 throw new Crypt_GPG_FileException('Could not open input ' .
                     'file "' . $data . '" for verifying.', 0, $data);

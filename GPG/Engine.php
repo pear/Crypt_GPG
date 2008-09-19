@@ -347,7 +347,7 @@ class Crypt_GPG_Engine
 
         // attempt to create homedir if it does not exist
         if (!is_dir($this->_homedir)) {
-            if (mkdir($this->_homedir, 0777, true)) {
+            if (@mkdir($this->_homedir, 0777, true)) {
                 // Set permissions on homedir. Parent directories are created
                 // with 0777, homedir is set to 0700.
                 chmod($this->_homedir, 0700);

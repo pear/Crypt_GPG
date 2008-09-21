@@ -57,18 +57,32 @@ require_once 'TestCase.php';
  */
 class SignTestCase extends TestCase
 {
-    // {{{ testSignKeyNotFoundException()
+    // string
+    // {{{ testSignKeyNotFoundException_invalid()
 
     /**
      * @expectedException Crypt_GPG_KeyNotFoundException
      *
-     * @group sign
+     * @group string
      */
-    public function testSignKeyNotFoundException()
+    public function testSignKeyNotFoundException_invalid()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $keyId = 'non-existent-key@example.com';
-        $this->gpg->addSignKey($keyId);
+        $this->gpg->addSignKey('non-existent-key@example.com');
+        $signedData = $this->gpg->sign($data);
+    }
+
+    // }}}
+    // {{{ testSignKeyNotFoundException_none()
+
+    /**
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     *
+     * @group string
+     */
+    public function testSignKeyNotFoundException_none()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
         $signedData = $this->gpg->sign($data);
     }
 
@@ -78,13 +92,12 @@ class SignTestCase extends TestCase
     /**
      * @expectedException Crypt_GPG_BadPassphraseException
      *
-     * @group sign
+     * @group string
      */
     public function testSignBadPassphraseException_missing()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $keyId = 'public-and-private@example.com';
-        $this->gpg->addSignKey($keyId);
+        $this->gpg->addSignKey('first-keypair@example.com');
         $signedData = $this->gpg->sign($data);
     }
 
@@ -94,14 +107,12 @@ class SignTestCase extends TestCase
     /**
      * @expectedException Crypt_GPG_BadPassphraseException
      *
-     * @group sign
+     * @group string
      */
     public function testSignBadPassphraseException_bad()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $keyId = 'public-and-private@example.com';
-        $passphrase = 'incorrect';
-        $this->gpg->addSignKey($keyId, $passphrase);
+        $this->gpg->addSignKey('first-keypair@example.com', 'incorrect');
         $signedData = $this->gpg->sign($data);
     }
 
@@ -109,72 +120,400 @@ class SignTestCase extends TestCase
     // {{{ testSignNoPassphrase()
 
     /**
-     * @group sign
+     * @group string
      */
     public function testSignNoPassphrase()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $keyId = 'no-passphrase@example.com';
-        $this->gpg->addSignKey($keyId);
+        $this->gpg->addSignKey('no-passphrase@example.com');
         $signedData = $this->gpg->sign($data);
 
-        $signature = $this->gpg->verify($signedData);
-        $this->assertTrue($signature->isValid());
+        $signatures = $this->gpg->verify($signedData);
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
     }
 
     // }}}
     // {{{ testSignNormal()
 
     /**
-     * @group sign
+     * @group string
      */
     public function testSignNormal()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $keyId = 'public-and-private@example.com';
-        $passphrase = 'test';
-        $this->gpg->addSignKey($keyId, $passphrase);
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $signedData = $this->gpg->sign($data);
 
-        $signature = $this->gpg->verify($signedData);
-        $this->assertTrue($signature->isValid());
+        $signatures = $this->gpg->verify($signedData);
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
     }
 
     // }}}
     // {{{ testSignClear()
 
     /**
-     * @group sign
+     * @group string
      */
     public function testSignClear()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $keyId = 'public-and-private@example.com';
-        $passphrase = 'test';
-        $this->gpg->addSignKey($keyId, $passphrase);
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $signedData = $this->gpg->sign($data, Crypt_GPG::SIGN_MODE_CLEAR);
 
-        $signature = $this->gpg->verify($signedData);
-        $this->assertTrue($signature->isValid());
+        $signatures = $this->gpg->verify($signedData);
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
     }
 
     // }}}
     // {{{ testSignDetached()
 
     /**
-     * @group sign
+     * @group string
      */
     public function testSignDetached()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $keyId = 'public-and-private@example.com';
-        $passphrase = 'test';
-        $this->gpg->addSignKey($keyId, $passphrase);
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $signatureData = $this->gpg->sign($data,
             Crypt_GPG::SIGN_MODE_DETACHED);
 
-        $signature = $this->gpg->verify($data, $signatureData);
-        $this->assertTrue($signature->isValid());
+        $signatures = $this->gpg->verify($data, $signatureData);
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignDualOnePassphrase()
+
+    /**
+     * @group string
+     */
+    public function testSignDualOnePassphrase()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        $this->gpg->addSignKey('no-passphrase@example.com');
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $signedData = $this->gpg->sign($data);
+
+        $signatures = $this->gpg->verify($signedData);
+        $this->assertEquals(2, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignDualNormal()
+
+    /**
+     * @group string
+     */
+    public function testSignDualNormal()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->addSignKey('second-keypair@example.com', 'test2');
+        $signedData = $this->gpg->sign($data);
+
+        $signatures = $this->gpg->verify($signedData);
+        $this->assertEquals(2, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignDualClear()
+
+    /**
+     * @group string
+     */
+    public function testSignDualClear()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->addSignKey('second-keypair@example.com', 'test2');
+        $signedData = $this->gpg->sign($data, Crypt_GPG::SIGN_MODE_CLEAR);
+
+        $signatures = $this->gpg->verify($signedData);
+        $this->assertEquals(2, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignDualDetached()
+
+    /**
+     * @group string
+     */
+    public function testSignDualDetached()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->addSignKey('second-keypair@example.com', 'test2');
+        $signatureData = $this->gpg->sign($data,
+            Crypt_GPG::SIGN_MODE_DETACHED);
+
+        $signatures = $this->gpg->verify($data, $signatureData);
+        $this->assertEquals(2, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+
+    // file
+    // {{{ testSignFileNoPassphrase()
+
+    /**
+     * @group file
+     */
+    public function testSignFileNoPassphrase()
+    {
+        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $outputFilename = TestCase::TEMPDIR . '/testSignFileNoPassphrase.asc';
+
+        $this->gpg->addSignKey('no-passphrase@example.com');
+        $this->gpg->signFile($inputFilename, $outputFilename);
+
+        $signatures = $this->gpg->verifyFile($outputFilename);
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignFileNormal()
+
+    /**
+     * @group file
+     */
+    public function testSignFileNormal()
+    {
+        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $outputFilename = TestCase::TEMPDIR . '/testSignFileNormal.asc';
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->signFile($inputFilename, $outputFilename);
+
+        $signatures = $this->gpg->verifyFile($outputFilename);
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignFileClear()
+
+    /**
+     * @group file
+     */
+    public function testSignFileClear()
+    {
+        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $outputFilename = TestCase::TEMPDIR . '/testSignFileClear.asc';
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->signFile($inputFilename, $outputFilename,
+            Crypt_GPG::SIGN_MODE_CLEAR);
+
+        $signatures = $this->gpg->verifyFile($outputFilename);
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignFileDetached()
+
+    /**
+     * @group file
+     */
+    public function testSignFileDetached()
+    {
+        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $outputFilename = TestCase::TEMPDIR . '/testSignFileDetached.asc';
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->signFile($inputFilename, $outputFilename,
+            Crypt_GPG::SIGN_MODE_DETACHED);
+
+        $signatureData = file_get_contents($outputFilename);
+
+        $signatures = $this->gpg->verifyFile($inputFilename, $signatureData);
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignFileDetachedToString()
+
+    /**
+     * @group file
+     */
+    public function testSignFileDetachedToString()
+    {
+        $filename = TestCase::DATADIR . '/testFileMedium.plain';
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $signatureData = $this->gpg->signFile($filename, null,
+            Crypt_GPG::SIGN_MODE_DETACHED);
+
+        $signatures = $this->gpg->verifyFile($filename, $signatureData);
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignFileDualOnePassphrase()
+
+    /**
+     * @group file
+     */
+    public function testSignFileDualOnePassphrase()
+    {
+        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $outputFilename = TestCase::TEMPDIR .
+            '/testSignFileDualOnePassphrase.asc';
+
+        $this->gpg->addSignKey('no-passphrase@example.com');
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->signFile($inputFilename, $outputFilename);
+
+        $signatures = $this->gpg->verifyFile($outputFilename);
+        $this->assertEquals(2, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignFileDualNormal()
+
+    /**
+     * @group file
+     */
+    public function testSignFileDualNormal()
+    {
+        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $outputFilename = TestCase::TEMPDIR . '/testSignFileDualNormal.asc';
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->addSignKey('second-keypair@example.com', 'test2');
+        $this->gpg->signFile($inputFilename, $outputFilename);
+
+        $signatures = $this->gpg->verifyFile($outputFilename);
+        $this->assertEquals(2, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignFileDualClear()
+
+    /**
+     * @group file
+     */
+    public function testSignFileDualClear()
+    {
+        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $outputFilename = TestCase::TEMPDIR . '/testSignFileDualClear.asc';
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->addSignKey('second-keypair@example.com', 'test2');
+        $this->gpg->signFile($inputFilename, $outputFilename,
+            Crypt_GPG::SIGN_MODE_CLEAR);
+
+        $signatures = $this->gpg->verifyFile($outputFilename);
+        $this->assertEquals(2, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignFileDualDetached()
+
+    /**
+     * @group file
+     */
+    public function testSignFileDualDetached()
+    {
+        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $outputFilename = TestCase::TEMPDIR . '/testSignFileDualDetached.asc';
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->addSignKey('second-keypair@example.com', 'test2');
+        $this->gpg->signFile($inputFilename, $outputFilename,
+            Crypt_GPG::SIGN_MODE_DETACHED);
+
+        $signatureData = file_get_contents($outputFilename);
+
+        $signatures = $this->gpg->verifyFile($inputFilename, $signatureData);
+        $this->assertEquals(2, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
+    // {{{ testSignFileFileException_input()
+
+    /**
+     * @expectedException Crypt_GPG_FileException
+     *
+     * @group file
+     */
+    public function testSignFileFileException_input()
+    {
+        // input file does not exist
+        $inputFilename = TestCase::DATADIR .
+            '/testSignFileFileFileException_input.plain';
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->signFile($inputFilename);
+    }
+
+    // }}}
+    // {{{ testSignFileFileException_output()
+
+    /**
+     * @expectedException Crypt_GPG_FileException
+     *
+     * @group file
+     */
+    public function testSignFileFileException_output()
+    {
+        // input file is encrypted with first-keypair@example.com
+        // output file does not exist
+        $inputFilename  = TestCase::DATADIR . '/testMediumFile.plain';
+        $outputFilename = './non-existent' .
+            '/testSignFileFileException_output.plain';
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $this->gpg->signFile($inputFilename, $outputFilename);
     }
 
     // }}}

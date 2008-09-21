@@ -105,20 +105,31 @@ class EncryptTestCase extends TestCase
     }
 
     // }}}
-    // {{{ testEncryptKeyNotFoundException()
+    // {{{ testEncryptKeyNotFoundException_invalid()
 
     /**
      * @expectedException Crypt_GPG_KeyNotFoundException
      *
      * @group string
      */
-    public function testEncryptNotFoundException()
+    public function testEncryptNotFoundException_invalid()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $keyId = 'non-existent-key@example.com';
+        $this->gpg->addEncryptKey('non-existent-key@example.com');
+        $encryptedData = $this->gpg->encrypt($data);
+    }
 
-        $this->gpg->addEncryptKey($keyId);
+    // }}}
+    // {{{ testEncryptKeyNotFoundException_none()
 
+    /**
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     *
+     * @group string
+     */
+    public function testEncryptNotFoundException_none()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
         $encryptedData = $this->gpg->encrypt($data);
     }
 

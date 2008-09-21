@@ -491,7 +491,7 @@ class Crypt_GPG_Engine
 
         if ($this->_debug) {
             $this->addStatusHandler(array($this, '_handleDebugStatus'));
-            $this->addStatusHandler(array($this, '_handleDebugError'));
+            $this->addErrorHandler(array($this, '_handleDebugError'));
         }
     }
 

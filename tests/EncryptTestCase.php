@@ -88,19 +88,20 @@ class EncryptTestCase extends TestCase
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
 
-        $firstKeyId       = 'first-keypair@example.com';
-        $firstPassphrase  = 'test1';
-        $secondKeyId      = 'second-keypair@example.com';
-        $secondPassphrase = 'test2';
-
-        $this->gpg->addEncryptKey($firstKeyId);
-        $this->gpg->addEncryptKey($secondKeyId);
+        $this->gpg->addEncryptKey('first-keypair@example.com');
+        $this->gpg->addEncryptKey('second-keypair@example.com');
         $encryptedData = $this->gpg->encrypt($data);
 
-        $this->gpg->addDecryptKey($firstKeyId, $firstPassphrase);
-        $this->gpg->addDecryptKey($secondKeyId, $secondPassphrase);
+        // decrypt with first key
+        $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
         $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->assertEquals($data, $decryptedData);
+        $this->gpg->clearDecryptKeys();
 
+        // decrypt with second key
+        $this->gpg->addDecryptKey('second-keypair@example.com', 'test2');
+        $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->gpg->clearDecryptKeys();
         $this->assertEquals($data, $decryptedData);
     }
 
@@ -175,10 +176,17 @@ class EncryptTestCase extends TestCase
         $this->gpg->addEncryptKey('second-keypair@example.com');
         $this->gpg->encryptFile($originalFilename, $encryptedFilename);
 
+        // decrypt with first key
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
-        $this->gpg->addEncryptKey('second-keypair@example.com', 'test2');
         $this->gpg->decryptFile($encryptedFilename, $decryptedFilename);
+        $this->gpg->clearDecryptKeys();
+        $md5Sum = $this->getMd5Sum($decryptedFilename);
+        $this->assertEquals($expectedMd5Sum, $md5Sum);
 
+        // decrypt with second key
+        $this->gpg->addDecryptKey('second-keypair@example.com', 'test2');
+        $this->gpg->decryptFile($encryptedFilename, $decryptedFilename);
+        $this->gpg->clearDecryptKeys();
         $md5Sum = $this->getMd5Sum($decryptedFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }

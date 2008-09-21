@@ -313,10 +313,16 @@ gX7Eg2ZqISULFydBckMJ6drojMMQiqZBeEc09GupSBL1zldnKHfiXBTw
 TEXT;
         // }}}
 
+        // decrypt with first key
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
-        $this->gpg->addDecryptKey('second-keypair@example.com', 'test2');
-
         $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->gpg->clearDecryptKeys();
+        $this->assertEquals($expectedDecryptedData, $decryptedData);
+
+        // decrypt with second key
+        $this->gpg->addDecryptKey('second-keypair@example.com', 'test2');
+        $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->gpg->clearDecryptKeys();
         $this->assertEquals($expectedDecryptedData, $decryptedData);
     }
 
@@ -367,10 +373,14 @@ S6stCnUnw33F2IUOsEufvLFfEWtXY8qbBCULYC+no3GOwJhMyJQEI+xw
 TEXT;
         // }}}
 
-        $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
-        $this->gpg->addDecryptKey('no-passphrase@example.com');
-
+        // decrypt with no passphrase
         $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->assertEquals($expectedDecryptedData, $decryptedData);
+
+        // decrypt with first key
+        $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
+        $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->gpg->clearDecryptKeys();
         $this->assertEquals($expectedDecryptedData, $decryptedData);
     }
 
@@ -502,12 +512,17 @@ TEXT;
         $inputFilename  = TestCase::DATADIR . '/testDecryptFileDual.asc';
         $outputFilename = TestCase::TEMPDIR . '/testDecryptFileDual.plain';
 
-        // file is encrypted with both first-keypair@example.com and
-        // second-keypair@example.com
+        // decrypt with first key
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
+        $this->gpg->decryptFile($inputFilename, $outputFilename);
+        $this->gpg->clearDecryptKeys();
+        $md5Sum = $this->getMd5Sum($outputFilename);
+        $this->assertEquals($expectedMd5Sum, $md5Sum);
+
+        // decrypt with second key
         $this->gpg->addDecryptKey('second-keypair@example.com', 'test2');
         $this->gpg->decryptFile($inputFilename, $outputFilename);
-
+        $this->gpg->clearDecryptKeys();
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
@@ -528,11 +543,15 @@ TEXT;
         $outputFilename = TestCase::TEMPDIR .
             '/testDecryptFileDualOnePassphrase.plain';
 
-        // file is encrypted with both first-keypair@example.com and
-        // no-passphrase@example.com
+        // decrypt with no-passphrase
+        $this->gpg->decryptFile($inputFilename, $outputFilename);
+        $md5Sum = $this->getMd5Sum($outputFilename);
+        $this->assertEquals($expectedMd5Sum, $md5Sum);
+
+        // decrypt with first key
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
         $this->gpg->decryptFile($inputFilename, $outputFilename);
-
+        $this->gpg->clearDecryptKeys();
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }

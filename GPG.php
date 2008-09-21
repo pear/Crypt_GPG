@@ -1577,6 +1577,9 @@ class Crypt_GPG
         } else {
             $output = @fopen($outputFile, 'wb');
             if ($output === false) {
+                if ($isFile) {
+                    fclose($input);
+                }
                 throw new Crypt_GPG_FileException('Could not open output ' .
                     'file "' . $outputFile . '" for storing encrypted data.',
                     0, $outputFile);
@@ -1663,6 +1666,9 @@ class Crypt_GPG
         } else {
             $output = @fopen($outputFile, 'wb');
             if ($output === false) {
+                if ($isFile) {
+                    fclose($input);
+                }
                 throw new Crypt_GPG_FileException('Could not open output ' .
                     'file "' . $outputFile . '" for storing decrypted data.',
                     0, $outputFile);
@@ -1773,6 +1779,9 @@ class Crypt_GPG
         } else {
             $output = @fopen($outputFile, 'wb');
             if ($output=== false) {
+                if ($isFile) {
+                    fclose($input);
+                }
                 throw new Crypt_GPG_FileException('Could not open output ' .
                     'file "' . $outputFile . '" for storing signed ' .
                     'data.', 0, $outputFile);

@@ -56,9 +56,9 @@
  */
 
 /**
- * GPG signature helper class
+ * GPG signature handler class
  */
-require_once 'Crypt/GPG/Signature.php';
+require_once 'Crypt/GPG/VerifyStatusHandler.php';
 
 /**
  * GPG key class
@@ -1096,11 +1096,9 @@ class Crypt_GPG
      *                           signature data. The data that was signed is
      *                           specified in <code>$signedData</code>.
      *
-     * @return Crypt_GPG_Signature the signature details of the signed data. If
-     *                             the signature is valid, the
-     *                             {@link Crypt_GPG_Signature::isValid()}
-     *                             method of the returned object will return
-     *                             true.
+     * @return array an array of {@link Crypt_GPG_Signature} objects for the
+     *               signed data. For each signature that is valid, the
+     *               {@link Crypt_GPG_Signature::isValid()} will return true.
      *
      * @throws Crypt_GPG_NoDataException if the provided data is not signed
      *         data.
@@ -1132,11 +1130,9 @@ class Crypt_GPG
      *                          signature data. The file that was signed is
      *                          specified in <code>$filename</code>.
      *
-     * @return Crypt_GPG_Signature the signature details of the signed file. If
-     *                             the signature is valid, the
-     *                             {@link Crypt_GPG_Signature::isValid()}
-     *                             method of the returned object will return
-     *                             true.
+     * @return array an array of {@link Crypt_GPG_Signature} objects for the
+     *               signed data. For each signature that is valid, the
+     *               {@link Crypt_GPG_Signature::isValid()} will return true.
      *
      * @throws Crypt_GPG_NoDataException if the provided data is not signed
      *         data.
@@ -1329,6 +1325,7 @@ class Crypt_GPG
      * @return void
      *
      * @see Crypt_GPG::decrypt()
+     * @see Crypt_GPG_Engine::addStatusHandler()
      */
     public function handleDecryptStatus($line)
     {
@@ -1342,67 +1339,6 @@ class Crypt_GPG
             } else {
                 $this->engine->sendCommand('');
             }
-            break;
-        }
-    }
-
-    // }}}
-    // {{{ handleVerifyStatus()
-
-    /**
-     * Handles the status output from GPG for the verify operation
-     *
-     * This method is responsible for building the signature object that is
-     * returned from the {@link Crypt_GPG::verify()} method. See
-     * <strong>doc/DETAILS</strong> in the
-     * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
-     * info on GPG's status output.
-     *
-     * @param string              $line      the status line to handle.
-     * @param Crypt_GPG_Signature $signature the current signature object being
-     *                                       processed.
-     *
-     * @return void
-     *
-     * @see Crypt_GPG::verify()
-     */
-    public function handleVerifyStatus($line, Crypt_GPG_Signature $signature)
-    {
-        $tokens = explode(' ', $line);
-        switch ($tokens[0]) {
-        case 'GOODSIG':
-        case 'EXPSIG':
-        case 'EXPKEYSIG':
-        case 'REVSIG':
-        case 'BADSIG':
-            if ($signature->getUserId() === null) {
-                $string = implode(' ', array_splice($tokens, 2));
-                $string = rawurldecode($string);
-                $signature->setUserId(Crypt_GPG_UserId::parse($string));
-            }
-            break;
-
-        case 'VALIDSIG':
-            $signature->setIsValid(true);
-            $signature->setKeyFingerprint($tokens[1]);
-
-            if (strpos($tokens[3], 'T') === false) {
-                $signature->setCreationDate($tokens[3]);
-            } else {
-                $signature->setCreationDate(strtotime($tokens[3]));
-            }
-
-            if (strpos($tokens[4], 'T') === false) {
-                $signature->setExpirationDate($tokens[4]);
-            } else {
-                $signature->setExpirationDate(strtotime($tokens[4]));
-            }
-
-            break;
-
-        case 'SIG_ID':
-            // signature id may not exist for some signature types
-            $signature->setId($tokens[1]);
             break;
         }
     }
@@ -1425,6 +1361,7 @@ class Crypt_GPG
      * @return void
      *
      * @see Crypt_GPG::import()
+     * @see Crypt_GPG_Engine::addStatusHandler()
      */
     public function handleImportKeyStatus($line, array &$result)
     {
@@ -1915,7 +1852,8 @@ class Crypt_GPG
      *                           signature, this must be the detached signature
      *                           data. Otherwise, specify ''.
      *
-     * @return Crypt_GPG_Signature the signature details of the signed data.
+     * @return array an array of {@link Crypt_GPG_Signature} objects for the
+     *               signed data.
      *
      * @throws Crypt_GPG_NoDataException if the provided data is not signed
      *         data.
@@ -1940,8 +1878,7 @@ class Crypt_GPG
             $arguments = array('--enable-special-filenames');
         }
 
-        // create an object to return, and fill it with data
-        $sigObj = new Crypt_GPG_Signature();
+        $handler = new Crypt_GPG_VerifyStatusHandler();
 
         if ($isFile) {
             $input = @fopen($data, 'rb');
@@ -1954,8 +1891,7 @@ class Crypt_GPG
         }
 
         $this->engine->reset();
-        $this->engine->addStatusHandler(array($this, 'handleVerifyStatus'),
-            array($sigObj));
+        $this->engine->addStatusHandler(array($handler, 'handle'));
 
         if ($signature == '') {
             // signed or clearsigned data
@@ -1986,7 +1922,7 @@ class Crypt_GPG
                 'Unknown error validating signature details.', $code);
         }
 
-        return $sigObj;
+        return $handler->getSignatures();
     }
 
     // }}}

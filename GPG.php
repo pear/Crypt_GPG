@@ -1772,6 +1772,8 @@ class Crypt_GPG
                 throw new Crypt_GPG_FileException('Could not open input ' .
                     'file "' . $data . '" for signing.', 0, $data);
             }
+        } else {
+            $input = $data;
         }
 
         if ($outputFile === null) {

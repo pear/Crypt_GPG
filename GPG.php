@@ -1495,7 +1495,7 @@ class Crypt_GPG
                     $key . '" for importing.', 0, $key);
             }
         } else {
-            $input = $key;
+            $input = strval($key);
         }
 
         $this->engine->reset();
@@ -1569,7 +1569,7 @@ class Crypt_GPG
                     $data . '" for encryption.', 0, $data);
             }
         } else {
-            $input = $data;
+            $input = strval($data);
         }
 
         if ($outputFile === null) {
@@ -1658,7 +1658,7 @@ class Crypt_GPG
                     $data . '" for decryption.', 0, $data);
             }
         } else {
-            $input = $data;
+            $input = strval($data);
         }
 
         if ($outputFile === null) {
@@ -1773,7 +1773,7 @@ class Crypt_GPG
                     'file "' . $data . '" for signing.', 0, $data);
             }
         } else {
-            $input = $data;
+            $input = strval($data);
         }
 
         if ($outputFile === null) {
@@ -1898,7 +1898,7 @@ class Crypt_GPG
                     'file "' . $data . '" for verifying.', 0, $data);
             }
         } else {
-            $input = $data;
+            $input = strval($data);
         }
 
         $this->engine->reset();

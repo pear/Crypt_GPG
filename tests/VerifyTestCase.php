@@ -72,6 +72,32 @@ class VerifyTestCase extends TestCase
     }
 
     // }}}
+    // {{{ testVerifyKeyNotFoundException()
+
+    /**
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     *
+     * @group string
+     */
+    public function testVerifyKeyNotFoundException()
+    {
+        $data = 'Hello, Alice! Goodbye, Bob!';
+        // {{{ detached signature
+        $detachedSignature = <<<TEXT
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQBI1xN9CuJ9bDb23VARAkKSAKCG5/jPq1H7+mpMEpDITFnAJhSqlwCggzRx
+laNWOZOef2zfm1yANtWjPyU=
+=fhME
+-----END PGP SIGNATURE-----
+
+TEXT;
+        // }}}
+        $signatures = $this->gpg->verify($data, $detachedSignature);
+    }
+
+    // }}}
     // {{{ testVerifyNormalSignedData()
 
     /**

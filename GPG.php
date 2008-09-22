@@ -1880,6 +1880,10 @@ class Crypt_GPG
         case Crypt_GPG::ERROR_NO_DATA:
             throw new Crypt_GPG_NoDataException(
                 'No valid signature data found.', $code);
+        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+            throw new Crypt_GPG_KeyNotFoundException(
+                'Public key required for data verification not in keyring.',
+                $code);
         default:
             throw new Crypt_GPG_Exception(
                 'Unknown error validating signature details.', $code);

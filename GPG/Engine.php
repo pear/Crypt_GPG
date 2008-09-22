@@ -38,7 +38,7 @@
  */
 
 /**
- * Crypt_GPG driver base class.
+ * Crypt_GPG base class.
  */
 require_once 'Crypt/GPG.php';
 
@@ -667,6 +667,11 @@ class Crypt_GPG_Engine
             if ($tokens[12] > 0) {
                 $this->_errorCode = Crypt_GPG::ERROR_DUPLICATE_KEY;
             }
+            break;
+
+        case 'NO_PUBKEY':
+        case 'NO_SECKEY':
+            $this->_errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             break;
 
         case 'NEED_PASSPHRASE':

@@ -56,9 +56,14 @@
  */
 
 /**
- * GPG signature handler class
+ * Signature handler class
  */
 require_once 'Crypt/GPG/VerifyStatusHandler.php';
+
+/**
+ * Decryption handler class
+ */
+require_once 'Crypt/GPG/DecryptStatusHandler.php';
 
 /**
  * GPG key class
@@ -1309,41 +1314,6 @@ class Crypt_GPG
     }
 
     // }}}
-    // {{{ handleDecryptStatus()
-
-    /**
-     * Handles the status output from GPG for the decrypt operation
-     *
-     * This method is responsible for sending the passphrase commands when
-     * required by the {@link Crypt_GPG::decrypt()} method. See
-     * <strong>doc/DETAILS</strong> in the
-     * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
-     * info on GPG's status output.
-     *
-     * @param string $line the status line to handle.
-     *
-     * @return void
-     *
-     * @see Crypt_GPG::decrypt()
-     * @see Crypt_GPG_Engine::addStatusHandler()
-     */
-    public function handleDecryptStatus($line)
-    {
-        $tokens = explode(' ', $line);
-        switch ($tokens[0]) {
-        case 'NEED_PASSPHRASE':
-            $subKeyId = $tokens[1];
-            if (array_key_exists($subKeyId, $this->decryptKeys)) {
-                $passphrase = $this->decryptKeys[$subKeyId]['passphrase'];
-                $this->engine->sendCommand($passphrase);
-            } else {
-                $this->engine->sendCommand('');
-            }
-            break;
-        }
-    }
-
-    // }}}
     // {{{ handleImportKeyStatus()
 
     /**
@@ -1675,8 +1645,11 @@ class Crypt_GPG
             }
         }
 
+        $handler = new Crypt_GPG_DecryptStatusHandler($this->engine,
+            $this->decryptKeys);
+
         $this->engine->reset();
-        $this->engine->addStatusHandler(array($this, 'handleDecryptStatus'));
+        $this->engine->addStatusHandler(array($handler, 'handle'));
         $this->engine->setOperation('--decrypt');
         $this->engine->setInput($input);
         $this->engine->setOutput($output);
@@ -1690,30 +1663,9 @@ class Crypt_GPG
             fclose($output);
         }
 
-        $code = $this->engine->getErrorCode();
-
-        switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
-            break;
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
-            throw new Crypt_GPG_KeyNotFoundException(
-                'Cannot decrypt data. Private key required for decryption '.
-                'is not in the keyring. Import the private key before '.
-                'trying to decrypt this data.', $code);
-        case Crypt_GPG::ERROR_NO_DATA:
-            throw new Crypt_GPG_NoDataException(
-                'Cannot decrypt data. No GPG encrypted data was found in '.
-                'the provided data.', $code);
-        case Crypt_GPG::ERROR_BAD_PASSPHRASE:
-            throw new Crypt_GPG_BadPassphraseException(
-                'Cannot decrypt data. Incorrect passphrase provided.', $code);
-        case Crypt_GPG::ERROR_MISSING_PASSPHRASE:
-            throw new Crypt_GPG_BadPassphraseException(
-                'Cannot decrypt data. No passphrase provided.', $code);
-        default:
-            throw new Crypt_GPG_Exception(
-                'Unknown error decrypting data.', $code);
-        }
+        // if there was any problem decrypting the data, the handler will
+        // deal with it here.
+        $handler->throwException();
 
         if ($outputFile === null) {
             return $output;

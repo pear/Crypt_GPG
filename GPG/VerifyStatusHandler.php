@@ -44,10 +44,13 @@ require_once 'Crypt/GPG/Signature.php';
 /**
  * Status line handler for the verify operation
  *
+ * This class is used internally by Crypt_GPG and does not need be used
+ * directly. See the {@link Crypt_GPG} class for end-user API.
+ *
  * This class is responsible for building signature objects that are returned
- * by the {@link Crypt_GPG::verify()} method. See <strong>doc/DETAILS</strong>
- * in the {@link http://www.gnupg.org/download/ GPG distribution} for detailed
- * info on GPG's status output for the verify operation.
+ * by the {@link Crypt_GPG::verify()} method. See <b>doc/DETAILS</b> in the
+ * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
+ * information on GPG's status output for the verify operation.
  *
  * @category  Encryption
  * @package   Crypt_GPG

@@ -429,9 +429,9 @@ class Crypt_GPG_SubKey
     /**
      * Parses a sub-key object from a sub-key string
      *
-     * See doc/DETAILS in the
-     * {@link http://www.gnupg.org/download/ GPG distribution} for info on
-     * how the string is parsed.
+     * See <b>doc/DETAILS</b> in the
+     * {@link http://www.gnupg.org/download/ GPG distribution} for information
+     * on how the sub-key string is parsed.
      *
      * @param string $string the string containing the sub-key.
      *

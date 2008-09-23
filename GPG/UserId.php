@@ -264,8 +264,8 @@ class Crypt_GPG_UserId
      * Parses a user id object from a user id string
      *
      * A user id string is of the form:
-     * <code>name (comment) &lt;email-address&gt;</code> with the
-     * <i>comment</i> and <i>email-address</i> being optional.
+     * <kbd>name (comment) <email-address></kbd> with the <i>comment</i> and
+     * <i>email-address</i> fields being optional.
      *
      * @param string $string the user id string to parse.
      *

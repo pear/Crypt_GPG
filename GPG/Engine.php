@@ -57,6 +57,9 @@ require_once 'PEAR/Exception.php';
 /**
  * Native PHP Crypt_GPG I/O engine
  *
+ * This class is used internally by Crypt_GPG and does not need be used
+ * directly. See the {@link Crypt_GPG} class for end-user API.
+ *
  * This engine uses PHP's native process control functions to directly control
  * the GPG process. The GPG executable is required to be on the system.
  *
@@ -109,7 +112,7 @@ class Crypt_GPG_Engine
     /**
      * GPG status output file descriptor. The status file descriptor outputs
      * detailed information for many GPG commands. See the second section of
-     * the file doc/DETAILS in the
+     * the file <b>doc/DETAILS</b> in the
      * {@link http://www.gnupg.org/download/ GPG package} for a detailed
      * description of GPG's status output.
      */
@@ -297,33 +300,32 @@ class Crypt_GPG_Engine
      *
      * Available options:
      *
-     * - <code>string  homedir</code>   - the directory where the GPG keyring
-     *                                    files are stored. If not specified,
-     *                                    Crypt_GPG uses the default of
-     *                                    <code>~/.gnupg</code>.
-     * - <code>string  gpgBinary</code> - the location of the GPG binary. If not
-     *                                    specified, the driver attempts to
-     *                                    auto-detect the GPG binary location
-     *                                    using a list of known default
-     *                                    locations for the current operating
-     *                                    system.
-     * - <code>boolean debug</code>     - whether or not to use debug mode. When
-     *                                    debug mode is on, all communication
-     *                                    to and from the GPG subprocess is
-     *                                    logged. This can be useful to diagnose
-     *                                    errors when using Crypt_GPG.
+     * - <kbd>string  homedir</kbd>   - the directory where the GPG keyring
+     *                                  files are stored. If not specified,
+     *                                  Crypt_GPG uses the default of
+     *                                  <kbd>~/.gnupg</kbd>.
+     * - <kbd>string  gpgBinary</kbd> - the location of the GPG binary. If not
+     *                                  specified, the driver attempts to
+     *                                  auto-detect the GPG binary location
+     *                                  using a list of known default locations
+     *                                  for the current operating system.
+     * - <kbd>boolean debug</kbd>     - whether or not to use debug mode. When
+     *                                  debug mode is on, all communication to
+     *                                  and from the GPG subprocess is logged.
+     *                                  This can be useful to diagnose errors
+     *                                  when using Crypt_GPG.
      *
      * @param array $options optional. An array of options used to create the
-     *                       GPG object. All options must be optional and are
+     *                       GPG object. All options are optional and are
      *                       represented as key-value pairs.
      *
-     * @throws Crypt_GPG_FileException if the <code>homedir</code> does not
-     *         exist and cannot be created. This can happen if
-     *         <code>homedir</code> is not specified, Crypt_GPG is run as the
-     *         web user, and the web user has no home directory.
+     * @throws Crypt_GPG_FileException if the <kbd>homedir</kbd> does not exist
+     *         and cannot be created. This can happen if <kbd>homedir</kbd> is
+     *         not specified, Crypt_GPG is run as the web user, and the web
+     *         user has no home directory.
      *
-     * @throws PEAR_Exception if the provided <code>gpgBinary</code> is invalid,
-     *         or if no <code>gpgBinary</code> is provided and no suitable
+     * @throws PEAR_Exception if the provided <kbd>gpgBinary</kbd> is invalid,
+     *         or if no <kbd>gpgBinary</kbd> is provided and no suitable
      *         binary could be found.
      */
     public function __construct(array $options = array())
@@ -604,8 +606,8 @@ class Crypt_GPG_Engine
      *
      * @param string $operation the operation to perform. This should be one
      *                          of GPG's operations. For example,
-     *                          <code>--encrypt</code>, <code>--decrypt</code>,
-     *                          <code>--sign</code>, etc.
+     *                          <kbd>--encrypt</kbd>, <kbd>--decrypt</kbd>,
+     *                          <kbd>--sign</kbd>, etc.
      * @param array  $arguments optional. Additional arguments for the GPG
      *                          subprocess. See the GPG manual for specific
      *                          values.
@@ -628,10 +630,9 @@ class Crypt_GPG_Engine
      * Handles error values in the status output from GPG
      *
      * This method is responsible for setting the
-     * {@link Crypt_GPG_Engine::$_errorCode}. See
-     * <strong>doc/DETAILS</strong> in the
+     * {@link Crypt_GPG_Engine::$_errorCode}. See <b>doc/DETAILS</b> in the
      * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
-     * info on GPG's status output.
+     * information on GPG's status output.
      *
      * @param string $line the status line to handle.
      *
@@ -1087,7 +1088,7 @@ class Crypt_GPG_Engine
      * the new subprocess.
      *
      * @param array $env optional. An array of shell environment variables.
-     *                   Defaults to <code>$_ENV</code> if not specified.
+     *                   Defaults to <kbd>$_ENV</kbd> if not specified.
      *
      * @return void
      *
@@ -1329,7 +1330,7 @@ class Crypt_GPG_Engine
      * @param integer $length optional. The length of the substring.
      *
      * @return string the extracted part of the string. Unlike the default PHP
-     *                <code>substr()</code> function, the returned value is
+     *                <kbd>substr()</kbd> function, the returned value is
      *                always a string and never false.
      *
      * @see Crypt_GPG_Engine::$_mbStringOverload

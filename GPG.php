@@ -321,33 +321,32 @@ class Crypt_GPG
      *
      * Available options are:
      *
-     * - <code>string  homedir</code>   - the directory where the GPG keyring
-     *                                    files are stored. If not specified,
-     *                                    Crypt_GPG uses the default of
-     *                                    <code>~/.gnupg</code>.
-     * - <code>string  gpgBinary</code> - the location of the GPG binary. If not
-     *                                    specified, the driver attempts to
-     *                                    auto-detect the GPG binary location
-     *                                    using a list of known default
-     *                                    locations for the current operating
-     *                                    system.
-     * - <code>boolean debug</code>     - whether or not to use debug mode. When
-     *                                    debug mode is on, all communication
-     *                                    to and from the GPG subprocess is
-     *                                    logged. This can be useful to diagnose
-     *                                    errors when using Crypt_GPG.
+     * - <kbd>string  homedir</kbd>   - the directory where the GPG keyring
+     *                                  files are stored. If not specified,
+     *                                  Crypt_GPG uses the default of
+     *                                  <kbd>~/.gnupg</kbd>.
+     * - <kbd>string  gpgBinary</kbd> - the location of the GPG binary. If not
+     *                                  specified, the driver attempts to
+     *                                  auto-detect the GPG binary location
+     *                                  using a list of known default locations
+     *                                  for the current operating system.
+     * - <kbd>boolean debug</kbd>     - whether or not to use debug mode. When
+     *                                  debug mode is on, all communication to
+     *                                  and from the GPG subprocess is logged.
+     *                                  This can be useful to diagnose errors
+     *                                  when using Crypt_GPG.
      *
      * @param array $options optional. An array of options used to create the
-     *                       GPG object. All options must be optional and are
+     *                       GPG object. All options are optional and are
      *                       represented as key-value pairs.
      *
-     * @throws Crypt_GPG_FileException if the <code>homedir</code> does not
-     *         exist and cannot be created. This can happen if
-     *         <code>homedir</code> is not specified, Crypt_GPG is run as the
-     *         web user, and the web user has no home directory.
+     * @throws Crypt_GPG_FileException if the <kbd>homedir</kbd> does not exist
+     *         and cannot be created. This can happen if <kbd>homedir</kbd> is
+     *         not specified, Crypt_GPG is run as the web user, and the web
+     *         user has no home directory.
      *
-     * @throws PEAR_Exception if the provided <code>gpgBinary</code> is invalid,
-     *         or if no <code>gpgBinary</code> is provided and no suitable
+     * @throws PEAR_Exception if the provided <kbd>gpgBinary</kbd> is invalid,
+     *         or if no <kbd>gpgBinary</kbd> is provided and no suitable
      *         binary could be found.
      */
     public function __construct(array $options = array())
@@ -368,23 +367,23 @@ class Crypt_GPG
      * @param string $data the key data to be imported.
      *
      * @return array an associative array containing the following elements:
-     *               - <code>fingerprint</code>       - the fingerprint of the
-     *                                                  imported key,
-     *               - <code>public_imported</code>   - the number of public
-     *                                                  keys imported,
-     *               - <code>public_unchanged</code>  - the number of unchanged
-     *                                                  public keys,
-     *               - <code>private_imported</code>  - the number of private
-     *                                                  keys imported,
-     *               - <code>private_unchanged</code> - the number of unchanged
-     *                                                  private keys.
+     *               - <kbd>fingerprint</kbd>       - the fingerprint of the
+     *                                                imported key,
+     *               - <kbd>public_imported</kbd>   - the number of public
+     *                                                keys imported,
+     *               - <kbd>public_unchanged</kbd>  - the number of unchanged
+     *                                                public keys,
+     *               - <kbd>private_imported</kbd>  - the number of private
+     *                                                keys imported,
+     *               - <kbd>private_unchanged</kbd> - the number of unchanged
+     *                                                private keys.
      *
      * @throws Crypt_GPG_NoDataException if the key data is missing or if the
      *         data is is not valid key data.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function importKey($data)
     {
@@ -404,15 +403,16 @@ class Crypt_GPG
      * @param string $filename the key file to be imported.
      *
      * @return array an associative array containing the following elements:
-     *               - <code>fingerprint</code>       - the fingerprint of the
-     *                                                  imported key,
-     *               - <code>public_imported</code>   - the number of public
-     *                                                  keys imported,
-     *               - <code>public_unchanged</code>  - the number of unchanged
-     *                                                  public keys,
-     *               - <code>private_imported</code>  - the number of private
-     *                                                  keys imported,
-     *               - <code>private_unchanged</code> - the number of unchanged
+     *               - <kbd>fingerprint</kbd>       - the fingerprint of the
+     *                                                imported key,
+     *               - <kbd>public_imported</kbd>   - the number of public
+     *                                                keys imported,
+     *               - <kbd>public_unchanged</kbd>  - the number of unchanged
+     *                                                public keys,
+     *               - <kbd>private_imported</kbd>  - the number of private
+     *                                                keys imported,
+     *               - <kbd>private_unchanged</kbd> - the number of unchanged
+     *                                                private keys.
      *                                                  private keys.
      *
      * @throws Crypt_GPG_NoDataException if the key data is missing or if the
@@ -421,8 +421,8 @@ class Crypt_GPG
      * @throws Crypt_GPG_FileException if the key file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function importKeyFile($filename)
     {
@@ -439,8 +439,8 @@ class Crypt_GPG
      * {@link Crypt_GPG::deletePublicKey()}.
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
-     * public key is exported.
+     * <kbd>$keyId</kbd> (for example, if you use a non-unique uid) only the
+     * first public key is exported.
      *
      * @param string  $keyId either the full uid of the public key, the email
      *                       part of the uid of the public key or the key id of
@@ -454,11 +454,11 @@ class Crypt_GPG
      * @return string the public key data.
      *
      * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
-     *         <i>$keyId</i> is not found.
+     *         <kbd>$keyId</kbd> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function exportPublicKey($keyId, $armor = true)
     {
@@ -498,8 +498,8 @@ class Crypt_GPG
      * Deletes a public key from the keyring
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
-     * public key is deleted.
+     * <kbd>$keyId</kbd> (for example, if you use a non-unique uid) only the
+     * first public key is deleted.
      *
      * The private key must be deleted first or an exception will be thrown.
      * See {@link Crypt_GPG::deletePrivateKey()}.
@@ -513,15 +513,15 @@ class Crypt_GPG
      * @return void
      *
      * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
-     *         <i>$keyId</i> is not found.
+     *         <kbd>$keyId</kbd> is not found.
      *
      * @throws Crypt_GPG_DeletePrivateKeyException if the specified public key
      *         has an associated private key on the keyring. The private key
      *         must be deleted first.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function deletePublicKey($keyId)
     {
@@ -567,10 +567,10 @@ class Crypt_GPG
      * Deletes a private key from the keyring
      *
      * If more than one key fingerprint is available for the specified
-     * <i>$keyId</i> (for example, if you use a non-unique uid) only the first
-     * private key is deleted.
+     * <kbd>$keyId</kbd> (for example, if you use a non-unique uid) only the
+     * first private key is deleted.
      *
-     * Calls GPG with the --delete-secret-key command.
+     * Calls GPG with the <kbd>--delete-secret-key</kbd> command.
      *
      * @param string $keyId either the full uid of the private key, the email
      *                      part of the uid of the private key or the key id of
@@ -581,11 +581,11 @@ class Crypt_GPG
      * @return void
      *
      * @throws Crypt_GPG_KeyNotFoundException if a private key with the given
-     *         <i>$keyId</i> is not found.
+     *         <kbd>$keyId</kbd> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function deletePrivateKey($keyId)
     {
@@ -630,8 +630,8 @@ class Crypt_GPG
     /**
      * Gets the available keys in the keyring
      *
-     * Calls GPG with the --list-keys command and grabs keys. See the first
-     * section of doc/DETAILS in the
+     * Calls GPG with the <kbd>--list-keys</kbd> command and grabs keys. See
+     * the first section of <b>doc/DETAILS</b> in the
      * {@link http://www.gnupg.org/download/ GPG package} for a detailed
      * description of how the GPG command output is parsed.
      *
@@ -641,12 +641,12 @@ class Crypt_GPG
      *                      specified, all keys are returned.
      *
      * @return array an array of {@link Crypt_GPG_Key} objects. If no keys
-     *               match the specified <i>$keyId</i> an empty array is
+     *               match the specified <kbd>$keyId</kbd> an empty array is
      *               returned.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      *
      * @see Crypt_GPG_Key
      */
@@ -788,8 +788,9 @@ class Crypt_GPG
      * If more than one key fingerprint is available (for example, if you use
      * a non-unique user id) only the first key fingerprint is returned.
      *
-     * Calls the GPG --list-keys command with the --with-fingerprint option to
-     * retrieve a public key fingerprint.
+     * Calls the GPG <kbd>--list-keys</kbd> command with the
+     * <kbd>--with-fingerprint</kbd> option to retrieve a public key
+     * fingerprint.
      *
      * @param string  $keyId  either the full user id of the key, the email
      *                        part of the user id of the key, or the key id of
@@ -805,11 +806,11 @@ class Crypt_GPG
      *                        Defaults to <code>Crypt_GPG::FORMAT_NONE</code>.
      *
      * @return string the fingerprint of the key, or null if no fingerprint
-     *                is found for the given <i>$keyId</i>.
+     *                is found for the given <kbd>$keyId</kbd>.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function getFingerprint($keyId, $format = Crypt_GPG::FORMAT_NONE)
     {
@@ -887,8 +888,8 @@ class Crypt_GPG
      *         See {@link Crypt_GPG::addEncryptKey()}.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      *
      * @sensitive $data
      */
@@ -915,7 +916,7 @@ class Crypt_GPG
      *                               returned; otherwise, binary data is
      *                               returned. Defaults to true.
      *
-     * @return void|string if the <code>$encryptedFile</code> parameter is null,
+     * @return void|string if the <kbd>$encryptedFile</kbd> parameter is null,
      *                     a string containing the encrypted data is returned.
      *
      * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified.
@@ -925,8 +926,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function encryptFile($filename, $encryptedFile = null, $armor = true)
     {
@@ -959,8 +960,8 @@ class Crypt_GPG
      *         {@link Crypt_GPG::addDecryptKey()}.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function decrypt($encryptedData)
     {
@@ -985,7 +986,7 @@ class Crypt_GPG
      *                              or unspecified, the decrypted data is
      *                              returned as a string.
      *
-     * @return void|string if the <code>$decryptedFile</code> parameter is null,
+     * @return void|string if the <kdb>$decryptedFile</kbd> parameter is null,
      *                     a string containing the decrypted data is returned.
      *
      * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
@@ -1002,8 +1003,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function decryptFile($encryptedFile, $decryptedFile = null)
     {
@@ -1027,11 +1028,11 @@ class Crypt_GPG
      *                       {@link Crypt_GPG::SIGN_MODE_CLEAR} or
      *                       {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
      *                       specified, defaults to
-     *                       <code>Crypt_GPG::SIGN_MODE_NORMAL</code>.
+     *                       <kbd>Crypt_GPG::SIGN_MODE_NORMAL</kbd>.
      * @param boolean $armor optional. If true, ASCII armored data is returned;
      *                       otherwise, binary data is returned. Defaults to
      *                       true. This has no effect if the mode
-     *                       <code>Crypt_GPG::SIGN_MODE_CLEAR</code> is used.
+     *                       <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is used.
      *
      * @return string the signed data, or the signature data if a detached
      *                signature is requested.
@@ -1043,8 +1044,8 @@ class Crypt_GPG
      *         incorrect or if a required passphrase is not specified.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function sign($data, $mode = Crypt_GPG::SIGN_MODE_NORMAL,
         $armor = true)
@@ -1074,17 +1075,17 @@ class Crypt_GPG
      *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or
      *                            {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
      *                            specified, defaults to
-     *                            <code>Crypt_GPG::SIGN_MODE_NORMAL</code>.
+     *                            <kbd>Crypt_GPG::SIGN_MODE_NORMAL</kbd>.
      * @param boolean $armor      optional. If true, ASCII armored data is
      *                            returned; otherwise, binary data is returned.
      *                            Defaults to true. This has no effect if the
-     *                            mode <code>Crypt_GPG::SIGN_MODE_CLEAR</code>
-     *                            is used.
+     *                            mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                            used.
      *
-     * @return void|string if the <code>$signedFile</code> parameter is null,
-     *                     a string containing the signed data (or the
-     *                     signature data if a detached signature is requested)
-     *                     is returned.
+     * @return void|string if the <kbd>$signedFile</kbd> parameter is null, a
+     *                     string containing the signed data (or the signature
+     *                     data if a detached signature is requested) is
+     *                     returned.
      *
      * @throws Crypt_GPG_KeyNotFoundException if no signing key is specified.
      *         See {@link Crypt_GPG::addSignKey()}.
@@ -1096,8 +1097,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function signFile($filename, $signedFile = null,
         $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true)
@@ -1119,7 +1120,7 @@ class Crypt_GPG
      * @param string $signature  optional. If verifying data signed using a
      *                           detached signature, this must be the detached
      *                           signature data. The data that was signed is
-     *                           specified in <code>$signedData</code>.
+     *                           specified in <kbd>$signedData</kbd>.
      *
      * @return array an array of {@link Crypt_GPG_Signature} objects for the
      *               signed data. For each signature that is valid, the
@@ -1129,8 +1130,8 @@ class Crypt_GPG
      *         data.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      *
      * @see Crypt_GPG_Signature
      */
@@ -1153,7 +1154,7 @@ class Crypt_GPG
      * @param string $signature optional. If verifying a file signed using a
      *                          detached signature, this must be the detached
      *                          signature data. The file that was signed is
-     *                          specified in <code>$filename</code>.
+     *                          specified in <kbd>$filename</kbd>.
      *
      * @return array an array of {@link Crypt_GPG_Signature} objects for the
      *               signed data. For each signature that is valid, the
@@ -1165,8 +1166,8 @@ class Crypt_GPG
      * @throws Crypt_GPG_FileException if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      *
      * @see Crypt_GPG_Signature
      */
@@ -1306,10 +1307,9 @@ class Crypt_GPG
      * Handles the status output from GPG for the sign operation
      *
      * This method is responsible for sending the passphrase commands when
-     * required by the {@link Crypt_GPG::sign()} method. See
-     * <strong>doc/DETAILS</strong> in the
-     * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
-     * info on GPG's status output.
+     * required by the {@link Crypt_GPG::sign()} method. See <b>doc/DETAILS</b>
+     * in the {@link http://www.gnupg.org/download/ GPG distribution} for
+     * detailed information on GPG's status output.
      *
      * @param string $line the status line to handle.
      *
@@ -1341,9 +1341,9 @@ class Crypt_GPG
      *
      * This method is responsible for building the result array that is
      * returned from the {@link Crypt_GPG::importKey()} method. See
-     * <strong>doc/DETAILS</strong> in the
+     * <b>doc/DETAILS</b> in the
      * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
-     * info on GPG's status output.
+     * information on GPG's status output.
      *
      * @param string $line    the status line to handle.
      * @param array  &$result the current result array being processed.
@@ -1377,7 +1377,7 @@ class Crypt_GPG
      * Adds a key to one of the internal key arrays
      *
      * This handles resolving full key objects from the provided
-     * <code>$key</code> value.
+     * <kbd>$key</kbd> value.
      *
      * @param array   &$array     the array to which the key should be added.
      * @param boolean $encrypt    whether or not the key must be able to
@@ -1454,16 +1454,16 @@ class Crypt_GPG
      * @param boolean $isFile whether or not the input is a filename.
      *
      * @return array an associative array containing the following elements:
-     *               - <code>fingerprint</code>       - the fingerprint of the
-     *                                                  imported key,
-     *               - <code>public_imported</code>   - the number of public
-     *                                                  keys imported,
-     *               - <code>public_unchanged</code>  - the number of unchanged
-     *                                                  public keys,
-     *               - <code>private_imported</code>  - the number of private
-     *                                                  keys imported,
-     *               - <code>private_unchanged</code> - the number of unchanged
-     *                                                  private keys.
+     *               - <kbd>fingerprint</kbd>       - the fingerprint of the
+     *                                                imported key,
+     *               - <kbd>public_imported</kbd>   - the number of public
+     *                                                keys imported,
+     *               - <kbd>public_unchanged</kbd>  - the number of unchanged
+     *                                                public keys,
+     *               - <kbd>private_imported</kbd>  - the number of private
+     *                                                keys imported,
+     *               - <kbd>private_unchanged</kbd> - the number of unchanged
+     *                                                private keys.
      *
      * @throws Crypt_GPG_NoDataException if the key data is missing or if the
      *         data is is not valid key data.
@@ -1471,8 +1471,8 @@ class Crypt_GPG
      * @throws Crypt_GPG_FileException if the key file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     private function _importKey($key, $isFile)
     {
@@ -1538,8 +1538,8 @@ class Crypt_GPG
      * @param boolean $armor      if true, ASCII armored data is returned;
      *                            otherwise, binary data is returned.
      *
-     * @return void|string if the <code>$outputFile</code> parameter is null,
-     *                     a string containing the encrypted data is returned.
+     * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
+     *                     string containing the encrypted data is returned.
      *
      * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified.
      *         See {@link Crypt_GPG::addEncryptKey()}.
@@ -1548,8 +1548,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     private function _encrypt($data, $isFile, $outputFile, $armor)
     {
@@ -1627,8 +1627,8 @@ class Crypt_GPG
      *                            data should be written. If null, the decrypted
      *                            data is returned as a string.
      *
-     * @return void|string if the <code>$outputFile</code> parameter is null,
-     *                     a string containing the decrypted data is returned.
+     * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
+     *                     string containing the decrypted data is returned.
      *
      * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
      *         decrypt the data is not in the user's keyring.
@@ -1644,8 +1644,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     private function _decrypt($data, $isFile, $outputFile)
     {
@@ -1723,13 +1723,13 @@ class Crypt_GPG
      * @param boolean $armor      if true, ASCII armored data is returned;
      *                            otherwise, binary data is returned. This has
      *                            no effect if the mode
-     *                            <code>Crypt_GPG::SIGN_MODE_CLEAR</code> is
+     *                            <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
      *                            used.
      *
-     * @return void|string if the <code>$outputFile</code> parameter is null,
-     *                     a string containing the signed data (or the
-     *                     signature data if a detached signature is requested)
-     *                     is returned.
+     * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
+     *                     string containing the signed data (or the signature
+     *                     data if a detached signature is requested) is
+     *                     returned.
      *
      * @throws Crypt_GPG_KeyNotFoundException if no signing key is specified.
      *         See {@link Crypt_GPG::addSignKey()}.
@@ -1741,8 +1741,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     private function _sign($data, $isFile, $outputFile, $mode, $armor)
     {
@@ -1859,8 +1859,8 @@ class Crypt_GPG
      * @throws Crypt_GPG_FileException if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <code>debug</code> option and file a bug report if
-     *         these exceptions occur.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      *
      * @see Crypt_GPG_Signature
      */

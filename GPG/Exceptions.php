@@ -446,7 +446,7 @@ class Crypt_GPG_DuplicateKeyImportException extends Crypt_GPG_Exception
 // {{{ class Crypt_GPG_UnsignedKeyException
 
 /**
- * An exception thrown when a key that is not signed is use for encryption
+ * An exception thrown when a key that is not signed is used for encryption
  *
  * @category  Encryption
  * @package   Crypt_GPG

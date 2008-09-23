@@ -50,10 +50,13 @@ require_once 'Crypt/GPG/Exceptions.php';
 /**
  * Status line handler for the decrypt operation
  *
+ * This class is used internally by Crypt_GPG and does not need be used
+ * directly. See the {@link Crypt_GPG} class for end-user API.
+ *
  * This class is responsible for sending the passphrase commands when required
- * by the {@link Crypt_GPG::decrypt()} method. See <strong>doc/DETAILS</strong>
- * in the {@link http://www.gnupg.org/download/ GPG distribution} for detailed
- * info on GPG's status output for the decrypt operation.
+ * by the {@link Crypt_GPG::decrypt()} method. See <b>doc/DETAILS</b> in the
+ * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
+ * information on GPG's status output for the decrypt operation.
  *
  * This class is also responsible for parsing error status nad throwing a
  * meaningful exception in the event that decryption fails.

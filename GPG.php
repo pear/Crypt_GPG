@@ -375,8 +375,8 @@ class Crypt_GPG
      *         data is is not valid key data.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     public function importKey($data)
     {
@@ -413,8 +413,8 @@ class Crypt_GPG
      * @throws Crypt_GPG_FileException if the key file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     public function importKeyFile($filename)
     {
@@ -449,8 +449,8 @@ class Crypt_GPG
      *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     public function exportPublicKey($keyId, $armor = true)
     {
@@ -510,8 +510,8 @@ class Crypt_GPG
      *         must be deleted first.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     public function deletePublicKey($keyId)
     {
@@ -572,8 +572,8 @@ class Crypt_GPG
      *         <i>$keyId</i> is not found.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     public function deletePrivateKey($keyId)
     {
@@ -631,8 +631,8 @@ class Crypt_GPG
      *               returned.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      *
      * @see Crypt_GPG_Key
      */
@@ -790,8 +790,8 @@ class Crypt_GPG
      *                is found for the given <i>$keyId</i>.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     public function getFingerprint($keyId, $format = Crypt_GPG::FORMAT_NONE)
     {
@@ -867,8 +867,8 @@ class Crypt_GPG
      *         See {@link Crypt_GPG::addEncryptKey()}.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      *
      * @sensitive $data
      */
@@ -905,8 +905,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     public function encryptFile($filename, $encryptedFile = null, $armor = true)
     {
@@ -939,8 +939,8 @@ class Crypt_GPG
      *         {@link Crypt_GPG::addDecryptKey()}.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     public function decrypt($encryptedData)
     {
@@ -982,8 +982,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     public function decryptFile($encryptedFile, $decryptedFile = null)
     {
@@ -1023,8 +1023,8 @@ class Crypt_GPG
      *         incorrect or if a required passphrase is not specified.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     public function sign($data, $mode = Crypt_GPG::SIGN_MODE_NORMAL,
         $armor = true)
@@ -1076,8 +1076,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     public function signFile($filename, $signedFile = null,
         $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true)
@@ -1109,8 +1109,8 @@ class Crypt_GPG
      *         data.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      *
      * @see Crypt_GPG_Signature
      */
@@ -1145,8 +1145,8 @@ class Crypt_GPG
      * @throws Crypt_GPG_FileException if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      *
      * @see Crypt_GPG_Signature
      */
@@ -1451,8 +1451,8 @@ class Crypt_GPG
      * @throws Crypt_GPG_FileException if the key file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     private function _importKey($key, $isFile)
     {
@@ -1526,8 +1526,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     private function _encrypt($data, $isFile, $outputFile, $armor)
     {
@@ -1620,8 +1620,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     private function _decrypt($data, $isFile, $outputFile)
     {
@@ -1717,8 +1717,8 @@ class Crypt_GPG
      *         if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      */
     private function _sign($data, $isFile, $outputFile, $mode, $armor)
     {
@@ -1833,8 +1833,8 @@ class Crypt_GPG
      * @throws Crypt_GPG_FileException if the input file is not readable.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
-     *         Use the <i>debug</i> option and file a bug report if these
-     *         exceptions occur.
+     *         Use the <code>debug</code> option and file a bug report if
+     *         these exceptions occur.
      *
      * @see Crypt_GPG_Signature
      */

@@ -318,16 +318,30 @@ TEXT;
     }
 
     // }}}
-    // {{{ testImportKeyNoDataException()
+    // {{{ testImportKeyNoDataException_invalid()
 
     /**
      * @expectedException Crypt_GPG_NoDataException
      *
      * @group string
      */
-    public function testImportKeyNoDataException()
+    public function testImportKeyNoDataException_invalid()
     {
         $keyData = 'Invalid OpenPGP data.';
+        $this->gpg->importKey($keyData);
+    }
+
+    // }}}
+    // {{{ testImportKeyNoDataException_empty()
+
+    /**
+     * @expectedException Crypt_GPG_NoDataException
+     *
+     * @group string
+     */
+    public function testImportKeyNoDataException_empty()
+    {
+        $keyData = '';
         $this->gpg->importKey($keyData);
     }
 
@@ -458,8 +472,22 @@ TEXT;
     public function testImportKeyFileFileException()
     {
         // input file does not exist
-        $this->gpg->importKeyFile('./data-files/' .
-            'testImportKeyFileFileException.asc');
+        $filename = TestCase::DATADIR . '/testImportKeyFileFileException.asc';
+        $this->gpg->importKeyFile($filename);
+    }
+
+    // }}}
+    // {{{ testImportKeyFileNoDataException()
+
+    /**
+     * @expectedException Crypt_GPG_NoDataException
+     *
+     * @group string
+     */
+    public function testImportKeyFileNoDataException()
+    {
+        $filename = TestCase::DATADIR . '/testFileEmpty.plain';
+        $this->gpg->importKeyFile($filename);
     }
 
     // }}}

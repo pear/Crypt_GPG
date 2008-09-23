@@ -482,7 +482,7 @@ TEXT;
     /**
      * @expectedException Crypt_GPG_NoDataException
      *
-     * @group string
+     * @group file
      */
     public function testImportKeyFileNoDataException()
     {

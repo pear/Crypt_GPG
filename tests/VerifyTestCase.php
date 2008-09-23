@@ -58,17 +58,31 @@ require_once 'TestCase.php';
 class VerifyTestCase extends TestCase
 {
     // string
-    // {{{ testVerifyNoDataException()
+    // {{{ testVerifyNoDataException_invalid()
 
     /**
      * @expectedException Crypt_GPG_NoDataException
      *
      * @group string
      */
-    public function testVerifyNoDataException()
+    public function testVerifyNoDataException_invalid()
     {
         $signedData = 'Invalid OpenPGP data.';
-        $signature = $this->gpg->verify($signedData);
+        $signatures = $this->gpg->verify($signedData);
+    }
+
+    // }}}
+    // {{{ testVerifyNoDataException_empty()
+
+    /**
+     * @expectedException Crypt_GPG_NoDataException
+     *
+     * @group string
+     */
+    public function testVerifyNoDataException_empty()
+    {
+        $signedData = '';
+        $signatures = $this->gpg->verify($signedData);
     }
 
     // }}}
@@ -707,6 +721,20 @@ TEXT;
     public function testVerifyFileFileException()
     {
         $filename = './non-existent/testVerifyFileFileException.asc';
+        $this->gpg->verifyFile($filename);
+    }
+
+    // }}}
+    // {{{ testVerifyFileNoDataException()
+
+    /**
+     * @expectedException Crypt_GPG_NoDataException
+     *
+     * @group file
+     */
+    public function testVerifyFileNoDataException()
+    {
+        $filename = TestCase::DATADIR . '/testFileEmpty.plain';
         $this->gpg->verifyFile($filename);
     }
 

@@ -24,9 +24,9 @@ This package requires PHP version 5.2.1 or greater.</description>
   <active>yes</active>
  </lead>
  <date>2008-09-23</date>
- <time>13:51:42</time>
+ <time>18:01:31</time>
  <version>
-  <release>0.7.0</release>
+  <release>0.7.1</release>
   <api>0.7.0</api>
  </version>
  <stability>
@@ -34,7 +34,9 @@ This package requires PHP version 5.2.1 or greater.</description>
   <api>beta</api>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
- <notes>Brought to you by strace, xdebug, time and phpunit.
+ <notes>Small cleanups in generated API documentation. See 0.7.0 release notes:
+
+Brought to you by strace, xdebug, time and phpunit.
 
 API is beta -- there are significant API changes in this release. See the API or end-user documentation for details. Other changes in this release include:
  * support operations on large strings properly. Bug #13806.
@@ -117,7 +119,7 @@ API is beta -- there are significant API changes in this release. See the API or
  <changelog>
   <release>
    <version>
-    <release>0.7.0</release>
+    <release>0.7.1</release>
     <api>0.7.0</api>
    </version>
    <stability>
@@ -126,7 +128,9 @@ API is beta -- there are significant API changes in this release. See the API or
    </stability>
    <date>2008-09-23</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>Brought to you by strace, xdebug, time and phpunit.
+   <notes>Small cleanups in generated API documentation. See 0.7.0 release notes:
+
+Brought to you by strace, xdebug, time and phpunit.
 
 API is beta -- there are significant API changes in this release. See the API or end-user documentation for details. Other changes in this release include:
  * support operations on large strings properly. Bug #13806.

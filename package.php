@@ -35,9 +35,11 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$release_version = '0.7.0';
+$release_version = '0.7.1';
 $release_state   = 'beta';
 $release_notes   =
+    "Small cleanups in generated API documentation. See 0.7.0 release " .
+    "notes:\n\n" .
     "Brought to you by strace, xdebug, time and phpunit.\n\n" .
     "API is beta -- there are significant API changes in this release. See " .
     "the API or end-user documentation for details. Other changes in this " .

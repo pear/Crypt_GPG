@@ -275,6 +275,27 @@ class SignTestCase extends TestCase
     }
 
     // }}}
+    // {{{ testSignEmpty()
+
+    /**
+     * @group string
+     */
+    public function testSignEmpty()
+    {
+        $data = '';
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+
+        $signedData = $this->gpg->sign($data);
+        $signatures = $this->gpg->verify($signedData);
+
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
+    }
+
+    // }}}
 
     // file
     // {{{ testSignFileNoPassphrase()
@@ -514,6 +535,27 @@ class SignTestCase extends TestCase
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->signFile($inputFilename, $outputFilename);
+    }
+
+    // }}}
+    // {{{ testSignFileEmpty()
+
+    /**
+     * @group file
+     */
+    public function testSignFileEmpty()
+    {
+        $filename = TestCase::DATADIR . '/testFileEmpty.plain';
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+
+        $signedData = $this->gpg->signFile($filename);
+        $signatures = $this->gpg->verify($signedData);
+
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue($signature->isValid());
+        }
     }
 
     // }}}

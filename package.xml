@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.6.2" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+<package packagerversion="1.7.2" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
     http://pear.php.net/dtd/tasks-1.0.xsd
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
@@ -23,45 +23,76 @@ This package requires PHP version 5.2.1 or greater.</description>
   <email>nathan@silverorange.com</email>
   <active>yes</active>
  </lead>
- <date>2008-04-05</date>
- <time>19:28:55</time>
+ <date>2008-09-23</date>
+ <time>13:51:42</time>
  <version>
-  <release>0.6.0</release>
-  <api>0.5.0</api>
+  <release>0.7.0</release>
+  <api>0.7.0</api>
  </version>
  <stability>
   <release>beta</release>
   <api>beta</api>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
- <notes>API is beta. No API changes in this release. Changes in this release:
- * unit test - fail on E_NOTICE,
- * unit test - fixes for PHPUnit &gt; 3.2.16,
- * unit test - fixes for systems other than Ubuntu 7.10,
- * PHP driver - added workarounds for Windows using temporary files,
- * PHP driver - added auto-detection of GPG binary, making it less likely that you need to specify the binary location,
- * PHP driver - documentation typo fixes,
- * PHP driver - fix bug parsing status output in Windows,
- * PHP driver - fix undefined array in _parseVerifyStatus(),
- * PHP driver - throw an exception if the specified GPG binary is not valid.
+ <notes>Brought to you by strace, xdebug, time and phpunit.
+
+API is beta -- there are significant API changes in this release. See the API or end-user documentation for details. Other changes in this release include:
+ * support operations on large strings properly. Bug #13806.
+ * support operations on files (or anything fopen-able). Bug #13586.
+ * encryption speed improvements (went from 10 seconds to encrypt a    1.9 MiB file to 0.1 - 0.2 seconds). There is new file-specific API.    see the API docs for details.
+ * remove GnuPG driver and driver architecture [BC BREAK]. The pecl    extension powering the GnuPG driver is missing features and doesn&apos;t    support any extra features that make it desirable to use. Crypt_GPG    still has nicer error handling, a greater feature set, better    documentation and more comprehensive tests.
+ * split GPG I/O engine into a separate class
+ * support multiple encryption, decryption and signing recipients    [BC BREAK]. Bug #13808. This moves the API towards something more    like the PECL gnupg extension where you add and clear keys for a    particular operation. This also changes the returned value of    verify() from a signature object to an array of signature objects.
+ * use PHP_EOL for detecting line endings.
+ * throw an exception if keychain can not be read or written.    Bug #14645.
+ * split unit tests into separate files.
+ * updated unit tests for new API and features.
+ * throw a KeyNotFound exception if trying to verify a signature when    the public key is not in the keyring.
+ * drop Windows support. PHP bugs and known limitations make it next    to impossible to develop for Windows correctly.
  </notes>
  <contents>
   <dir baseinstalldir="/Crypt" name="/">
    <dir name="GPG">
-    <dir name="Driver">
-     <file name="GnuPG.php" role="php" />
-     <file name="Php.php" role="php" />
-    </dir> <!-- /GPG/Driver -->
+    <file name="DecryptStatusHandler.php" role="php" />
+    <file name="Engine.php" role="php" />
     <file name="Exceptions.php" role="php" />
     <file name="Key.php" role="php" />
     <file name="Signature.php" role="php" />
     <file name="SubKey.php" role="php" />
     <file name="UserId.php" role="php" />
+    <file name="VerifyStatusHandler.php" role="php" />
    </dir> <!-- /GPG -->
    <dir name="tests">
-    <file name="DriverTestCase.php" role="test" />
-    <file name="GnuPGDriverTestCase.php" role="test" />
-    <file name="PhpDriverTestCase.php" role="test" />
+    <dir name="data-files">
+     <file name="testDecryptFile.asc" role="test" />
+     <file name="testDecryptFileDual.asc" role="test" />
+     <file name="testDecryptFileDualOnePassphrase.asc" role="test" />
+     <file name="testDecryptFileKeyNotFoundException.asc" role="test" />
+     <file name="testDecryptFileNoPassphrase.asc" role="test" />
+     <file name="testDecryptFileToString.asc" role="test" />
+     <file name="testFileEmpty.plain" role="test" />
+     <file name="testFileMedium.plain" role="test" />
+     <file name="testFileSmall.plain" role="test" />
+     <file name="testImportKeyFile_private.asc" role="test" />
+     <file name="testImportKeyFile_public.asc" role="test" />
+     <file name="testVerifyFileClearsignedData.asc" role="test" />
+     <file name="testVerifyFileDualClearsignedData.asc" role="test" />
+     <file name="testVerifyFileDualNormalSignedData.asc" role="test" />
+     <file name="testVerifyFileNormalSignedData.asc" role="test" />
+    </dir> <!-- /tests/data-files -->
+    <file name="AllTests.php" role="test" />
+    <file name="DecryptTestCase.php" role="test" />
+    <file name="DeletePrivateKeyTestCase.php" role="test" />
+    <file name="DeletePublicKeyTestCase.php" role="test" />
+    <file name="EncryptTestCase.php" role="test" />
+    <file name="ExportPublicKeyTestCase.php" role="test" />
+    <file name="GeneralTestCase.php" role="test" />
+    <file name="GetFingerprintTestCase.php" role="test" />
+    <file name="GetKeysTestCase.php" role="test" />
+    <file name="ImportKeyTestCase.php" role="test" />
+    <file name="SignTestCase.php" role="test" />
+    <file name="TestCase.php" role="test" />
+    <file name="VerifyTestCase.php" role="test" />
    </dir> <!-- /tests -->
    <file name="ChangeLog" role="data" />
    <file name="GPG.php" role="php" />
@@ -76,36 +107,40 @@ This package requires PHP version 5.2.1 or greater.</description>
    <pearinstaller>
     <min>1.4.0</min>
    </pearinstaller>
+   <os>
+    <name>windows</name>
+    <conflicts />
+   </os>
   </required>
-  <optional>
-   <extension>
-    <name>gnupg</name>
-   </extension>
-  </optional>
  </dependencies>
  <phprelease />
  <changelog>
   <release>
    <version>
-    <release>0.6.0</release>
-    <api>0.5.0</api>
+    <release>0.7.0</release>
+    <api>0.7.0</api>
    </version>
    <stability>
     <release>beta</release>
     <api>beta</api>
    </stability>
-   <date>2008-04-05</date>
+   <date>2008-09-23</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>API is beta. No API changes in this release. Changes in this release:
- * unit test - fail on E_NOTICE,
- * unit test - fixes for PHPUnit &gt; 3.2.16,
- * unit test - fixes for systems other than Ubuntu 7.10,
- * PHP driver - added workarounds for Windows using temporary files,
- * PHP driver - added auto-detection of GPG binary, making it less likely that you need to specify the binary location,
- * PHP driver - documentation typo fixes,
- * PHP driver - fix bug parsing status output in Windows,
- * PHP driver - fix undefined array in _parseVerifyStatus(),
- * PHP driver - throw an exception if the specified GPG binary is not valid.
+   <notes>Brought to you by strace, xdebug, time and phpunit.
+
+API is beta -- there are significant API changes in this release. See the API or end-user documentation for details. Other changes in this release include:
+ * support operations on large strings properly. Bug #13806.
+ * support operations on files (or anything fopen-able). Bug #13586.
+ * encryption speed improvements (went from 10 seconds to encrypt a    1.9 MiB file to 0.1 - 0.2 seconds). There is new file-specific API.    see the API docs for details.
+ * remove GnuPG driver and driver architecture [BC BREAK]. The pecl    extension powering the GnuPG driver is missing features and doesn&apos;t    support any extra features that make it desirable to use. Crypt_GPG    still has nicer error handling, a greater feature set, better    documentation and more comprehensive tests.
+ * split GPG I/O engine into a separate class
+ * support multiple encryption, decryption and signing recipients    [BC BREAK]. Bug #13808. This moves the API towards something more    like the PECL gnupg extension where you add and clear keys for a    particular operation. This also changes the returned value of    verify() from a signature object to an array of signature objects.
+ * use PHP_EOL for detecting line endings.
+ * throw an exception if keychain can not be read or written.    Bug #14645.
+ * split unit tests into separate files.
+ * updated unit tests for new API and features.
+ * throw a KeyNotFound exception if trying to verify a signature when    the public key is not in the keyring.
+ * drop Windows support. PHP bugs and known limitations make it next    to impossible to develop for Windows correctly.
    </notes>
   </release>
  </changelog>

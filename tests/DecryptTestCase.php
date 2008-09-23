@@ -176,16 +176,30 @@ TEXT;
     }
 
     // }}}
-    // {{{ testDecryptNoDataException()
+    // {{{ testDecryptNoDataException_invalid()
 
     /**
      * @expectedException Crypt_GPG_NoDataException
      *
      * @group string
      */
-    public function testDecryptNoDataException()
+    public function testDecryptNoDataException_invalid()
     {
         $encryptedData = 'Invalid OpenPGP data.';
+        $decryptedData = $this->gpg->decrypt($encryptedData);
+    }
+
+    // }}}
+    // {{{ testDecryptNoDataException_empty()
+
+    /**
+     * @expectedException Crypt_GPG_NoDataException
+     *
+     * @group string
+     */
+    public function testDecryptNoDataException_empty()
+    {
+        $encryptedData = '';
         $decryptedData = $this->gpg->decrypt($encryptedData);
     }
 
@@ -554,6 +568,20 @@ TEXT;
         $this->gpg->clearDecryptKeys();
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
+    }
+
+    // }}}
+    // {{{ testDecryptFileNoDataException()
+
+    /**
+     * @expectedException Crypt_GPG_NoDataException
+     *
+     * @group file
+     */
+    public function testDecryptFileNoDataException()
+    {
+        $filename = TestCase::DATADIR . '/testFileEmpty.plain';
+        $this->gpg->decryptFile($filename);
     }
 
     // }}}

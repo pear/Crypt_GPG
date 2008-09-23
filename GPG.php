@@ -239,6 +239,14 @@ class Crypt_GPG
     const FORMAT_X509 = 3;
 
     // }}}
+    // {{{ other class constants
+
+    /**
+     * URI at which package bugs may be reported.
+     */
+    const BUG_URI = 'http://pear.php.net/bugs/report.php?package=Crypt_GPG';
+
+    // }}}
     // {{{ protected class properties
 
     /**
@@ -475,7 +483,9 @@ class Crypt_GPG
 
         if ($code !== Crypt_GPG::ERROR_NONE) {
             throw new Crypt_GPG_Exception(
-                'Unknown error exporting public key.', $code);
+                'Unknown error exporting public key. Please use the ' .
+                '\'debug\' option when creating the Crypt_GPG object, and ' .
+                'file a bug report at ' . self::BUG_URI, $code);
         }
 
         return $keyData;
@@ -544,7 +554,9 @@ class Crypt_GPG
                 'deleted.', $code, $keyId);
         default:
             throw new Crypt_GPG_Exception(
-                'Unknown error deleting public key.', $code);
+                'Unknown error deleting public key. Please use the ' .
+                '\'debug\' option when creating the Crypt_GPG object, and ' .
+                'file a bug report at ' . self::BUG_URI, $code);
         }
     }
 
@@ -606,7 +618,9 @@ class Crypt_GPG
                 $code, $keyId);
         default:
             throw new Crypt_GPG_Exception(
-                'Unknown error deleting private key.', $code);
+                'Unknown error deleting private key. Please use the ' .
+                '\'debug\' option when creating the Crypt_GPG object, and ' .
+                'file a bug report at ' . self::BUG_URI, $code);
         }
     }
 
@@ -668,7 +682,9 @@ class Crypt_GPG
             break;
         default:
             throw new Crypt_GPG_Exception(
-                'Unknown error getting keys.', $code);
+                'Unknown error getting keys. Please use the \'debug\' option ' .
+                'when creating the Crypt_GPG object, and file a bug report ' .
+                'at ' . self::BUG_URI, $code);
         }
 
         $privateKeyFingerprints = array();
@@ -704,7 +720,9 @@ class Crypt_GPG
             break;
         default:
             throw new Crypt_GPG_Exception(
-                'Unknown error getting keys.', $code);
+                'Unknown error getting keys. Please use the \'debug\' option ' .
+                'when creating the Crypt_GPG object, and file a bug report ' .
+                'at ' . self::BUG_URI, $code);
         }
 
         $keys = array();
@@ -816,7 +834,9 @@ class Crypt_GPG
             break;
         default:
             throw new Crypt_GPG_Exception(
-                'Unknown error getting key fingerprint.', $code);
+                'Unknown error getting key fingerprint. Please use the ' .
+                '\'debug\' option when creating the Crypt_GPG object, and ' .
+                'file a bug report at ' . self::BUG_URI, $code);
         }
 
         $fingerprint = null;
@@ -1496,7 +1516,9 @@ class Crypt_GPG
                 'No valid GPG key data found.', $code);
         default:
             throw new Crypt_GPG_Exception(
-                'Unknown error importing GPG key.', $code);
+                'Unknown error importing GPG key. Please use the \'debug\' ' .
+                'option when creating the Crypt_GPG object, and file a bug ' .
+                'report at ' . self::BUG_URI, $code);
         }
 
         return $result;
@@ -1583,7 +1605,9 @@ class Crypt_GPG
 
         if ($code !== Crypt_GPG::ERROR_NONE) {
             throw new Crypt_GPG_Exception(
-                'Unknown error encrypting data.', $code);
+                'Unknown error encrypting data. Please use the \'debug\' ' .
+                'option when creating the Crypt_GPG object, and file a bug ' .
+                'report at ' . self::BUG_URI, $code);
         }
 
         if ($outputFile === null) {
@@ -1804,7 +1828,9 @@ class Crypt_GPG
                 'Cannot sign data. No passphrase provided.', $code);
         default:
             throw new Crypt_GPG_Exception(
-                'Unknown error signing data.', $code);
+                'Unknown error signing data. Please use the \'debug\' option ' .
+                'when creating the Crypt_GPG object, and file a bug report ' .
+                'at ' . self::BUG_URI, $code);
         }
 
         if ($outputFile === null) {
@@ -1899,7 +1925,9 @@ class Crypt_GPG
                 $code);
         default:
             throw new Crypt_GPG_Exception(
-                'Unknown error validating signature details.', $code);
+                'Unknown error validating signature details. Please use the ' .
+                '\'debug\' option when creating the Crypt_GPG object, and ' .
+                'file a bug report at ' . self::BUG_URI, $code);
         }
 
         return $handler->getSignatures();

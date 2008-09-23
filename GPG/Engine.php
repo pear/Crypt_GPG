@@ -821,12 +821,24 @@ class Crypt_GPG_Engine
                 }
             }
 
+            // close GPG input pipe if there is no more data
+            if ($inputBuffer == '' && $inputComplete) {
+                $this->_debug('=> closing GPG input pipe');
+                $this->_closePipe(self::FD_INPUT);
+            }
+
             if (is_resource($this->_message) && !$messageComplete) {
                 if (feof($this->_message)) {
                     $messageComplete = true;
                 } else {
                     $inputStreams[] = $this->_message;
                 }
+            }
+
+            // close GPG message pipe if there is no more data
+            if ($messageBuffer == '' && $messageComplete) {
+                $this->_debug('=> closing GPG message pipe');
+                $this->_closePipe(self::FD_MESSAGE);
             }
 
             if (!feof($fdOutput)) {
@@ -902,19 +914,13 @@ class Crypt_GPG_Engine
 
                 $inputBuffer = self::_byteSubstring($inputBuffer,
                     $length);
-
-                // close GPG input pipe if there is no more data
-                if ($inputBuffer == '' && $inputComplete) {
-                    $this->_debug('=> closing GPG input pipe');
-                    $this->_closePipe(self::FD_INPUT);
-                }
             }
 
             // read input (from PHP stream)
             if (in_array($this->_input, $inputStreams)) {
                 $this->_debug('input stream is ready for reading');
                 $this->_debug('=> about to read ' . self::CHUNK_SIZE .
-                    'bytes from input stream');
+                    ' bytes from input stream');
 
                 $chunk        = fread($this->_input, self::CHUNK_SIZE);
                 $length       = self::_byteLength($chunk);
@@ -939,12 +945,6 @@ class Crypt_GPG_Engine
                 $this->_debug('=> wrote ' . $length . ' bytes');
 
                 $messageBuffer = self::_byteSubstring($messageBuffer, $length);
-
-                // close GPG message pipe if there is no more data
-                if ($messageBuffer == '' && $messageComplete) {
-                    $this->_debug('=> closing GPG message pipe');
-                    $this->_closePipe(self::FD_MESSAGE);
-                }
             }
 
             // read message (from PHP stream)

@@ -135,6 +135,25 @@ class EncryptTestCase extends TestCase
     }
 
     // }}}
+    // {{{ testEncryptEmpty()
+
+    /**
+     * @group string
+     */
+    public function testEncryptEmpty()
+    {
+        $data = '';
+
+        $this->gpg->addEncryptKey('first-keypair@example.com');
+        $encryptedData = $this->gpg->encrypt($data);
+
+        $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
+        $decryptedData = $this->gpg->decrypt($encryptedData);
+
+        $this->assertEquals($data, $decryptedData);
+    }
+
+    // }}}
 
     // file
     // {{{ testEncryptFile()
@@ -246,6 +265,25 @@ class EncryptTestCase extends TestCase
 
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptFile($inputFilename, $outputFilename);
+    }
+
+    // }}}
+    // {{{ testEncryptFileEmpty()
+
+    /**
+     * @group file
+     */
+    public function testEncryptFileEmpty()
+    {
+        $filename = TestCase::DATADIR . '/testFileEmpty.plain';
+
+        $this->gpg->addEncryptKey('first-keypair@example.com');
+        $encryptedData = $this->gpg->encryptFile($filename);
+
+        $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
+        $decryptedData = $this->gpg->decrypt($encryptedData);
+
+        $this->assertEquals('', $decryptedData);
     }
 
     // }}}

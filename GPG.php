@@ -1466,6 +1466,10 @@ class Crypt_GPG
             }
         } else {
             $input = strval($key);
+            if ($input == '') {
+                throw new Crypt_GPG_NoDataException(
+                    'No valid GPG key data found.', Crypt_GPG::ERROR_NO_DATA);
+            }
         }
 
         $this->engine->reset();
@@ -1629,6 +1633,11 @@ class Crypt_GPG
             }
         } else {
             $input = strval($data);
+            if ($input == '') {
+                throw new Crypt_GPG_NoDataException(
+                    'Cannot decrypt data. No PGP encrypted data was found in '.
+                    'the provided data.', Crypt_GPG::ERROR_NO_DATA);
+            }
         }
 
         if ($outputFile === null) {
@@ -1851,6 +1860,10 @@ class Crypt_GPG
             }
         } else {
             $input = strval($data);
+            if ($input == '') {
+                throw new Crypt_GPG_NoDataException(
+                    'No valid signature data found.', Crypt_GPG::ERROR_NO_DATA);
+            }
         }
 
         $this->engine->reset();

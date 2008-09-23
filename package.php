@@ -39,34 +39,33 @@ $release_version = '0.7.0';
 $release_state   = 'beta';
 $release_notes   =
     "Brought to you by strace, xdebug, time and phpunit.\n\n" .
-    "API is beta -- there are significant API changes in this release. See\n" .
-    "the API or end-user documentation for details. Other changes in this\n" .
+    "API is beta -- there are significant API changes in this release. See " .
+    "the API or end-user documentation for details. Other changes in this " .
     "release include:\n" .
     " * support operations on large strings properly. Bug #13806.\n" .
     " * support operations on files (or anything fopen-able). Bug #13586.\n" .
-    " * encryption speed improvements (went from 10 seconds to encrypt a\n" .
-    "   1.9 MiB file to 0.1 - 0.2 seconds).\n" .
-    " * remove GnuPG driver and driver architecture [BC BREAK]\n" .
-    "   * the pecl extension powering the GnuPG driver is missing features\n" .
-    "     and doesn't support any extra features that make it desirable to\n" .
-    "     use. Crypt_GPG still has nicer error handling, a greater feature\n" .
-    "     set, better documentation and more comprehensive tests.\n" .
+    " * encryption speed improvements (went from 10 seconds to encrypt a " .
+    "   1.9 MiB file to 0.1 - 0.2 seconds). There is new file-specific API. " .
+    "   see the API docs for details.\n" .
+    " * remove GnuPG driver and driver architecture [BC BREAK]. The pecl " .
+    "   extension powering the GnuPG driver is missing features and doesn't " .
+    "   support any extra features that make it desirable to use. Crypt_GPG " .
+    "   still has nicer error handling, a greater feature set, better " .
+    "   documentation and more comprehensive tests.\n" .
     " * split GPG I/O engine into a separate class\n" .
-    " * support multiple encryption, decryption and signing recipients\n" .
-    "   [BC BREAK]. Bug #13808.\n" .
-    "   * this moves the API towards something more like the pecl gnupg\n" .
-    "     extension where you add and clear keys for a particular\n" .
-    "     operation.\n" .
-    "   * this also changes the returned value of verify() from a signature\n" .
-    "     object to an array of signature objects.\n" .
+    " * support multiple encryption, decryption and signing recipients " .
+    "   [BC BREAK]. Bug #13808. This moves the API towards something more " .
+    "   like the PECL gnupg extension where you add and clear keys for a " .
+    "   particular operation. This also changes the returned value of " .
+    "   verify() from a signature object to an array of signature objects.\n" .
     " * use PHP_EOL for detecting line endings.\n" .
-    " * throw an exception if keychain can not be read or written.\n" .
+    " * throw an exception if keychain can not be read or written. " .
     "   Bug #14645.\n" .
     " * split unit tests into separate files.\n" .
     " * updated unit tests for new API and features.\n" .
-    " * throw a KeyNotFound exception if trying to verify a signature when\n" .
+    " * throw a KeyNotFound exception if trying to verify a signature when " .
     "   the public key is not in the keyring.\n" .
-    " * drop Windows support. PHP bugs and known limitations make it next\n" .
+    " * drop Windows support. PHP bugs and known limitations make it next " .
     "   to impossible to develop for Windows correctly.\n";
 
 

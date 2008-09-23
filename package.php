@@ -35,21 +35,40 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$release_version = '0.6.0';
+$release_version = '0.7.0';
 $release_state   = 'beta';
 $release_notes   =
-    "API is beta. No API changes in this release. Changes in this release:\n" .
-    " * unit test - fail on E_NOTICE,\n" .
-    " * unit test - fixes for PHPUnit > 3.2.16,\n" .
-    " * unit test - fixes for systems other than Ubuntu 7.10,\n" .
-    " * PHP driver - added workarounds for Windows using temporary files,\n" .
-    " * PHP driver - added auto-detection of GPG binary, making it less " .
-    "likely that you need to specify the binary location,\n" .
-    " * PHP driver - documentation typo fixes,\n" .
-    " * PHP driver - fix bug parsing status output in Windows,\n" .
-    " * PHP driver - fix undefined array in _parseVerifyStatus(),\n" .
-    " * PHP driver - throw an exception if the specified GPG binary is not ".
-    "valid.\n";
+    "Brought to you by strace, xdebug, time and phpunit.\n\n" .
+    "API is beta -- there are significant API changes in this release. See\n" .
+    "the API or end-user documentation for details. Other changes in this\n" .
+    "release include:\n" .
+    " * support operations on large strings properly. Bug #13806.\n" .
+    " * support operations on files (or anything fopen-able). Bug #13586.\n" .
+    " * encryption speed improvements (went from 10 seconds to encrypt a\n" .
+    "   1.9 MiB file to 0.1 - 0.2 seconds).\n" .
+    " * remove GnuPG driver and driver architecture [BC BREAK]\n" .
+    "   * the pecl extension powering the GnuPG driver is missing features\n" .
+    "     and doesn't support any extra features that make it desirable to\n" .
+    "     use. Crypt_GPG still has nicer error handling, a greater feature\n" .
+    "     set, better documentation and more comprehensive tests.\n" .
+    " * split GPG I/O engine into a separate class\n" .
+    " * support multiple encryption, decryption and signing recipients\n" .
+    "   [BC BREAK]. Bug #13808.\n" .
+    "   * this moves the API towards something more like the pecl gnupg\n" .
+    "     extension where you add and clear keys for a particular\n" .
+    "     operation.\n" .
+    "   * this also changes the returned value of verify() from a signature\n" .
+    "     object to an array of signature objects.\n" .
+    " * use PHP_EOL for detecting line endings.\n" .
+    " * throw an exception if keychain can not be read or written.\n" .
+    "   Bug #14645.\n" .
+    " * split unit tests into separate files.\n" .
+    " * updated unit tests for new API and features.\n" .
+    " * throw a KeyNotFound exception if trying to verify a signature when\n" .
+    "   the public key is not in the keyring.\n" .
+    " * drop Windows support. PHP bugs and known limitations make it next\n" .
+    "   to impossible to develop for Windows correctly.\n";
+
 
 $description =
     "This package provides an object oriented interface to GNU Privacy ".
@@ -67,13 +86,15 @@ $package->setOptions(array(
     'packagedirectory'  => './',
     'dir_roles'         => array(
         'GPG'        => 'php',
-        'GPG/Driver' => 'php',
         'tests'      => 'test'
     ),
     'exceptions'        => array(
         'LICENSE' => 'doc',
         'GPG.php' => 'php'
     ),
+    'ignore'            => array(
+        'tools/'
+    )
 ));
 
 $package->setPackage('Crypt_GPG');
@@ -86,11 +107,10 @@ $package->setLicense('LGPL', 'http://www.gnu.org/copyleft/lesser.html');
 $package->setNotes($release_notes);
 $package->setReleaseVersion($release_version);
 $package->setReleaseStability($release_state);
-$package->setAPIVersion('0.5.0');
+$package->setAPIVersion('0.7.0');
 $package->setAPIStability('beta');
 
 $package->addIgnore('package.php');
-$package->addIgnore('package-2.0.xml');
 $package->addIgnore('*.tgz');
 
 $package->addMaintainer('lead', 'gauthierm', 'Mike Gauthier',
@@ -100,7 +120,7 @@ $package->addMaintainer('lead', 'nrf', 'Nathan Fredrickson',
     'nathan@silverorange.com');
 
 $package->setPhpDep('5.2.1');
-$package->addExtensionDep('optional', 'gnupg');
+$package->addOsDep('windows', true);
 $package->setPearinstallerDep('1.4.0');
 $package->generateContents();
 

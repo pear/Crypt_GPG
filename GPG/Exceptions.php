@@ -46,7 +46,7 @@ require_once 'PEAR/Exception.php';
 // {{{ class Crypt_GPG_Exception
 
 /**
- * An exception class thrown by the Crypt_GPG class
+ * An exception thrown by the Crypt_GPG package
  *
  * @category  Encryption
  * @package   Crypt_GPG
@@ -63,11 +63,11 @@ class Crypt_GPG_Exception extends PEAR_Exception
 // {{{ class Crypt_GPG_FileException
 
 /**
- * This exception is thrown when the Crypt_GPG class tries to use a file in
- * ways it cannot be used
+ * An exception thrown when a file is used in ways it cannot be used
  *
- * For example, if an output file is specified and the file is not writeable or
- * if an input file is specified and the file is not readable.
+ * For example, if an output file is specified and the file is not writeable, or
+ * if an input file is specified and the file is not readable, this exception
+ * is thrown.
  *
  * @category  Encryption
  * @package   Crypt_GPG
@@ -122,31 +122,13 @@ class Crypt_GPG_FileException extends Crypt_GPG_Exception
 }
 
 // }}}
-// {{{ class Crypt_GPG_PermissionException
-
-/**
- * This exception is thrown when the Crypt_GPG cannot read or write the
- * keychain
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- */
-class Crypt_GPG_PermissionException extends Crypt_GPG_Exception
-{
-}
-
-// }}}
 // {{{ class Crypt_GPG_OpenSubprocessException
 
 /**
- * An exception class thrown by the Crypt_GPG::_openSubprocess() method
+ * An exception thrown when the GPG subprocess cannot be opened
  *
- * This exception is thrown when the Crypt_GPG class tries to open a new
- * subprocess and fails.
+ * This exception is thrown when the {@link Crypt_GPG_Engine} tries to open a
+ * new subprocess and fails.
  *
  * @category  Encryption
  * @package   Crypt_GPG
@@ -207,7 +189,7 @@ class Crypt_GPG_OpenSubprocessException extends Crypt_GPG_Exception
 // {{{ class Crypt_GPG_InvalidOperationException
 
 /**
- * An exception class thrown when an invalid GPG operation is attempted
+ * An exception thrown when an invalid GPG operation is attempted
  *
  * @category  Encryption
  * @package   Crypt_GPG
@@ -265,8 +247,8 @@ class Crypt_GPG_InvalidOperationException extends Crypt_GPG_Exception
 // {{{ class Crypt_GPG_KeyNotFoundException
 
 /**
- * This exception is thrown when the Crypt_GPG class fails to find the key for
- * various opetations
+ * An exception thrown when Crypt_GPG fails to find the key for various
+ * operations
  *
  * @category  Encryption
  * @package   Crypt_GPG
@@ -322,8 +304,8 @@ class Crypt_GPG_KeyNotFoundException extends Crypt_GPG_Exception
 // {{{ class Crypt_GPG_NoDataException
 
 /**
- * An exception class thrown when the GPG process cannot find data for
- * various operations
+ * An exception thrown when Crypt_GPG cannot find valid data for various
+ * operations
  *
  * @category  Encryption
  * @package   Crypt_GPG
@@ -340,7 +322,7 @@ class Crypt_GPG_NoDataException extends Crypt_GPG_Exception
 // {{{ class Crypt_GPG_BadPassphraseException
 
 /**
- * An exception class thrown when the GPG passphrase is bad or missing
+ * An exception thrown when a required passphrase is incorrect or missing
  *
  * @category  Encryption
  * @package   Crypt_GPG

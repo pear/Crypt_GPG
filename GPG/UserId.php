@@ -159,7 +159,8 @@ class Crypt_GPG_UserId
     /**
      * Gets a string representation of this user id
      *
-     * The string is formatted as: 'name (comment) <email>'.
+     * The string is formatted as:
+     * <b><kbd>name (comment) <email-address></kbd></b>.
      *
      * @return string a string representation of this user id.
      */
@@ -264,8 +265,8 @@ class Crypt_GPG_UserId
      * Parses a user id object from a user id string
      *
      * A user id string is of the form:
-     * <kbd>name (comment) <email-address></kbd> with the <i>comment</i> and
-     * <i>email-address</i> fields being optional.
+     * <b><kbd>name (comment) <email-address></kbd></b> with the <i>comment</i>
+     * and <i>email-address</i> fields being optional.
      *
      * @param string $string the user id string to parse.
      *

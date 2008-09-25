@@ -125,7 +125,9 @@ $package->addOsDep('windows', true);
 $package->setPearinstallerDep('1.4.0');
 $package->generateContents();
 
-if (isset($_GET['make']) || (isset($_SERVER['argv']) && @$_SERVER['argv'][1] == 'make')) {
+if (   isset($_GET['make'])
+    || (isset($_SERVER['argv']) && @$_SERVER['argv'][1] == 'make')
+) {
     $package->writePackageFile();
 } else {
     $package->debugPackageFile();

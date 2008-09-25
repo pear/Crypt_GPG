@@ -359,18 +359,19 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
     /**
      * Creates a new Crypt_GPG_BadPassphraseException
      *
-     * @param string  $message           an error message.
-     * @param integer $code              a user defined error code.
-     * @param string  $badPassphrases    an array containing user ids of keys
-     *                                   for which the passphrase is incorrect.
-     * @param string  $missingPassprases an array containing user ids of keys
-     *                                   for which the passphrase is missing.
+     * @param string  $message            an error message.
+     * @param integer $code               a user defined error code.
+     * @param string  $badPassphrases     an array containing user ids of keys
+     *                                    for which the passphrase is incorrect.
+     * @param string  $missingPassphrases an array containing user ids of keys
+     *                                    for which the passphrase is missing.
      */
     public function __construct($message, $code = 0,
         array $badPassphrases = array(), array $missingPassphrases = array())
     {
-        $this->_badPassphrases = $badPassphrases;
+        $this->_badPassphrases     = $badPassphrases;
         $this->_missingPassphrases = $missingPassphrases;
+
         parent::__construct($message, $code);
     }
 

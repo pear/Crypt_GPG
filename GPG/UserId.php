@@ -89,6 +89,65 @@ class Crypt_GPG_UserId
     private $_isValid = true;
 
     // }}}
+    // {{{ public function __construct()
+
+    /**
+     * Creates a new user id
+     *
+     * User ids can be initialized from an array of named values. Available
+     * names are:
+     *
+     * - <kbd>string  name</kbd>    - the name field of the user id.
+     * - <kbd>string  comment</kbd> - the comment field of the user id.
+     * - <kbd>string  email</kbd>   - the email field of the user id.
+     * - <kbd>obolean valid</kbd>   - whether or not the user id is valid.
+     * - <kbd>boolean revoked</kbd> - whether or not the user id is revoked.
+     *
+     * @param Crypt_GPG_UserId|string|array $userId optional. Either an
+     *        existing user id object, which is copied; a user id string, which
+     *        is parsed; or an array of initial values.
+     */
+    public function __construct($userId = null)
+    {
+        // parse from string
+        if (is_string($userId)) {
+            $userId = self::parse($userId);
+        }
+
+        // copy from object
+        if ($userId instanceof Crypt_GPG_UserId) {
+            $this->_name      = $userId->_name;
+            $this->_comment   = $userId->_comment;
+            $this->_email     = $userId->_email;
+            $this->_isRevoked = $userId->_isRevoked;
+            $this->_isValid   = $userId->_isValid;
+        }
+
+        // initialize from array
+        if (is_array($userId)) {
+            if (array_key_exists('name', $options)) {
+                $this->setName($options['name']);
+            }
+
+            if (array_key_exists('comment', $options)) {
+                $this->setComment($options['comment']);
+            }
+
+            if (array_key_exists('email', $options)) {
+                $this->setEmail($options['email']);
+            }
+
+            if (array_key_exists('revoked', $options)) {
+                $this->setRevoked($options['revoked']);
+            }
+
+            if (array_key_exists('valid', $options)) {
+                $this->setValid($options['valid']);
+            }
+        }
+    }
+
+    // }}}
     // {{{ getName()
 
     /**

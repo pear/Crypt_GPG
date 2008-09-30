@@ -321,20 +321,21 @@ class Crypt_GPG
      *
      * Available options are:
      *
-     * - <kbd>string  homedir</kbd>   - the directory where the GPG keyring
-     *                                  files are stored. If not specified,
-     *                                  Crypt_GPG uses the default of
-     *                                  <kbd>~/.gnupg</kbd>.
-     * - <kbd>string  gpgBinary</kbd> - the location of the GPG binary. If not
-     *                                  specified, the driver attempts to
-     *                                  auto-detect the GPG binary location
-     *                                  using a list of known default locations
-     *                                  for the current operating system.
-     * - <kbd>boolean debug</kbd>     - whether or not to use debug mode. When
-     *                                  debug mode is on, all communication to
-     *                                  and from the GPG subprocess is logged.
-     *                                  This can be useful to diagnose errors
-     *                                  when using Crypt_GPG.
+     * - <kbd>string  homedir</kbd> - the directory where the GPG keyring files
+     *                                are stored. If not specified, Crypt_GPG
+     *                                uses the default of <kbd>~/.gnupg</kbd>.
+     * - <kbd>string  binary</kbd>  - the location of the GPG binary. If not
+     *                                specified, the driver attempts to auto-
+     *                                detect the GPG binary location using a
+     *                                list of known default locations for the
+     *                                current operating system. The option
+     *                                <kbd>gpgBinary</kbd> is a deprecated
+     *                                alias for this option.
+     * - <kbd>boolean debug</kbd>   - whether or not to use debug mode. When
+     *                                debug mode is on, all communication to and
+     *                                from the GPG subprocess is logged. This
+     *                                can be useful to diagnose errors when
+     *                                using Crypt_GPG.
      *
      * @param array $options optional. An array of options used to create the
      *                       GPG object. All options are optional and are
@@ -345,9 +346,9 @@ class Crypt_GPG
      *         not specified, Crypt_GPG is run as the web user, and the web
      *         user has no home directory.
      *
-     * @throws PEAR_Exception if the provided <kbd>gpgBinary</kbd> is invalid,
-     *         or if no <kbd>gpgBinary</kbd> is provided and no suitable
-     *         binary could be found.
+     * @throws PEAR_Exception if the provided <kbd>binary</kbd> is invalid, or
+     *         if no <kbd>binary</kbd> is provided and no suitable binary could
+     *         be found.
      */
     public function __construct(array $options = array())
     {
@@ -986,7 +987,7 @@ class Crypt_GPG
      *                              or unspecified, the decrypted data is
      *                              returned as a string.
      *
-     * @return void|string if the <kdb>$decryptedFile</kbd> parameter is null,
+     * @return void|string if the <kbd>$decryptedFile</kbd> parameter is null,
      *                     a string containing the decrypted data is returned.
      *
      * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
@@ -1192,9 +1193,10 @@ class Crypt_GPG
      * @return void
      *
      * @see Crypt_GPG::decrypt()
+     * @see Crypt_GPG::decryptFile()
      * @see Crypt_GPG::clearDecryptKeys()
-     * @see Crypt_GPG::handleDecryptStatus()
      * @see Crypt_GPG::_addKey()
+     * @see Crypt_GPG_DecryptStatusHandler()
      *
      * @sensitive $passphrase
      */
@@ -1217,6 +1219,7 @@ class Crypt_GPG
      * @return void
      *
      * @see Crypt_GPG::encrypt()
+     * @see Crypt_GPG::encryptFile()
      * @see Crypt_GPG::clearEncryptKeys()
      * @see Crypt_GPG::_addKey()
      */
@@ -1240,7 +1243,8 @@ class Crypt_GPG
      *
      * @return void
      *
-     * @see Crypt_GPG::decrypt()
+     * @see Crypt_GPG::sign()
+     * @see Crypt_GPG::signFile()
      * @see Crypt_GPG::clearSignKeys()
      * @see Crypt_GPG::handleSignStatus()
      * @see Crypt_GPG::_addKey()

@@ -154,7 +154,7 @@ class Crypt_GPG_Engine
      * @see Crypt_GPG_Engine::__construct()
      * @see Crypt_GPG_Engine::_getBinary()
      */
-    private $_gpgBinary = '';
+    private $_binary = '';
 
     /**
      * Directory containing the GPG key files
@@ -298,22 +298,23 @@ class Crypt_GPG_Engine
     /**
      * Creates a new GPG engine
      *
-     * Available options:
+     * Available options are:
      *
-     * - <kbd>string  homedir</kbd>   - the directory where the GPG keyring
-     *                                  files are stored. If not specified,
-     *                                  Crypt_GPG uses the default of
-     *                                  <kbd>~/.gnupg</kbd>.
-     * - <kbd>string  gpgBinary</kbd> - the location of the GPG binary. If not
-     *                                  specified, the driver attempts to
-     *                                  auto-detect the GPG binary location
-     *                                  using a list of known default locations
-     *                                  for the current operating system.
-     * - <kbd>boolean debug</kbd>     - whether or not to use debug mode. When
-     *                                  debug mode is on, all communication to
-     *                                  and from the GPG subprocess is logged.
-     *                                  This can be useful to diagnose errors
-     *                                  when using Crypt_GPG.
+     * - <kbd>string  homedir</kbd> - the directory where the GPG keyring files
+     *                                are stored. If not specified, Crypt_GPG
+     *                                uses the default of <kbd>~/.gnupg</kbd>.
+     * - <kbd>string  binary</kbd>  - the location of the GPG binary. If not
+     *                                specified, the driver attempts to auto-
+     *                                detect the GPG binary location using a
+     *                                list of known default locations for the
+     *                                current operating system. The option
+     *                                <kbd>gpgBinary</kbd> is a deprecated
+     *                                alias for this option.
+     * - <kbd>boolean debug</kbd>   - whether or not to use debug mode. When
+     *                                debug mode is on, all communication to and
+     *                                from the GPG subprocess is logged. This
+     *                                can be useful to diagnose errors when
+     *                                using Crypt_GPG.
      *
      * @param array $options optional. An array of options used to create the
      *                       GPG object. All options are optional and are
@@ -324,9 +325,9 @@ class Crypt_GPG_Engine
      *         not specified, Crypt_GPG is run as the web user, and the web
      *         user has no home directory.
      *
-     * @throws PEAR_Exception if the provided <kbd>gpgBinary</kbd> is invalid,
-     *         or if no <kbd>gpgBinary</kbd> is provided and no suitable
-     *         binary could be found.
+     * @throws PEAR_Exception if the provided <kbd>binary</kbd> is invalid, or
+     *         if no <kbd>binary</kbd> is provided and no suitable binary could
+     *         be found.
      */
     public function __construct(array $options = array())
     {
@@ -364,16 +365,19 @@ class Crypt_GPG_Engine
         }
 
         // get binary
-        if (array_key_exists('gpgBinary', $options)) {
-            $this->_gpgBinary = (string)$options['gpgBinary'];
+        if (array_key_exists('binary', $options)) {
+            $this->_binary = (string)$options['binary'];
+        } elseif (array_key_exists('gpgBinary', $options)) {
+            // deprecated alias
+            $this->_binary = (string)$options['gpgBinary'];
         } else {
-            $this->_gpgBinary = $this->_getBinary();
+            $this->_binary = $this->_getBinary();
         }
 
-        if ($this->_gpgBinary == '' || !is_executable($this->_gpgBinary)) {
+        if ($this->_binary == '' || !is_executable($this->_binary)) {
             throw new PEAR_Exception('GPG binary not found. If you are sure '.
                 'the GPG binary is installed, please specify the location of '.
-                'the GPG binary using the \'gpgBinary\' driver option.');
+                'the GPG binary using the \'binary\' driver option.');
         }
 
         if (array_key_exists('debug', $options)) {
@@ -1105,7 +1109,7 @@ class Crypt_GPG_Engine
             $env = $_ENV;
         }
 
-        $commandLine = $this->_gpgBinary;
+        $commandLine = $this->_binary;
 
         $arguments = array_merge(array(
             '--status-fd ' . escapeshellarg(self::FD_STATUS),
@@ -1228,8 +1232,8 @@ class Crypt_GPG_Engine
     /**
      * Gets the name of the GPG binary for the current operating system
      *
-     * This method is called if the 'gpgBinary' option is <i>not</i> specified
-     * when creating this driver.
+     * This method is called if the '<kbd>binary</kbd>' option is <i>not</i>
+     * specified when creating this driver.
      *
      * @return string the name of the GPG binary for the current operating
      *                system. If no suitable binary could be found, an empty

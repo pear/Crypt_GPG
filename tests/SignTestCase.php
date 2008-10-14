@@ -55,7 +55,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class SignTestCase extends TestCase
+class SignTestCase extends Crypt_GPG_TestCase
 {
     // string
     // {{{ testSignKeyNotFoundException_invalid()
@@ -305,8 +305,9 @@ class SignTestCase extends TestCase
      */
     public function testSignFileNoPassphrase()
     {
-        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
-        $outputFilename = TestCase::TEMPDIR . '/testSignFileNoPassphrase.asc';
+        $inputFilename  = $this->getDataFilename('testFileMedium.plain');
+        $outputFilename =
+            $this->getTempFilename('testSignFileNoPassphrase.asc');
 
         $this->gpg->addSignKey('no-passphrase@example.com');
         $this->gpg->signFile($inputFilename, $outputFilename);
@@ -326,8 +327,8 @@ class SignTestCase extends TestCase
      */
     public function testSignFileNormal()
     {
-        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
-        $outputFilename = TestCase::TEMPDIR . '/testSignFileNormal.asc';
+        $inputFilename  = $this->getDataFilename('testFileMedium.plain');
+        $outputFilename = $this->getTempFilename('testSignFileNormal.asc');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->signFile($inputFilename, $outputFilename);
@@ -347,8 +348,8 @@ class SignTestCase extends TestCase
      */
     public function testSignFileClear()
     {
-        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
-        $outputFilename = TestCase::TEMPDIR . '/testSignFileClear.asc';
+        $inputFilename  = $this->getDataFilename('testFileMedium.plain');
+        $outputFilename = $this->getTempFilename('testSignFileClear.asc');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->signFile($inputFilename, $outputFilename,
@@ -369,8 +370,8 @@ class SignTestCase extends TestCase
      */
     public function testSignFileDetached()
     {
-        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
-        $outputFilename = TestCase::TEMPDIR . '/testSignFileDetached.asc';
+        $inputFilename  = $this->getDataFilename('testFileMedium.plain');
+        $outputFilename = $this->getTempFilename('testSignFileDetached.asc');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->signFile($inputFilename, $outputFilename,
@@ -393,7 +394,7 @@ class SignTestCase extends TestCase
      */
     public function testSignFileDetachedToString()
     {
-        $filename = TestCase::DATADIR . '/testFileMedium.plain';
+        $filename = $this->getDataFilename('testFileMedium.plain');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $signatureData = $this->gpg->signFile($filename, null,
@@ -414,9 +415,9 @@ class SignTestCase extends TestCase
      */
     public function testSignFileDualOnePassphrase()
     {
-        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
-        $outputFilename = TestCase::TEMPDIR .
-            '/testSignFileDualOnePassphrase.asc';
+        $inputFilename  = $this->getDataFilename('testFileMedium.plain');
+        $outputFilename =
+            $this->getTempFilename('testSignFileDualOnePassphrase.asc');
 
         $this->gpg->addSignKey('no-passphrase@example.com');
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
@@ -437,8 +438,8 @@ class SignTestCase extends TestCase
      */
     public function testSignFileDualNormal()
     {
-        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
-        $outputFilename = TestCase::TEMPDIR . '/testSignFileDualNormal.asc';
+        $inputFilename  = $this->getDataFilename('testFileMedium.plain');
+        $outputFilename = $this->getTempFilename('testSignFileDualNormal.asc');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addSignKey('second-keypair@example.com', 'test2');
@@ -459,8 +460,8 @@ class SignTestCase extends TestCase
      */
     public function testSignFileDualClear()
     {
-        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
-        $outputFilename = TestCase::TEMPDIR . '/testSignFileDualClear.asc';
+        $inputFilename  = $this->getDataFilename('testFileMedium.plain');
+        $outputFilename = $this->getTempFilename('testSignFileDualClear.asc');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addSignKey('second-keypair@example.com', 'test2');
@@ -482,8 +483,9 @@ class SignTestCase extends TestCase
      */
     public function testSignFileDualDetached()
     {
-        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
-        $outputFilename = TestCase::TEMPDIR . '/testSignFileDualDetached.asc';
+        $inputFilename  = $this->getDataFilename('testFileMedium.plain');
+        $outputFilename =
+            $this->getTempFilename('testSignFileDualDetached.asc');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addSignKey('second-keypair@example.com', 'test2');
@@ -510,8 +512,8 @@ class SignTestCase extends TestCase
     public function testSignFileFileException_input()
     {
         // input file does not exist
-        $inputFilename = TestCase::DATADIR .
-            '/testSignFileFileFileException_input.plain';
+        $inputFilename =
+            $this->getDataFilename('testSignFileFileFileException_input.plain');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->signFile($inputFilename);
@@ -529,7 +531,7 @@ class SignTestCase extends TestCase
     {
         // input file is encrypted with first-keypair@example.com
         // output file does not exist
-        $inputFilename  = TestCase::DATADIR . '/testMediumFile.plain';
+        $inputFilename  = $this->getDataFilename('testMediumFile.plain');
         $outputFilename = './non-existent' .
             '/testSignFileFileException_output.plain';
 
@@ -545,7 +547,7 @@ class SignTestCase extends TestCase
      */
     public function testSignFileEmpty()
     {
-        $filename = TestCase::DATADIR . '/testFileEmpty.plain';
+        $filename = $this->getDataFilename('testFileEmpty.plain');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
 

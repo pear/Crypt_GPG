@@ -74,7 +74,7 @@ require_once 'Crypt/GPG/Signature.php';
  *    A public key that does not initially exist in the keyring that can be
  *    imported.
  */
-abstract class TestCase extends PHPUnit_Framework_TestCase
+abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
 {
     // {{{ class constants
 
@@ -470,6 +470,22 @@ TEXT;
         $sum = explode(' ', `md5sum $filename`);
         $sum = $sum[0];
         return $sum;
+    }
+
+    // }}}
+    // {{{ getDataFilename()
+
+    protected function getDataFilename($filename)
+    {
+        return self::DATADIR . '/' . $filename;
+    }
+
+    // }}}
+    // {{{ getTempFilename()
+
+    protected function getTempFilename($filename)
+    {
+        return self::TEMPDIR . '/' . $filename;
     }
 
     // }}}

@@ -55,7 +55,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class EncryptTestCase extends TestCase
+class EncryptTestCase extends Crypt_GPG_TestCase
 {
     // string
     // {{{ testEncrypt()
@@ -164,9 +164,9 @@ class EncryptTestCase extends TestCase
     public function testEncryptFile()
     {
         $expectedMd5Sum    = 'f96267d87551ee09bfcac16921e351c1';
-        $originalFilename  = TestCase::DATADIR . '/testFileMedium.plain';
-        $encryptedFilename = TestCase::TEMPDIR . '/testEncryptFile.asc';
-        $decryptedFilename = TestCase::TEMPDIR . '/testEncryptFile.plain';
+        $originalFilename  = $this->getDataFilename('testFileMedium.plain');
+        $encryptedFilename = $this->getTempFilename('testEncryptFile.asc');
+        $decryptedFilename = $this->getTempFilename('testEncryptFile.plain');
 
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptFile($originalFilename, $encryptedFilename);
@@ -187,9 +187,9 @@ class EncryptTestCase extends TestCase
     public function testEncryptFileDual()
     {
         $expectedMd5Sum    = 'f96267d87551ee09bfcac16921e351c1';
-        $originalFilename  = TestCase::DATADIR . '/testFileMedium.plain';
-        $encryptedFilename = TestCase::TEMPDIR . '/testEncryptFile.asc';
-        $decryptedFilename = TestCase::TEMPDIR . '/testEncryptFile.plain';
+        $originalFilename  = $this->getDataFilename('testFileMedium.plain');
+        $encryptedFilename = $this->getTempFilename('testEncryptFile.asc');
+        $decryptedFilename = $this->getTempFilename('testEncryptFile.plain');
 
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->addEncryptKey('second-keypair@example.com');
@@ -219,7 +219,7 @@ class EncryptTestCase extends TestCase
     public function testEncryptFileToString()
     {
         $expectedData     = 'Hello, Alice! Goodbye, Bob!';
-        $originalFilename = TestCase::DATADIR . '/testFileSmall.plain';
+        $originalFilename = $this->getDataFilename('testFileSmall.plain');
 
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $encryptedData = $this->gpg->encryptFile($originalFilename);
@@ -241,8 +241,8 @@ class EncryptTestCase extends TestCase
     public function testEncryptFileFileException_input()
     {
         // input file does not exist
-        $filename = TestCase::DATADIR .
-            '/testEncryptFileFileException_input.plain';
+        $filename =
+            $this->getDataFilename('testEncryptFileFileException_input.plain');
 
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptFile($filename);
@@ -259,7 +259,7 @@ class EncryptTestCase extends TestCase
     public function testEncryptFileFileException_output()
     {
         // output file does not exist
-        $inputFilename  = TestCase::DATADIR . '/testFileMedium.plain';
+        $inputFilename  = $this->getDataFilename('testFileMedium.plain');
         $outputFilename = './non-existent' .
             '/testEncryptFileFileException_output.asc';
 
@@ -275,7 +275,7 @@ class EncryptTestCase extends TestCase
      */
     public function testEncryptFileEmpty()
     {
-        $filename = TestCase::DATADIR . '/testFileEmpty.plain';
+        $filename = $this->getDataFilename('testFileEmpty.plain');
 
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $encryptedData = $this->gpg->encryptFile($filename);

@@ -55,7 +55,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class ImportKeyTestCase extends TestCase
+class ImportKeyTestCase extends Crypt_GPG_TestCase
 {
     // string
     // {{{ testImportKey_private()
@@ -363,8 +363,8 @@ TEXT;
             'private_unchanged' => 0
         );
 
-        $result = $this->gpg->importKeyFile('./data-files/' .
-            'testImportKeyFile_private.asc');
+        $filename = $this->getDataFilename('testImportKeyFile_private.asc');
+        $result   = $this->gpg->importKeyFile($filename);
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -385,8 +385,8 @@ TEXT;
             'private_unchanged' => 0
         );
 
-        $result = $this->gpg->importKeyFile('./data-files/' .
-            'testImportKeyFile_public.asc');
+        $filename = $this->getDataFilename('testImportKeyFile_public.asc');
+        $result   = $this->gpg->importKeyFile($filename);
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -399,8 +399,8 @@ TEXT;
      */
     public function testImportKeyFileAlreadyImported_private()
     {
-        $result = $this->gpg->importKeyFile('./data-files/' .
-            'testImportKeyFile_private.asc');
+        $filename = $this->getDataFilename('testImportKeyFile_private.asc');
+        $result   = $this->gpg->importKeyFile($filename);
 
         $expectedResult = array(
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
@@ -412,8 +412,7 @@ TEXT;
 
         $this->assertEquals($expectedResult, $result);
 
-        $result = $this->gpg->importKeyFile('./data-files/' .
-            'testImportKeyFile_private.asc');
+        $result = $this->gpg->importKeyFile($filename);
 
         $expectedResult = array(
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
@@ -434,8 +433,8 @@ TEXT;
      */
     public function testImportKeyFileAlreadyImported_public()
     {
-        $result = $this->gpg->importKeyFile('./data-files/' .
-            'testImportKeyFile_public.asc');
+        $filename = $this->getDataFilename('testImportKeyFile_public.asc');
+        $result = $this->gpg->importKeyFile($filename);
 
         $expectedResult = array(
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
@@ -447,8 +446,7 @@ TEXT;
 
         $this->assertEquals($expectedResult, $result);
 
-        $result = $this->gpg->importKeyFile('./data-files/' .
-            'testImportKeyFile_public.asc');
+        $result = $this->gpg->importKeyFile($filename);
 
         $expectedResult = array(
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
@@ -472,7 +470,9 @@ TEXT;
     public function testImportKeyFileFileException()
     {
         // input file does not exist
-        $filename = TestCase::DATADIR . '/testImportKeyFileFileException.asc';
+        $filename =
+            $this->getDataFilename('testImportKeyFileFileException.asc');
+
         $this->gpg->importKeyFile($filename);
     }
 
@@ -486,7 +486,7 @@ TEXT;
      */
     public function testImportKeyFileNoDataException()
     {
-        $filename = TestCase::DATADIR . '/testFileEmpty.plain';
+        $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->importKeyFile($filename);
     }
 

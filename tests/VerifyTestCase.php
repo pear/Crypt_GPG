@@ -55,7 +55,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class VerifyTestCase extends TestCase
+class VerifyTestCase extends Crypt_GPG_TestCase
 {
     // string
     // {{{ testVerifyNoDataException_invalid()
@@ -464,7 +464,8 @@ TEXT;
 
         $expectedSignatures = array($signature);
 
-        $filename = TestCase::DATADIR . '/testVerifyFileNormalSignedData.asc';
+        $filename =
+            $this->getDataFilename('testVerifyFileNormalSignedData.asc');
 
         $signatures = $this->gpg->verifyFile($filename);
         $this->assertEquals($expectedSignatures, $signatures);
@@ -497,7 +498,7 @@ TEXT;
 
         $expectedSignatures = array($signature);
 
-        $filename = TestCase::DATADIR . '/testVerifyFileClearsignedData.asc';
+        $filename = $this->getDataFilename('testVerifyFileClearsignedData.asc');
 
         $signatures = $this->gpg->verifyFile($filename);
         $this->assertEquals($expectedSignatures, $signatures);
@@ -542,7 +543,7 @@ TEXT;
 
         $expectedSignatures = array($signature);
 
-        $filename = TestCase::DATADIR . '/testFileMedium.plain';
+        $filename = $this->getDataFilename('testFileMedium.plain');
 
         $signatures = $this->gpg->verifyFile($filename, $signatureData);
         $this->assertEquals($expectedSignatures, $signatures);
@@ -591,8 +592,8 @@ TEXT;
 
         $expectedSignatures = array($firstSignature, $secondSignature);
 
-        $filename = TestCase::DATADIR .
-            '/testVerifyFileDualNormalSignedData.asc';
+        $filename =
+            $this->getDataFilename('testVerifyFileDualNormalSignedData.asc');
 
         $signatures = $this->gpg->verifyFile($filename);
         $this->assertEquals($expectedSignatures, $signatures);
@@ -641,8 +642,8 @@ TEXT;
 
         $expectedSignatures = array($firstSignature, $secondSignature);
 
-        $filename = TestCase::DATADIR .
-            '/testVerifyFileDualClearsignedData.asc';
+        $filename =
+            $this->getDataFilename('testVerifyFileDualClearsignedData.asc');
 
         $signatures = $this->gpg->verifyFile($filename);
         $this->assertEquals($expectedSignatures, $signatures);
@@ -704,7 +705,7 @@ TEXT;
 
         $expectedSignatures = array($firstSignature, $secondSignature);
 
-        $filename = TestCase::DATADIR . '/testFileMedium.plain';
+        $filename = $this->getDataFilename('testFileMedium.plain');
 
         $signatures = $this->gpg->verifyFile($filename, $signatureData);
         $this->assertEquals($expectedSignatures, $signatures);
@@ -734,7 +735,7 @@ TEXT;
      */
     public function testVerifyFileNoDataException()
     {
-        $filename = TestCase::DATADIR . '/testFileEmpty.plain';
+        $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->verifyFile($filename);
     }
 

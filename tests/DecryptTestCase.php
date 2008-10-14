@@ -55,7 +55,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class DecryptTestCase extends TestCase
+class DecryptTestCase extends Crypt_GPG_TestCase
 {
     // string
     // {{{ testDecrypt()
@@ -409,8 +409,8 @@ TEXT;
     public function testDecryptFile()
     {
         $expectedMd5Sum = 'f96267d87551ee09bfcac16921e351c1';
-        $inputFilename  = TestCase::DATADIR . '/testDecryptFile.asc';
-        $outputFilename = TestCase::TEMPDIR . '/testDecryptFile.plain';
+        $inputFilename  = $this->getDataFilename('testDecryptFile.asc');
+        $outputFilename = $this->getTempFilename('testDecryptFile.plain');
 
         // file is encrypted with first-keypair@example.com
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
@@ -429,7 +429,7 @@ TEXT;
     public function testDecryptFileToString()
     {
         $expectedData  = 'Hello, Alice! Goodbye, Bob!';
-        $inputFilename = TestCase::DATADIR . '/testDecryptFileToString.asc';
+        $inputFilename = $this->getDataFilename('testDecryptFileToString.asc');
 
         // file is encrypted with first-keypair@example.com
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
@@ -448,11 +448,11 @@ TEXT;
     {
         $expectedMd5Sum = 'f96267d87551ee09bfcac16921e351c1';
 
-        $inputFilename = TestCase::DATADIR .
-            '/testDecryptFileNoPassphrase.asc';
+        $inputFilename =
+            $this->getDataFilename('testDecryptFileNoPassphrase.asc');
 
-        $outputFilename = TestCase::TEMPDIR .
-            '/testDecryptFileNoPassphrase.plain';
+        $outputFilename =
+            $this->getTempFilename('testDecryptFileNoPassphrase.plain');
 
         // file is encrypted with no-passphrase@example.com
         $this->gpg->decryptFile($inputFilename, $outputFilename);
@@ -472,8 +472,8 @@ TEXT;
     public function testDecryptFileFileException_input()
     {
         // input file does not exist
-        $inputFilename = TestCase::DATADIR .
-            '/testDecryptFileFileException_input.asc';
+        $inputFilename =
+            $this->getDataFilename('testDecryptFileFileException_input.asc');
 
         $this->gpg->decryptFile($inputFilename);
     }
@@ -490,7 +490,7 @@ TEXT;
     {
         // input file is encrypted with first-keypair@example.com
         // output file does not exist
-        $inputFilename  = TestCase::DATADIR . '/testDecryptFile.asc';
+        $inputFilename  = $this->getDataFilename('testDecryptFile.asc');
         $outputFilename = './non-existent' .
             '/testDecryptFileFileException_output.plain';
 
@@ -509,9 +509,13 @@ TEXT;
     public function testDecryptFileKeyNotFoundException()
     {
         // file is encrypted with missing-key@example.com
-        $this->gpg->decryptFile(
-            TestCase::DATADIR . '/testDecryptFileKeyNotFoundException.asc',
-            TestCase::TEMPDIR . '/testDecryptFileKeyNotFoundException.plain');
+        $inputFilename =
+            $this->getDataFilename('testDecryptFileKeyNotFoundException.asc');
+
+        $outputFilename =
+            $this->getTempFilename('testDecryptFileKeyNotFoundException.plain');
+
+        $this->gpg->decryptFile($inputFilename, $outputFilename);
     }
 
     // }}}
@@ -523,8 +527,8 @@ TEXT;
     public function testDecryptFileDual()
     {
         $expectedMd5Sum = 'f96267d87551ee09bfcac16921e351c1';
-        $inputFilename  = TestCase::DATADIR . '/testDecryptFileDual.asc';
-        $outputFilename = TestCase::TEMPDIR . '/testDecryptFileDual.plain';
+        $inputFilename  = $this->getDataFilename('testDecryptFileDual.asc');
+        $outputFilename = $this->getTempFilename('testDecryptFileDual.plain');
 
         // decrypt with first key
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
@@ -551,11 +555,11 @@ TEXT;
     {
         $expectedMd5Sum = 'f96267d87551ee09bfcac16921e351c1';
 
-        $inputFilename = TestCase::DATADIR .
-            '/testDecryptFileDualOnePassphrase.asc';
+        $inputFilename =
+            $this->getDataFilename('testDecryptFileDualOnePassphrase.asc');
 
-        $outputFilename = TestCase::TEMPDIR .
-            '/testDecryptFileDualOnePassphrase.plain';
+        $outputFilename =
+            $this->getTempFilename('testDecryptFileDualOnePassphrase.plain');
 
         // decrypt with no-passphrase
         $this->gpg->decryptFile($inputFilename, $outputFilename);
@@ -580,7 +584,7 @@ TEXT;
      */
     public function testDecryptFileNoDataException()
     {
-        $filename = TestCase::DATADIR . '/testFileEmpty.plain';
+        $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->decryptFile($filename);
     }
 

@@ -125,24 +125,24 @@ class Crypt_GPG_UserId
 
         // initialize from array
         if (is_array($userId)) {
-            if (array_key_exists('name', $options)) {
-                $this->setName($options['name']);
+            if (array_key_exists('name', $userId)) {
+                $this->setName($userId['name']);
             }
 
-            if (array_key_exists('comment', $options)) {
-                $this->setComment($options['comment']);
+            if (array_key_exists('comment', $userId)) {
+                $this->setComment($userId['comment']);
             }
 
-            if (array_key_exists('email', $options)) {
-                $this->setEmail($options['email']);
+            if (array_key_exists('email', $userId)) {
+                $this->setEmail($userId['email']);
             }
 
-            if (array_key_exists('revoked', $options)) {
-                $this->setRevoked($options['revoked']);
+            if (array_key_exists('revoked', $userId)) {
+                $this->setRevoked($userId['revoked']);
             }
 
-            if (array_key_exists('valid', $options)) {
-                $this->setValid($options['valid']);
+            if (array_key_exists('valid', $userId)) {
+                $this->setValid($userId['valid']);
             }
         }
     }
@@ -337,12 +337,14 @@ class Crypt_GPG_UserId
         $email   = '';
         $comment = '';
 
+        // get email address from end of string if it exists
         $matches = array();
         if (preg_match('/^(.+?) <([^>]+)>$/', $string, $matches) === 1) {
             $string = $matches[1];
             $email  = $matches[2];
         }
 
+        // cet comment from end of string if it exists
         $matches = array();
         if (preg_match('/^(.+?) \(([^\)]+)\)$/', $string, $matches) === 1) {
             $string  = $matches[1];

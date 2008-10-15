@@ -173,7 +173,7 @@ class Crypt_GPG_Signature
             }
 
             if (array_key_exists('valid', $signature)) {
-                $this->setIsValid($signature['valid']);
+                $this->setValid($signature['valid']);
             }
 
             if (array_key_exists('userId', $signature)) {
@@ -351,7 +351,7 @@ class Crypt_GPG_Signature
     }
 
     // }}}
-    // {{{ setIsValid()
+    // {{{ setValid()
 
     /**
      * Sets whether or not this signature is valid
@@ -361,7 +361,7 @@ class Crypt_GPG_Signature
      *
      * @return void
      */
-    public function setIsValid($isValid)
+    public function setValid($isValid)
     {
         $this->_isValid = ($isValid) ? true : false;
     }

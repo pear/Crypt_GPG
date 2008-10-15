@@ -127,7 +127,7 @@ TEXT;
 
         $signature->setCreationDate(1221785858);
         $signature->setExpirationDate(0);
-        $signature->setIsValid(true);
+        $signature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -171,7 +171,7 @@ TEXT;
 
         $signature->setCreationDate(1221785858);
         $signature->setExpirationDate(0);
-        $signature->setIsValid(true);
+        $signature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -220,7 +220,7 @@ TEXT;
 
         $signature->setCreationDate(1221785858);
         $signature->setExpirationDate(0);
-        $signature->setIsValid(true);
+        $signature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -263,7 +263,7 @@ TEXT;
 
         $firstSignature->setCreationDate(1221785858);
         $firstSignature->setExpirationDate(0);
-        $firstSignature->setIsValid(true);
+        $firstSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('Second Keypair Test Key');
@@ -279,7 +279,7 @@ TEXT;
 
         $secondSignature->setCreationDate(1221785858);
         $secondSignature->setExpirationDate(0);
-        $secondSignature->setIsValid(true);
+        $secondSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -325,7 +325,7 @@ TEXT;
 
         $firstSignature->setCreationDate(1221785858);
         $firstSignature->setExpirationDate(0);
-        $firstSignature->setIsValid(true);
+        $firstSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('Second Keypair Test Key');
@@ -341,7 +341,7 @@ TEXT;
 
         $secondSignature->setCreationDate(1221785858);
         $secondSignature->setExpirationDate(0);
-        $secondSignature->setIsValid(true);
+        $secondSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -391,7 +391,7 @@ TEXT;
 
         $firstSignature->setCreationDate(1221785858);
         $firstSignature->setExpirationDate(0);
-        $firstSignature->setIsValid(true);
+        $firstSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('Second Keypair Test Key');
@@ -407,7 +407,7 @@ TEXT;
 
         $secondSignature->setCreationDate(1221785858);
         $secondSignature->setExpirationDate(0);
-        $secondSignature->setIsValid(true);
+        $secondSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -453,7 +453,7 @@ TEXT;
 
         $signature->setCreationDate(1221960707);
         $signature->setExpirationDate(0);
-        $signature->setIsValid(true);
+        $signature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -487,7 +487,7 @@ TEXT;
 
         $signature->setCreationDate(1221960707);
         $signature->setExpirationDate(0);
-        $signature->setIsValid(true);
+        $signature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -520,7 +520,7 @@ TEXT;
 
         $signature->setCreationDate(1221960707);
         $signature->setExpirationDate(0);
-        $signature->setIsValid(true);
+        $signature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -565,7 +565,7 @@ TEXT;
 
         $firstSignature->setCreationDate(1221960707);
         $firstSignature->setExpirationDate(0);
-        $firstSignature->setIsValid(true);
+        $firstSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -581,7 +581,7 @@ TEXT;
 
         $secondSignature->setCreationDate(1221960707);
         $secondSignature->setExpirationDate(0);
-        $secondSignature->setIsValid(true);
+        $secondSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('Second Keypair Test Key');
@@ -615,7 +615,7 @@ TEXT;
 
         $firstSignature->setCreationDate(1221960707);
         $firstSignature->setExpirationDate(0);
-        $firstSignature->setIsValid(true);
+        $firstSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -631,7 +631,7 @@ TEXT;
 
         $secondSignature->setCreationDate(1221960707);
         $secondSignature->setExpirationDate(0);
-        $secondSignature->setIsValid(true);
+        $secondSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('Second Keypair Test Key');
@@ -665,7 +665,7 @@ TEXT;
 
         $firstSignature->setCreationDate(1221960707);
         $firstSignature->setExpirationDate(0);
-        $firstSignature->setIsValid(true);
+        $firstSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -681,7 +681,7 @@ TEXT;
 
         $secondSignature->setCreationDate(1221960707);
         $secondSignature->setExpirationDate(0);
-        $secondSignature->setIsValid(true);
+        $secondSignature->setValid(true);
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('Second Keypair Test Key');

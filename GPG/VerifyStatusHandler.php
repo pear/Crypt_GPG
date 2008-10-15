@@ -132,7 +132,7 @@ class Crypt_GPG_VerifyStatusHandler
 
             $signature = $this->signatures[$this->index];
 
-            $signature->setIsValid(true);
+            $signature->setValid(true);
             $signature->setKeyFingerprint($tokens[1]);
 
             if (strpos($tokens[3], 'T') === false) {

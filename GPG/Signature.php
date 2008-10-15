@@ -111,6 +111,79 @@ class Crypt_GPG_Signature
     private $_isValid = false;
 
     // }}}
+    // {{{ public function __construct()
+
+    /**
+     * Creates a new signature
+     *
+     * Signatures can be initialized from an array of named values. Available
+     * names are:
+     *
+     * - <kbd>string  id</kbd>          - the unique id of this signature.
+     * - <kbd>string  fingerprint</kbd> - the fingerprint of the key used to
+     *                                    create the signature. The fingerprint
+     *                                    should not contain formatting
+     *                                    characters.
+     * - <kbd>integer creation</kbd>    - the date the signature was created.
+     *                                    This is a UNIX timestamp.
+     * - <kbd>integer expiration</kbd>  - the date the signature expired. This
+     *                                    is a UNIX timestamp. If the signature
+     *                                    does not expire, use 0.
+     * - <kbd>boolean valid</kbd>       - whether or not the signature is valid.
+     * - <kbd>string  userId</kbd>      - the user id associated with the
+     *                                    signature. This may also be a
+     *                                    {@link Crypt_GPG_UserId} object.
+     *
+     * @param Crypt_GPG_Signature|array $signature optional. Either an existing
+     *        signature object, which is copied; or an array of initial values.
+     */
+    public function __construct($signature = null)
+    {
+        // copy from object
+        if ($signature instanceof Crypt_GPG_Signature) {
+            $this->_id             = $signature->_id;
+            $this->_keyFingerprint = $signature->_keyFingerprint;
+            $this->_creationDate   = $signature->_creationDate;
+            $this->_expirationDate = $signature->_expirationDate;
+            $this->_isValid        = $signature->_isValid;
+
+            if ($signature->userId instanceof Crypt_GPG_UserId) {
+                $this->_userId = clone $signature->_userId;
+            } else {
+                $this->_userId = clone $signature->_userId;
+            }
+        }
+
+        // initialize from array
+        if (is_array($signature)) {
+            if (array_key_exists('id', $signature)) {
+                $this->setId($signature['id']);
+            }
+
+            if (array_key_exists('fingerprint', $signature)) {
+                $this->setKeyFingerprint($signature['fingerprint']);
+            }
+
+            if (array_key_exists('creation', $signature)) {
+                $this->setCreationDate($signature['creation']);
+            }
+
+            if (array_key_exists('expiration', $signature)) {
+                $this->setExpirationDate($signature['expiration']);
+            }
+
+            if (array_key_exists('valid', $signature)) {
+                $this->setIsValid($signature['valid']);
+            }
+
+            if (array_key_exists('userId', $signature)) {
+                $userId = new Crypt_GPG_UserId($signature['userId']);
+                $this->setUserId($userId);
+            }
+        }
+    }
+
+    // }}}
     // {{{ getId()
 
     /**

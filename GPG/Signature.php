@@ -111,7 +111,7 @@ class Crypt_GPG_Signature
     private $_isValid = false;
 
     // }}}
-    // {{{ public function __construct()
+    // {{{ __construct()
 
     /**
      * Creates a new signature
@@ -147,10 +147,10 @@ class Crypt_GPG_Signature
             $this->_expirationDate = $signature->_expirationDate;
             $this->_isValid        = $signature->_isValid;
 
-            if ($signature->userId instanceof Crypt_GPG_UserId) {
+            if ($signature->_userId instanceof Crypt_GPG_UserId) {
                 $this->_userId = clone $signature->_userId;
             } else {
-                $this->_userId = clone $signature->_userId;
+                $this->_userId = $signature->_userId;
             }
         }
 

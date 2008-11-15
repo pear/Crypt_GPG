@@ -472,7 +472,7 @@ class UserIdTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
-    // {{{ testIsValid()
+    // {{{ testSetValid()
 
     /**
      * @group mutators

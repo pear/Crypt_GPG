@@ -100,7 +100,7 @@ class Crypt_GPG_UserId
      * - <kbd>string  name</kbd>    - the name field of the user id.
      * - <kbd>string  comment</kbd> - the comment field of the user id.
      * - <kbd>string  email</kbd>   - the email field of the user id.
-     * - <kbd>obolean valid</kbd>   - whether or not the user id is valid.
+     * - <kbd>boolean valid</kbd>   - whether or not the user id is valid.
      * - <kbd>boolean revoked</kbd> - whether or not the user id is revoked.
      *
      * @param Crypt_GPG_UserId|string|array $userId optional. Either an

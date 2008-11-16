@@ -150,6 +150,98 @@ class Crypt_GPG_SubKey
     private $_hasPrivate = false;
 
     // }}}
+    // {{{ __construct()
+
+    /**
+     * Creates a new sub-key object
+     *
+     * Sub-keys can be initialized from an array of named values. Available
+     * names are:
+     *
+     * - <kbd>string  id</kbd>          - the key id of the sub-key.
+     * - <kbd>integer algorithm</kbd>   - the encryption algorithm of the
+     *                                    sub-key.
+     * - <kbd>string  fingerprint</kbd> - the fingerprint of the sub-key. The
+     *                                    fingerprint should not contain
+     *                                    formatting characters.
+     * - <kbd>integer length</kbd>      - the length of the sub-key in bits.
+     * - <kbd>integer creation</kbd>    - the date the sub-key was created.
+     *                                    This is a UNIX timestamp.
+     * - <kbd>integer expiration</kbd>  - the date the sub-key expires. This
+     *                                    is a UNIX timestamp. If the sub-key
+     *                                    does not expire, use 0.
+     * - <kbd>boolean canSign</kbd>     - whether or not the sub-key can be
+     *                                    used to sign data.
+     * - <kbd>boolean canEncrypt</kbd>  - whether or not the sub-key can be
+     *                                    used to encrypt data.
+     * - <kbd>boolean hasPrivate</kbd>  - whether or not the private key for
+     *                                    the sub-key exists in the keyring.
+     *
+     * @param Crypt_GPG_SubKey|string|array $key optional. Either an existing
+     *        sub-key object, which is copied; a sub-key string, which is
+     *        parsed; or an array of initial values.
+     */
+    public function __construct($key = null)
+    {
+        // parse from string
+        if (is_string($key)) {
+            $key = self::parse($key);
+        }
+
+        // copy from object
+        if ($key instanceof Crypt_GPG_SubKey) {
+            $this->_id             = $key->_id;
+            $this->_algorithm      = $key->_algorithm;
+            $this->_fingerprint    = $key->_fingerprint;
+            $this->_length         = $key->_length;
+            $this->_creationDate   = $key->_creationDate;
+            $this->_expirationDate = $key->_expirationDate;
+            $this->_canSign        = $key->_canSign;
+            $this->_canEncrypt     = $key->_canEncrypt;
+            $this->_hasPrivate     = $key->_hasPrivate;
+        }
+
+        // initialize from array
+        if (is_array($key)) {
+            if (array_key_exists('id', $key)) {
+                $this->setId($key['id']);
+            }
+
+            if (array_key_exists('algorithm', $key)) {
+                $this->setAlgorithm($key['algorithm']);
+            }
+
+            if (array_key_exists('fingerprint', $key)) {
+                $this->setFingerprint($key['fingerprint']);
+            }
+
+            if (array_key_exists('length', $key)) {
+                $this->setLength($key['length']);
+            }
+
+            if (array_key_exists('creation', $key)) {
+                $this->setCreationDate($key['creation']);
+            }
+
+            if (array_key_exists('expiration', $key)) {
+                $this->setExpirationDate($key['expiration']);
+            }
+
+            if (array_key_exists('canSign', $key)) {
+                $this->setCanSign($key['canSign']);
+            }
+
+            if (array_key_exists('canEncrypt', $key)) {
+                $this->setCanEncrypt($key['canEncrypt']);
+            }
+
+            if (array_key_exists('hasPrivate', $key)) {
+                $this->setHasPrivate($key['hasPrivate']);
+            }
+        }
+    }
+
+    // }}}
     // {{{ getId()
 
     /**
@@ -446,18 +538,8 @@ class Crypt_GPG_SubKey
         $subKey->setId($tokens[4]);
         $subKey->setLength($tokens[2]);
         $subKey->setAlgorithm($tokens[3]);
-
-        if (strpos($tokens[5], 'T') === false) {
-            $subKey->setCreationDate($tokens[5]);
-        } else {
-            $subKey->setCreationDate(strtotime($tokens[5]));
-        }
-
-        if (strpos($tokens[6], 'T') === false) {
-            $subKey->setExpirationDate($tokens[6]);
-        } else {
-            $subKey->setExpirationDate(strtotime($tokens[6]));
-        }
+        $subKey->setCreationDate(self::parseDate($tokens[5]));
+        $subKey->setExpirationDate(self::parseDate($tokens[6]));
 
         if (strpos($tokens[11], 's') !== false) {
             $subKey->setCanSign(true);
@@ -468,6 +550,39 @@ class Crypt_GPG_SubKey
         }
 
         return $subKey;
+    }
+
+    // }}}
+    // {{{ parseDate()
+
+    /**
+     * Parses a date string as provided by GPG into a UNIX timestamp
+     *
+     * @param string $string the date string.
+     *
+     * @return integer the UNIX timestamp corresponding to the provided date
+     *                 string.
+     */
+    private static function parseDate($string)
+    {
+        if ($string == '') {
+            $timestamp = 0;
+        } else {
+            // all times are in UTC according to GPG documentation
+            $timeZone = new DateTimeZone('UTC');
+
+            if (strpos($string, 'T') === false) {
+                // interpret as UNIX timestamp
+                $string = '@' . $string;
+            }
+
+            $date = new DateTime($string, $timeZone);
+
+            // convert to UNIX timestamp
+            $timestamp = intval($date->format('U'));
+        }
+
+        return $timestamp;
     }
 
     // }}}

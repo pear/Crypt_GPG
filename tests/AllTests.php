@@ -57,6 +57,7 @@ require_once 'GetKeysTestCase.php';
 require_once 'ImportKeyTestCase.php';
 require_once 'SignatureTestCase.php';
 require_once 'SignTestCase.php';
+require_once 'SubKeyTestCase.php';
 require_once 'UserIdTestCase.php';
 require_once 'VerifyTestCase.php';
 
@@ -95,6 +96,7 @@ class Crypt_GPG_AllTests
         $suite->addTestSuite('ImportKeyTestCase');
         $suite->addTestSuite('SignatureTestCase');
         $suite->addTestSuite('SignTestCase');
+        $suite->addTestSuite('SubKeyTestCase');
         $suite->addTestSuite('UserIdTestCase');
         $suite->addTestSuite('VerifyTestCase');
         return $suite;

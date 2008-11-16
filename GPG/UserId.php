@@ -89,7 +89,7 @@ class Crypt_GPG_UserId
     private $_isValid = true;
 
     // }}}
-    // {{{ public function __construct()
+    // {{{ __construct()
 
     /**
      * Creates a new user id

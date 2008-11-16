@@ -409,58 +409,6 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
 }
 
 // }}}
-// {{{ class Crypt_GPG_DuplicateKeyImportException
-
-/**
- * An exception thrown when a key that is already in the keyring is imported
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2006 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- */
-class Crypt_GPG_DuplicateKeyImportException extends Crypt_GPG_Exception
-{
-}
-
-// }}}
-// {{{ class Crypt_GPG_UnsignedKeyException
-
-/**
- * An exception thrown when a key that is not signed is used for encryption
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2006 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- */
-class Crypt_GPG_UnsignedKeyException extends Crypt_GPG_Exception
-{
-}
-
-// }}}
-// {{{ class Crypt_GPG_MissingSelfSignatureException
-
-/**
- * An exception thrown when a key that is not self signed is used for
- * encryption
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2006 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- */
-class Crypt_GPG_MissingSelfSignatureException extends Crypt_GPG_Exception
-{
-}
-
-// }}}
 // {{{ class Crypt_GPG_DeletePrivateKeyException
 
 /**

@@ -344,7 +344,7 @@ class Crypt_GPG_UserId
             $email  = $matches[2];
         }
 
-        // cet comment from end of string if it exists
+        // get comment from end of string if it exists
         $matches = array();
         if (preg_match('/^(.+?) \(([^\)]+)\)$/', $string, $matches) === 1) {
             $string  = $matches[1];

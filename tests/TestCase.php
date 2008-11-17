@@ -477,7 +477,7 @@ TEXT;
 
     protected function getDataFilename($filename)
     {
-        return self::DATADIR . '/' . $filename;
+        return dirname(__FILE__) . '/'. self::DATADIR . '/' . $filename;
     }
 
     // }}}
@@ -485,7 +485,7 @@ TEXT;
 
     protected function getTempFilename($filename)
     {
-        return self::TEMPDIR . '/' . $filename;
+        return dirname(__FILE__) . '/' . self::TEMPDIR . '/' . $filename;
     }
 
     // }}}

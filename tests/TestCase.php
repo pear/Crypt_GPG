@@ -78,11 +78,11 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
 {
     // {{{ class constants
 
-    const HOMEDIR = './test-keychain';
+    const HOMEDIR = 'test-keychain';
 
-    const TEMPDIR = './temp-files';
+    const TEMPDIR = 'temp-files';
 
-    const DATADIR = './data-files';
+    const DATADIR = 'data-files';
 
     // }}}
     // {{{ protected properties
@@ -95,12 +95,36 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
     private $_old_error_level;
 
     // }}}
+    // {{{ getOptions()
+
+    protected function getOptions()
+    {
+        return array(
+            'homedir' => self::HOMEDIR,
+//            'debug'   => true
+        );
+    }
+
+    // }}}
+
+    // set up
     // {{{ setUp()
 
     public function setUp()
     {
         $this->_old_error_level = error_reporting(E_ALL | E_STRICT);
 
+        $this->_setUpKeyring();
+        $this->_setUpTempdir();
+
+        $this->gpg = new Crypt_GPG($this->getOptions());
+    }
+
+    // }}}
+    // {{{ _setUpKeyring()
+
+    private function _setUpKeyring()
+    {
         // {{{ pubring data
         $pubringData = <<<TEXT
 mQGiBEjS+M0RBADIuG1okbW2FPjlx1MKYthiN0rRcoN0P3H1G+0x6vMIV0YE
@@ -381,78 +405,97 @@ P++wDnCxNUsUWr7WikOt
 TEXT;
         // }}}
 
-        mkdir(self::HOMEDIR);
+        $directoryName = dirname(__FILE__) . '/' . self::HOMEDIR;
+        if (!file_exists($directoryName)) {
+            mkdir($directoryName);
+        }
 
-        $pubring = fopen(self::HOMEDIR . '/pubring.gpg', 'wb');
+        $pubring = fopen($this->getKeyringFilename('pubring.gpg'), 'wb');
         fwrite($pubring, base64_decode(str_replace("\n", '', $pubringData)));
         fclose($pubring);
 
-        $secring = fopen(self::HOMEDIR . '/secring.gpg', 'wb');
+        $secring = fopen($this->getKeyringFilename('secring.gpg'), 'wb');
         fwrite($secring, base64_decode(str_replace("\n", '', $secringData)));
         fclose($secring);
 
-        $trustdb = fopen(self::HOMEDIR . '/trustdb.gpg', 'wb');
+        $trustdb = fopen($this->getKeyringFilename('trustdb.gpg'), 'wb');
         fwrite($trustdb, base64_decode(str_replace("\n", '', $trustdbData)));
         fclose($trustdb);
 
-        $randomSeed = fopen(self::HOMEDIR . '/random_seed', 'wb');
+        $randomSeed = fopen($this->getKeyringFilename('random_seed'), 'wb');
         fwrite($randomSeed, base64_decode(
             str_replace("\n", '', $randomSeedData)));
 
         fclose($randomSeed);
-
-        mkdir(self::TEMPDIR);
-
-        $this->gpg = new Crypt_GPG($this->getOptions());
     }
 
     // }}}
+    // {{{ _setUpTempdir()
+
+    private function _setUpTempdir()
+    {
+        $directoryName = dirname(__FILE__) . '/' . self::TEMPDIR;
+        if (!file_exists($directoryName)) {
+            mkdir($directoryName);
+        }
+    }
+
+    // }}}
+
+    // tear down
     // {{{ tearDown()
 
     public function tearDown()
     {
         unset($this->gpg);
 
-        if (file_exists(self::HOMEDIR . '/pubring.gpg~')) {
-            unlink(self::HOMEDIR . '/pubring.gpg~');
-        }
-
-        if (file_exists(self::HOMEDIR . '/secring.gpg~')) {
-            unlink(self::HOMEDIR . '/secring.gpg~');
-        }
-
-        if (file_exists(self::HOMEDIR . '/trustdb.gpg~')) {
-            unlink(self::HOMEDIR . '/trustdb.gpg~');
-        }
-
-        unlink(self::HOMEDIR . '/pubring.gpg');
-        unlink(self::HOMEDIR . '/secring.gpg');
-        unlink(self::HOMEDIR . '/trustdb.gpg');
-        unlink(self::HOMEDIR . '/random_seed');
-
-        // remove temporary files and temporary directory
-        $iterator = new DirectoryIterator(self::TEMPDIR);
-        foreach ($iterator as $file) {
-            if (!$file->isDot()) {
-                unlink(self::TEMPDIR. '/' . $file->getFilename());
-            }
-        }
-
-        rmdir(self::TEMPDIR);
-        rmdir(self::HOMEDIR);
+        $this->_tearDownKeyring();
+        $this->_tearDownTempdir();
 
         error_reporting($this->_old_error_level);
     }
 
     // }}}
-    // {{{ getOptions()
+    // {{{ _tearDownKeyring()
 
-    protected function getOptions()
+    private function _tearDownKeyring()
     {
-        return array(
-            'homedir' => self::HOMEDIR,
-//            'debug'   => true
+        $filenames = array(
+            $this->getKeyringFilename('pubring.gpg~'),
+            $this->getKeyringFilename('secring.gpg~'),
+            $this->getKeyringFilename('trustdb.gpg~'),
+            $this->getKeyringFilename('pubring.gpg'),
+            $this->getKeyringFilename('secring.gpg'),
+            $this->getKeyringFilename('trustdb.gpg'),
+            $this->getKeyringFilename('random_seed')
         );
+
+        foreach ($filenames as $filename) {
+            if (file_exists($filename)) {
+                unlink($filename);
+            }
+        }
+
+        rmdir(dirname(__FILE__) . '/' . self::HOMEDIR);
+    }
+
+    // }}}
+    // {{{ _tearDownTempdir()
+
+    private function _tearDownTempdir()
+    {
+        $directoryName = dirname(__FILE__) . '/' . self::TEMPDIR;
+
+        // remove temporary files and temporary directory
+        $iterator = new DirectoryIterator($directoryName);
+        foreach ($iterator as $file) {
+            if (!$file->isDot()) {
+                $filename = $this->getTempFilename($file->getFilename());
+                unlink($filename);
+            }
+        }
+
+        rmdir($directoryName);
     }
 
     // }}}
@@ -470,6 +513,14 @@ TEXT;
         $sum = explode(' ', `md5sum $filename`);
         $sum = $sum[0];
         return $sum;
+    }
+
+    // }}}
+    // {{{ getKeyringFilename()
+
+    protected function getKeyringFilename($filename)
+    {
+        return dirname(__FILE__) . '/'. self::HOMEDIR . '/' . $filename;
     }
 
     // }}}

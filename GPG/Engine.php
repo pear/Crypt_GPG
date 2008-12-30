@@ -144,6 +144,7 @@ class Crypt_GPG_Engine
      * Debugging is off by default.
      *
      * @var boolean
+     * @see Crypt_GPG_Engine::__construct()
      */
     private $_debug = false;
 
@@ -204,32 +205,43 @@ class Crypt_GPG_Engine
     private $_isDarwin = false;
 
     /**
-     * @var string
+     * Commands to be sent to GPG's command input stream
      *
+     * @var string
      * @see Crypt_GPG_Engine::sendCommand()
      */
     private $_commandBuffer = '';
 
     /**
-     * @var array
+     * Array of status line handlers
      *
+     * @var array
      * @see Crypt_GPG_Engine::addStatusHandler()
      */
     private $_statusHandlers = array();
 
     /**
-     * @var array
+     * Array of error line handlers
      *
+     * @var array
      * @see Crypt_GPG_Engine::addErrorHandler()
      */
     private $_errorHandlers = array();
 
     /**
+     * The error code of the current operation
+     *
      * @var integer
+     * @see Crypt_GPG_Engine::getErrorCode()
      */
     private $_errorCode = Crypt_GPG::ERROR_NONE;
 
     /**
+     * The number of currently needed passphrases
+     *
+     * If this is not zero when the GPG command is completed, the error code is
+     * set to {@link Crypt_GPG::ERROR_MISSING_PASSPHRASE}.
+     *
      * @var integer
      */
     private $_needPassphrase = 0;
@@ -237,37 +249,38 @@ class Crypt_GPG_Engine
     /**
      * The input source
      *
-     * This is data to send to GPG.
+     * This is data to send to GPG. Either a string or a stream resource.
      *
      * @var string|resource
-     *
      * @see Crypt_GPG_Engine::setInput()
-     *
-     * All arguments may either be strings or streams. Output from this method
-     * is stored in in the strings or streams passed by reference in the
-     * appropriate parameters. All parameters are passed by reference
-     *
-     * @param string|resource $input   the input source. This is data to send
-     *                                 to GPG. If there is no data to send to
-     *                                 GPG, specify null.
-     * @param string|resource $output  the output location. This is where the
-     *                                 output of GPG is sent.
-     * @param string|resource $message the extra message input source. Detached
-     *                                 signature data should be specified here.
-     *                                 If there is no message input, specify
-     *                                 null.
      */
     private $_input = null;
 
+    /**
+     * The extra message input source
+     *
+     * Either a string or a stream resource.
+     *
+     * @var string|resource
+     * @see Crypt_GPG_Engine::setMessage()
+     */
     private $_message = null;
 
+    /**
+     * The output location
+     *
+     * This is where the output from GPG is sent. Either a string or a stream
+     * resource.
+     *
+     * @var string|resource
+     * @see Crypt_GPG_Engine::setOutput()
+     */
     private $_output = '';
 
     /**
      * The GPG operation to execute
      *
      * @var string
-     *
      * @see Crypt_GPG_Engine::setOperation()
      */
     private $_operation;
@@ -276,7 +289,6 @@ class Crypt_GPG_Engine
      * Arguments for the current operation
      *
      * @var array
-     *
      * @see Crypt_GPG_Engine::setOperation()
      */
     private $_arguments = array();
@@ -287,6 +299,7 @@ class Crypt_GPG_Engine
      *
      * This is cached for optimal performance inside the I/O loop.
      *
+     * @var boolean
      * @see Crypt_GPG_Engine::_byteLength()
      * @see Crypt_GPG_Engine::_byteSubstring()
      */
@@ -571,6 +584,8 @@ class Crypt_GPG_Engine
 
     /**
      * Sets the message source for the current GPG operation
+     *
+     * Detached signature data should be specified here.
      *
      * @param string|resource &$message either a reference to the string
      *                                  containing the message data or an open

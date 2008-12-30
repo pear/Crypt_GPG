@@ -538,8 +538,8 @@ class Crypt_GPG_SubKey
         $subKey->setId($tokens[4]);
         $subKey->setLength($tokens[2]);
         $subKey->setAlgorithm($tokens[3]);
-        $subKey->setCreationDate(self::parseDate($tokens[5]));
-        $subKey->setExpirationDate(self::parseDate($tokens[6]));
+        $subKey->setCreationDate(self::_parseDate($tokens[5]));
+        $subKey->setExpirationDate(self::_parseDate($tokens[6]));
 
         if (strpos($tokens[11], 's') !== false) {
             $subKey->setCanSign(true);
@@ -553,7 +553,7 @@ class Crypt_GPG_SubKey
     }
 
     // }}}
-    // {{{ parseDate()
+    // {{{ _parseDate()
 
     /**
      * Parses a date string as provided by GPG into a UNIX timestamp
@@ -563,7 +563,7 @@ class Crypt_GPG_SubKey
      * @return integer the UNIX timestamp corresponding to the provided date
      *                 string.
      */
-    private static function parseDate($string)
+    private static function _parseDate($string)
     {
         if ($string == '') {
             $timestamp = 0;

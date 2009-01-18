@@ -197,8 +197,8 @@ class Crypt_GPG_DecryptStatusHandler
 
         case 'USERID_HINT':
             // remember the user id for pretty exception messages
-            $this->badPassphrases[$tokens[1]] =
-                implode(' ', array_splice($tokens, 2));
+            $this->badPassphrases[$tokens[1]]
+                = implode(' ', array_splice($tokens, 2));
 
             break;
 
@@ -209,8 +209,8 @@ class Crypt_GPG_DecryptStatusHandler
             break;
 
         case 'MISSING_PASSPHRASE':
-            $this->missingPassphrases[$this->currentSubKeyId] =
-                $this->currentSubKeyId;
+            $this->missingPassphrases[$this->currentSubKeyId]
+                = $this->currentSubKeyId;
 
             break;
 
@@ -283,11 +283,15 @@ class Crypt_GPG_DecryptStatusHandler
                 'decrypt this data.', $code);
 
         case Crypt_GPG::ERROR_BAD_PASSPHRASE:
-            $badPassphrases = array_diff_key($this->badPassphrases,
-                $this->missingPassphrases);
+            $badPassphrases = array_diff_key(
+                $this->badPassphrases,
+                $this->missingPassphrases
+            );
 
-            $missingPassphrases = array_intersect_key($this->badPassphrases,
-                $this->missingPassphrases);
+            $missingPassphrases = array_intersect_key(
+                $this->badPassphrases,
+                $this->missingPassphrases
+            );
 
             $message =  'Cannot decrypt data.';
             if (count($badPassphrases) > 0) {

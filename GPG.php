@@ -1049,8 +1049,8 @@ class Crypt_GPG
      *         exceptions occur.
      */
     public function sign($data, $mode = Crypt_GPG::SIGN_MODE_NORMAL,
-        $armor = true)
-    {
+        $armor = true
+    ) {
         return $this->_sign($data, false, null, $mode, $armor);
     }
 
@@ -1102,8 +1102,8 @@ class Crypt_GPG
      *         exceptions occur.
      */
     public function signFile($filename, $signedFile = null,
-        $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true)
-    {
+        $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true
+    ) {
         return $this->_sign($filename, true, $signedFile, $mode, $armor);
     }
 
@@ -1398,8 +1398,8 @@ class Crypt_GPG
      * @sensitive $passphrase
      */
     private function _addKey(array &$array, $encrypt, $sign, $key,
-        $passphrase = null)
-    {
+        $passphrase = null
+    ) {
         if (is_scalar($key)) {
             $keys = $this->getKeys($key);
             if (count($keys) == 0) {
@@ -1497,8 +1497,10 @@ class Crypt_GPG
         }
 
         $this->engine->reset();
-        $this->engine->addStatusHandler(array($this, 'handleImportKeyStatus'),
-            array(&$result));
+        $this->engine->addStatusHandler(
+            array($this, 'handleImportKeyStatus'),
+            array(&$result)
+        );
 
         $this->engine->setOperation('--import');
         $this->engine->setInput($input);

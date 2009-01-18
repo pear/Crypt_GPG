@@ -367,8 +367,8 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
      *                                    for which the passphrase is missing.
      */
     public function __construct($message, $code = 0,
-        array $badPassphrases = array(), array $missingPassphrases = array())
-    {
+        array $badPassphrases = array(), array $missingPassphrases = array()
+    ) {
         $this->_badPassphrases     = $badPassphrases;
         $this->_missingPassphrases = $missingPassphrases;
 

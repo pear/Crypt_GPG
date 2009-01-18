@@ -51,6 +51,7 @@ require_once 'DecryptTestCase.php';
 require_once 'DeletePublicKeyTestCase.php';
 require_once 'DeletePrivateKeyTestCase.php';
 require_once 'EncryptTestCase.php';
+require_once 'ExceptionsTestCase.php';
 require_once 'ExportPublicKeyTestCase.php';
 require_once 'GetFingerprintTestCase.php';
 require_once 'GetKeysTestCase.php';
@@ -91,6 +92,7 @@ class Crypt_GPG_AllTests
         $suite->addTestSuite('DeletePublicKeyTestCase');
         $suite->addTestSuite('DeletePrivateKeyTestCase');
         $suite->addTestSuite('EncryptTestCase');
+        $suite->addTestSuite('ExceptionsTestCase');
         $suite->addTestSuite('ExportPublicKeyTestCase');
         $suite->addTestSuite('GetFingerprintTestCase');
         $suite->addTestSuite('GetKeysTestCase');

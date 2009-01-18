@@ -67,10 +67,10 @@ class ExportPublicKeyTestCase extends Crypt_GPG_TestCase
         $keyId = 'public-only@example.com';
 
         // {{{ expected key data
+        // Key block identifier and version identifier intentionally omitted
+        // because they contain system-specific information, and causes tests
+        // to fail on other systems.
         $expectedKeyData = <<<TEXT
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
 mQGiBEjS+OIRBACPl023p+jInWiUtc7zSBU1D4mv42zSOwPdC37Pn/4x9FyhIOXE
 LCRTpsnAw9rT6R3BvAC4uO68fxjxFCwTpsa60RsHw4bwpSAYuf0t5Xg+GQIritlm
 XHVYwku3Hkh4Svv0quemooGuJ9lLwIHacL/4W1dTHLB2rzon0T4kx7ExZwCg/XKl

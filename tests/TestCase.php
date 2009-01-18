@@ -100,7 +100,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
     protected function getOptions()
     {
         return array(
-            'homedir' => self::HOMEDIR,
+            'homedir' => dirname(__FILE__) . '/' . self::HOMEDIR,
 //            'debug'   => true
         );
     }

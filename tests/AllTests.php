@@ -38,8 +38,6 @@
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-chdir(dirname(__FILE__));
-
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Crypt_GPG_AllTests::main');
 }

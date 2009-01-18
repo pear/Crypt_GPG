@@ -897,8 +897,12 @@ class Crypt_GPG_Engine
 
             $this->_debug('selecting streams');
 
-            $ready = stream_select($inputStreams, $outputStreams,
-                $exceptionStreams, null);
+            $ready = stream_select(
+                $inputStreams,
+                $outputStreams,
+                $exceptionStreams,
+                null
+            );
 
             $this->_debug('=> got ' . $ready);
 
@@ -920,27 +924,35 @@ class Crypt_GPG_Engine
             if (in_array($fdInput, $outputStreams)) {
                 $this->_debug('GPG is ready for input');
 
-                $chunk = self::_byteSubstring($inputBuffer,
-                    0, self::CHUNK_SIZE);
+                $chunk = self::_byteSubstring(
+                    $inputBuffer,
+                    0,
+                    self::CHUNK_SIZE
+                );
 
                 $length = self::_byteLength($chunk);
 
-                $this->_debug('=> about to write ' . $length . ' bytes ' .
-                    'to GPG input');
+                $this->_debug(
+                    '=> about to write ' . $length . ' bytes to GPG input'
+                );
 
                 $length = fwrite($fdInput, $chunk, $length);
 
                 $this->_debug('=> wrote ' . $length . ' bytes');
 
-                $inputBuffer = self::_byteSubstring($inputBuffer,
-                    $length);
+                $inputBuffer = self::_byteSubstring(
+                    $inputBuffer,
+                    $length
+                );
             }
 
             // read input (from PHP stream)
             if (in_array($this->_input, $inputStreams)) {
                 $this->_debug('input stream is ready for reading');
-                $this->_debug('=> about to read ' . self::CHUNK_SIZE .
-                    ' bytes from input stream');
+                $this->_debug(
+                    '=> about to read ' . self::CHUNK_SIZE .
+                    ' bytes from input stream'
+                );
 
                 $chunk        = fread($this->_input, self::CHUNK_SIZE);
                 $length       = self::_byteLength($chunk);
@@ -953,13 +965,17 @@ class Crypt_GPG_Engine
             if (in_array($fdMessage, $outputStreams)) {
                 $this->_debug('GPG is ready for message data');
 
-                $chunk = self::_byteSubstring($messageBuffer,
-                    0, self::CHUNK_SIZE);
+                $chunk = self::_byteSubstring(
+                    $messageBuffer,
+                    0,
+                    self::CHUNK_SIZE
+                );
 
                 $length = self::_byteLength($chunk);
 
-                $this->_debug('=> about to write ' . $length . ' bytes ' .
-                    'to GPG message');
+                $this->_debug(
+                    '=> about to write ' . $length . ' bytes to GPG message'
+                );
 
                 $length = fwrite($fdMessage, $chunk, $length);
                 $this->_debug('=> wrote ' . $length . ' bytes');
@@ -970,8 +986,10 @@ class Crypt_GPG_Engine
             // read message (from PHP stream)
             if (in_array($this->_message, $inputStreams)) {
                 $this->_debug('message stream is ready for reading');
-                $this->_debug('=> about to read ' . self::CHUNK_SIZE .
-                    ' bytes from message stream');
+                $this->_debug(
+                    '=> about to read ' . self::CHUNK_SIZE .
+                    ' bytes from message stream'
+                );
 
                 $chunk          = fread($this->_message, self::CHUNK_SIZE);
                 $length         = self::_byteLength($chunk);
@@ -983,8 +1001,10 @@ class Crypt_GPG_Engine
             // read output (from GPG)
             if (in_array($fdOutput, $inputStreams)) {
                 $this->_debug('GPG output stream ready for reading');
-                $this->_debug('=> about to read ' . self::CHUNK_SIZE .
-                    ' bytes from GPG output');
+                $this->_debug(
+                    '=> about to read ' . self::CHUNK_SIZE .
+                    ' bytes from GPG output'
+                );
 
                 $chunk         = fread($fdOutput, self::CHUNK_SIZE);
                 $length        = self::_byteLength($chunk);
@@ -997,13 +1017,17 @@ class Crypt_GPG_Engine
             if (in_array($this->_output, $outputStreams)) {
                 $this->_debug('output stream is ready for data');
 
-                $chunk = self::_byteSubstring($outputBuffer,
-                    0, self::CHUNK_SIZE);
+                $chunk = self::_byteSubstring(
+                    $outputBuffer,
+                    0,
+                    self::CHUNK_SIZE
+                );
 
                 $length = self::_byteLength($chunk);
 
-                $this->_debug('=> about to write ' . $length . ' bytes ' .
-                    'to output stream');
+                $this->_debug(
+                    '=> about to write ' . $length . ' bytes to output stream'
+                );
 
                 $length = fwrite($this->_output, $chunk, $length);
 
@@ -1015,8 +1039,10 @@ class Crypt_GPG_Engine
             // read error (from GPG)
             if (in_array($fdError, $inputStreams)) {
                 $this->_debug('GPG error stream ready for reading');
-                $this->_debug('=> about to read ' . self::CHUNK_SIZE .
-                    ' bytes from GPG error');
+                $this->_debug(
+                    '=> about to read ' . self::CHUNK_SIZE .
+                    ' bytes from GPG error'
+                );
 
                 $chunk        = fread($fdError, self::CHUNK_SIZE);
                 $length       = self::_byteLength($chunk);
@@ -1029,21 +1055,27 @@ class Crypt_GPG_Engine
                     $line = self::_byteSubstring($errorBuffer, 0, $pos);
                     foreach ($this->_errorHandlers as $handler) {
                         array_unshift($handler['args'], $line);
-                        call_user_func_array($handler['callback'],
-                            $handler['args']);
+                        call_user_func_array(
+                            $handler['callback'],
+                            $handler['args']
+                        );
 
                         array_shift($handler['args']);
                     }
-                    $errorBuffer = self::_byteSubString($errorBuffer,
-                        $pos + self::_byteLength(PHP_EOL));
+                    $errorBuffer = self::_byteSubString(
+                        $errorBuffer,
+                        $pos + self::_byteLength(PHP_EOL)
+                    );
                 }
             }
 
             // read status (from GPG)
             if (in_array($fdStatus, $inputStreams)) {
                 $this->_debug('GPG status stream ready for reading');
-                $this->_debug('=> about to read ' . self::CHUNK_SIZE .
-                    ' bytes from GPG status');
+                $this->_debug(
+                    '=> about to read ' . self::CHUNK_SIZE .
+                    ' bytes from GPG status'
+                );
 
                 $chunk         = fread($fdStatus, self::CHUNK_SIZE);
                 $length        = self::_byteLength($chunk);
@@ -1059,14 +1091,18 @@ class Crypt_GPG_Engine
                         $line = self::_byteSubstring($line, 9);
                         foreach ($this->_statusHandlers as $handler) {
                             array_unshift($handler['args'], $line);
-                            call_user_func_array($handler['callback'],
-                                $handler['args']);
+                            call_user_func_array(
+                                $handler['callback'],
+                                $handler['args']
+                            );
 
                             array_shift($handler['args']);
                         }
                     }
-                    $statusBuffer = self::_byteSubString($statusBuffer,
-                        $pos + self::_byteLength(PHP_EOL));
+                    $statusBuffer = self::_byteSubString(
+                        $statusBuffer,
+                        $pos + self::_byteLength(PHP_EOL)
+                    );
                 }
             }
 
@@ -1075,20 +1111,26 @@ class Crypt_GPG_Engine
                 $this->_debug('GPG is ready for command data');
 
                 // send commands
-                $chunk = self::_byteSubstring($this->_commandBuffer,
-                    0, self::CHUNK_SIZE);
+                $chunk = self::_byteSubstring(
+                    $this->_commandBuffer,
+                    0,
+                    self::CHUNK_SIZE
+                );
 
                 $length = self::_byteLength($chunk);
 
-                $this->_debug('=> about to write ' . $length . ' bytes ' .
-                    'to GPG command');
+                $this->_debug(
+                    '=> about to write ' . $length . ' bytes to GPG command'
+                );
 
                 $length = fwrite($fdCommand, $chunk, $length);
 
                 $this->_debug('=> wrote ' . $length);
 
-                $this->_commandBuffer =
-                    self::_byteSubstring($this->_commandBuffer, $length);
+                $this->_commandBuffer = self::_byteSubstring(
+                    $this->_commandBuffer,
+                    $length
+                );
             }
 
         } // end loop while streams are open
@@ -1126,16 +1168,19 @@ class Crypt_GPG_Engine
 
         $commandLine = $this->_binary;
 
-        $arguments = array_merge(array(
-            '--status-fd ' . escapeshellarg(self::FD_STATUS),
-            '--command-fd ' . escapeshellarg(self::FD_COMMAND),
-            '--no-use-agent',
-            '--no-secmem-warning',
-            '--no-permission-warning',
-            '--no-tty',
-            '--exit-on-status-write-error',
-            '--trust-model always'
-        ), $this->_arguments);
+        $arguments = array_merge(
+            array(
+                '--status-fd ' . escapeshellarg(self::FD_STATUS),
+                '--command-fd ' . escapeshellarg(self::FD_COMMAND),
+                '--no-use-agent',
+                '--no-secmem-warning',
+                '--no-permission-warning',
+                '--no-tty',
+                '--exit-on-status-write-error',
+                '--trust-model always'
+            ),
+            $this->_arguments
+        );
 
         if ($this->_homedir) {
             $arguments[] = '--homedir ' . escapeshellarg($this->_homedir);
@@ -1161,8 +1206,14 @@ class Crypt_GPG_Engine
         $this->_debug('OPENING SUBPROCESS WITH THE FOLLOWING COMMAND:');
         $this->_debug($commandLine);
 
-        $this->_process = proc_open($commandLine, $descriptorSpec,
-            $this->_pipes, null, $env, array('binary_pipes' => true));
+        $this->_process = proc_open(
+            $commandLine,
+            $descriptorSpec,
+            $this->_pipes,
+            null,
+            $env,
+            array('binary_pipes' => true)
+        );
 
         if (!is_resource($this->_process)) {
             throw new Crypt_GPG_OpenSubprocessException(
@@ -1200,8 +1251,10 @@ class Crypt_GPG_Engine
             $exitCode = proc_close($this->_process);
 
             if ($exitCode != 0) {
-                $this->_debug('=> subprocess returned an unexpected exit ' .
-                    'code: ' . $exitCode);
+                $this->_debug(
+                    '=> subprocess returned an unexpected exit code: ' .
+                    $exitCode
+                );
 
                 if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
                     if ($this->_needPassphrase > 0) {
@@ -1358,8 +1411,11 @@ class Crypt_GPG_Engine
     {
         if (self::$_mbStringOverload) {
             if ($length === null) {
-                return mb_substr($string, $start,
-                    self::_byteLength($string) - $start, '8bit');
+                return mb_substr(
+                    $string,
+                    $start,
+                    self::_byteLength($string) - $start, '8bit'
+                );
             }
 
             return mb_substr($string, $start, $length, '8bit');

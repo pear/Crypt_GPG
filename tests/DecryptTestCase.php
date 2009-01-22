@@ -428,6 +428,83 @@ TEXT;
     }
 
     // }}}
+    // {{{ testDecryptFirstSubKey()
+
+    /**
+     * @group string
+     */
+    public function testDecryptFirstSubKey()
+    {
+        $expectedDecryptedData = 'Hello, Alice! Goodbye, Bob!';
+
+        // encrypted with first subkey (ELG-E) of multiple-subkeys@example.com
+        // {{{ encrypted data
+        $encryptedData = <<<TEXT
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+hQIOA2+UGsw2JFPaEAf/TQ5We9V090WikWJTnpLwIZVgJSU1aCcG6R9h3wBOPFHi
+RLQ4jBSL8EvXk4VwVJ0tuqpcB10+W1OugWbHTOxWnpbioEaUJk8jRu3MZvnyJe/d
+3FcLlqXE0SocZR1Okxbp64tDvBzs4jjniQYfoMEM1j/VVlkQ02nufOLy6uvxPZjf
+KkSeCVSy0HIaT0U5e3R28fT+dYN8i2RhT8AckjWeovJAMbHxCCsKdinI45u7O1QA
+t9zZxMBaUvo/ikLM1/fyw7E8QaGCh4LlH8WrgBXneAgOPtlkHGziS/I54RSvGe07
+yWrYkNzFch0l9RnGjAMqqzY9kXn+HxMr3bOFKeSzVQgAssvhcx6OjD+ZzRnVb8D+
+i5KYFTrVih377e5cBhayWEEIdNeV/QTH9ooZxEVqxC10J5P6UgwNewOYhGJxr1yN
+Nn2+KlgfoXuqa5RtLhShjDduPF5FS3v7HKGXuyXBQ+W9FcVeytayo8QRqbMqxWZe
+dNlgjfbNsXJtUjm/48fYdmIiBkb5lf+2LPBhX9JHekVbzJdqx3kigcyXnh7VefKZ
+fWnOmDdAd3hqeeagXUVGmtH+z6+XDGSKDuoBbwreHxr0ZIpW8mm6I6nx9kBF+LoE
+OapSuua9s7ddcBxaOVUGECiH4owhHnfFQSz58XsRNIbkZL8R4YewrCmCoscN6/qN
+adJWAY877iMazlpAzZWr6IZNvKqsET8yQbCllR0olqgh/VOmYUrnj31XtVFgP+47
+kjHVkhz76aEUtquqMmWsR8r8p42TqR0u1KoW2dGysFzdPreXPORf3tQ=
+=i9lR
+-----END PGP MESSAGE-----
+
+TEXT;
+        // }}}
+
+        $this->gpg->addDecryptKey('multiple-subkeys@example.com', 'test');
+
+        $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->assertEquals($expectedDecryptedData, $decryptedData);
+    }
+
+    // }}}
+    // {{{ testDecryptSecondSubKey()
+
+    /**
+     * @group string
+     */
+    public function testDecryptSecondSubKey()
+    {
+        $expectedDecryptedData = 'Hello, Alice! Goodbye, Bob!';
+
+        // encrypted with second subkey (RSA) of multiple-subkeys@example.com
+        // {{{ encrypted data
+        $encryptedData = <<<TEXT
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+hQEMAykh4NP/Ww9KAQf9HLxeXIXDMXEyJaCsfulZodSavNBP0IuZrXVkxrMPPart
+fOf2N0Snnq3vA3MjPL9vEfD5sZLlA2bYMZmilyCh+lryYccME+Qa1gQ5xak1Cra1
+y5ckZ7UNOTdHnhH5VvXk+bwm4KDbdeJJPLOxBJ/j6pf03vxeDEyoBPeeMzzzkXqH
++XZ9j7BHZcsLkY7j7iEw1DwcB4TdbOzkcVVBYwovCmhdY0i0m48mkqGVB0mKNUu+
+YbJuOqiqjACIwXBelB4h/xEXGeEPk+ij1UMt74QhNM2OaQ2HUhIKYMWvAHYuGAvx
++ETuFiJo5OqCa4jW4Nqczw4FYLSDOVHdzKw7+dqeddJWAVST6k4823HSprJVFJ+i
+pY9Bijx3ziDr14+IPxspoJTOInBFYihbwmLFL2RYsf0+pDFmngRhskWIyl4ann4/
+w7YcziO6EF7lbOqYdn+rBA8e46kgbBQ=
+=7fzo
+-----END PGP MESSAGE-----
+
+TEXT;
+        // }}}
+
+        $this->gpg->addDecryptKey('multiple-subkeys@example.com', 'test');
+
+        $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->assertEquals($expectedDecryptedData, $decryptedData);
+    }
+
+    // }}}
 
     // file
     // {{{ testDecryptFile()

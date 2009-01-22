@@ -202,6 +202,51 @@ class GetKeysTestCase extends Crypt_GPG_TestCase
         $subKey->setHasPrivate(true);
         $key->addSubKey($subKey);
         // }}}
+        // {{{ multiple-subkeys@example.com
+        $key = new Crypt_GPG_Key();
+        $expectedKeys[] = $key;
+
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('Multiple Subkeys');
+        $userId->setEmail('multiple-subkeys@example.com');
+        $key->addUserId($userId);
+
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('B07A621DC9295765');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey->setFingerprint('F9DF21B5D2DD02D3DF760270B07A621DC9295765');
+        $subKey->setLength(1024);
+        $subKey->setCreationDate(1232605399);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(true);
+        $subKey->setCanEncrypt(false);
+        $subKey->setHasPrivate(true);
+        $key->addSubKey($subKey);
+
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('6F941ACC362453DA');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey->setFingerprint('A728EE198BA2FB5C7B1C8B896F941ACC362453DA');
+        $subKey->setLength(2048);
+        $subKey->setCreationDate(1232605407);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(false);
+        $subKey->setCanEncrypt(true);
+        $subKey->setHasPrivate(true);
+        $key->addSubKey($subKey);
+
+        $subKey = new Crypt_GPG_SubKey();
+        $subKey->setId('2921E0D3FF5B0F4A');
+        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_RSA);
+        $subKey->setFingerprint('E1363DCE4863B824813AB2702921E0D3FF5B0F4A');
+        $subKey->setLength(2048);
+        $subKey->setCreationDate(1232605437);
+        $subKey->setExpirationDate(0);
+        $subKey->setCanSign(false);
+        $subKey->setCanEncrypt(true);
+        $subKey->setHasPrivate(true);
+        $key->addSubKey($subKey);
+        // }}}
 
         $keys = $this->gpg->getKeys();
         $this->assertEquals($expectedKeys, $keys);

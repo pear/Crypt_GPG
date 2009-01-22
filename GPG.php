@@ -1426,6 +1426,8 @@ class Crypt_GPG
                     || ($encrypt && !$sign && $canEncrypt)
                     || (!$encrypt && $sign && $canSign)
                 ) {
+                    // We add all subkeys that meet the requirements because we
+                    // were not told which subkey is required.
                     $subKeys[] = $subKey;
                 }
             }

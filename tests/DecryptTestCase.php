@@ -34,7 +34,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2008 silverorange
+ * @copyright 2005-2009 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -399,6 +399,35 @@ TEXT;
     }
 
     // }}}
+    // {{{ testDecryptSignedData()
+
+    /**
+     * @group string
+     */
+    public function testDecryptSignedData()
+    {
+        $expectedDecryptedData = 'Hello, Alice! Goodbye, Bob!';
+
+        // signed with first-keypair@example.com
+        // {{{ signed data
+        $signedData = <<<TEXT
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+owGbwMvMwCR4YPrNN1MOJCczrjFOEsrLL8pNzNEtzkzPS03RTUksSfS49JPJIzUn
+J19HwTEnMzlVUcE9Pz8lqTJVR8EpP0mxw56ZlQGkBmaMIJO9GsOCo2L3pk5y2DNT
+yiFKb0X03YSJqscaGRb0BKjZ3P+6SvjG160/WOa9vpey4QUDAA==
+=wtCB
+-----END PGP MESSAGE-----
+
+TEXT;
+        // }}}
+
+        $decryptedData = $this->gpg->decrypt($signedData);
+        $this->assertEquals($expectedDecryptedData, $decryptedData);
+    }
+
+    // }}}
 
     // file
     // {{{ testDecryptFile()
@@ -586,6 +615,28 @@ TEXT;
     {
         $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->decryptFile($filename);
+    }
+
+    // }}}
+    // {{{ testDecryptFileSignedData()
+
+    /**
+     * @group string
+     */
+    public function testDecryptFileSignedData()
+    {
+        $expectedMd5Sum = 'f96267d87551ee09bfcac16921e351c1';
+
+        $inputFilename =
+            $this->getDataFilename('testVerifyFileNormalSignedData.asc');
+
+        $outputFilename =
+            $this->getTempFilename('testDecryptFileSignedData.plain');
+
+        $this->gpg->decryptFile($inputFilename, $outputFilename);
+
+        $md5Sum = $this->getMd5Sum($outputFilename);
+        $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
 
     // }}}

@@ -29,7 +29,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2009 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -58,7 +58,7 @@ require_once 'Crypt/GPG/Exceptions.php';
  * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
  * information on GPG's status output for the decrypt operation.
  *
- * This class is also responsible for parsing error status nad throwing a
+ * This class is also responsible for parsing error status and throwing a
  * meaningful exception in the event that decryption fails.
  *
  * @category  Encryption
@@ -107,9 +107,13 @@ class Crypt_GPG_DecryptStatusHandler
     /**
      * Whether or not decryption succeeded
      *
+     * If the message is only signed (compressed) and not encrypted, this is
+     * always true. If the message is encrypted, this flag is set to false
+     * until we know the decryption succeeded.
+     *
      * @var boolean
      */
-    protected $decryptionOkay = false;
+    protected $decryptionOkay = true;
 
     /**
      * Whether or not there was no data for decryption
@@ -180,6 +184,10 @@ class Crypt_GPG_DecryptStatusHandler
         $tokens = explode(' ', $line);
         switch ($tokens[0]) {
         case 'ENC_TO':
+            // Now we know the message is encrypted. Set flag to check if
+            // decryption succeeded.
+            $this->decryptionOkay = false;
+
             // this is the new key message
             $this->currentSubKeyId = $tokens[1];
             break;
@@ -225,7 +233,7 @@ class Crypt_GPG_DecryptStatusHandler
             break;
 
         case 'DECRYPTION_OKAY':
-            // this is the all-clear signal
+            // If the message is encrypted, this is the all-clear signal.
             $this->decryptionOkay = true;
             break;
         }
@@ -265,11 +273,11 @@ class Crypt_GPG_DecryptStatusHandler
                 $code = Crypt_GPG::ERROR_BAD_PASSPHRASE;
             } elseif (count($this->missingKeys) > 0) {
                 $code = Crypt_GPG::ERROR_KEY_NOT_FOUND;
-            } elseif ($this->noData) {
-                $code = Crypt_GPG::ERROR_NO_DATA;
             } else {
                 $code = Crypt_GPG::ERROR_UNKNOWN;
             }
+        } elseif ($this->noData) {
+            $code = Crypt_GPG::ERROR_NO_DATA;
         }
 
         switch ($code) {

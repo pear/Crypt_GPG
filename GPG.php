@@ -1400,6 +1400,8 @@ class Crypt_GPG
     private function _addKey(array &$array, $encrypt, $sign, $key,
         $passphrase = null
     ) {
+        $subKeys = array();
+
         if (is_scalar($key)) {
             $keys = $this->getKeys($key);
             if (count($keys) == 0) {
@@ -1424,28 +1426,31 @@ class Crypt_GPG
                     || ($encrypt && !$sign && $canEncrypt)
                     || (!$encrypt && $sign && $canSign)
                 ) {
-                    $key = $subKey;
-                    break;
+                    $subKeys[] = $subKey;
                 }
             }
+        } elseif ($key instanceof Crypt_GPG_SubKey) {
+            $subKeys[] = $key;
         }
 
-        if (!($key instanceof Crypt_GPG_SubKey)) {
+        if (count($subKeys) === 0) {
             throw new InvalidArgumentException('Key is not recognized format.');
         }
 
-        if ($encrypt && !$key->canEncrypt()) {
-            throw new InvalidArgumentException('Key cannot encrypt.');
-        }
+        foreach ($subKeys as $subKey) {
+            if ($encrypt && !$subKey->canEncrypt()) {
+                throw new InvalidArgumentException('Key cannot encrypt.');
+            }
 
-        if ($sign && !$key->canSign()) {
-            throw new InvalidArgumentException('Key cannot sign.');
-        }
+            if ($sign && !$subKey->canSign()) {
+                throw new InvalidArgumentException('Key cannot sign.');
+            }
 
-        $array[$key->getId()] = array(
-            'fingerprint' => $key->getFingerprint(),
-            'passphrase'  => $passphrase
-        );
+            $array[$subKey->getId()] = array(
+                'fingerprint' => $subKey->getFingerprint(),
+                'passphrase'  => $passphrase
+            );
+        }
     }
 
     // }}}

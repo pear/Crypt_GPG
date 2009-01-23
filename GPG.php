@@ -1354,7 +1354,8 @@ class Crypt_GPG
      *
      * @return void
      *
-     * @see Crypt_GPG::import()
+     * @see Crypt_GPG::importKey()
+     * @see Crypt_GPG::importKeyFile()
      * @see Crypt_GPG_Engine::addStatusHandler()
      */
     public function handleImportKeyStatus($line, array &$result)

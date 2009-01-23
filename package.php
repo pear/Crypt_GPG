@@ -35,41 +35,26 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$release_version = '0.7.1';
+$api_version     = '1.0.0';
+$api_state       = 'stable';
+
+$release_version = '1.0.0RC1';
 $release_state   = 'beta';
 $release_notes   =
-    "Small cleanups in generated API documentation. See 0.7.0 release " .
-    "notes:\n\n" .
-    "Brought to you by strace, xdebug, time and phpunit.\n\n" .
-    "API is beta -- there are significant API changes in this release. See " .
-    "the API or end-user documentation for details. Other changes in this " .
-    "release include:\n" .
-    " * support operations on large strings properly. Bug #13806.\n" .
-    " * support operations on files (or anything fopen-able). Bug #13586.\n" .
-    " * encryption speed improvements (went from 10 seconds to encrypt a " .
-    "   1.9 MiB file to 0.1 - 0.2 seconds). There is new file-specific API. " .
-    "   see the API docs for details.\n" .
-    " * remove GnuPG driver and driver architecture [BC BREAK]. The pecl " .
-    "   extension powering the GnuPG driver is missing features and doesn't " .
-    "   support any extra features that make it desirable to use. Crypt_GPG " .
-    "   still has nicer error handling, a greater feature set, better " .
-    "   documentation and more comprehensive tests.\n" .
-    " * split GPG I/O engine into a separate class\n" .
-    " * support multiple encryption, decryption and signing recipients " .
-    "   [BC BREAK]. Bug #13808. This moves the API towards something more " .
-    "   like the PECL gnupg extension where you add and clear keys for a " .
-    "   particular operation. This also changes the returned value of " .
-    "   verify() from a signature object to an array of signature objects.\n" .
-    " * use PHP_EOL for detecting line endings.\n" .
-    " * throw an exception if keychain can not be read or written. " .
-    "   Bug #14645.\n" .
-    " * split unit tests into separate files.\n" .
-    " * updated unit tests for new API and features.\n" .
-    " * throw a KeyNotFound exception if trying to verify a signature when " .
-    "   the public key is not in the keyring.\n" .
-    " * drop Windows support. PHP bugs and known limitations make it next " .
-    "   to impossible to develop for Windows correctly.\n";
-
+    "RC1. API is stable. Changes include:\n" .
+    " * add support for initializing user ids, signatures and sub-keys from " .
+    "   an array of fields.\n" .
+    " * clean up unit tests to work with PEAR's continuous integration " .
+    "   server.\n" .
+    " * add unit tests for exception, user id, signature, key and sub-key " .
+    "   classes.\n" .
+    " * rename the 'gpgBinary' option in the constructor to just 'binary'. " .
+    "   the old option name is deprecated but still works.\n" .
+    " * rename Signature::setIsValid() to Signature::setValid() to match " .
+    "   methods on UserId.\n" .
+    " * remove unused exceptions: 'DuplicateKeyImportException', " .
+    "   'UnsignedKeyException', and 'MissingSelfSignatureException'.\n" .
+    " * Fix ISO 8601 timestamp parsing when E_STRICT is used.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy ".
@@ -108,8 +93,8 @@ $package->setLicense('LGPL', 'http://www.gnu.org/copyleft/lesser.html');
 $package->setNotes($release_notes);
 $package->setReleaseVersion($release_version);
 $package->setReleaseStability($release_state);
-$package->setAPIVersion('0.7.0');
-$package->setAPIStability('beta');
+$package->setAPIVersion($api_version);
+$package->setAPIStability($api_state);
 
 $package->addIgnore('package.php');
 $package->addIgnore('*.tgz');

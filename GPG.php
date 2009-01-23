@@ -1196,7 +1196,7 @@ class Crypt_GPG
      * @see Crypt_GPG::decryptFile()
      * @see Crypt_GPG::clearDecryptKeys()
      * @see Crypt_GPG::_addKey()
-     * @see Crypt_GPG_DecryptStatusHandler()
+     * @see Crypt_GPG_DecryptStatusHandler
      *
      * @sensitive $passphrase
      */

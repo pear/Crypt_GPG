@@ -5,10 +5,10 @@
     http://pear.php.net/dtd/package-2.0.xsd">
  <name>Crypt_GPG</name>
  <channel>pear.php.net</channel>
- <summary>GNU Privacy Guard (GPG)</summary>
- <description>This package provides an object oriented interface to GNU Privacy Guard (GPG). It requires the GPG executable to be on the system.
+ <summary>GNU Privacy Guard (GnuPG)</summary>
+ <description>This package provides an object oriented interface to GNU Privacy Guard (GnuPG). It requires the GnuPG executable to be on the system.
 
-Though GPG can support symmetric-key cryptography, this package is intended only to facilitate public-key cryptography.
+Though GnuPG can support symmetric-key cryptography, this package is intended only to facilitate public-key cryptography.
 
 This package requires PHP version 5.2.1 or greater.</description>
  <lead>
@@ -23,34 +23,23 @@ This package requires PHP version 5.2.1 or greater.</description>
   <email>nathan@silverorange.com</email>
   <active>yes</active>
  </lead>
- <date>2008-09-23</date>
- <time>18:01:31</time>
+ <date>2009-01-22</date>
+ <time>22:21:04</time>
  <version>
-  <release>0.7.1</release>
-  <api>0.7.0</api>
+  <release>1.0.0</release>
+  <api>1.0.0</api>
  </version>
  <stability>
-  <release>beta</release>
-  <api>beta</api>
+  <release>stable</release>
+  <api>stable</api>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
- <notes>Small cleanups in generated API documentation. See 0.7.0 release notes:
-
-Brought to you by strace, xdebug, time and phpunit.
-
-API is beta -- there are significant API changes in this release. See the API or end-user documentation for details. Other changes in this release include:
- * support operations on large strings properly. Bug #13806.
- * support operations on files (or anything fopen-able). Bug #13586.
- * encryption speed improvements (went from 10 seconds to encrypt a    1.9 MiB file to 0.1 - 0.2 seconds). There is new file-specific API.    see the API docs for details.
- * remove GnuPG driver and driver architecture [BC BREAK]. The pecl    extension powering the GnuPG driver is missing features and doesn&apos;t    support any extra features that make it desirable to use. Crypt_GPG    still has nicer error handling, a greater feature set, better    documentation and more comprehensive tests.
- * split GPG I/O engine into a separate class
- * support multiple encryption, decryption and signing recipients    [BC BREAK]. Bug #13808. This moves the API towards something more    like the PECL gnupg extension where you add and clear keys for a    particular operation. This also changes the returned value of    verify() from a signature object to an array of signature objects.
- * use PHP_EOL for detecting line endings.
- * throw an exception if keychain can not be read or written.    Bug #14645.
- * split unit tests into separate files.
- * updated unit tests for new API and features.
- * throw a KeyNotFound exception if trying to verify a signature when    the public key is not in the keyring.
- * drop Windows support. PHP bugs and known limitations make it next    to impossible to develop for Windows correctly.
+ <notes>First stable release. Changes include:
+ * Fix Bug #15470. Fixes decryption with passphrase when there is more    than one decryption subkey.
+ * Fix Bug #15593. Makes decrypt work on signed (compressed) but non-   encrypted data.
+ * Improved end-user documentation. (Doc #14645 and Doc #15054).
+ * Coding standards cleanups.
+ * Fixed PEAR continuous-integration testing for real this time.
  </notes>
  <contents>
   <dir baseinstalldir="/Crypt" name="/">
@@ -87,13 +76,18 @@ API is beta -- there are significant API changes in this release. See the API or
     <file name="DeletePrivateKeyTestCase.php" role="test" />
     <file name="DeletePublicKeyTestCase.php" role="test" />
     <file name="EncryptTestCase.php" role="test" />
+    <file name="ExceptionsTestCase.php" role="test" />
     <file name="ExportPublicKeyTestCase.php" role="test" />
     <file name="GeneralTestCase.php" role="test" />
     <file name="GetFingerprintTestCase.php" role="test" />
     <file name="GetKeysTestCase.php" role="test" />
     <file name="ImportKeyTestCase.php" role="test" />
+    <file name="KeyTestCase.php" role="test" />
+    <file name="SignatureTestCase.php" role="test" />
     <file name="SignTestCase.php" role="test" />
+    <file name="SubKeyTestCase.php" role="test" />
     <file name="TestCase.php" role="test" />
+    <file name="UserIdTestCase.php" role="test" />
     <file name="VerifyTestCase.php" role="test" />
    </dir> <!-- /tests -->
    <file name="ChangeLog" role="data" />
@@ -119,32 +113,21 @@ API is beta -- there are significant API changes in this release. See the API or
  <changelog>
   <release>
    <version>
-    <release>0.7.1</release>
-    <api>0.7.0</api>
+    <release>1.0.0</release>
+    <api>1.0.0</api>
    </version>
    <stability>
-    <release>beta</release>
-    <api>beta</api>
+    <release>stable</release>
+    <api>stable</api>
    </stability>
-   <date>2008-09-23</date>
+   <date>2009-01-22</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>Small cleanups in generated API documentation. See 0.7.0 release notes:
-
-Brought to you by strace, xdebug, time and phpunit.
-
-API is beta -- there are significant API changes in this release. See the API or end-user documentation for details. Other changes in this release include:
- * support operations on large strings properly. Bug #13806.
- * support operations on files (or anything fopen-able). Bug #13586.
- * encryption speed improvements (went from 10 seconds to encrypt a    1.9 MiB file to 0.1 - 0.2 seconds). There is new file-specific API.    see the API docs for details.
- * remove GnuPG driver and driver architecture [BC BREAK]. The pecl    extension powering the GnuPG driver is missing features and doesn&apos;t    support any extra features that make it desirable to use. Crypt_GPG    still has nicer error handling, a greater feature set, better    documentation and more comprehensive tests.
- * split GPG I/O engine into a separate class
- * support multiple encryption, decryption and signing recipients    [BC BREAK]. Bug #13808. This moves the API towards something more    like the PECL gnupg extension where you add and clear keys for a    particular operation. This also changes the returned value of    verify() from a signature object to an array of signature objects.
- * use PHP_EOL for detecting line endings.
- * throw an exception if keychain can not be read or written.    Bug #14645.
- * split unit tests into separate files.
- * updated unit tests for new API and features.
- * throw a KeyNotFound exception if trying to verify a signature when    the public key is not in the keyring.
- * drop Windows support. PHP bugs and known limitations make it next    to impossible to develop for Windows correctly.
+   <notes>First stable release. Changes include:
+ * Fix Bug #15470. Fixes decryption with passphrase when there is more    than one decryption subkey.
+ * Fix Bug #15593. Makes decrypt work on signed (compressed) but non-   encrypted data.
+ * Improved end-user documentation. (Doc #14645 and Doc #15054).
+ * Coding standards cleanups.
+ * Fixed PEAR continuous-integration testing for real this time.
    </notes>
   </release>
  </changelog>

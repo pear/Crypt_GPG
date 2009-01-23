@@ -27,7 +27,7 @@
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @author    Nathan Fredrikson <nathan@silverorange.com>
- * @copyright 2005-2008 silverorange
+ * @copyright 2005-2009 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -38,54 +38,50 @@ PEAR::setErrorHandling(PEAR_ERROR_DIE);
 $apiVersion     = '1.0.0';
 $apiState       = 'stable';
 
-$releaseVersion = '1.0.0RC1';
-$releaseState   = 'beta';
+$releaseVersion = '1.0.0';
+$releaseState   = 'stable';
 $releaseNotes   =
-    "RC1. API is stable. Changes include:\n" .
-    " * add support for initializing user ids, signatures and sub-keys from " .
-    "   an array of fields.\n" .
-    " * clean up unit tests to work with PEAR's continuous integration " .
-    "   server.\n" .
-    " * add unit tests for exception, user id, signature, key and sub-key " .
-    "   classes.\n" .
-    " * rename the 'gpgBinary' option in the constructor to just 'binary'. " .
-    "   the old option name is deprecated but still works.\n" .
-    " * rename Signature::setIsValid() to Signature::setValid() to match " .
-    "   methods on UserId.\n" .
-    " * remove unused exceptions: 'DuplicateKeyImportException', " .
-    "   'UnsignedKeyException', and 'MissingSelfSignatureException'.\n" .
-    " * Fix ISO 8601 timestamp parsing when E_STRICT is used.\n";
+    "First stable release. Changes include:\n" .
+    " * Fix Bug #15470. Fixes decryption with passphrase when there is more " .
+    "   than one decryption subkey.\n" .
+    " * Fix Bug #15593. Makes decrypt work on signed (compressed) but non-" .
+    "   encrypted data.\n" .
+    " * Improved end-user documentation. (Doc #14645 and Doc #15054).\n" .
+    " * Coding standards cleanups.\n" .
+    " * Fixed PEAR continuous-integration testing for real this time.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy ".
-    "Guard (GPG). It requires the GPG executable to be on the system.\n\n".
-    "Though GPG can support symmetric-key cryptography, this package is ".
+    "Guard (GnuPG). It requires the GnuPG executable to be on the system.\n\n".
+    "Though GnuPG can support symmetric-key cryptography, this package is ".
     "intended only to facilitate public-key cryptography.\n\n".
     "This package requires PHP version 5.2.1 or greater.";
 
 $package = new PEAR_PackageFileManager2();
 
-$package->setOptions(array(
-    'filelistgenerator' => 'cvs',
-    'simpleoutput'      => true,
-    'baseinstalldir'    => '/Crypt',
-    'packagedirectory'  => './',
-    'dir_roles'         => array(
-        'GPG'        => 'php',
-        'tests'      => 'test'
-    ),
-    'exceptions'        => array(
-        'LICENSE' => 'doc',
-        'GPG.php' => 'php'
-    ),
-    'ignore'            => array(
-        'tools/',
-        'package.php'
+$package->setOptions(
+    array(
+        'filelistgenerator' => 'cvs',
+        'simpleoutput'      => true,
+        'baseinstalldir'    => '/Crypt',
+        'packagedirectory'  => './',
+        'dir_roles'         => array(
+            'GPG'        => 'php',
+            'tests'      => 'test'
+        ),
+        'exceptions'        => array(
+            'LICENSE' => 'doc',
+            'GPG.php' => 'php'
+        ),
+        'ignore'            => array(
+            'tools/',
+            'package.php'
+        )
     )
-));
+);
 
 $package->setPackage('Crypt_GPG');
-$package->setSummary('GNU Privacy Guard (GPG)');
+$package->setSummary('GNU Privacy Guard (GnuPG)');
 $package->setDescription($description);
 $package->setChannel('pear.php.net');
 $package->setPackageType('php');
@@ -97,11 +93,19 @@ $package->setReleaseStability($releaseState);
 $package->setAPIVersion($apiVersion);
 $package->setAPIStability($apiState);
 
-$package->addMaintainer('lead', 'gauthierm', 'Mike Gauthier',
-    'mike@silverorange.com');
+$package->addMaintainer(
+    'lead',
+    'gauthierm',
+    'Mike Gauthier',
+    'mike@silverorange.com'
+);
 
-$package->addMaintainer('lead', 'nrf', 'Nathan Fredrickson',
-    'nathan@silverorange.com');
+$package->addMaintainer(
+    'lead',
+    'nrf',
+    'Nathan Fredrickson',
+    'nathan@silverorange.com'
+);
 
 $package->setPhpDep('5.2.1');
 $package->addOsDep('windows', true);

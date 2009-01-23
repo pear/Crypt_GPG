@@ -35,12 +35,12 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$api_version     = '1.0.0';
-$api_state       = 'stable';
+$apiVersion     = '1.0.0';
+$apiState       = 'stable';
 
-$release_version = '1.0.0RC1';
-$release_state   = 'beta';
-$release_notes   =
+$releaseVersion = '1.0.0RC1';
+$releaseState   = 'beta';
+$releaseNotes   =
     "RC1. API is stable. Changes include:\n" .
     " * add support for initializing user ids, signatures and sub-keys from " .
     "   an array of fields.\n" .
@@ -79,7 +79,8 @@ $package->setOptions(array(
         'GPG.php' => 'php'
     ),
     'ignore'            => array(
-        'tools/'
+        'tools/',
+        'package.php'
     )
 ));
 
@@ -90,14 +91,11 @@ $package->setChannel('pear.php.net');
 $package->setPackageType('php');
 $package->setLicense('LGPL', 'http://www.gnu.org/copyleft/lesser.html');
 
-$package->setNotes($release_notes);
-$package->setReleaseVersion($release_version);
-$package->setReleaseStability($release_state);
-$package->setAPIVersion($api_version);
-$package->setAPIStability($api_state);
-
-$package->addIgnore('package.php');
-$package->addIgnore('*.tgz');
+$package->setNotes($releaseNotes);
+$package->setReleaseVersion($releaseVersion);
+$package->setReleaseStability($releaseState);
+$package->setAPIVersion($apiVersion);
+$package->setAPIStability($apiState);
 
 $package->addMaintainer('lead', 'gauthierm', 'Mike Gauthier',
     'mike@silverorange.com');

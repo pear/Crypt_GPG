@@ -294,6 +294,14 @@ class Crypt_GPG_Engine
     private $_arguments = array();
 
     /**
+     * The version number of the GPG binary
+     *
+     * @var string
+     * @see Crypt_GPG_Engine::_getVersion()
+     */
+    private $_version = '';
+
+    /**
      * Cached value indicating whether or not mbstring function overloading is
      * on for strlen
      *
@@ -1162,25 +1170,37 @@ class Crypt_GPG_Engine
      */
     private function _openSubprocess(array $env = null)
     {
+        $version = $this->_getVersion();
+
         if ($env === null) {
             $env = $_ENV;
         }
 
         $commandLine = $this->_binary;
 
-        $arguments = array_merge(
-            array(
-                '--status-fd ' . escapeshellarg(self::FD_STATUS),
-                '--command-fd ' . escapeshellarg(self::FD_COMMAND),
-                '--no-use-agent',
-                '--no-secmem-warning',
-                '--no-permission-warning',
-                '--no-tty',
-                '--exit-on-status-write-error',
-                '--trust-model always'
-            ),
-            $this->_arguments
+        $defaultArguments = array(
+            '--status-fd ' . escapeshellarg(self::FD_STATUS),
+            '--command-fd ' . escapeshellarg(self::FD_COMMAND),
+            '--no-secmem-warning',
+            '--no-tty',
         );
+
+        if (version_compare($version, '1.0.7', 'ge')) {
+            $defaultArguments[] = '--no-use-agent';
+            $defaultArguments[] = '--no-permission-warning';
+        }
+
+        if (version_compare($version, '1.4.2', 'ge')) {
+            $defaultArguments[] = '--exit-on-status-write-error';
+        }
+
+        if (version_compare($version, '1.3.2', 'ge')) {
+            $defaultArguments[] = '--trust-model always';
+        } else {
+            $defaultArguments[] = '--always-trust';
+        }
+
+        $arguments = array_merge($defaultArguments, $this->_arguments);
 
         if ($this->_homedir) {
             $arguments[] = '--homedir ' . escapeshellarg($this->_homedir);
@@ -1333,6 +1353,58 @@ class Crypt_GPG_Engine
         }
 
         return $binary;
+    }
+
+    // }}}
+    // {{{ _getVersion()
+
+    private function _getVersion()
+    {
+        if ($this->_version == '') {
+
+            $options = array(
+                'homedir' => $this->_homedir,
+                'binary'  => $this->_binary,
+                'debug'   => $this->_debug
+            );
+
+            $engine = new self($options);
+            $info   = '';
+
+            // Set a garbage version so we do not end up looking up the version
+            // recursively.
+            $engine->_version = '1.0.0';
+
+            $engine->reset();
+            $engine->setOutput($info);
+            $engine->setOperation('--version');
+            $engine->run();
+
+            $code = $this->getErrorCode();
+
+            if ($code !== Crypt_GPG::ERROR_NONE) {
+                throw new Crypt_GPG_Exception(
+                    'Unknown error getting GnuPG version information. Please ' .
+                    'use the \'debug\' option when creating the Crypt_GPG ' .
+                    'object, and file a bug report at ' . Crypt_GPG::BUG_URI,
+                    $code);
+            }
+
+            $info       = explode(PHP_EOL, $info);
+            $matches    = array();
+            $expression = '/^gpg \(GnuPG\) (.*)$/';
+
+            if (preg_match($expression, $info[0], $matches) === 1) {
+                $this->_version = $matches[1];
+            } else {
+                throw new Crypt_GPG_Exception(
+                    'No GnuPG version information provided by the binary "' .
+                    $this->_binary . '". Are you sure it is GnuPG?',
+                    Crypt_GPG::ERROR_UNKNOWN);
+            }
+        }
+
+        return $this->_version;
     }
 
     // }}}

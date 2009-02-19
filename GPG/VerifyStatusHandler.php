@@ -141,10 +141,12 @@ class Crypt_GPG_VerifyStatusHandler
                 $signature->setCreationDate(strtotime($tokens[3]));
             }
 
-            if (strpos($tokens[4], 'T') === false) {
-                $signature->setExpirationDate($tokens[4]);
-            } else {
-                $signature->setExpirationDate(strtotime($tokens[4]));
+            if (array_key_exists(4, $tokens)) {
+                if (strpos($tokens[4], 'T') === false) {
+                    $signature->setExpirationDate($tokens[4]);
+                } else {
+                    $signature->setExpirationDate(strtotime($tokens[4]));
+                }
             }
 
             break;

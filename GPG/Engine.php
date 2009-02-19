@@ -130,6 +130,11 @@ class Crypt_GPG_Engine
      */
     const FD_MESSAGE = 5;
 
+    /**
+     * Minimum version of GnuPG that is supported.
+     */
+    const MIN_VERSION = '1.0.2';
+
     // }}}
     // {{{ private class properties
 
@@ -648,6 +653,79 @@ class Crypt_GPG_Engine
     {
         $this->_operation = $operation;
         $this->_arguments = $arguments;
+    }
+
+    // }}}
+    // {{{ getVersion()
+
+    /**
+     * Gets the version of the GnuPG binary
+     *
+     * @return string a version number string containing the version of GnuPG
+     *                being used. This value is suitable to use with PHP's
+     *                version_compare() function.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     *
+     * @throws Crypt_GPG_UnsupportedException if the provided binary is not
+     *         GnuPG or if the GnuPG version is less than 1.0.2.
+     */
+    public function getVersion()
+    {
+        if ($this->_version == '') {
+
+            $options = array(
+                'homedir' => $this->_homedir,
+                'binary'  => $this->_binary,
+                'debug'   => $this->_debug
+            );
+
+            $engine = new self($options);
+            $info   = '';
+
+            // Set a garbage version so we do not end up looking up the version
+            // recursively.
+            $engine->_version = '1.0.0';
+
+            $engine->reset();
+            $engine->setOutput($info);
+            $engine->setOperation('--version');
+            $engine->run();
+
+            $code = $this->getErrorCode();
+
+            if ($code !== Crypt_GPG::ERROR_NONE) {
+                throw new Crypt_GPG_Exception(
+                    'Unknown error getting GnuPG version information. Please ' .
+                    'use the \'debug\' option when creating the Crypt_GPG ' .
+                    'object, and file a bug report at ' . Crypt_GPG::BUG_URI,
+                    $code);
+            }
+
+            $info       = explode(PHP_EOL, $info);
+            $matches    = array();
+            $expression = '/^gpg \(GnuPG\) (.*)$/';
+
+            if (preg_match($expression, $info[0], $matches) === 1) {
+                $this->_version = $matches[1];
+            } else {
+                throw new Crypt_GPG_Exception(
+                    'No GnuPG version information provided by the binary "' .
+                    $this->_binary . '". Are you sure it is GnuPG?');
+            }
+
+            if (version_compare($this->_version, self::MIN_VERSION, 'lt') {
+                throw new Crypt_GPG_Exception(
+                    'The version of GnuPG being used (' . $this->_version .
+                    ') is not supported by Crypt_GPG. The minimum version ' .
+                    'required by Crypt_GPG is ' . self::MIN_VERSION);
+            }
+        }
+
+
+        return $this->_version;
     }
 
     // }}}
@@ -1170,7 +1248,7 @@ class Crypt_GPG_Engine
      */
     private function _openSubprocess(array $env = null)
     {
-        $version = $this->_getVersion();
+        $version = $this->getVersion();
 
         if ($env === null) {
             $env = $_ENV;
@@ -1353,58 +1431,6 @@ class Crypt_GPG_Engine
         }
 
         return $binary;
-    }
-
-    // }}}
-    // {{{ _getVersion()
-
-    private function _getVersion()
-    {
-        if ($this->_version == '') {
-
-            $options = array(
-                'homedir' => $this->_homedir,
-                'binary'  => $this->_binary,
-                'debug'   => $this->_debug
-            );
-
-            $engine = new self($options);
-            $info   = '';
-
-            // Set a garbage version so we do not end up looking up the version
-            // recursively.
-            $engine->_version = '1.0.0';
-
-            $engine->reset();
-            $engine->setOutput($info);
-            $engine->setOperation('--version');
-            $engine->run();
-
-            $code = $this->getErrorCode();
-
-            if ($code !== Crypt_GPG::ERROR_NONE) {
-                throw new Crypt_GPG_Exception(
-                    'Unknown error getting GnuPG version information. Please ' .
-                    'use the \'debug\' option when creating the Crypt_GPG ' .
-                    'object, and file a bug report at ' . Crypt_GPG::BUG_URI,
-                    $code);
-            }
-
-            $info       = explode(PHP_EOL, $info);
-            $matches    = array();
-            $expression = '/^gpg \(GnuPG\) (.*)$/';
-
-            if (preg_match($expression, $info[0], $matches) === 1) {
-                $this->_version = $matches[1];
-            } else {
-                throw new Crypt_GPG_Exception(
-                    'No GnuPG version information provided by the binary "' .
-                    $this->_binary . '". Are you sure it is GnuPG?',
-                    Crypt_GPG::ERROR_UNKNOWN);
-            }
-        }
-
-        return $this->_version;
     }
 
     // }}}

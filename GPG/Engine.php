@@ -716,7 +716,7 @@ class Crypt_GPG_Engine
                     $this->_binary . '". Are you sure it is GnuPG?');
             }
 
-            if (version_compare($this->_version, self::MIN_VERSION, 'lt') {
+            if (version_compare($this->_version, self::MIN_VERSION, 'lt')) {
                 throw new Crypt_GPG_Exception(
                     'The version of GnuPG being used (' . $this->_version .
                     ') is not supported by Crypt_GPG. The minimum version ' .

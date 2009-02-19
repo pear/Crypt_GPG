@@ -1504,13 +1504,22 @@ class Crypt_GPG
             }
         }
 
+        $arguments = array();
+        $version   = $this->engine->getVersion();
+
+        if (   version_compare($version, '1.0.5', 'ge')
+            && version_compare($version, '1.0.7', 'lt')
+        ) {
+            $arguments[] = '--allow-secret-key-import';
+        }
+
         $this->engine->reset();
         $this->engine->addStatusHandler(
             array($this, 'handleImportKeyStatus'),
             array(&$result)
         );
 
-        $this->engine->setOperation('--import');
+        $this->engine->setOperation('--import', $arguments);
         $this->engine->setInput($input);
         $this->engine->run();
 

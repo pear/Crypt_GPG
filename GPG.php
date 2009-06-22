@@ -1066,7 +1066,8 @@ class Crypt_GPG
      * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
      * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
      *
-     * @param string  $filename   the data to be signed.
+     * @param string  $filename   the name of the file containing the data to
+     *                            be signed.
      * @param string  $signedFile optional. The name of the file in which the
      *                            signed data should be stored. If null or
      *                            unspecified, the signed data is returned as a

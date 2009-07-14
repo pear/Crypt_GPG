@@ -61,17 +61,17 @@ $package = new PEAR_PackageFileManager2();
 
 $package->setOptions(
     array(
-        'filelistgenerator' => 'cvs',
+        'filelistgenerator' => 'svn',
         'simpleoutput'      => true,
-        'baseinstalldir'    => '/Crypt',
+        'baseinstalldir'    => '/',
         'packagedirectory'  => './',
         'dir_roles'         => array(
-            'GPG'        => 'php',
-            'tests'      => 'test'
+            'Crypt'         => 'php',
+            'Crypt/GPG'     => 'php',
+            'tests'         => 'test'
         ),
         'exceptions'        => array(
-            'LICENSE' => 'doc',
-            'GPG.php' => 'php'
+            'LICENSE'       => 'doc',
         ),
         'ignore'            => array(
             'tools/',

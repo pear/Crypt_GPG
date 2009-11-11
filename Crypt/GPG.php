@@ -321,21 +321,55 @@ class Crypt_GPG
      *
      * Available options are:
      *
-     * - <kbd>string  homedir</kbd> - the directory where the GPG keyring files
-     *                                are stored. If not specified, Crypt_GPG
-     *                                uses the default of <kbd>~/.gnupg</kbd>.
-     * - <kbd>string  binary</kbd>  - the location of the GPG binary. If not
-     *                                specified, the driver attempts to auto-
-     *                                detect the GPG binary location using a
-     *                                list of known default locations for the
-     *                                current operating system. The option
-     *                                <kbd>gpgBinary</kbd> is a deprecated
-     *                                alias for this option.
-     * - <kbd>boolean debug</kbd>   - whether or not to use debug mode. When
-     *                                debug mode is on, all communication to and
-     *                                from the GPG subprocess is logged. This
-     *                                can be useful to diagnose errors when
-     *                                using Crypt_GPG.
+     * - <kbd>string  homedir</kbd>        - the directory where the GPG
+     *                                       keyring files are stored. If not
+     *                                       specified, Crypt_GPG uses the
+     *                                       default of <kbd>~/.gnupg</kbd>.
+     * - <kbd>string  publicKeyring</kbd>  - the file path of the public
+     *                                       keyring. Use this if the public
+     *                                       keyring is not in the homedir, or
+     *                                       if the keyring is in a directory
+     *                                       not writable by the process
+     *                                       invoking GPG (like Apache). Then
+     *                                       you can specify the path to the
+     *                                       keyring with this option
+     *                                       (/foo/bar/pubring.gpg), and specify
+     *                                       a writable directory (like /tmp)
+     *                                       using the <i>homedir</i> option.
+     * - <kbd>string  privateKeyring</kbd> - the file path of the private
+     *                                       keyring. Use this if the private
+     *                                       keyring is not in the homedir, or
+     *                                       if the keyring is in a directory
+     *                                       not writable by the process
+     *                                       invoking GPG (like Apache). Then
+     *                                       you can specify the path to the
+     *                                       keyring with this option
+     *                                       (/foo/bar/secring.gpg), and specify
+     *                                       a writable directory (like /tmp)
+     *                                       using the <i>homedir</i> option.
+     * - <kbd>string  trustDb</kbd>        - the file path of the web-of-trust
+     *                                       database. Use this if the trust
+     *                                       database is not in the homedir, or
+     *                                       if the database is in a directory
+     *                                       not writable by the process
+     *                                       invoking GPG (like Apache). Then
+     *                                       you can specify the path to the
+     *                                       trust database with this option
+     *                                       (/foo/bar/trustdb.gpg), and specify
+     *                                       a writable directory (like /tmp)
+     *                                       using the <i>homedir</i> option.
+     * - <kbd>string  binary</kbd>         - the location of the GPG binary. If
+     *                                       not specified, the driver attempts
+     *                                       to auto-detect the GPG binary
+     *                                       location using a list of known
+     *                                       default locations for the current
+     *                                       operating system. The option
+     *                                       <kbd>gpgBinary</kbd> is a
+     *                                       deprecated alias for this option.
+     * - <kbd>boolean debug</kbd>          - whether or not to use debug mode.
+     *                                       When debug mode is on, all
+     *                                       communication to and from the GPG
+     *                                       subprocess is logged. This can be
      *
      * @param array $options optional. An array of options used to create the
      *                       GPG object. All options are optional and are
@@ -344,7 +378,13 @@ class Crypt_GPG
      * @throws Crypt_GPG_FileException if the <kbd>homedir</kbd> does not exist
      *         and cannot be created. This can happen if <kbd>homedir</kbd> is
      *         not specified, Crypt_GPG is run as the web user, and the web
-     *         user has no home directory.
+     *         user has no home directory. This exception is also thrown if any
+     *         of the options <kbd>publicKeyring</kbd>,
+     *         <kbd>privateKeyring</kbd> or <kbd>trustDb</kbd> options are
+     *         specified but the files do not exist or are are not readable.
+     *         This can happen if the user running the Crypt_GPG process (for
+     *         example, the Apache user) does not have permission to read the
+     *         files.
      *
      * @throws PEAR_Exception if the provided <kbd>binary</kbd> is invalid, or
      *         if no <kbd>binary</kbd> is provided and no suitable binary could

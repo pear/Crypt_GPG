@@ -174,6 +174,51 @@ class Crypt_GPG_Engine
     private $_homedir = '';
 
     /**
+     * File path of the public keyring
+     *
+     * This property only contains the file path when the <i>public_keyring</i>
+     * option is specified in the constructor.
+     *
+     * If the specified file path starts with <kbd>~/</kbd>, the path is
+     * relative to the <i>homedir</i> if specified, otherwise to
+     * <kbd>~/.gnupg</kbd>.
+     *
+     * @var string
+     * @see Crypt_GPG_Engine::__construct()
+     */
+    private $_publicKeyring = '';
+
+    /**
+     * File path of the private (secret) keyring
+     *
+     * This property only contains the file path when the <i>private_keyring</i>
+     * option is specified in the constructor.
+     *
+     * If the specified file path starts with <kbd>~/</kbd>, the path is
+     * relative to the <i>homedir</i> if specified, otherwise to
+     * <kbd>~/.gnupg</kbd>.
+     *
+     * @var string
+     * @see Crypt_GPG_Engine::__construct()
+     */
+    private $_privateKeyring = '';
+
+    /**
+     * File path of the trust database
+     *
+     * This property only contains the file path when the <i>trust_db</i>
+     * option is specified in the constructor.
+     *
+     * If the specified file path starts with <kbd>~/</kbd>, the path is
+     * relative to the <i>homedir</i> if specified, otherwise to
+     * <kbd>~/.gnupg</kbd>.
+     *
+     * @var string
+     * @see Crypt_GPG_Engine::__construct()
+     */
+    private $_trustDb = '';
+
+    /**
      * Array of pipes used for communication with the GPG binary
      *
      * This is an array of file descriptor resources.
@@ -326,21 +371,57 @@ class Crypt_GPG_Engine
      *
      * Available options are:
      *
-     * - <kbd>string  homedir</kbd> - the directory where the GPG keyring files
-     *                                are stored. If not specified, Crypt_GPG
-     *                                uses the default of <kbd>~/.gnupg</kbd>.
-     * - <kbd>string  binary</kbd>  - the location of the GPG binary. If not
-     *                                specified, the driver attempts to auto-
-     *                                detect the GPG binary location using a
-     *                                list of known default locations for the
-     *                                current operating system. The option
-     *                                <kbd>gpgBinary</kbd> is a deprecated
-     *                                alias for this option.
-     * - <kbd>boolean debug</kbd>   - whether or not to use debug mode. When
-     *                                debug mode is on, all communication to and
-     *                                from the GPG subprocess is logged. This
-     *                                can be useful to diagnose errors when
-     *                                using Crypt_GPG.
+     * - <kbd>string  homedir</kbd>        - the directory where the GPG
+     *                                       keyring files are stored. If not
+     *                                       specified, Crypt_GPG uses the
+     *                                       default of <kbd>~/.gnupg</kbd>.
+     * - <kbd>string  publicKeyring</kbd>  - the file path of the public
+     *                                       keyring. Use this if the public
+     *                                       keyring is not in the homedir, or
+     *                                       if the keyring is in a directory
+     *                                       not writable by the process
+     *                                       invoking GPG (like Apache). Then
+     *                                       you can specify the path to the
+     *                                       keyring with this option
+     *                                       (/foo/bar/pubring.gpg), and specify
+     *                                       a writable directory (like /tmp)
+     *                                       using the <i>homedir</i> option.
+     * - <kbd>string  privateKeyring</kbd> - the file path of the private
+     *                                       keyring. Use this if the private
+     *                                       keyring is not in the homedir, or
+     *                                       if the keyring is in a directory
+     *                                       not writable by the process
+     *                                       invoking GPG (like Apache). Then
+     *                                       you can specify the path to the
+     *                                       keyring with this option
+     *                                       (/foo/bar/secring.gpg), and specify
+     *                                       a writable directory (like /tmp)
+     *                                       using the <i>homedir</i> option.
+     * - <kbd>string  trustDb</kbd>        - the file path of the web-of-trust
+     *                                       database. Use this if the trust
+     *                                       database is not in the homedir, or
+     *                                       if the database is in a directory
+     *                                       not writable by the process
+     *                                       invoking GPG (like Apache). Then
+     *                                       you can specify the path to the
+     *                                       trust database with this option
+     *                                       (/foo/bar/trustdb.gpg), and specify
+     *                                       a writable directory (like /tmp)
+     *                                       using the <i>homedir</i> option.
+     * - <kbd>string  binary</kbd>         - the location of the GPG binary. If
+     *                                       not specified, the driver attempts
+     *                                       to auto-detect the GPG binary
+     *                                       location using a list of known
+     *                                       default locations for the current
+     *                                       operating system. The option
+     *                                       <kbd>gpgBinary</kbd> is a
+     *                                       deprecated alias for this option.
+     * - <kbd>boolean debug</kbd>          - whether or not to use debug mode.
+     *                                       When debug mode is on, all
+     *                                       communication to and from the GPG
+     *                                       subprocess is logged. This can be
+     *                                       useful to diagnose errors when
+     *                                       using Crypt_GPG.
      *
      * @param array $options optional. An array of options used to create the
      *                       GPG object. All options are optional and are
@@ -349,7 +430,13 @@ class Crypt_GPG_Engine
      * @throws Crypt_GPG_FileException if the <kbd>homedir</kbd> does not exist
      *         and cannot be created. This can happen if <kbd>homedir</kbd> is
      *         not specified, Crypt_GPG is run as the web user, and the web
-     *         user has no home directory.
+     *         user has no home directory. This exception is also thrown if any
+     *         of the options <kbd>publicKeyring</kbd>,
+     *         <kbd>privateKeyring</kbd> or <kbd>trustDb</kbd> options are
+     *         specified but the files do not exist or are are not readable.
+     *         This can happen if the user running the Crypt_GPG process (for
+     *         example, the Apache user) does not have permission to read the
+     *         files.
      *
      * @throws PEAR_Exception if the provided <kbd>binary</kbd> is invalid, or
      *         if no <kbd>binary</kbd> is provided and no suitable binary could
@@ -404,6 +491,52 @@ class Crypt_GPG_Engine
             throw new PEAR_Exception('GPG binary not found. If you are sure '.
                 'the GPG binary is installed, please specify the location of '.
                 'the GPG binary using the \'binary\' driver option.');
+        }
+
+        /*
+         * Note:
+         *
+         * Normally, GnuPG expects keyrings to be in the homedir and expects
+         * to be able to write temporary files in the homedir. Sometimes,
+         * keyrings are not in the homedir, or location of the keyrings does
+         * not allow writing temporary files. In this case, the <i>homedir</i>
+         * option by itself is not enough to specify the keyrings because GnuPG
+         * can not write required temporary files. Additional options are
+         * provided so you can specify the location of the keyrings separately
+         * from the homedir.
+         */
+
+        // get public keyring
+        if (array_key_exists('publicKeyring', $options)) {
+            $this->_publicKeyring = (string)$options['publicKeyring'];
+            if (!is_readable($this->_publicKeyring)) {
+                 throw new Crypt_GPG_FileException('The \'publicKeyring\' "' .
+                    $this->_publicKeyring . '" does not exist or is ' .
+                    'not readable. Check the location and ensure the file ' .
+                    'permissions are correct.', 0, $this->_publicKeyring);
+            }
+        }
+
+        // get private keyring
+        if (array_key_exists('privateKeyring', $options)) {
+            $this->_privateKeyring = (string)$options['privateKeyring'];
+            if (!is_readable($this->_privateKeyring)) {
+                 throw new Crypt_GPG_FileException('The \'privateKeyring\' "' .
+                    $this->_privateKeyring . '" does not exist or is ' .
+                    'not readable. Check the location and ensure the file ' .
+                    'permissions are correct.', 0, $this->_privateKeyring);
+            }
+        }
+
+        // get trust database
+        if (array_key_exists('trustDb', $options)) {
+            $this->_trustDb = (string)$options['trustDb'];
+            if (!is_readable($this->_trustDb)) {
+                 throw new Crypt_GPG_FileException('The \'trustDb\' "' .
+                    $this->_trustDb . '" does not exist or is not readable. ' .
+                    'Check the location and ensure the file permissions are ' .
+                    'correct.', 0, $this->_trustDb);
+            }
         }
 
         if (array_key_exists('debug', $options)) {
@@ -1261,6 +1394,8 @@ class Crypt_GPG_Engine
             '--command-fd ' . escapeshellarg(self::FD_COMMAND),
             '--no-secmem-warning',
             '--no-tty',
+            '--no-default-keyring', // ignored if keying files are not specified
+            '--no-options'          // prevent creation of ~/.gnupg directory
         );
 
         if (version_compare($version, '1.0.7', 'ge')) {
@@ -1282,6 +1417,25 @@ class Crypt_GPG_Engine
 
         if ($this->_homedir) {
             $arguments[] = '--homedir ' . escapeshellarg($this->_homedir);
+
+            // the random seed file makes subsequent actions faster so only
+            // disable it if we have to.
+            if (!is_writeable($this->_homedir)) {
+                $argumenst[] = '--no-random-seed-file';
+            }
+        }
+
+        if ($this->_publicKeyring) {
+            $arguments[] = '--keyring ' . escapeshellarg($this->_publicKeyring);
+        }
+
+        if ($this->_privateKeyring) {
+            $arguments[] = '--secret-keyring ' .
+                escapeshellarg($this->_privateKeyring);
+        }
+
+        if ($this->_trustDb) {
+            $arguments[] = '--trustdb-name' . escapeshellarg($this->_trustDb);
         }
 
         $commandLine .= ' ' . implode(' ', $arguments) . ' ' .

@@ -976,6 +976,81 @@ class Crypt_GPG
     }
 
     // }}}
+    // {{{ encryptAndSign()
+
+    /**
+     * Encrypts and signs data
+     *
+     * Data is encrypted and signed in a single pass.
+     *
+     * @param string  $data  the data to be encrypted and signed.
+     * @param boolean $armor optional. If true, ASCII armored data is returned;
+     *                       otherwise, binary data is returned. Defaults to
+     *                       true.
+     *
+     * @return string the encrypted signed data.
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified
+     *         or if no signing key is specified. See
+     *         {@link Crypt_GPG::addEncryptKey()} and
+     *         {@link Crypt_GPG::addSignKey()}.
+     *
+     * @throws Crypt_GPG_BadPassphraseException if a specified passphrase is
+     *         incorrect or if a required passphrase is not specified.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     */
+    public function encryptAndSign($data, $armor = true)
+    {
+        return $this->_encryptAndSign($data, false, null, $armor);
+    }
+
+    // }}}
+    // {{{ encryptAndSignFile()
+
+    /**
+     * Encrypts and signs a file
+     *
+     * The file is encrypted and signed in a single pass.
+     *
+     * @param string  $filename   the name of the file containing the data to
+     *                            be encrypted and signed.
+     * @param string  $signedFile optional. The name of the file in which the
+     *                            encrypted, signed data should be stored. If
+     *                            null or unspecified, the encrypted, signed
+     *                            data is returned as a string.
+     * @param boolean $armor      optional. If true, ASCII armored data is
+     *                            returned; otherwise, binary data is returned.
+     *                            Defaults to true.
+     *
+     * @return void|string if the <kbd>$signedFile</kbd> parameter is null, a
+     *                     string containing the encrypted, signed data is
+     *                     returned.
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified
+     *         or if no signing key is specified. See
+     *         {@link Crypt_GPG::addEncryptKey()} and
+     *         {@link Crypt_GPG::addSignKey()}.
+     *
+     * @throws Crypt_GPG_BadPassphraseException if a specified passphrase is
+     *         incorrect or if a required passphrase is not specified.
+     *
+     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     *         if the input file is not readable.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     */
+    public function encryptAndSignFile($filename, $signedFile = null,
+        $armor = true
+    ) {
+        return $this->_encryptAndSign($filename, true, $signedFile, $armor);
+    }
+
+    // }}}
     // {{{ decrypt()
 
     /**
@@ -1895,6 +1970,136 @@ class Crypt_GPG
                 'Unknown error signing data. Please use the \'debug\' option ' .
                 'when creating the Crypt_GPG object, and file a bug report ' .
                 'at ' . self::BUG_URI, $code);
+        }
+
+        if ($outputFile === null) {
+            return $output;
+        }
+    }
+
+    // }}}
+    // {{{ _encryptAndSign()
+
+    /**
+     * Encrypts and signs data
+     *
+     * @param string  $data       the data to be encrypted and signed.
+     * @param boolean $isFile     whether or not the data is a filename.
+     * @param string  $outputFile the name of the file in which the encrypted,
+     *                            signed data should be stored. If null, the
+     *                            encrypted, signed data is returned as a
+     *                            string.
+     * @param boolean $armor      if true, ASCII armored data is returned;
+     *                            otherwise, binary data is returned. This has
+     *                            no effect if the mode
+     *                            <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                            used.
+     *
+     * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
+     *                     string containing the encrypted, signed data is
+     *                     returned.
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified
+     *         or if no signing key is specified. See
+     *         {@link Crypt_GPG::addEncryptKey()} and
+     *         {@link Crypt_GPG::addSignKey()}.
+     *
+     * @throws Crypt_GPG_BadPassphraseException if a specified passphrase is
+     *         incorrect or if a required passphrase is not specified.
+     *
+     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     *         if the input file is not readable.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     */
+    private function _encryptAndSign($data, $isFile, $outputFile, $armor)
+    {
+        if (count($this->signKeys) === 0) {
+            throw new Crypt_GPG_KeyNotFoundException(
+                'No signing keys specified.');
+        }
+
+        if (count($this->encryptKeys) === 0) {
+            throw new Crypt_GPG_KeyNotFoundException(
+                'No encryption keys specified.');
+        }
+
+
+        if ($isFile) {
+            $input = @fopen($data, 'rb');
+            if ($input === false) {
+                throw new Crypt_GPG_FileException('Could not open input ' .
+                    'file "' . $data . '" for encrypting and signing.', 0,
+                    $data);
+            }
+        } else {
+            $input = strval($data);
+        }
+
+        if ($outputFile === null) {
+            $output = '';
+        } else {
+            $output = @fopen($outputFile, 'wb');
+            if ($output=== false) {
+                if ($isFile) {
+                    fclose($input);
+                }
+                throw new Crypt_GPG_FileException('Could not open output ' .
+                    'file "' . $outputFile . '" for storing encrypted, ' .
+                    'signed data.', 0, $outputFile);
+            }
+        }
+
+        $arguments  = ($armor) ? array('--armor') : array();
+
+        foreach ($this->signKeys as $key) {
+            $arguments[] = '--local-user ' .
+                escapeshellarg($key['fingerprint']);
+        }
+
+        foreach ($this->encryptKeys as $key) {
+            $arguments[] = '--recipient ' . escapeshellarg($key['fingerprint']);
+        }
+
+        $this->engine->reset();
+        $this->engine->addStatusHandler(array($this, 'handleSignStatus'));
+        $this->engine->setInput($input);
+        $this->engine->setOutput($output);
+        $this->engine->setOperation('--encrypt --sign', $arguments);
+        $this->engine->run();
+
+        if ($isFile) {
+            fclose($input);
+        }
+
+        if ($outputFile !== null) {
+            fclose($output);
+        }
+
+        $code = $this->engine->getErrorCode();
+
+        switch ($code) {
+        case Crypt_GPG::ERROR_NONE:
+            break;
+        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+            throw new Crypt_GPG_KeyNotFoundException(
+                'Cannot sign encrypted data. Private key not found. Import '.
+                'the private key before trying to sign the encrypted data.',
+                $code);
+        case Crypt_GPG::ERROR_BAD_PASSPHRASE:
+            throw new Crypt_GPG_BadPassphraseException(
+                'Cannot sign encrypted data. Incorrect passphrase provided.',
+                $code);
+        case Crypt_GPG::ERROR_MISSING_PASSPHRASE:
+            throw new Crypt_GPG_BadPassphraseException(
+                'Cannot sign encrypted data. No passphrase provided.', $code);
+        default:
+            throw new Crypt_GPG_Exception(
+                'Unknown error encrypting and signing data. Please use the ' .
+                '\'debug\' option when creating the Crypt_GPG object, and ' .
+                'file a bug report at ' . self::BUG_URI, $code);
         }
 
         if ($outputFile === null) {

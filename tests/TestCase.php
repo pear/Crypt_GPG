@@ -60,10 +60,10 @@ require_once 'Crypt/GPG/Signature.php';
  *
  * Test keyring contains:
  *
- * 1) first-keypair@example.com - passphrase 'test'
+ * 1) first-keypair@example.com - passphrase 'test1'
  *    A public-private key pair that can be used to both encrypt and decrypt.
  *
- * 2) second-keypair@example.com - passphrase 'test'
+ * 2) second-keypair@example.com - passphrase 'test2'
  *    A public-private key pair that can be used to both encrypt and decrypt.
  *
  * 3) public-only@example.com - passphrase 'test'

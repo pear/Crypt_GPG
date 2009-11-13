@@ -983,6 +983,12 @@ class Crypt_GPG
      *
      * Data is encrypted and signed in a single pass.
      *
+     * NOTE: Until GnuPG version 1.4.10, it was not possible to verify
+     * encrypted-signed data without decrypting it at the same time. If you try
+     * to use {@link Crypt_GPG::verify()} method on encrypted-signed data with
+     * earlier GnuPG versions, you will get an error. Please use
+     * {@link Crypt_GPG::decryptAndVerify()} to verify encrypted-signed data.
+     *
      * @param string  $data  the data to be encrypted and signed.
      * @param boolean $armor optional. If true, ASCII armored data is returned;
      *                       otherwise, binary data is returned. Defaults to
@@ -1001,6 +1007,8 @@ class Crypt_GPG
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
+     *
+     * @see Crypt_GPG::decryptAndVerify()
      */
     public function encryptAndSign($data, $armor = true)
     {
@@ -1014,6 +1022,13 @@ class Crypt_GPG
      * Encrypts and signs a file
      *
      * The file is encrypted and signed in a single pass.
+     *
+     * NOTE: Until GnuPG version 1.4.10, it was not possible to verify
+     * encrypted-signed files without decrypting them at the same time. If you
+     * try to use {@link Crypt_GPG::verify()} method on encrypted-signed files
+     * with earlier GnuPG versions, you will get an error. Please use
+     * {@link Crypt_GPG::decryptAndVerifyFile()} to verify encrypted-signed
+     * files.
      *
      * @param string  $filename   the name of the file containing the data to
      *                            be encrypted and signed.
@@ -1043,6 +1058,8 @@ class Crypt_GPG
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
+     *
+     * @see Crypt_GPG::decryptAndVerifyFile()
      */
     public function encryptAndSignFile($filename, $signedFile = null,
         $armor = true

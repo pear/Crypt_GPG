@@ -1183,7 +1183,7 @@ class Crypt_GPG
     }
 
     // }}}
-    // {{{ decryptFile()
+    // {{{ decryptAndVerifyFile()
 
     /**
      * Decrypts and verifies a signed, encrypted file

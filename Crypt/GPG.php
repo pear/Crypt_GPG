@@ -2006,7 +2006,7 @@ class Crypt_GPG
             $output = '';
         } else {
             $output = @fopen($outputFile, 'wb');
-            if ($output=== false) {
+            if ($output === false) {
                 if ($isFile) {
                     fclose($input);
                 }
@@ -2144,7 +2144,7 @@ class Crypt_GPG
             $output = '';
         } else {
             $output = @fopen($outputFile, 'wb');
-            if ($output=== false) {
+            if ($output === false) {
                 if ($isFile) {
                     fclose($input);
                 }

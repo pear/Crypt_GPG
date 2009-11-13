@@ -253,6 +253,8 @@ class Crypt_GPG
      * Engine used to control the GPG subprocess
      *
      * @var Crypt_GPG_Engine
+     *
+     * @see Crypt_GPG::setEngine()
      */
     protected $engine = null;
 
@@ -392,7 +394,7 @@ class Crypt_GPG
      */
     public function __construct(array $options = array())
     {
-        $this->engine = new Crypt_GPG_Engine($options);
+        $this->setEngine(new Crypt_GPG_Engine($options));
     }
 
     // }}}
@@ -1591,6 +1593,24 @@ class Crypt_GPG
             $result['private_unchanged'] = intval($tokens[12]);
             break;
         }
+    }
+
+    // }}}
+    // {{{ setEngine()
+
+    /**
+     * Sets the I/O engine to use for GnuPG operations
+     *
+     * Normally this method does not need to be used. It provides a means for
+     * dependency injection.
+     *
+     * @param Crypt_GPG_Engine $engine the engine to use.
+     *
+     * @return void
+     */
+    public function setEngine(Crypt_GPG_Engine $engine)
+    {
+        $this->engine = $engine;
     }
 
     // }}}

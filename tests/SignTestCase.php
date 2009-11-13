@@ -531,7 +531,7 @@ class SignTestCase extends Crypt_GPG_TestCase
     {
         // input file is encrypted with first-keypair@example.com
         // output file does not exist
-        $inputFilename  = $this->getDataFilename('testMediumFile.plain');
+        $inputFilename  = $this->getDataFilename('testFileMedium.plain');
         $outputFilename = './non-existent' .
             '/testSignFileFileException_output.plain';
 

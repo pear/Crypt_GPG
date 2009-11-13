@@ -462,7 +462,7 @@ class EncryptAndSignTestCase extends Crypt_GPG_TestCase
     {
         // input file is plaintext
         // output file does not exist
-        $inputFilename  = $this->getDataFilename('testMediumFile.plain');
+        $inputFilename  = $this->getDataFilename('testFileMedium.plain');
         $outputFilename = './non-existent' .
             '/testEncryptAndSignFileFileException_output.plain';
 

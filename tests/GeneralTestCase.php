@@ -57,6 +57,54 @@ require_once 'TestCase.php';
  */
 class GeneralTestCase extends Crypt_GPG_TestCase
 {
+    // {{{ testPublicKeyringFileException()
+
+    /**
+     * @expectedException Crypt_GPG_FileException
+     */
+    public function testPublicKeyringFileException()
+    {
+        $publicKeyringFile = $this->getTempFilename('pubring.gpg');
+        $gpg = new Crypt_GPG(
+            array(
+                'publicKeyring' => $publicKeyringFile
+            )
+        );
+    }
+
+    // }}}
+    // {{{ testPrivateKeyringFileException()
+
+    /**
+     * @expectedException Crypt_GPG_FileException
+     */
+    public function testPrivateKeyringFileException()
+    {
+        $privateKeyringFile = $this->getTempFilename('secring.gpg');
+        $gpg = new Crypt_GPG(
+            array(
+                'privateKeyring' => $privateKeyringFile
+            )
+        );
+    }
+
+    // }}}
+    // {{{ testTrustDatabaseFileException()
+
+    /**
+     * @expectedException Crypt_GPG_FileException
+     */
+    public function testTrustDatabaseFileException()
+    {
+        $trustDbFile = $this->getTempFilename('secring.gpg');
+        $gpg = new Crypt_GPG(
+            array(
+                'trustDb' => $trustDbFile
+            )
+        );
+    }
+
+    // }}}
     // {{{ testHomedirFileException()
 
     /**
@@ -73,6 +121,17 @@ class GeneralTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
+    // {{{ testBinaryPEARException()
+
+    /**
+     * @expectedException PEAR_Exception
+     */
+    public function testBinaryPEARException()
+    {
+        $gpg = new Crypt_GPG(array('binary' => './non-existent-binary'));
+    }
+
+    // }}}
     // {{{ testGPGBinaryPEARException()
 
     /**
@@ -81,6 +140,30 @@ class GeneralTestCase extends Crypt_GPG_TestCase
     public function testGPGBinaryPEARException()
     {
         $gpg = new Crypt_GPG(array('gpgBinary' => './non-existent-binary'));
+    }
+
+    // }}}
+    // {{{ testSetEngine()
+
+    public function testSetEngine()
+    {
+        $engine = new Crypt_GPG_Engine($this->getOptions());
+        $gpg = new Crypt_GPG();
+        $gpg->setEngine($engine);
+
+        $homedirConstraint = $this->attribute(
+            $this->attributeEqualTo(
+                '_homedir',
+                dirname(__FILE__) . '/' . self::HOMEDIR
+            ),
+            'engine'
+        );
+
+        $this->assertThat(
+            $gpg,
+            $homedirConstraint,
+            'Engine was not set properly.'
+        );
     }
 
     // }}}

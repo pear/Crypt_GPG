@@ -1128,6 +1128,91 @@ class Crypt_GPG
     }
 
     // }}}
+    // {{{ decryptAndVerify()
+
+    /**
+     * Decrypts and verifies string data
+     *
+     * This method assumes the required private key is available in the keyring
+     * and throws an exception if the private key is not available. To add a
+     * private key to the keyring, use the {@link Crypt_GPG::importKey()} or
+     * {@link Crypt_GPG::importKeyFile()} methods.
+     *
+     * @param string $encryptedData the encrypted, signed data to be decrypted
+     *                              and verified.
+     *
+     * @return array two element array. The array has an element 'data'
+     *               containing the decrypted data and an element
+     *               'signatures' containing an array of
+     *               {@link Crypt_GPG_Signature} objects for the signed data.
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
+     *         decrypt the data is not in the user's keyring.
+     *
+     * @throws Crypt_GPG_NoDataException if specified data does not contain
+     *         GPG encrypted data.
+     *
+     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     *         incorrect or if a required passphrase is not specified. See
+     *         {@link Crypt_GPG::addDecryptKey()}.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     */
+    public function decryptAndVerify($encryptedData)
+    {
+        return $this->_decryptAndVerify($encryptedData, false, null);
+    }
+
+    // }}}
+    // {{{ decryptFile()
+
+    /**
+     * Decrypts and verifies a signed, encrypted file
+     *
+     * This method assumes the required private key is available in the keyring
+     * and throws an exception if the private key is not available. To add a
+     * private key to the keyring, use the {@link Crypt_GPG::importKey()} or
+     * {@link Crypt_GPG::importKeyFile()} methods.
+     *
+     * @param string $encryptedFile the name of the signed, encrypted file to
+     *                              to decrypt and verify.
+     * @param string $decryptedFile optional. The name of the file to which the
+     *                              decrypted data should be written. If null
+     *                              or unspecified, the decrypted data is
+     *                              returned in the results array.
+     *
+     * @return array two element array. The array has an element 'data'
+     *               containing the decrypted data and an element
+     *               'signatures' containing an array of
+     *               {@link Crypt_GPG_Signature} objects for the signed data.
+     *               If the decrypted data is written to a file, the 'data'
+     *               element is null.
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
+     *         decrypt the data is not in the user's keyring.
+     *
+     * @throws Crypt_GPG_NoDataException if specified data does not contain
+     *         GPG encrypted data.
+     *
+     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     *         incorrect or if a required passphrase is not specified. See
+     *         {@link Crypt_GPG::addDecryptKey()}.
+     *
+     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     *         if the input file is not readable.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     */
+    public function decryptAndVerifyFile($encryptedFile, $decryptedFile = null)
+    {
+        return $this->_decryptAndVerify($encryptedFile, true, $decryptedFile);
+    }
+
+    // }}}
     // {{{ sign()
 
     /**
@@ -2200,6 +2285,133 @@ class Crypt_GPG
         }
 
         return $handler->getSignatures();
+    }
+
+    // }}}
+    // {{{ _decryptAndVerify()
+
+    /**
+     * Decrypts and verifies encrypted, signed data
+     *
+     * @param string  $data       the encrypted signed data to be decrypted and
+     *                            verified.
+     * @param boolean $isFile     whether or not the data is a filename.
+     * @param string  $outputFile the name of the file to which the decrypted
+     *                            data should be written. If null, the decrypted
+     *                            data is returned in the results array.
+     *
+     * @return array two element array. The array has an element 'data'
+     *               containing the decrypted data and an element
+     *               'signatures' containing an array of
+     *               {@link Crypt_GPG_Signature} objects for the signed data.
+     *               If the decrypted data is written to a file, the 'data'
+     *               element is null.
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
+     *         decrypt the data is not in the user's keyring.
+     *
+     * @throws Crypt_GPG_NoDataException if specified data does not contain
+     *         GPG signed, encrypted data.
+     *
+     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     *         incorrect or if a required passphrase is not specified. See
+     *         {@link Crypt_GPG::addDecryptKey()}.
+     *
+     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     *         if the input file is not readable.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     *
+     * @see Crypt_GPG_Signature
+     */
+    private function _decryptAndVerify($data, $isFile, $outputFile)
+    {
+        if ($isFile) {
+            $input = @fopen($data, 'rb');
+            if ($input === false) {
+                throw new Crypt_GPG_FileException('Could not open input ' .
+                    'file "' . $data . '" for decrypting and verifying.', 0,
+                    $data);
+            }
+        } else {
+            $input = strval($data);
+            if ($input == '') {
+                throw new Crypt_GPG_NoDataException(
+                    'No valid encrypted signed data found.',
+                    Crypt_GPG::ERROR_NO_DATA);
+            }
+        }
+
+        if ($outputFile === null) {
+            $output = '';
+        } else {
+            $output = @fopen($outputFile, 'wb');
+            if ($output === false) {
+                if ($isFile) {
+                    fclose($input);
+                }
+                throw new Crypt_GPG_FileException('Could not open output ' .
+                    'file "' . $outputFile . '" for storing decrypted data.',
+                    0, $outputFile);
+            }
+        }
+
+        $verifyHandler = new Crypt_GPG_VerifyStatusHandler();
+
+        $decryptHandler = new Crypt_GPG_DecryptStatusHandler($this->engine,
+            $this->decryptKeys);
+
+        $this->engine->reset();
+        $this->engine->addStatusHandler(array($verifyHandler, 'handle'));
+        $this->engine->addStatusHandler(array($decryptHandler, 'handle'));
+        $this->engine->setInput($input);
+        $this->engine->setOutput($output);
+        $this->engine->setOperation('--decrypt');
+        $this->engine->run();
+
+        if ($isFile) {
+            fclose($input);
+        }
+
+        if ($outputFile !== null) {
+            fclose($output);
+        }
+
+        $code = $this->engine->getErrorCode();
+
+        switch ($code) {
+        case Crypt_GPG::ERROR_NONE:
+            break;
+        case Crypt_GPG::ERROR_NO_DATA:
+            throw new Crypt_GPG_NoDataException(
+                'No valid signature data found.', $code);
+        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+            throw new Crypt_GPG_KeyNotFoundException(
+                'Public key required for data verification not in keyring.',
+                $code);
+        default:
+            throw new Crypt_GPG_Exception(
+                'Unknown error validating signature details. Please use the ' .
+                '\'debug\' option when creating the Crypt_GPG object, and ' .
+                'file a bug report at ' . self::BUG_URI, $code);
+        }
+
+        $return = array(
+            'data'       => null,
+            'signatures' => $verifyHandler->getSignatures()
+        );
+
+        // if there was any problem decrypting the data, the handler will
+        // deal with it here.
+        $decryptHandler->throwException();
+
+        if ($outputFile === null) {
+            $return['data'] = $output;
+        }
+
+        return $return;
     }
 
     // }}}

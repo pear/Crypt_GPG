@@ -1644,18 +1644,21 @@ class Crypt_GPG
         if (is_scalar($key)) {
             $keys = $this->getKeys($key);
             if (count($keys) == 0) {
-                throw new Crypt_GPG_KeyNotFoundException('Key not found.');
+                throw new Crypt_GPG_KeyNotFoundException(
+                    'Key "' . $key . '" not found.', 0, $key);
             }
             $key = $keys[0];
         }
 
         if ($key instanceof Crypt_GPG_Key) {
             if ($encrypt && !$key->canEncrypt()) {
-                throw new InvalidArgumentException('Key cannot encrypt.');
+                throw new InvalidArgumentException(
+                    'Key "' . $key . '" cannot encrypt.');
             }
 
             if ($sign && !$key->canSign()) {
-                throw new InvalidArgumentException('Key cannot sign.');
+                throw new InvalidArgumentException(
+                    'Key "' . $key . '" cannot sign.');
             }
 
             foreach ($key->getSubKeys() as $subKey) {
@@ -1675,16 +1678,19 @@ class Crypt_GPG
         }
 
         if (count($subKeys) === 0) {
-            throw new InvalidArgumentException('Key is not recognized format.');
+            throw new InvalidArgumentException(
+                'Key "' . $key . '" is not in a recognized format.');
         }
 
         foreach ($subKeys as $subKey) {
             if ($encrypt && !$subKey->canEncrypt()) {
-                throw new InvalidArgumentException('Key cannot encrypt.');
+                throw new InvalidArgumentException(
+                    'Key "' . $key . '" cannot encrypt.');
             }
 
             if ($sign && !$subKey->canSign()) {
-                throw new InvalidArgumentException('Key cannot sign.');
+                throw new InvalidArgumentException(
+                    'Key "' . $key . '" cannot sign.');
             }
 
             $array[$subKey->getId()] = array(
@@ -2345,7 +2351,8 @@ class Crypt_GPG
      *               element is null.
      *
      * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
-     *         decrypt the data is not in the user's keyring.
+     *         decrypt the data is not in the user's keyring or it the public
+     *         key needed for verification is not in the user's keyring.
      *
      * @throws Crypt_GPG_NoDataException if specified data does not contain
      *         GPG signed, encrypted data.

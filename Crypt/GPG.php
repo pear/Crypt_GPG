@@ -2423,25 +2423,6 @@ class Crypt_GPG
             fclose($output);
         }
 
-        $code = $this->engine->getErrorCode();
-
-        switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
-            break;
-        case Crypt_GPG::ERROR_NO_DATA:
-            throw new Crypt_GPG_NoDataException(
-                'No valid signature data found.', $code);
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
-            throw new Crypt_GPG_KeyNotFoundException(
-                'Public key required for data verification not in keyring.',
-                $code);
-        default:
-            throw new Crypt_GPG_Exception(
-                'Unknown error validating signature details. Please use the ' .
-                '\'debug\' option when creating the Crypt_GPG object, and ' .
-                'file a bug report at ' . self::BUG_URI, $code);
-        }
-
         $return = array(
             'data'       => null,
             'signatures' => $verifyHandler->getSignatures()
@@ -2449,7 +2430,27 @@ class Crypt_GPG
 
         // if there was any problem decrypting the data, the handler will
         // deal with it here.
-        $decryptHandler->throwException();
+        try {
+            $decryptHandler->throwException();
+        } catch (Exception $e) {
+            if ($e instanceof Crypt_GPG_KeyNotFoundException) {
+                throw new Crypt_GPG_KeyNotFoundException(
+                    'Public key required for data verification not in ',
+                    'the keyring. Either no suitable private decryption key ' .
+                    'is in the keyring or the public key required for data ' .
+                    'verification is not in the keyring. Import a suitable ' .
+                    'key before trying to decrypt and verify this data.',
+                    $code);
+            }
+
+            if ($e instanceof Crypt_GPG_NoDataException) {
+                throw new Crypt_GPG_NoDataException(
+                    'Cannot decrypt and verify data. No PGP encrypted data ' .
+                    'was found in the provided data.', $code);
+            }
+
+            throw $e;
+        }
 
         if ($outputFile === null) {
             $return['data'] = $output;

@@ -2440,13 +2440,13 @@ class Crypt_GPG
                     'is in the keyring or the public key required for data ' .
                     'verification is not in the keyring. Import a suitable ' .
                     'key before trying to decrypt and verify this data.',
-                    $code);
+                    self::ERROR_KEY_NOT_FOUND);
             }
 
             if ($e instanceof Crypt_GPG_NoDataException) {
                 throw new Crypt_GPG_NoDataException(
                     'Cannot decrypt and verify data. No PGP encrypted data ' .
-                    'was found in the provided data.', $code);
+                    'was found in the provided data.', self::ERROR_NO_DATA);
             }
 
             throw $e;

@@ -1242,17 +1242,23 @@ class Crypt_GPG
      * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
      * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
      *
-     * @param string  $data  the data to be signed.
-     * @param boolean $mode  optional. The data signing mode to use. Should
-     *                       be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
-     *                       {@link Crypt_GPG::SIGN_MODE_CLEAR} or
-     *                       {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
-     *                       specified, defaults to
-     *                       <kbd>Crypt_GPG::SIGN_MODE_NORMAL</kbd>.
-     * @param boolean $armor optional. If true, ASCII armored data is returned;
-     *                       otherwise, binary data is returned. Defaults to
-     *                       true. This has no effect if the mode
-     *                       <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is used.
+     * @param string  $data     the data to be signed.
+     * @param boolean $mode     optional. The data signing mode to use. Should
+     *                          be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
+     *                          {@link Crypt_GPG::SIGN_MODE_CLEAR} or
+     *                          {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
+     *                          specified, defaults to
+     *                          <kbd>Crypt_GPG::SIGN_MODE_NORMAL</kbd>.
+     * @param boolean $armor    optional. If true, ASCII armored data is
+     *                          returned; otherwise, binary data is returned.
+     *                          Defaults to true. This has no effect if the
+     *                          mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                          used.
+     * @param boolean $textmode optional. If true, line-breaks in signed data
+     *                          be normalized. Use this option when signing
+     *                          e-mail, or for greater compatibility between
+     *                          systems with different line-break formats.
+     *                          Defaults to false.
      *
      * @return string the signed data, or the signature data if a detached
      *                signature is requested.
@@ -1268,9 +1274,9 @@ class Crypt_GPG
      *         exceptions occur.
      */
     public function sign($data, $mode = Crypt_GPG::SIGN_MODE_NORMAL,
-        $armor = true
+        $armor = true, $textmode = false
     ) {
-        return $this->_sign($data, false, null, $mode, $armor);
+        return $this->_sign($data, false, null, $mode, $armor, $textmode);
     }
 
     // }}}
@@ -1302,6 +1308,11 @@ class Crypt_GPG
      *                            Defaults to true. This has no effect if the
      *                            mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
      *                            used.
+     * @param boolean $textmode   optional. If true, line-breaks in signed data
+     *                            be normalized. Use this option when signing
+     *                            e-mail, or for greater compatibility between
+     *                            systems with different line-break formats.
+     *                            Defaults to false.
      *
      * @return void|string if the <kbd>$signedFile</kbd> parameter is null, a
      *                     string containing the signed data (or the signature
@@ -1322,9 +1333,16 @@ class Crypt_GPG
      *         exceptions occur.
      */
     public function signFile($filename, $signedFile = null,
-        $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true
+        $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true, $textmode = false
     ) {
-        return $this->_sign($filename, true, $signedFile, $mode, $armor);
+        return $this->_sign(
+            $filename,
+            true,
+            $signedFile,
+            $mode,
+            $armor,
+            $textmode
+        );
     }
 
     // }}}
@@ -1992,6 +2010,11 @@ class Crypt_GPG
      *                            no effect if the mode
      *                            <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
      *                            used.
+     * @param boolean $textmode   if true, line-breaks in signed data be
+     *                            normalized. Use this option when signing
+     *                            e-mail, or for greater compatibility between
+     *                            systems with different line-break formats.
+     *                            Defaults to false.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the signed data (or the signature
@@ -2011,8 +2034,9 @@ class Crypt_GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    private function _sign($data, $isFile, $outputFile, $mode, $armor)
-    {
+    private function _sign($data, $isFile, $outputFile, $mode, $armor,
+        $textmode
+    ) {
         if (count($this->signKeys) === 0) {
             throw new Crypt_GPG_KeyNotFoundException(
                 'No signing keys specified.');
@@ -2056,7 +2080,14 @@ class Crypt_GPG
         }
 
         $signedData = '';
-        $arguments  = ($armor) ? array('--armor') : array();
+        $arguments  = array();
+
+        if ($armor) {
+            $arguments[] = '--armor';
+        }
+        if ($textmode) {
+            $arguments[] = '--textmode';
+        }
 
         foreach ($this->signKeys as $key) {
             $arguments[] = '--local-user ' .

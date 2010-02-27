@@ -45,6 +45,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 require_once 'PHPUnit/TextUI/TestRunner.php';
 
 require_once 'DecryptTestCase.php';
+require_once 'DecryptAndVerifyTestCase.php';
 require_once 'DeletePublicKeyTestCase.php';
 require_once 'DeletePrivateKeyTestCase.php';
 require_once 'EncryptTestCase.php';
@@ -87,6 +88,7 @@ class Crypt_GPG_AllTests
     {
         $suite = new PHPUnit_Framework_TestSuite('Crypt_GPG Tests');
         $suite->addTestSuite('DecryptTestCase');
+        $suite->addTestSuite('DecryptAndVerifyTestCase');
         $suite->addTestSuite('DeletePublicKeyTestCase');
         $suite->addTestSuite('DeletePrivateKeyTestCase');
         $suite->addTestSuite('EncryptTestCase');

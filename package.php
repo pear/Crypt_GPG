@@ -35,20 +35,19 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.0.0';
+$apiVersion     = '1.1.0';
 $apiState       = 'stable';
 
-$releaseVersion = '1.0.0';
+$releaseVersion = '1.1.0';
 $releaseState   = 'stable';
 $releaseNotes   =
-    "First stable release. Changes include:\n" .
-    " * Fix Bug #15470. Fixes decryption with passphrase when there is more " .
-    "   than one decryption subkey.\n" .
-    " * Fix Bug #15593. Makes decrypt work on signed (compressed) but non-" .
-    "   encrypted data.\n" .
-    " * Improved end-user documentation. (Doc #14645 and Doc #15054).\n" .
-    " * Coding standards cleanups.\n" .
-    " * Fixed PEAR continuous-integration testing for real this time.\n";
+    "Feature and bug fix release. Changes include:\n" .
+    " * Better support for older versions of GnuPG. Fixes Bug #15906.\n" .
+    " * New options to specify the location of the public keyring, secret " .
+    "   keyring and trust database.\n" .
+    " * Added methods to encrypt and sign data in a single pass.\n" .
+    " * Added methods to decrypt and verify data in a single pass.\n" .
+    " * Added method to get GnuPG version.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy ".

@@ -1255,7 +1255,7 @@ class Crypt_GPG
      *                          mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
      *                          used.
      * @param boolean $textmode optional. If true, line-breaks in signed data
-     *                          be normalized. Use this option when signing
+     *                          are normalized. Use this option when signing
      *                          e-mail, or for greater compatibility between
      *                          systems with different line-break formats.
      *                          Defaults to false.
@@ -1309,7 +1309,7 @@ class Crypt_GPG
      *                            mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
      *                            used.
      * @param boolean $textmode   optional. If true, line-breaks in signed data
-     *                            be normalized. Use this option when signing
+     *                            are normalized. Use this option when signing
      *                            e-mail, or for greater compatibility between
      *                            systems with different line-break formats.
      *                            Defaults to false.

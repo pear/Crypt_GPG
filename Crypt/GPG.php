@@ -1263,7 +1263,9 @@ class Crypt_GPG
      *                          are normalized. Use this option when signing
      *                          e-mail, or for greater compatibility between
      *                          systems with different line-break formats.
-     *                          Defaults to false.
+     *                          Defaults to false. This has no effect if the
+     *                          mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                          used as clear-signing always uses textmode.
      *
      * @return string the signed data, or the signature data if a detached
      *                signature is requested.
@@ -1317,7 +1319,9 @@ class Crypt_GPG
      *                            are normalized. Use this option when signing
      *                            e-mail, or for greater compatibility between
      *                            systems with different line-break formats.
-     *                            Defaults to false.
+     *                            Defaults to false. This has no effect if the
+     *                            mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                            used as clear-signing always uses textmode.
      *
      * @return void|string if the <kbd>$signedFile</kbd> parameter is null, a
      *                     string containing the signed data (or the signature
@@ -2019,7 +2023,9 @@ class Crypt_GPG
      *                            normalized. Use this option when signing
      *                            e-mail, or for greater compatibility between
      *                            systems with different line-break formats.
-     *                            Defaults to false.
+     *                            Defaults to false. This has no effect if the
+     *                            mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                            used as clear-signing always uses textmode.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the signed data (or the signature
@@ -2154,10 +2160,7 @@ class Crypt_GPG
      *                            encrypted, signed data is returned as a
      *                            string.
      * @param boolean $armor      if true, ASCII armored data is returned;
-     *                            otherwise, binary data is returned. This has
-     *                            no effect if the mode
-     *                            <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
-     *                            used.
+     *                            otherwise, binary data is returned.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the encrypted, signed data is

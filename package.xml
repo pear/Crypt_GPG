@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.7.2" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+<package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
     http://pear.php.net/dtd/tasks-1.0.xsd
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
@@ -23,36 +23,43 @@ This package requires PHP version 5.2.1 or greater.</description>
   <email>nathan@silverorange.com</email>
   <active>yes</active>
  </lead>
- <date>2009-01-22</date>
- <time>22:21:04</time>
+ <date>2010-03-01</date>
+ <time>01:08:01</time>
  <version>
-  <release>1.0.0</release>
-  <api>1.0.0</api>
+  <release>1.1.0</release>
+  <api>1.1.0</api>
  </version>
  <stability>
   <release>stable</release>
   <api>stable</api>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
- <notes>First stable release. Changes include:
- * Fix Bug #15470. Fixes decryption with passphrase when there is more    than one decryption subkey.
- * Fix Bug #15593. Makes decrypt work on signed (compressed) but non-   encrypted data.
- * Improved end-user documentation. (Doc #14645 and Doc #15054).
- * Coding standards cleanups.
- * Fixed PEAR continuous-integration testing for real this time.
+ <notes>
+Feature and bug fix release. Changes include:
+ * Better support for older versions of GnuPG. Fixes Bug #15906.
+ * Added method to get GnuPG version.
+ * New options to specify the location of the public keyring, secret    keyring and trust database. Req #17005.
+ * Added methods to encrypt and sign data in a single pass.    Req #17004.
+ * Added methods to decrypt and verify data in a single pass.    Req #17004
+ * Added &apos;textmode&apos; option to sign() and signFile() methods.    Req #17006.
+ * Fixed Bug #17174, handling verification of bad signatures.
+ * Added fluent interface for UserId, Key, SubKey and Signature    objects.
  </notes>
  <contents>
-  <dir baseinstalldir="/Crypt" name="/">
-   <dir name="GPG">
-    <file name="DecryptStatusHandler.php" role="php" />
-    <file name="Engine.php" role="php" />
-    <file name="Exceptions.php" role="php" />
-    <file name="Key.php" role="php" />
-    <file name="Signature.php" role="php" />
-    <file name="SubKey.php" role="php" />
-    <file name="UserId.php" role="php" />
-    <file name="VerifyStatusHandler.php" role="php" />
-   </dir> <!-- /GPG -->
+  <dir baseinstalldir="/" name="/">
+   <dir name="Crypt">
+    <dir name="GPG">
+     <file name="DecryptStatusHandler.php" role="php" />
+     <file name="Engine.php" role="php" />
+     <file name="Exceptions.php" role="php" />
+     <file name="Key.php" role="php" />
+     <file name="Signature.php" role="php" />
+     <file name="SubKey.php" role="php" />
+     <file name="UserId.php" role="php" />
+     <file name="VerifyStatusHandler.php" role="php" />
+    </dir> <!-- /Crypt/GPG -->
+    <file name="GPG.php" role="php" />
+   </dir> <!-- /Crypt -->
    <dir name="tests">
     <dir name="data-files">
      <file name="testDecryptFile.asc" role="test" />
@@ -61,6 +68,12 @@ This package requires PHP version 5.2.1 or greater.</description>
      <file name="testDecryptFileKeyNotFoundException.asc" role="test" />
      <file name="testDecryptFileNoPassphrase.asc" role="test" />
      <file name="testDecryptFileToString.asc" role="test" />
+     <file name="testDecryptVerifyFile.asc" role="test" />
+     <file name="testDecryptVerifyFileDual.asc" role="test" />
+     <file name="testDecryptVerifyFileDualOnePassphrase.asc" role="test" />
+     <file name="testDecryptVerifyFileDualSignatories.asc" role="test" />
+     <file name="testDecryptVerifyFileNoPassphrase.asc" role="test" />
+     <file name="testDecryptVerifyFileToString.asc" role="test" />
      <file name="testFileEmpty.plain" role="test" />
      <file name="testFileMedium.plain" role="test" />
      <file name="testFileSmall.plain" role="test" />
@@ -72,9 +85,11 @@ This package requires PHP version 5.2.1 or greater.</description>
      <file name="testVerifyFileNormalSignedData.asc" role="test" />
     </dir> <!-- /tests/data-files -->
     <file name="AllTests.php" role="test" />
+    <file name="DecryptAndVerifyTestCase.php" role="test" />
     <file name="DecryptTestCase.php" role="test" />
     <file name="DeletePrivateKeyTestCase.php" role="test" />
     <file name="DeletePublicKeyTestCase.php" role="test" />
+    <file name="EncryptAndSignTestCase.php" role="test" />
     <file name="EncryptTestCase.php" role="test" />
     <file name="ExceptionsTestCase.php" role="test" />
     <file name="ExportPublicKeyTestCase.php" role="test" />
@@ -91,7 +106,6 @@ This package requires PHP version 5.2.1 or greater.</description>
     <file name="VerifyTestCase.php" role="test" />
    </dir> <!-- /tests -->
    <file name="ChangeLog" role="data" />
-   <file name="GPG.php" role="php" />
    <file name="LICENSE" role="doc" />
   </dir> <!-- / -->
  </contents>
@@ -113,21 +127,25 @@ This package requires PHP version 5.2.1 or greater.</description>
  <changelog>
   <release>
    <version>
-    <release>1.0.0</release>
-    <api>1.0.0</api>
+    <release>1.1.0</release>
+    <api>1.1.0</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2009-01-22</date>
+   <date>2010-03-01</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>First stable release. Changes include:
- * Fix Bug #15470. Fixes decryption with passphrase when there is more    than one decryption subkey.
- * Fix Bug #15593. Makes decrypt work on signed (compressed) but non-   encrypted data.
- * Improved end-user documentation. (Doc #14645 and Doc #15054).
- * Coding standards cleanups.
- * Fixed PEAR continuous-integration testing for real this time.
+   <notes>
+Feature and bug fix release. Changes include:
+ * Better support for older versions of GnuPG. Fixes Bug #15906.
+ * Added method to get GnuPG version.
+ * New options to specify the location of the public keyring, secret    keyring and trust database. Req #17005.
+ * Added methods to encrypt and sign data in a single pass.    Req #17004.
+ * Added methods to decrypt and verify data in a single pass.    Req #17004
+ * Added &apos;textmode&apos; option to sign() and signFile() methods.    Req #17006.
+ * Fixed Bug #17174, handling verification of bad signatures.
+ * Added fluent interface for UserId, Key, SubKey and Signature    objects.
    </notes>
   </release>
  </changelog>

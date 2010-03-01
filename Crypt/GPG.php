@@ -169,6 +169,11 @@ class Crypt_GPG
      */
     const ERROR_DELETE_PRIVATE_KEY = 9;
 
+    /**
+     * Error code returned when one or more bad signatures are detected.
+     */
+    const ERROR_BAD_SIGNATURE = 10;
+
     // }}}
     // {{{ class constants for data signing modes
 
@@ -2343,6 +2348,7 @@ class Crypt_GPG
 
         switch ($code) {
         case Crypt_GPG::ERROR_NONE:
+        case Crypt_GPG::ERROR_BAD_SIGNATURE:
             break;
         case Crypt_GPG::ERROR_NO_DATA:
             throw new Crypt_GPG_NoDataException(

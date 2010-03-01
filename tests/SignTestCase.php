@@ -296,6 +296,48 @@ class SignTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
+    // {{{ testSignDetachedTextmode()
+
+    /**
+     * @group string
+     */
+    public function testSignDetachedTextmode()
+    {
+        // data with Unix line endings
+        $data = "It was the best of times,\n"
+            . "it was the worst of times,\n"
+            . "it was the age of wisdom,\n"
+            . "it was the age of foolishness,\n"
+            . "it was the epoch of belief,\n"
+            . "it was the epoch of incredulity,\n"
+            . "it was the season of Light,\n"
+            . "it was the season of Darkness,\n"
+            . "it was the spring of hope,\n"
+            . "it was the winter of despair,";
+
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $signatureData = $this->gpg->sign(
+            $data,
+            Crypt_GPG::SIGN_MODE_DETACHED,
+            true,
+            true
+        );
+
+        // convert data to Windows line endings
+        $data = str_replace("\n", "\r\n", $data);
+
+        // verify data
+        $signatures = $this->gpg->verify($data, $signatureData);
+        $this->assertEquals(1, count($signatures));
+        foreach ($signatures as $signature) {
+            $this->assertTrue(
+                $signature->isValid(),
+                'Failed asserting textmode signature is valid.'
+            );
+        }
+    }
+
+    // }}}
 
     // file
     // {{{ testSignFileNoPassphrase()

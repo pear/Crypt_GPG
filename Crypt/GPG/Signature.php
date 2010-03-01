@@ -28,7 +28,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Nathan Fredrickson <nathan@silverorange.com>
- * @copyright 2005 silverorange
+ * @copyright 2005-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -50,7 +50,7 @@ require_once 'Crypt/GPG/UserId.php';
  * @package   Crypt_GPG
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2008 silverorange
+ * @copyright 2005-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @see       Crypt_GPG::verify()
@@ -275,13 +275,14 @@ class Crypt_GPG_Signature
      * @param string $id a base64-encoded string containing a unique id for
      *                   this signature.
      *
-     * @return void
+     * @return Crypt_GPG_Signature the current object, for fluent interface.
      *
      * @see Crypt_GPG_Signature::getId()
      */
     public function setId($id)
     {
         $this->_id = strval($id);
+        return $this;
     }
 
     // }}}
@@ -294,11 +295,12 @@ class Crypt_GPG_Signature
      *                            is the fingerprint of the primary key used to
      *                            sign this signature.
      *
-     * @return void
+     * @return Crypt_GPG_Signature the current object, for fluent interface.
      */
     public function setKeyFingerprint($fingerprint)
     {
         $this->_keyFingerprint = strval($fingerprint);
+        return $this;
     }
 
     // }}}
@@ -310,11 +312,12 @@ class Crypt_GPG_Signature
      * @param integer $creationDate the creation date of this signature. This
      *                              is a Unix timestamp.
      *
-     * @return void
+     * @return Crypt_GPG_Signature the current object, for fluent interface.
      */
     public function setCreationDate($creationDate)
     {
         $this->_creationDate = intval($creationDate);
+        return $this;
     }
 
     // }}}
@@ -327,11 +330,12 @@ class Crypt_GPG_Signature
      *                                This is a Unix timestamp. Specify zero if
      *                                this signature does not expire.
      *
-     * @return void
+     * @return Crypt_GPG_Signature the current object, for fluent interface.
      */
     public function setExpirationDate($expirationDate)
     {
         $this->_expirationDate = intval($expirationDate);
+        return $this;
     }
 
     // }}}
@@ -343,11 +347,12 @@ class Crypt_GPG_Signature
      * @param Crypt_GPG_UserId $userId the user id associated with this
      *                                 signature.
      *
-     * @return void
+     * @return Crypt_GPG_Signature the current object, for fluent interface.
      */
     public function setUserId(Crypt_GPG_UserId $userId)
     {
         $this->_userId = $userId;
+        return $this;
     }
 
     // }}}
@@ -359,11 +364,12 @@ class Crypt_GPG_Signature
      * @param boolean $isValid true if this signature is valid and false if it
      *                         is not.
      *
-     * @return void
+     * @return Crypt_GPG_Signature the current object, for fluent interface.
      */
     public function setValid($isValid)
     {
         $this->_isValid = ($isValid) ? true : false;
+        return $this;
     }
 
     // }}}

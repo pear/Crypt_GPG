@@ -26,7 +26,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -43,7 +43,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @see       Crypt_GPG::getKeys()
@@ -250,11 +250,12 @@ class Crypt_GPG_UserId
      *
      * @param string $name the name field of this user id.
      *
-     * @return void
+     * @return Crypt_GPG_UserId the current object, for fluent interface.
      */
     public function setName($name)
     {
         $this->_name = strval($name);
+        return $this;
     }
 
     // }}}
@@ -265,11 +266,12 @@ class Crypt_GPG_UserId
      *
      * @param string $comment the comment field of this user id.
      *
-     * @return void
+     * @return Crypt_GPG_UserId the current object, for fluent interface.
      */
     public function setComment($comment)
     {
         $this->_comment = strval($comment);
+        return $this;
     }
 
     // }}}
@@ -280,11 +282,12 @@ class Crypt_GPG_UserId
      *
      * @param string $email the email field of this user id.
      *
-     * @return void
+     * @return Crypt_GPG_UserId the current object, for fluent interface.
      */
     public function setEmail($email)
     {
         $this->_email = strval($email);
+        return $this;
     }
 
     // }}}
@@ -295,11 +298,12 @@ class Crypt_GPG_UserId
      *
      * @param boolean $isRevoked whether or not this user id is revoked.
      *
-     * @return void
+     * @return Crypt_GPG_UserId the current object, for fluent interface.
      */
     public function setRevoked($isRevoked)
     {
         $this->_isRevoked = ($isRevoked) ? true : false;
+        return $this;
     }
 
     // }}}
@@ -310,11 +314,12 @@ class Crypt_GPG_UserId
      *
      * @param boolean $isValid whether or not this user id is valid.
      *
-     * @return void
+     * @return Crypt_GPG_UserId the current object, for fluent interface.
      */
     public function setValid($isValid)
     {
         $this->_isValid = ($isValid) ? true : false;
+        return $this;
     }
 
     // }}}

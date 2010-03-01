@@ -26,7 +26,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -53,7 +53,7 @@ require_once 'Crypt/GPG/UserId.php';
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @see       Crypt_GPG::getKeys()
@@ -191,11 +191,12 @@ class Crypt_GPG_Key
      *
      * @param Crypt_GPG_SubKey $subKey the sub-key to add.
      *
-     * @return void
+     * @return Crypt_GPG_Key the current object, for fluent interface.
      */
     public function addSubKey(Crypt_GPG_SubKey $subKey)
     {
         $this->_subKeys[] = $subKey;
+        return $this;
     }
 
     // }}}
@@ -206,11 +207,12 @@ class Crypt_GPG_Key
      *
      * @param Crypt_GPG_UserId $userId the user id to add.
      *
-     * @return void
+     * @return Crypt_GPG_Key the current object, for fluent interface.
      */
     public function addUserId(Crypt_GPG_UserId $userId)
     {
         $this->_userIds[] = $userId;
+        return $this;
     }
 
     // }}}

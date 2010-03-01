@@ -27,7 +27,7 @@
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @author    Nathan Fredrickson <nathan@silverorange.com>
- * @copyright 2005-2008 silverorange
+ * @copyright 2005-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -45,7 +45,7 @@
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @author    Nathan Fredrickson <nathan@silverorange.com>
- * @copyright 2005-2008 silverorange
+ * @copyright 2005-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @see       Crypt_GPG::getKeys()
@@ -380,11 +380,12 @@ class Crypt_GPG_SubKey
      *
      * @param integer $creationDate the creation date of this sub-key.
      *
-     * @return void
+     * @return Crypt_GPG_SubKey the current object, for fluent interface.
      */
     public function setCreationDate($creationDate)
     {
         $this->_creationDate = intval($creationDate);
+        return $this;
     }
 
     // }}}
@@ -398,11 +399,12 @@ class Crypt_GPG_SubKey
      *
      * @param integer $expirationDate the expiration date of this sub-key.
      *
-     * @return void
+     * @return Crypt_GPG_SubKey the current object, for fluent interface.
      */
     public function setExpirationDate($expirationDate)
     {
         $this->_expirationDate = intval($expirationDate);
+        return $this;
     }
 
     // }}}
@@ -413,11 +415,12 @@ class Crypt_GPG_SubKey
      *
      * @param string $id the id of this sub-key.
      *
-     * @return void
+     * @return Crypt_GPG_SubKey the current object, for fluent interface.
      */
     public function setId($id)
     {
         $this->_id = strval($id);
+        return $this;
     }
 
     // }}}
@@ -428,11 +431,12 @@ class Crypt_GPG_SubKey
      *
      * @param integer $algorithm the algorithm used by this sub-key.
      *
-     * @return void
+     * @return Crypt_GPG_SubKey the current object, for fluent interface.
      */
     public function setAlgorithm($algorithm)
     {
         $this->_algorithm = intval($algorithm);
+        return $this;
     }
 
     // }}}
@@ -443,11 +447,12 @@ class Crypt_GPG_SubKey
      *
      * @param string $fingerprint the fingerprint of this sub-key.
      *
-     * @return void
+     * @return Crypt_GPG_SubKey the current object, for fluent interface.
      */
     public function setFingerprint($fingerprint)
     {
         $this->_fingerprint = strval($fingerprint);
+        return $this;
     }
 
     // }}}
@@ -458,11 +463,12 @@ class Crypt_GPG_SubKey
      *
      * @param integer $length the length of this sub-key in bits.
      *
-     * @return void
+     * @return Crypt_GPG_SubKey the current object, for fluent interface.
      */
     public function setLength($length)
     {
         $this->_length = intval($length);
+        return $this;
     }
 
     // }}}
@@ -474,11 +480,12 @@ class Crypt_GPG_SubKey
      * @param boolean $canSign true if this sub-key can sign data and false if
      *                         it can not.
      *
-     * @return void
+     * @return Crypt_GPG_SubKey the current object, for fluent interface.
      */
     public function setCanSign($canSign)
     {
         $this->_canSign = ($canSign) ? true : false;
+        return $this;
     }
 
     // }}}
@@ -490,11 +497,12 @@ class Crypt_GPG_SubKey
      * @param boolean $canEncrypt true if this sub-key can encrypt data and
      *                            false if it can not.
      *
-     * @return void
+     * @return Crypt_GPG_SubKey the current object, for fluent interface.
      */
     public function setCanEncrypt($canEncrypt)
     {
         $this->_canEncrypt = ($canEncrypt) ? true : false;
+        return $this;
     }
 
     // }}}
@@ -508,11 +516,12 @@ class Crypt_GPG_SubKey
      *                            exists in the keyring and false if it does
      *                            not.
      *
-     * @return void
+     * @return Crypt_GPG_SubKey the current object, for fluent interface.
      */
     public function setHasPrivate($hasPrivate)
     {
         $this->_hasPrivate = ($hasPrivate) ? true : false;
+        return $this;
     }
 
     // }}}

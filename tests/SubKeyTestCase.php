@@ -34,7 +34,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -56,7 +56,7 @@ require_once 'Crypt/GPG/SubKey.php';
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -782,6 +782,98 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
         $subKey->setHasPrivate(true);
 
         $this->assertEquals($expectedSubKey, $subKey);
+    }
+
+    // }}}
+
+    // fluent interface
+    // {{{ testFluentInterface
+
+    /**
+     * @group fluent
+     */
+    public function testFluentInterface()
+    {
+        $subKey         = new Crypt_GPG_SubKey();
+        $returnedSubKey = $subKey->setId('8C37DBD2A01B7976');
+        $this->assertEquals(
+            $subKey,
+            $returnedSubKey,
+            'Failed asserting fluent interface works for setId() method.'
+        );
+
+        $subKey         = new Crypt_GPG_SubKey();
+        $returnedSubKey = $subKey->setAlgorithm(
+            Crypt_GPG_SubKey::ALGORITHM_DSA
+        );
+        $this->assertEquals(
+            $subKey,
+            $returnedSubKey,
+            'Failed asserting fluent interface works for setAlgorithm() method.'
+        );
+
+        $subKey         = new Crypt_GPG_SubKey();
+        $returnedSubKey = $subKey->setFingerprint(
+            '8D2299D9C5C211128B32BBB0C097D9EC94C06363'
+        );
+        $this->assertEquals(
+            $subKey,
+            $returnedSubKey,
+            'Failed asserting fluent interface works for setFingerprint() ' .
+            'method.'
+        );
+
+        $subKey         = new Crypt_GPG_SubKey();
+        $returnedSubKey = $subKey->setLength(2048);
+        $this->assertEquals(
+            $subKey,
+            $returnedSubKey,
+            'Failed asserting fluent interface works for setLength() method.'
+        );
+
+        $subKey         = new Crypt_GPG_SubKey();
+        $returnedSubKey = $subKey->setCreationDate(1234567890);
+        $this->assertEquals(
+            $subKey,
+            $returnedSubKey,
+            'Failed asserting fluent interface works for setCreationDate() ' .
+            'method.'
+        );
+
+        $subKey         = new Crypt_GPG_SubKey();
+        $returnedSubKey = $subKey->setExpirationDate(1234567890);
+        $this->assertEquals(
+            $subKey,
+            $returnedSubKey,
+            'Failed asserting fluent interface works for setExpirationDate() ' .
+            'method.'
+        );
+
+        $subKey         = new Crypt_GPG_SubKey();
+        $returnedSubKey = $subKey->setCanSign(true);
+        $this->assertEquals(
+            $subKey,
+            $returnedSubKey,
+            'Failed asserting fluent interface works for setCanSign() method.'
+        );
+
+        $subKey         = new Crypt_GPG_SubKey();
+        $returnedSubKey = $subKey->setCanEncrypt(true);
+        $this->assertEquals(
+            $subKey,
+            $returnedSubKey,
+            'Failed asserting fluent interface works for setCanEncrypt() ' .
+            'method.'
+        );
+
+        $subKey         = new Crypt_GPG_SubKey();
+        $returnedSubKey = $subKey->setHasPrivate(true);
+        $this->assertEquals(
+            $subKey,
+            $returnedSubKey,
+            'Failed asserting fluent interface works for setHasPrivate() ' .
+            'method.'
+        );
     }
 
     // }}}

@@ -34,7 +34,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2008 silverorange
+ * @copyright 2005-2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -56,7 +56,7 @@ require_once 'Crypt/GPG/Signature.php';
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -448,6 +448,70 @@ class SignatureTestCase extends Crypt_GPG_TestCase
         $signature->setUserId($userId);
 
         $this->assertEquals($expectedSignature, $signature);
+    }
+
+    // }}}
+
+    // fluent interface
+    // {{{ testFluentInterface
+
+    /**
+     * @group fluent
+     */
+    public function testFluentInterface()
+    {
+        $signature         = new Crypt_GPG_Signature();
+        $returnedSignature = $signature->setId('KuhELanvhPRXozEjFWb2mam1q20');
+        $this->assertEquals(
+            $signature,
+            $returnedSignature,
+            'Failed asserting fluent interface works for setId() method.'
+        );
+
+        $signature         = new Crypt_GPG_Signature();
+        $returnedSignature = $signature->setKeyFingerprint(
+            '8D2299D9C5C211128B32BBB0C097D9EC94C06363'
+        );
+        $this->assertEquals(
+            $signature,
+            $returnedSignature,
+            'Failed asserting fluent interface works for setKeyFingerprint() ' .
+            'method.'
+        );
+
+        $signature         = new Crypt_GPG_Signature();
+        $returnedSignature = $signature->setCreationDate(1234567890);
+        $this->assertEquals(
+            $signature,
+            $returnedSignature,
+            'Failed asserting fluent interface works for setCreationDate() ' .
+            'method.'
+        );
+
+        $signature         = new Crypt_GPG_Signature();
+        $returnedSignature = $signature->setExpirationDate(1234567890);
+        $this->assertEquals(
+            $signature,
+            $returnedSignature,
+            'Failed asserting fluent interface works for setExpirationDate() ' .
+            'method.'
+        );
+
+        $signature         = new Crypt_GPG_Signature();
+        $returnedSignature = $signature->setValid(true);
+        $this->assertEquals(
+            $signature,
+            $returnedSignature,
+            'Failed asserting fluent interface works for setValid() method.'
+        );
+
+        $signature         = new Crypt_GPG_Signature();
+        $returnedSignature = $signature->setUserId(new Crypt_GPG_UserId());
+        $this->assertEquals(
+            $signature,
+            $returnedSignature,
+            'Failed asserting fluent interface works for setUserId() method.'
+        );
     }
 
     // }}}

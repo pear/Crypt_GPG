@@ -34,7 +34,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -66,7 +66,7 @@ require_once 'Crypt/GPG/SubKey.php';
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -521,6 +521,54 @@ class KeyTestCase extends Crypt_GPG_TestCase
         $this->assertEquals($userIds[1], $secondUserId,
             'Failed to assert the second user id is the same as the second ' .
             'added user id.');
+    }
+
+    // }}}
+
+    // fluent interface
+    // {{{ testFluentInterface
+
+    /**
+     * @group fluent
+     */
+    public function testFluentInterface()
+    {
+        $key = new Crypt_GPG_Key();
+
+        // add first sub-key
+        $firstSubKey = new Crypt_GPG_SubKey(array(
+            'id'          => 'C097D9EC94C06363',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 1024,
+            'creation'    => 1221785805,
+            'expiration'  => 0,
+            'canSign'     => true,
+            'canEncrypt'  => false,
+            'hasPrivate'  => true
+        ));
+
+        $returnedKey = $key->addSubKey($firstSubKey);
+
+        $this->assertEquals(
+            $key,
+            $returnedKey,
+            'Failed asserting fluent interface works for addSubKey() method.'
+        );
+
+        $firstUserId = new Crypt_GPG_UserId(array(
+            'name'    => 'Alice',
+            'comment' => 'shipping',
+            'email'   => 'alice@example.com'
+        ));
+
+        $returnedKey = $key->addUserId($firstUserId);
+
+        $this->assertEquals(
+            $key,
+            $returnedKey,
+            'Failed asserting fluent interface works for addUserId() method.'
+        );
     }
 
     // }}}

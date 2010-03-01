@@ -34,7 +34,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2008 silverorange
+ * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -56,7 +56,7 @@ require_once 'Crypt/GPG/UserId.php';
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -492,6 +492,57 @@ class UserIdTestCase extends Crypt_GPG_TestCase
         $userId->setValid(true);
 
         $this->assertEquals($expectedUserId, $userId);
+    }
+
+    // }}}
+
+    // fluent interface
+    // {{{ testFluentInterface
+
+    /**
+     * @group fluent
+     */
+    public function testFluentInterface()
+    {
+        $userId         = new Crypt_GPG_UserId();
+        $returnedUserId = $userId->setName('Alice');
+        $this->assertEquals(
+            $userId,
+            $returnedUserId,
+            'Failed asserting fluent interface works for setName() method.'
+        );
+
+        $userId         = new Crypt_GPG_UserId();
+        $returnedUserId = $userId->setComment('encryption is fun');
+        $this->assertEquals(
+            $userId,
+            $returnedUserId,
+            'Failed asserting fluent interface works for setComment() method.'
+        );
+
+        $userId         = new Crypt_GPG_UserId();
+        $returnedUserId = $userId->setEmail('test@example.com');
+        $this->assertEquals(
+            $userId,
+            $returnedUserId,
+            'Failed asserting fluent interface works for setEmail() method.'
+        );
+
+        $userId         = new Crypt_GPG_UserId();
+        $returnedUserId = $userId->setRevoked(true);
+        $this->assertEquals(
+            $userId,
+            $returnedUserId,
+            'Failed asserting fluent interface works for setRevoked() method.'
+        );
+
+        $userId         = new Crypt_GPG_UserId();
+        $returnedUserId = $userId->setValid(true);
+        $this->assertEquals(
+            $userId,
+            $returnedUserId,
+            'Failed asserting fluent interface works for setValid() method.'
+        );
     }
 
     // }}}

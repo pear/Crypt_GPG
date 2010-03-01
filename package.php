@@ -51,7 +51,7 @@ $releaseNotes   =
     " * Added methods to decrypt and verify data in a single pass. " .
     "   Req #17004\n" .
     " * Added 'textmode' option to sign() and signFile() methods. " .
-    "   Req #17006.\n"
+    "   Req #17006.\n" .
     " * Fixed Bug #17174, handling verification of bad signatures.\n" .
     " * Added fluent interface for UserId, Key, SubKey and Signature " .
     "   objects.\n";

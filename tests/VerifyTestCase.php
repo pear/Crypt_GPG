@@ -436,6 +436,93 @@ TEXT;
     }
 
     // }}}
+    // {{{ testVerifyBadSignature()
+
+    /**
+     * @group string
+     */
+    public function testVerifyBadSignature()
+    {
+        $modifiedData = 'Hello, Bob! Goodbye, Alice!';
+
+        // {{{ signature
+        $signature = new Crypt_GPG_Signature();
+        $signature->setValid(false);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('First Keypair Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('first-keypair@example.com');
+        $signature->setUserId($userId);
+        // }}}
+        // {{{ detached signature
+        $detachedSignature = <<<TEXT
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQBI0vkCwJfZ7JTAY2MRAj8mAKC4IN01tGaEtNxWYS5eQiNT4Fua9ACeKum3
+BdQ5rTOK2pp2X2vy/k2aCPo=
+=upYI
+-----END PGP SIGNATURE-----
+
+TEXT;
+        // }}}
+
+        $expectedSignatures = array($signature);
+
+        $signatures = $this->gpg->verify($modifiedData, $detachedSignature);
+        $this->assertEquals($expectedSignatures, $signatures);
+    }
+
+    // }}}
+    // {{{ testVerifyDualBadSignatures()
+
+    /**
+     * @group string
+     */
+    public function testVerifyDualBadSignatures()
+    {
+        $modifiedData = 'Hello, Bob! Goodbye, Alice!';
+
+        // {{{ first signature
+        $firstSignature = new Crypt_GPG_Signature();
+        $firstSignature->setExpirationDate(0);
+        $firstSignature->setValid(false);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('Second Keypair Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('second-keypair@example.com');
+        $firstSignature->setUserId($userId);
+        // }}}
+        // {{{ second signature
+        $secondSignature = new Crypt_GPG_Signature();
+        $secondSignature->setValid(false);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('First Keypair Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('first-keypair@example.com');
+        $secondSignature->setUserId($userId);
+        // }}}
+        // {{{ dual detached signature
+        $dualDetachedSignature = <<<TEXT
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQBI0vkCA8yJCvodrUsRAj8mAKCJWz3ANeG9SPGUHMg04gH0rCOqKwCfaxUR
+Dypdcanj3VE3inTxleaQtdqIPwMFAEjS+QLAl9nslMBjYxECPyYAoN+Y3tibHIg+
+9+fdvxAEvANir2RQAKCuD2BsKzSmyV3G4/i6oPNhOrwtPg==
+=8P1D
+-----END PGP SIGNATURE-----
+
+TEXT;
+        // }}}
+
+        $expectedSignatures = array($firstSignature, $secondSignature);
+
+        $signatures = $this->gpg->verify($modifiedData, $dualDetachedSignature);
+        $this->assertEquals($expectedSignatures, $signatures);
+    }
+
+    // }}}
 
     // file
     // {{{ testVerifyFileNormalSignedData()

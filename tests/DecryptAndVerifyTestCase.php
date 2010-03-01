@@ -662,7 +662,7 @@ TEXT;
     /**
      * @group string
      */
-    public function testDecryptVerifySignedData()
+    public function testDecryptVerifySignedOnly()
     {
         // {{{ signature
         $signature = new Crypt_GPG_Signature();
@@ -818,6 +818,50 @@ TEXT;
 
         $this->gpg->addDecryptKey('multiple-subkeys@example.com', 'test');
         $results = $this->gpg->decryptAndVerify($encryptedData);
+        $this->assertEquals($expectedResults, $results);
+    }
+
+    // }}}
+    // {{{ testDecryptVerifySignedOnlyBadSignature()
+
+    /**
+     * @group string
+     */
+    public function testDecryptVerifySignedOnlyBadSignature()
+    {
+        // {{{ signature
+        $signature = new Crypt_GPG_Signature();
+        $signature->setValid(false);
+        $userId = new Crypt_GPG_UserId();
+        $userId->setName('First Keypair Test Key');
+        $userId->setComment('do not encrypt important data with this key');
+        $userId->setEmail('first-keypair@example.com');
+        $signature->setUserId($userId);
+        // }}}
+
+        $expectedResults = array(
+            'data'       => "Hello, Bob! Goodbye, Alice!\n",
+            'signatures' => array($signature)
+        );
+
+        // {{{ clearsigned data
+        $clearsignedData = <<<TEXT
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hello, Bob! Goodbye, Alice!
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFI0vkCwJfZ7JTAY2MRAgzTAKCRecYZsCS+PE46Fa2QLTEP8XGLwwCfQEAL
+qO+KlKcldtYdMZH9AA+KOLQ=
+=EO2G
+-----END PGP SIGNATURE-----
+
+TEXT;
+        // }}}
+
+        $results = $this->gpg->decryptAndVerify($clearsignedData);
         $this->assertEquals($expectedResults, $results);
     }
 

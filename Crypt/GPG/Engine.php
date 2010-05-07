@@ -1442,7 +1442,7 @@ class Crypt_GPG_Engine
         }
 
         if ($this->_trustDb) {
-            $arguments[] = '--trustdb-name' . escapeshellarg($this->_trustDb);
+            $arguments[] = '--trustdb-name ' . escapeshellarg($this->_trustDb);
         }
 
         $commandLine .= ' ' . implode(' ', $arguments) . ' ' .

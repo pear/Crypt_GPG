@@ -38,23 +38,10 @@ PEAR::setErrorHandling(PEAR_ERROR_DIE);
 $apiVersion     = '1.1.0';
 $apiState       = 'stable';
 
-$releaseVersion = '1.1.0';
+$releaseVersion = '1.1.1';
 $releaseState   = 'stable';
 $releaseNotes   =
-    "Feature and bug fix release. Changes include:\n" .
-    " * Better support for older versions of GnuPG. Fixes Bug #15906.\n" .
-    " * Added method to get GnuPG version.\n" .
-    " * New options to specify the location of the public keyring, secret " .
-    "   keyring and trust database. Req #17005.\n" .
-    " * Added methods to encrypt and sign data in a single pass. " .
-    "   Req #17004.\n" .
-    " * Added methods to decrypt and verify data in a single pass. " .
-    "   Req #17004\n" .
-    " * Added 'textmode' option to sign() and signFile() methods. " .
-    "   Req #17006.\n" .
-    " * Fixed Bug #17174, handling verification of bad signatures.\n" .
-    " * Added fluent interface for UserId, Key, SubKey and Signature " .
-    "   objects.\n";
+    "Fix Bug #17380. Specifying Trust DB breaks module.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy ".

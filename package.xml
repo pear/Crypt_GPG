@@ -23,10 +23,10 @@ This package requires PHP version 5.2.1 or greater.</description>
   <email>nathan@silverorange.com</email>
   <active>yes</active>
  </lead>
- <date>2010-03-01</date>
- <time>01:08:01</time>
+ <date>2010-05-07</date>
+ <time>16:09:57</time>
  <version>
-  <release>1.1.0</release>
+  <release>1.1.1</release>
   <api>1.1.0</api>
  </version>
  <stability>
@@ -35,15 +35,7 @@ This package requires PHP version 5.2.1 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Feature and bug fix release. Changes include:
- * Better support for older versions of GnuPG. Fixes Bug #15906.
- * Added method to get GnuPG version.
- * New options to specify the location of the public keyring, secret    keyring and trust database. Req #17005.
- * Added methods to encrypt and sign data in a single pass.    Req #17004.
- * Added methods to decrypt and verify data in a single pass.    Req #17004
- * Added &apos;textmode&apos; option to sign() and signFile() methods.    Req #17006.
- * Fixed Bug #17174, handling verification of bad signatures.
- * Added fluent interface for UserId, Key, SubKey and Signature    objects.
+Fix Bug #17380. Specifying Trust DB breaks module.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -127,25 +119,17 @@ Feature and bug fix release. Changes include:
  <changelog>
   <release>
    <version>
-    <release>1.1.0</release>
+    <release>1.1.1</release>
     <api>1.1.0</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2010-03-01</date>
+   <date>2010-05-07</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-Feature and bug fix release. Changes include:
- * Better support for older versions of GnuPG. Fixes Bug #15906.
- * Added method to get GnuPG version.
- * New options to specify the location of the public keyring, secret    keyring and trust database. Req #17005.
- * Added methods to encrypt and sign data in a single pass.    Req #17004.
- * Added methods to decrypt and verify data in a single pass.    Req #17004
- * Added &apos;textmode&apos; option to sign() and signFile() methods.    Req #17006.
- * Fixed Bug #17174, handling verification of bad signatures.
- * Added fluent interface for UserId, Key, SubKey and Signature    objects.
+Fix Bug #17380. Specifying Trust DB breaks module.
    </notes>
   </release>
  </changelog>

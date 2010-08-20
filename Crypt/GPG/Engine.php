@@ -855,11 +855,10 @@ class Crypt_GPG_Engine
                     $code);
             }
 
-            $info       = explode(PHP_EOL, $info);
             $matches    = array();
-            $expression = '/^gpg \(GnuPG\) (.*)$/';
+            $expression = '/gpg \(GnuPG\) (\S+)$/';
 
-            if (preg_match($expression, $info[0], $matches) === 1) {
+            if (preg_match($expression, $info, $matches) === 1) {
                 $this->_version = $matches[1];
             } else {
                 throw new Crypt_GPG_Exception(

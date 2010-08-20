@@ -883,7 +883,7 @@ class Crypt_GPG_Engine
             }
 
             $matches    = array();
-            $expression = '/gpg \(GnuPG\) (\S+)$/';
+            $expression = '/gpg \(GnuPG\) (\S+)/';
 
             if (preg_match($expression, $info, $matches) === 1) {
                 $this->_version = $matches[1];

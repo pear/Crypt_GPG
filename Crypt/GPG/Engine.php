@@ -287,6 +287,14 @@ class Crypt_GPG_Engine
     private $_errorCode = Crypt_GPG::ERROR_NONE;
 
     /**
+     * File related to the error code of the current operation
+     *
+     * @var string
+     * @see Crypt_GPG_Engine::getErrorFilename()
+     */
+    private $_errorFilename = '';
+
+    /**
      * The number of currently needed passphrases
      *
      * If this is not zero when the GPG command is completed, the error code is
@@ -469,10 +477,11 @@ class Crypt_GPG_Engine
                 chmod($this->_homedir, 0700);
             } else {
                 throw new Crypt_GPG_FileException('The \'homedir\' "' .
-                    $this->_homedir . '" does not exist and cannot be ' .
-                    'created. This can happen if \'homedir\' is not ' .
-                    'specified in the Crypt_GPG options, Crypt_GPG is run as ' .
-                    'the web user, and the web user has no home directory.',
+                    $this->_homedir . '" is not readable or does not exist '.
+                    'and cannot be created. This can happen if \'homedir\' '.
+                    'is not specified in the Crypt_GPG options, Crypt_GPG is '.
+                    'run as the web user, and the web user has no home '.
+                    'directory.',
                     0, $this->_homedir);
             }
         }
@@ -723,6 +732,24 @@ class Crypt_GPG_Engine
     public function getErrorCode()
     {
         return $this->_errorCode;
+    }
+
+    // }}}
+    // {{{ getErrorFilename()
+
+    /**
+     * Gets the file related to the error code of the last executed operation
+     *
+     * This value is only meaningful after {@link Crypt_GPG_Engine::run()} has
+     * been executed. If there is no file related to the error, an empty string
+     * is returned.
+     *
+     * @return string the file related to the error code of the last executed
+     *                operation.
+     */
+    public function getErrorFilename()
+    {
+        return $this->_errorFilename;
     }
 
     // }}}
@@ -981,6 +1008,15 @@ class Crypt_GPG_Engine
             $pattern = '/No public key|public key not found/';
             if (preg_match($pattern, $line) === 1) {
                 $this->_errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+            }
+        }
+
+        if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
+            $matches = array();
+            $pattern = '/can\'t (?:access|open) `(.*?)\'/';
+            if (preg_match($pattern, $line, $matches) === 1) {
+                $this->_errorFilename = $matches[1];
+                $this->_errorCode = Crypt_GPG::ERROR_FILE_PERMISSIONS;
             }
         }
     }

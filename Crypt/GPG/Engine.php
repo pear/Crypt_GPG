@@ -686,9 +686,27 @@ class Crypt_GPG_Engine
                 'calling Crypt_GPG_Engine::run().');
         }
 
-        $this->_openSubprocess();
-        $this->_process();
-        $this->_closeSubprocess();
+        // GnuPG returns localized results. Crypt_GPG only works with English,
+        // so set the locale to 'C' while commands run.
+        $oldLocale = setlocale(LC_ALL, 0);
+        setlocale(LC_ALL, 'C');
+
+        try {
+
+            $this->_openSubprocess();
+            $this->_process();
+            $this->_closeSubprocess();
+
+        } catch (Crypt_GPG_Exception $e) {
+
+            // If there was an error, remember to reset the locale.
+            setlocale(LC_ALL, $oldLocale);
+            throw $e;
+
+        }
+
+        // Reset locale so outside scripts are not affected.
+        setlocale(LC_ALL, $oldLocale);
     }
 
     // }}}

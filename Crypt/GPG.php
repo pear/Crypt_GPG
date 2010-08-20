@@ -707,6 +707,8 @@ class Crypt_GPG
             $operation = '--list-secret-keys ' . escapeshellarg($keyId);
         }
 
+        // According to The file 'doc/DETAILS' in the GnuPG distribution, using
+        // double '--with-fingerprint' also prints the fingerprint for subkeys.
         $arguments = array(
             '--with-colons',
             '--with-fingerprint',

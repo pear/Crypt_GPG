@@ -347,7 +347,7 @@ class Crypt_GPG_Engine
      * The version number of the GPG binary
      *
      * @var string
-     * @see Crypt_GPG_Engine::_getVersion()
+     * @see Crypt_GPG_Engine::getVersion()
      */
     private $_version = '';
 
@@ -954,14 +954,14 @@ class Crypt_GPG_Engine
         }
 
         if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
-            $pattern = '/secret key not available/';
+            $pattern = '/No secret key|secret key not available/';
             if (preg_match($pattern, $line) === 1) {
                 $this->_errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             }
         }
 
         if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
-            $pattern = '/public key not found/';
+            $pattern = '/No public key|public key not found/';
             if (preg_match($pattern, $line) === 1) {
                 $this->_errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             }

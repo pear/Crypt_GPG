@@ -1459,7 +1459,9 @@ class Crypt_GPG_Engine
         );
 
         if (version_compare($version, '1.0.7', 'ge')) {
-            $defaultArguments[] = '--no-use-agent';
+            if (version_compare($version, '2.0.0', 'lt')) {
+                $defaultArguments[] = '--no-use-agent';
+            }
             $defaultArguments[] = '--no-permission-warning';
         }
 

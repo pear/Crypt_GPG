@@ -695,27 +695,9 @@ class Crypt_GPG_Engine
                 'calling Crypt_GPG_Engine::run().');
         }
 
-        // GnuPG returns localized results. Crypt_GPG only works with English,
-        // so set the locale to 'C' while commands run.
-        $oldLocale = setlocale(LC_ALL, 0);
-        setlocale(LC_ALL, 'C');
-
-        try {
-
-            $this->_openSubprocess();
-            $this->_process();
-            $this->_closeSubprocess();
-
-        } catch (Crypt_GPG_Exception $e) {
-
-            // If there was an error, remember to reset the locale.
-            setlocale(LC_ALL, $oldLocale);
-            throw $e;
-
-        }
-
-        // Reset locale so outside scripts are not affected.
-        setlocale(LC_ALL, $oldLocale);
+        $this->_openSubprocess();
+        $this->_process();
+        $this->_closeSubprocess();
     }
 
     // }}}
@@ -1427,9 +1409,6 @@ class Crypt_GPG_Engine
      * the private class property {@link Crypt_GPG_Engine::$_process} to
      * the new subprocess.
      *
-     * @param array $env optional. An array of shell environment variables.
-     *                   Defaults to <kbd>$_ENV</kbd> if not specified.
-     *
      * @return void
      *
      * @throws Crypt_GPG_OpenSubprocessException if the subprocess could not be
@@ -1439,13 +1418,15 @@ class Crypt_GPG_Engine
      * @see Crypt_GPG_Engine::_closeSubprocess()
      * @see Crypt_GPG_Engine::$_process
      */
-    private function _openSubprocess(array $env = null)
+    private function _openSubprocess()
     {
         $version = $this->getVersion();
 
-        if ($env === null) {
-            $env = $_ENV;
-        }
+        $env = $_ENV;
+
+        // Newer versions of GnuPG return localized results. Crypt_GPG only
+        // works with English, so set the locale to 'C' for the subprocess.
+        $env['LC_ALL'] = 'C';
 
         $commandLine = $this->_binary;
 

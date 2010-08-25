@@ -73,6 +73,7 @@ class SignatureTestCase extends Crypt_GPG_TestCase
         $expectedSignature = new Crypt_GPG_Signature(array(
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'keyId'       => '0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
@@ -95,6 +96,7 @@ class SignatureTestCase extends Crypt_GPG_TestCase
         $signature = new Crypt_GPG_Signature(array(
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'keyId'       => '0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
@@ -106,6 +108,8 @@ class SignatureTestCase extends Crypt_GPG_TestCase
 
         $this->assertEquals('8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             $signature->getKeyFingerprint());
+
+        $this->assertEquals('0C097D9EC94C06363', $signature->getKeyId());
 
         $this->assertEquals(1221785858, $signature->getCreationDate());
         $this->assertEquals(1421785858, $signature->getExpirationDate());
@@ -157,6 +161,27 @@ class SignatureTestCase extends Crypt_GPG_TestCase
 
         $this->assertEquals('8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             $signature->getKeyFingerprint());
+    }
+
+    // }}}
+    // {{{ testGetKeyId()
+
+    /**
+     * @group accessors
+     */
+    public function testGetKeyId()
+    {
+        $signature = new Crypt_GPG_Signature(array(
+            'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'keyId'       => '0C097D9EC94C06363',
+            'creation'    => 1221785858,
+            'expiration'  => 1421785858,
+            'valid'       => false,
+            'userId'      => 'Alice <alice@example.com>'
+        ));
+
+        $this->assertEquals('0C097D9EC94C06363', $signature->getKeyId());
     }
 
     // }}}
@@ -322,6 +347,39 @@ class SignatureTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
+    // {{{ testSetKeyId()
+
+    /**
+     * @group mutators
+     */
+    public function testSetKeyId()
+    {
+        $expectedSignature = new Crypt_GPG_Signature(array(
+            'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'keyId'       => '0C097D9EC94C06363',
+            'creation'    => 1221785858,
+            'expiration'  => 1421785858,
+            'valid'       => true,
+            'userId'      => 'Alice <alice@example.com>'
+        ));
+
+        $signature = new Crypt_GPG_Signature(array(
+            'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'keyId'       => 'bad key id',
+            'creation'    => 1221785858,
+            'expiration'  => 1421785858,
+            'valid'       => true,
+            'userId'      => 'Alice <alice@example.com>'
+        ));
+
+        $signature->setKeyId('0C097D9EC94C06363');
+
+        $this->assertEquals($expectedSignature, $signature);
+    }
+
+    // }}}
     // {{{ testSetCreationDate()
 
     /**
@@ -477,6 +535,14 @@ class SignatureTestCase extends Crypt_GPG_TestCase
             $returnedSignature,
             'Failed asserting fluent interface works for setKeyFingerprint() ' .
             'method.'
+        );
+
+        $signature         = new Crypt_GPG_Signature();
+        $returnedSignature = $signature->setKeyId('0C097D9EC94C06363');
+        $this->assertEquals(
+            $signature,
+            $returnedSignature,
+            'Failed asserting fluent interface works for setKeyId() method'
         );
 
         $signature         = new Crypt_GPG_Signature();

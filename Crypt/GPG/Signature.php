@@ -78,6 +78,13 @@ class Crypt_GPG_Signature
     private $_keyFingerprint = '';
 
     /**
+     * The id of the key used to create the signature
+     *
+     * @var string
+     */
+    private $_keyId = '';
+
+    /**
      * The creation date of this signature
      *
      * This is a Unix timestamp.
@@ -124,6 +131,8 @@ class Crypt_GPG_Signature
      *                                    create the signature. The fingerprint
      *                                    should not contain formatting
      *                                    characters.
+     * - <kbd>string  keyId</kbd>       - the id of the key used to create the
+     *                                    the signature.
      * - <kbd>integer creation</kbd>    - the date the signature was created.
      *                                    This is a UNIX timestamp.
      * - <kbd>integer expiration</kbd>  - the date the signature expired. This
@@ -143,6 +152,7 @@ class Crypt_GPG_Signature
         if ($signature instanceof Crypt_GPG_Signature) {
             $this->_id             = $signature->_id;
             $this->_keyFingerprint = $signature->_keyFingerprint;
+            $this->_keyId          = $signature->_keyId;
             $this->_creationDate   = $signature->_creationDate;
             $this->_expirationDate = $signature->_expirationDate;
             $this->_isValid        = $signature->_isValid;
@@ -162,6 +172,10 @@ class Crypt_GPG_Signature
 
             if (array_key_exists('fingerprint', $signature)) {
                 $this->setKeyFingerprint($signature['fingerprint']);
+            }
+
+            if (array_key_exists('keyId', $signature)) {
+                $this->setKeyId($signature['keyId']);
             }
 
             if (array_key_exists('creation', $signature)) {
@@ -209,6 +223,23 @@ class Crypt_GPG_Signature
     public function getKeyFingerprint()
     {
         return $this->_keyFingerprint;
+    }
+
+    // }}}
+    // {{{ getKeyId()
+
+    /**
+     * Gets the id of the key used to create this signature
+     *
+     * Whereas the fingerprint of the signing key may not always be available
+     * (for example if the signature is bad), the id should always be
+     * available.
+     *
+     * @return string the id of the key used to create this signature.
+     */
+    public function getKeyId()
+    {
+        return $this->_keyId;
     }
 
     // }}}
@@ -293,13 +324,30 @@ class Crypt_GPG_Signature
      *
      * @param string $fingerprint the key fingerprint of this signature. This
      *                            is the fingerprint of the primary key used to
-     *                            sign this signature.
+     *                            create this signature.
      *
      * @return Crypt_GPG_Signature the current object, for fluent interface.
      */
     public function setKeyFingerprint($fingerprint)
     {
         $this->_keyFingerprint = strval($fingerprint);
+        return $this;
+    }
+
+    // }}}
+    // {{{ setKeyId()
+
+    /**
+     * Sets the key id of this signature
+     *
+     * @param string $id the key id of this signature. This is the id of the
+     *                   primary key used to create this signature.
+     *
+     * @return Crypt_GPG_Signature the current object, for fluent interface.
+     */
+    public function setKeyId($id)
+    {
+        $this->_keyId = strval($id);
         return $this;
     }
 

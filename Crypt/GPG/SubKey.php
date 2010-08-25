@@ -149,6 +149,13 @@ class Crypt_GPG_SubKey
      */
     private $_hasPrivate = false;
 
+    /**
+     * Whether or not this sub-key is revoked
+     *
+     * @var boolean
+     */
+    private $_isRevoked = false;
+
     // }}}
     // {{{ __construct()
 
@@ -176,6 +183,8 @@ class Crypt_GPG_SubKey
      *                                    used to encrypt data.
      * - <kbd>boolean hasPrivate</kbd>  - whether or not the private key for
      *                                    the sub-key exists in the keyring.
+     * - <kbd>boolean isRevoked</kbd>   - whether or not this sub-key is
+     *                                    revoked.
      *
      * @param Crypt_GPG_SubKey|string|array $key optional. Either an existing
      *        sub-key object, which is copied; a sub-key string, which is
@@ -199,6 +208,7 @@ class Crypt_GPG_SubKey
             $this->_canSign        = $key->_canSign;
             $this->_canEncrypt     = $key->_canEncrypt;
             $this->_hasPrivate     = $key->_hasPrivate;
+            $this->_isRevoked      = $key->_isRevoked;
         }
 
         // initialize from array
@@ -237,6 +247,10 @@ class Crypt_GPG_SubKey
 
             if (array_key_exists('hasPrivate', $key)) {
                 $this->setHasPrivate($key['hasPrivate']);
+            }
+
+            if (array_key_exists('isRevoked', $key)) {
+                $this->setRevoked($key['isRevoked']);
             }
         }
     }
@@ -368,6 +382,19 @@ class Crypt_GPG_SubKey
     public function hasPrivate()
     {
         return $this->_hasPrivate;
+    }
+
+    // }}}
+    // {{{ isRevoked()
+
+    /**
+     * Gets whether or not this sub-key is revoked
+     *
+     * @return boolean true if this sub-key is revoked and false if it is not.
+     */
+    public function isRevoked()
+    {
+        return $this->_isRevoked;
     }
 
     // }}}
@@ -525,6 +552,22 @@ class Crypt_GPG_SubKey
     }
 
     // }}}
+    // {{{ setRevoked()
+
+    /**
+     * Sets whether or not this sub-key is revoked
+     *
+     * @param boolean $isRevoked whether or not this sub-key is revoked.
+     *
+     * @return Crypt_GPG_SubKey the current object, for fluent interface.
+     */
+    public function setRevoked($isRevoked)
+    {
+        $this->_isRevoked = ($isRevoked) ? true : false;
+        return $this;
+    }
+
+    // }}}
     // {{{ parse()
 
     /**
@@ -549,6 +592,10 @@ class Crypt_GPG_SubKey
         $subKey->setAlgorithm($tokens[3]);
         $subKey->setCreationDate(self::_parseDate($tokens[5]));
         $subKey->setExpirationDate(self::_parseDate($tokens[6]));
+
+        if ($tokens[1] == 'r') {
+            $subKey->setRevoked(true);
+        }
 
         if (strpos($tokens[11], 's') !== false) {
             $subKey->setCanSign(true);

@@ -77,10 +77,11 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
             'creation'    => 1221528655,
             'expiration'  => 0,
             'canSign'     => false,
-            'canEncrypt'  => true
+            'canEncrypt'  => true,
+            'isRevoked'   => true
         ));
 
-        $string = 'sub:u:2048:16:8C37DBD2A01B7976:1221528655::::::e:';
+        $string = 'sub:r:2048:16:8C37DBD2A01B7976:1221528655::::::e:';
         $subKey = new Crypt_GPG_SubKey($string);
 
         $this->assertEquals($expectedSubKey, $subKey);
@@ -103,7 +104,8 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
+            'isRevoked'   => true
         ));
 
         $subKey = new Crypt_GPG_SubKey($expectedSubKey);
@@ -128,7 +130,8 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
+            'isRevoked'   => true
         ));
 
         $this->assertEquals('8C37DBD2A01B7976', $subKey->getId());
@@ -144,6 +147,7 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
         $this->assertFalse($subKey->canSign());
         $this->assertTrue($subKey->canEncrypt());
         $this->assertTrue($subKey->hasPrivate());
+        $this->assertTrue($subKey->isRevoked());
     }
 
     // }}}
@@ -163,10 +167,11 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
             'creation'    => 1221528655,
             'expiration'  => 0,
             'canSign'     => false,
-            'canEncrypt'  => true
+            'canEncrypt'  => true,
+            'isRevoked'   => true
         ));
 
-        $string = 'sub:u:2048:16:8C37DBD2A01B7976:1221528655::::::e:';
+        $string = 'sub:r:2048:16:8C37DBD2A01B7976:1221528655::::::e:';
         $subKey = Crypt_GPG_SubKey::parse($string);
 
         $this->assertEquals($expectedSubKey, $subKey);
@@ -447,6 +452,45 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
         ));
 
         $this->assertFalse($subKey->hasPrivate());
+    }
+
+    // }}}
+    // {{{ testIsRevoked()
+
+    /**
+     * @group accessors
+     */
+    public function testIsRevoked()
+    {
+        $subKey = new Crypt_GPG_SubKey(array(
+            'id'          => '8C37DBD2A01B7976',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 1024,
+            'creation'    => 1221785858,
+            'expiration'  => 1421785858,
+            'canSign'     => true,
+            'canEncrypt'  => false,
+            'hasPrivate'  => true,
+            'isRevoked'   => true
+        ));
+
+        $this->assertTrue($subKey->isRevoked());
+
+        $subKey = new Crypt_GPG_SubKey(array(
+            'id'          => '8C37DBD2A01B7976',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 1024,
+            'creation'    => 1221785858,
+            'expiration'  => 1421785858,
+            'canSign'     => true,
+            'canEncrypt'  => false,
+            'hasPrivate'  => false,
+            'isRevoked'   => false
+        ));
+
+        $this->assertFalse($subKey->isRevoked());
     }
 
     // }}}
@@ -785,6 +829,45 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
+    // {{{ testSetRevoked()
+
+    /**
+     * @group mutators
+     */
+    public function testSetRevoked()
+    {
+        $expectedSubKey = new Crypt_GPG_SubKey(array(
+            'id'          => '8C37DBD2A01B7976',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 2048,
+            'creation'    => 1221785858,
+            'expiration'  => 1421785858,
+            'canSign'     => false,
+            'canEncrypt'  => false,
+            'hasPrivate'  => false,
+            'isRevoked'   => true
+        ));
+
+        $subKey = new Crypt_GPG_SubKey(array(
+            'id'          => '8C37DBD2A01B7976',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 2048,
+            'creation'    => 1221785858,
+            'expiration'  => 1421785858,
+            'canSign'     => false,
+            'canEncrypt'  => false,
+            'hasPrivate'  => false,
+            'isRevoked'   => false
+        ));
+
+        $subKey->setRevoked(true);
+
+        $this->assertEquals($expectedSubKey, $subKey);
+    }
+
+    // }}}
 
     // fluent interface
     // {{{ testFluentInterface
@@ -873,6 +956,14 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
             $returnedSubKey,
             'Failed asserting fluent interface works for setHasPrivate() ' .
             'method.'
+        );
+
+        $subKey         = new Crypt_GPG_SubKey();
+        $returnedSubKey = $subKey->setRevoked(true);
+        $this->assertEquals(
+            $subKey,
+            $returnedSubKey,
+            'Failed asserting fluent interface works for setRevoked() method.'
         );
     }
 

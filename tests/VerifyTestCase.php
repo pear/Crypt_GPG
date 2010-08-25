@@ -125,6 +125,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221785858);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -169,6 +170,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221785858);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -218,6 +220,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221785858);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -261,6 +264,7 @@ TEXT;
         $firstSignature->setKeyFingerprint(
             '880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
+        $firstSignature->setKeyId('03CC890AFA1DAD4B');
         $firstSignature->setCreationDate(1221785858);
         $firstSignature->setExpirationDate(0);
         $firstSignature->setValid(true);
@@ -277,6 +281,7 @@ TEXT;
         $secondSignature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $secondSignature->setKeyId('C097D9EC94C06363');
         $secondSignature->setCreationDate(1221785858);
         $secondSignature->setExpirationDate(0);
         $secondSignature->setValid(true);
@@ -323,6 +328,7 @@ TEXT;
         $firstSignature->setKeyFingerprint(
             '880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
+        $firstSignature->setKeyId('03CC890AFA1DAD4B');
         $firstSignature->setCreationDate(1221785858);
         $firstSignature->setExpirationDate(0);
         $firstSignature->setValid(true);
@@ -339,6 +345,7 @@ TEXT;
         $secondSignature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $secondSignature->setKeyId('C097D9EC94C06363');
         $secondSignature->setCreationDate(1221785858);
         $secondSignature->setExpirationDate(0);
         $secondSignature->setValid(true);
@@ -389,6 +396,7 @@ TEXT;
         $firstSignature->setKeyFingerprint(
             '880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
+        $firstSignature->setKeyId('03CC890AFA1DAD4B');
         $firstSignature->setCreationDate(1221785858);
         $firstSignature->setExpirationDate(0);
         $firstSignature->setValid(true);
@@ -405,6 +413,7 @@ TEXT;
         $secondSignature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $secondSignature->setKeyId('C097D9EC94C06363');
         $secondSignature->setCreationDate(1221785858);
         $secondSignature->setExpirationDate(0);
         $secondSignature->setValid(true);
@@ -447,6 +456,7 @@ TEXT;
 
         // {{{ signature
         $signature = new Crypt_GPG_Signature();
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setValid(false);
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
@@ -487,6 +497,7 @@ TEXT;
         $firstSignature = new Crypt_GPG_Signature();
         $firstSignature->setExpirationDate(0);
         $firstSignature->setValid(false);
+        $firstSignature->setKeyId('03CC890AFA1DAD4B');
         $userId = new Crypt_GPG_UserId();
         $userId->setName('Second Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
@@ -496,6 +507,7 @@ TEXT;
         // {{{ second signature
         $secondSignature = new Crypt_GPG_Signature();
         $secondSignature->setValid(false);
+        $secondSignature->setKeyId('C097D9EC94C06363');
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
@@ -538,6 +550,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221960707);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -572,6 +585,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221960707);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -605,6 +619,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221960707);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -650,6 +665,7 @@ TEXT;
         $firstSignature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $firstSignature->setKeyId('C097D9EC94C06363');
         $firstSignature->setCreationDate(1221960707);
         $firstSignature->setExpirationDate(0);
         $firstSignature->setValid(true);
@@ -666,6 +682,7 @@ TEXT;
         $secondSignature->setKeyFingerprint(
             '880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
+        $secondSignature->setKeyId('03CC890AFA1DAD4B');
         $secondSignature->setCreationDate(1221960707);
         $secondSignature->setExpirationDate(0);
         $secondSignature->setValid(true);
@@ -700,6 +717,7 @@ TEXT;
         $firstSignature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $firstSignature->setKeyId('C097D9EC94C06363');
         $firstSignature->setCreationDate(1221960707);
         $firstSignature->setExpirationDate(0);
         $firstSignature->setValid(true);
@@ -716,6 +734,7 @@ TEXT;
         $secondSignature->setKeyFingerprint(
             '880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
+        $secondSignature->setKeyId('03CC890AFA1DAD4B');
         $secondSignature->setCreationDate(1221960707);
         $secondSignature->setExpirationDate(0);
         $secondSignature->setValid(true);
@@ -750,6 +769,7 @@ TEXT;
         $firstSignature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $firstSignature->setKeyId('C097D9EC94C06363');
         $firstSignature->setCreationDate(1221960707);
         $firstSignature->setExpirationDate(0);
         $firstSignature->setValid(true);
@@ -766,6 +786,7 @@ TEXT;
         $secondSignature->setKeyFingerprint(
             '880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
+        $secondSignature->setKeyId('03CC890AFA1DAD4B');
         $secondSignature->setCreationDate(1221960707);
         $secondSignature->setExpirationDate(0);
         $secondSignature->setValid(true);

@@ -115,6 +115,8 @@ class Crypt_GPG_VerifyStatusHandler
                 $this->signatureId = '';
             }
 
+            $signature->setKeyId($tokens[1]);
+
             // get user id string
             $string = implode(' ', array_splice($tokens, 2));
             $string = rawurldecode($string);

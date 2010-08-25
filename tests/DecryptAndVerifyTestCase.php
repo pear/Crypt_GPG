@@ -71,6 +71,7 @@ class DecryptAndVerifyTestCase extends Crypt_GPG_TestCase
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1258956392);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -134,6 +135,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1258956262);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -428,6 +430,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1258955651);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -510,6 +513,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1258955916);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -590,6 +594,7 @@ TEXT;
         $signature1->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature1->setKeyId('C097D9EC94C06363');
         $signature1->setCreationDate(1258956025);
         $signature1->setExpirationDate(0);
         $signature1->setValid(true);
@@ -606,6 +611,7 @@ TEXT;
         $signature2->setKeyFingerprint(
             '880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
+        $signature2->setKeyId('03CC890AFA1DAD4B');
         $signature2->setCreationDate(1258956025);
         $signature2->setExpirationDate(0);
         $signature2->setValid(true);
@@ -670,6 +676,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1258956761);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -719,6 +726,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1267228319);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -777,6 +785,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1267229043);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -832,6 +841,7 @@ TEXT;
         // {{{ signature
         $signature = new Crypt_GPG_Signature();
         $signature->setValid(false);
+        $signature->setKeyId('C097D9EC94C06363');
         $userId = new Crypt_GPG_UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
@@ -881,6 +891,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1258220197);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -928,6 +939,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1258221035);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -970,6 +982,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1258220226);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -1080,6 +1093,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1258220362);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -1141,6 +1155,7 @@ TEXT;
         $signature1->setKeyFingerprint(
             '880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
+        $signature1->setKeyId('03CC890AFA1DAD4B');
         $signature1->setCreationDate(1258220269);
         $signature1->setExpirationDate(0);
         $signature1->setValid(true);
@@ -1157,6 +1172,7 @@ TEXT;
         $signature2->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature2->setKeyId('C097D9EC94C06363');
         $signature2->setCreationDate(1258220269);
         $signature2->setExpirationDate(0);
         $signature2->setValid(true);
@@ -1205,6 +1221,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1258220334);
         $signature->setExpirationDate(0);
         $signature->setValid(true);
@@ -1279,6 +1296,7 @@ TEXT;
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
+        $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221960707);
         $signature->setExpirationDate(0);
         $signature->setValid(true);

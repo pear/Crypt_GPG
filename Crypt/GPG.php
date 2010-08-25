@@ -832,7 +832,13 @@ class Crypt_GPG
             } elseif ($lineExp[0] == 'uid') {
 
                 $string = stripcslashes($lineExp[9]); // as per documentation
-                $key->addUserId(Crypt_GPG_UserId::parse($string));
+                $userId = new Crypt_GPG_UserId($string);
+
+                if ($lineExp[1] == 'r') {
+                    $userId->setRevoked(true);
+                }
+
+                $key->addUserId($userId);
 
             }
         }

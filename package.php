@@ -35,19 +35,29 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.1.0';
+$apiVersion     = '1.2.0';
 $apiState       = 'stable';
 
-$releaseVersion = '1.1.1';
+$releaseVersion = '1.2.0';
 $releaseState   = 'stable';
 $releaseNotes   =
-    "Fix Bug #17380. Specifying Trust DB breaks module.\n";
+    "Fix Bug #17512. Handle permissions error in addDecryptKey().\n" .
+    "Fix Bug #17759. Work with localized versions of GnuPG by setting " .
+    "LC_ALL=C.\n" .
+    "Fix Bug #17760. Work with newer GnuPG responses.\n" .
+    "Fix Bug #17762. --no-use-agent is deprecated in GnuPG 2.x.\n" .
+    "Implement Req #17808. Add key id to signature object and parse results " .
+    "in verify methods.\n" .
+    "Fix Bug #17814. Set revoked status on parsed user ids. Added isRevoked " .
+    "method to sub-key object.\n" .
+    "Fix Bugs #17628 and #17817. Handle file permissions error better when " .
+    "listing keys.\n";
 
 $description =
-    "This package provides an object oriented interface to GNU Privacy ".
-    "Guard (GnuPG). It requires the GnuPG executable to be on the system.\n\n".
-    "Though GnuPG can support symmetric-key cryptography, this package is ".
-    "intended only to facilitate public-key cryptography.\n\n".
+    "This package provides an object oriented interface to GNU Privacy " .
+    "Guard (GnuPG). It requires the GnuPG executable to be on the system.\n\n" .
+    "Though GnuPG can support symmetric-key cryptography, this package is " .
+    "intended only to facilitate public-key cryptography.\n\n" .
     "This package requires PHP version 5.2.1 or greater.";
 
 $package = new PEAR_PackageFileManager2();

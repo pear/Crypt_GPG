@@ -784,6 +784,17 @@ class Crypt_GPG
         case Crypt_GPG::ERROR_KEY_NOT_FOUND:
             // ignore not found key errors
             break;
+        case Crypt_GPG::ERROR_FILE_PERMISSIONS:
+            $filename = $this->engine->getErrorFilename();
+            if ($filename) {
+                throw new Crypt_GPG_FileException(sprintf(
+                    'Error reading GnuPG data file \'%s\'. Check to make ' .
+                    'sure it is readable by the current user.', $filename),
+                    $code, $filename);
+            }
+            throw new Crypt_GPG_FileException(
+                'Error reading GnuPG data file. Check to make GnuPG data ' .
+                'files are readable by the current user.', $code);
         default:
             throw new Crypt_GPG_Exception(
                 'Unknown error getting keys. Please use the \'debug\' option ' .

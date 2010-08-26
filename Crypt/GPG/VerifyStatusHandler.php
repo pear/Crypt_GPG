@@ -105,7 +105,7 @@ class Crypt_GPG_VerifyStatusHandler
         case 'GOODSIG':
         case 'EXPSIG':
         case 'EXPKEYSIG':
-        case 'REVSIG':
+        case 'REVKEYSIG':
         case 'BADSIG':
             $signature = new Crypt_GPG_Signature();
 

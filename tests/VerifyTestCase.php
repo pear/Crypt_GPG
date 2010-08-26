@@ -68,7 +68,7 @@ class VerifyTestCase extends Crypt_GPG_TestCase
     public function testVerifyNoDataException_invalid()
     {
         $signedData = 'Invalid OpenPGP data.';
-        $signatures = $this->gpg->verify($signedData);
+        $this->gpg->verify($signedData);
     }
 
     // }}}
@@ -82,7 +82,7 @@ class VerifyTestCase extends Crypt_GPG_TestCase
     public function testVerifyNoDataException_empty()
     {
         $signedData = '';
-        $signatures = $this->gpg->verify($signedData);
+        $this->gpg->verify($signedData);
     }
 
     // }}}
@@ -108,7 +108,7 @@ laNWOZOef2zfm1yANtWjPyU=
 
 TEXT;
         // }}}
-        $signatures = $this->gpg->verify($data, $detachedSignature);
+        $this->gpg->verify($data, $detachedSignature);
     }
 
     // }}}

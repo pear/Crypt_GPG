@@ -117,7 +117,7 @@ class EncryptTestCase extends Crypt_GPG_TestCase
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addEncryptKey('non-existent-key@example.com');
-        $encryptedData = $this->gpg->encrypt($data);
+        $this->gpg->encrypt($data);
     }
 
     // }}}
@@ -131,7 +131,7 @@ class EncryptTestCase extends Crypt_GPG_TestCase
     public function testEncryptNotFoundException_none()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $encryptedData = $this->gpg->encrypt($data);
+        $this->gpg->encrypt($data);
     }
 
     // }}}

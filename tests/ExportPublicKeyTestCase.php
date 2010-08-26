@@ -121,7 +121,7 @@ TEXT;
     public function testExportPublicKeyNotFoundException()
     {
         $keyId = 'non-existent-key@example.com';
-        $keyData = $this->gpg->exportPublicKey($keyId);
+        $this->gpg->exportPublicKey($keyId);
     }
 
     // }}}

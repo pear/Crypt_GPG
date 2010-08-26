@@ -65,7 +65,7 @@ class GeneralTestCase extends Crypt_GPG_TestCase
     public function testPublicKeyringFileException()
     {
         $publicKeyringFile = $this->getTempFilename('pubring.gpg');
-        $gpg = new Crypt_GPG(
+        new Crypt_GPG(
             array(
                 'publicKeyring' => $publicKeyringFile
             )
@@ -81,7 +81,7 @@ class GeneralTestCase extends Crypt_GPG_TestCase
     public function testPrivateKeyringFileException()
     {
         $privateKeyringFile = $this->getTempFilename('secring.gpg');
-        $gpg = new Crypt_GPG(
+        new Crypt_GPG(
             array(
                 'privateKeyring' => $privateKeyringFile
             )
@@ -97,7 +97,7 @@ class GeneralTestCase extends Crypt_GPG_TestCase
     public function testTrustDatabaseFileException()
     {
         $trustDbFile = $this->getTempFilename('secring.gpg');
-        $gpg = new Crypt_GPG(
+        new Crypt_GPG(
             array(
                 'trustDb' => $trustDbFile
             )
@@ -117,7 +117,7 @@ class GeneralTestCase extends Crypt_GPG_TestCase
         }
 
         $nonWriteableDirectory = '//.gnupg';
-        $gpg = new Crypt_GPG(array('homedir' => $nonWriteableDirectory));
+        new Crypt_GPG(array('homedir' => $nonWriteableDirectory));
     }
 
     // }}}
@@ -128,7 +128,7 @@ class GeneralTestCase extends Crypt_GPG_TestCase
      */
     public function testBinaryPEARException()
     {
-        $gpg = new Crypt_GPG(array('binary' => './non-existent-binary'));
+        new Crypt_GPG(array('binary' => './non-existent-binary'));
     }
 
     // }}}
@@ -139,7 +139,7 @@ class GeneralTestCase extends Crypt_GPG_TestCase
      */
     public function testGPGBinaryPEARException()
     {
-        $gpg = new Crypt_GPG(array('gpgBinary' => './non-existent-binary'));
+        new Crypt_GPG(array('gpgBinary' => './non-existent-binary'));
     }
 
     // }}}

@@ -172,7 +172,7 @@ CNl9/GMhmvFD5un2+hMDVfFjZ2FHSH5QgMF50Ws10+jpXan7PTDdNMw=
 TEXT;
         // }}}
 
-        $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->gpg->decrypt($encryptedData);
     }
 
     // }}}
@@ -186,7 +186,7 @@ TEXT;
     public function testDecryptNoDataException_invalid()
     {
         $encryptedData = 'Invalid OpenPGP data.';
-        $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->gpg->decrypt($encryptedData);
     }
 
     // }}}
@@ -200,7 +200,7 @@ TEXT;
     public function testDecryptNoDataException_empty()
     {
         $encryptedData = '';
-        $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->gpg->decrypt($encryptedData);
     }
 
     // }}}
@@ -238,7 +238,7 @@ JspFzixPnaDl16sE082GSg0VctFMkCZhb/jghMIQYJ2131DoGXJ4QDU=
 TEXT;
         // }}}
 
-        $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->gpg->decrypt($encryptedData);
     }
 
     // }}}
@@ -277,7 +277,7 @@ TEXT;
         // }}}
 
         $this->gpg->addDecryptKey('first-keypair@example.com', 'incorrect');
-        $decryptedData = $this->gpg->decrypt($encryptedData);
+        $this->gpg->decrypt($encryptedData);
     }
 
     // }}}

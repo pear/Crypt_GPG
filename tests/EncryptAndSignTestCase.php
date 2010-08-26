@@ -70,7 +70,7 @@ class EncryptAndSignTestCase extends Crypt_GPG_TestCase
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('non-existent-key@example.com');
         $this->gpg->addEncryptKey('first-keypair@example.com');
-        $encryptedSignedData = $this->gpg->encryptAndSign($data);
+        $this->gpg->encryptAndSign($data);
     }
 
     // }}}
@@ -85,7 +85,7 @@ class EncryptAndSignTestCase extends Crypt_GPG_TestCase
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addEncryptKey('first-keypair@example.com');
-        $encryptedSignedData = $this->gpg->encryptAndSign($data);
+        $this->gpg->encryptAndSign($data);
     }
 
     // }}}
@@ -101,7 +101,7 @@ class EncryptAndSignTestCase extends Crypt_GPG_TestCase
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addEncryptKey('non-existent-key@example.com');
-        $encryptedSignedData = $this->gpg->encryptAndSign($data);
+        $this->gpg->encryptAndSign($data);
     }
 
     // }}}
@@ -116,7 +116,7 @@ class EncryptAndSignTestCase extends Crypt_GPG_TestCase
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
-        $encryptedSignedData = $this->gpg->encryptAndSign($data);
+        $this->gpg->encryptAndSign($data);
     }
 
     // }}}
@@ -132,7 +132,7 @@ class EncryptAndSignTestCase extends Crypt_GPG_TestCase
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com');
         $this->gpg->addEncryptKey('first-keypair@example.com');
-        $encryptedSignedData = $this->gpg->encryptAndSign($data);
+        $this->gpg->encryptAndSign($data);
     }
 
     // }}}
@@ -148,7 +148,7 @@ class EncryptAndSignTestCase extends Crypt_GPG_TestCase
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com', 'incorrect');
         $this->gpg->addEncryptKey('first-keypair@example.com');
-        $encryptedSignedData = $this->gpg->encryptAndSign($data);
+        $this->gpg->encryptAndSign($data);
     }
 
     // }}}

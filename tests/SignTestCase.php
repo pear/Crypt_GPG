@@ -69,7 +69,7 @@ class SignTestCase extends Crypt_GPG_TestCase
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('non-existent-key@example.com');
-        $signedData = $this->gpg->sign($data);
+        $this->gpg->sign($data);
     }
 
     // }}}
@@ -83,7 +83,7 @@ class SignTestCase extends Crypt_GPG_TestCase
     public function testSignKeyNotFoundException_none()
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
-        $signedData = $this->gpg->sign($data);
+        $this->gpg->sign($data);
     }
 
     // }}}
@@ -98,7 +98,7 @@ class SignTestCase extends Crypt_GPG_TestCase
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com');
-        $signedData = $this->gpg->sign($data);
+        $this->gpg->sign($data);
     }
 
     // }}}
@@ -113,7 +113,7 @@ class SignTestCase extends Crypt_GPG_TestCase
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com', 'incorrect');
-        $signedData = $this->gpg->sign($data);
+        $this->gpg->sign($data);
     }
 
     // }}}

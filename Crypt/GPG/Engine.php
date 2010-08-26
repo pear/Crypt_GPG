@@ -1464,7 +1464,7 @@ class Crypt_GPG_Engine
             // the random seed file makes subsequent actions faster so only
             // disable it if we have to.
             if (!is_writeable($this->_homedir)) {
-                $argumenst[] = '--no-random-seed-file';
+                $arguments[] = '--no-random-seed-file';
             }
         }
 
@@ -1512,7 +1512,7 @@ class Crypt_GPG_Engine
 
         if (!is_resource($this->_process)) {
             throw new Crypt_GPG_OpenSubprocessException(
-                'Unable to open GPG subprocess.', 0, $command);
+                'Unable to open GPG subprocess.', 0, $commandLine);
         }
 
         $this->_openPipes = $this->_pipes;

@@ -2125,7 +2125,6 @@ class Crypt_GPG
             break;
         }
 
-        $signedData = '';
         $arguments  = array();
 
         if ($armor) {

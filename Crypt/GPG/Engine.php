@@ -976,7 +976,7 @@ class Crypt_GPG_Engine
 
         case 'EXPSIG':
         case 'EXPKEYSIG':
-        case 'REVSIG':
+        case 'REVKEYSIG':
         case 'BADSIG':
             $this->_errorCode = Crypt_GPG::ERROR_BAD_SIGNATURE;
             break;

@@ -115,7 +115,17 @@ class Crypt_GPG_VerifyStatusHandler
                 $this->signatureId = '';
             }
 
-            $signature->setKeyId($tokens[1]);
+            // Detect whether fingerprint or key id was returned and set
+            // signature values appropriately. Key ids are strings of either
+            // 16 or 8 hexadecimal characters. Fingerprints are strings of 40
+            // hexadecimal characters. The key id is the last 16 characters of
+            // the key fingerprint.
+            if (strlen($tokens[1]) > 16) {
+                $signature->setKeyFingerprint($tokens[1]);
+                $signature->setKeyId(substr($tokens[1], -16));
+            } else {
+                $signature->setKeyId($tokens[1]);
+            }
 
             // get user id string
             $string = implode(' ', array_splice($tokens, 2));

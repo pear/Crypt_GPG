@@ -285,10 +285,15 @@ class Crypt_GPG_DecryptStatusHandler
             break;
 
         case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+            if (count($this->missingKeys) > 0) {
+                $keyId = reset($this->missingKeys);
+            } else {
+                $keyId = '';
+            }
             throw new Crypt_GPG_KeyNotFoundException(
                 'Cannot decrypt data. No suitable private key is in the ' .
                 'keyring. Import a suitable private key before trying to ' .
-                'decrypt this data.', $code);
+                'decrypt this data.', $code, $keyId);
 
         case Crypt_GPG::ERROR_BAD_PASSPHRASE:
             $badPassphrases = array_diff_key(

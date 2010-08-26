@@ -2162,7 +2162,8 @@ class Crypt_GPG
         case Crypt_GPG::ERROR_KEY_NOT_FOUND:
             throw new Crypt_GPG_KeyNotFoundException(
                 'Cannot sign data. Private key not found. Import the '.
-                'private key before trying to sign data.', $code);
+                'private key before trying to sign data.', $code,
+                $this->engine->getErrorKeyId());
         case Crypt_GPG::ERROR_BAD_PASSPHRASE:
             throw new Crypt_GPG_BadPassphraseException(
                 'Cannot sign data. Incorrect passphrase provided.', $code);
@@ -2288,7 +2289,7 @@ class Crypt_GPG
             throw new Crypt_GPG_KeyNotFoundException(
                 'Cannot sign encrypted data. Private key not found. Import '.
                 'the private key before trying to sign the encrypted data.',
-                $code);
+                $code, $this->engine->getErrorKeyId());
         case Crypt_GPG::ERROR_BAD_PASSPHRASE:
             throw new Crypt_GPG_BadPassphraseException(
                 'Cannot sign encrypted data. Incorrect passphrase provided.',
@@ -2393,7 +2394,7 @@ class Crypt_GPG
         case Crypt_GPG::ERROR_KEY_NOT_FOUND:
             throw new Crypt_GPG_KeyNotFoundException(
                 'Public key required for data verification not in keyring.',
-                $code);
+                $code, $this->engine->getErrorKeyId());
         default:
             throw new Crypt_GPG_Exception(
                 'Unknown error validating signature details. Please use the ' .
@@ -2514,7 +2515,7 @@ class Crypt_GPG
                     'is in the keyring or the public key required for data ' .
                     'verification is not in the keyring. Import a suitable ' .
                     'key before trying to decrypt and verify this data.',
-                    self::ERROR_KEY_NOT_FOUND);
+                    self::ERROR_KEY_NOT_FOUND, $this->engine->getErrorKeyId());
             }
 
             if ($e instanceof Crypt_GPG_NoDataException) {

@@ -295,6 +295,14 @@ class Crypt_GPG_Engine
     private $_errorFilename = '';
 
     /**
+     * Key id related to the error code of the current operation
+     *
+     * @var string
+     * @see Crypt_GPG_Engine::getErrorKeyId()
+     */
+    private $_errorkeyId = '';
+
+    /**
      * The number of currently needed passphrases
      *
      * If this is not zero when the GPG command is completed, the error code is
@@ -735,6 +743,24 @@ class Crypt_GPG_Engine
     }
 
     // }}}
+    // {{{ getErrorKeyId()
+
+    /**
+     * Gets the key id related to the error code of the last executed operation
+     *
+     * This value is only meaningful after {@link Crypt_GPG_Engine::run()} has
+     * been executed. If there is no key id related to the error, an empty
+     * string is returned.
+     *
+     * @return string the key id related to the error code of the last executed
+     *                operation.
+     */
+    public function getErrorKeyId()
+    {
+        return $this->_errorKeyId;
+    }
+
+    // }}}
     // {{{ setInput()
 
     /**
@@ -936,7 +962,8 @@ class Crypt_GPG_Engine
 
         case 'NO_PUBKEY':
         case 'NO_SECKEY':
-            $this->_errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+            $this->_errorKeyId = $tokens[1];
+            $this->_errorCode  = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             break;
 
         case 'NEED_PASSPHRASE':

@@ -137,6 +137,32 @@ class Crypt_GPG_VerifyStatusHandler
             $this->signatures[$this->index] = $signature;
             break;
 
+        case 'ERRSIG':
+            $signature = new Crypt_GPG_Signature();
+
+            // if there was a signature id, set it on the new signature
+            if ($this->signatureId != '') {
+                $signature->setId($this->signatureId);
+                $this->signatureId = '';
+            }
+
+            // Detect whether fingerprint or key id was returned and set
+            // signature values appropriately. Key ids are strings of either
+            // 16 or 8 hexadecimal characters. Fingerprints are strings of 40
+            // hexadecimal characters. The key id is the last 16 characters of
+            // the key fingerprint.
+            if (strlen($tokens[1]) > 16) {
+                $signature->setKeyFingerprint($tokens[1]);
+                $signature->setKeyId(substr($tokens[1], -16));
+            } else {
+                $signature->setKeyId($tokens[1]);
+            }
+
+            $this->index++;
+            $this->signatures[$this->index] = $signature;
+
+            break;
+
         case 'VALIDSIG':
             if (!array_key_exists($this->index, $this->signatures)) {
                 break;

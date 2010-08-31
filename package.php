@@ -51,7 +51,9 @@ $releaseNotes   =
     "Fix Bug #17814. Set revoked status on parsed user ids. Added isRevoked " .
     "method to sub-key object.\n" .
     "Fix Bugs #17628 and #17817. Handle file permissions error better when " .
-    "listing keys.\n";
+    "listing keys.\n" .
+    "Fix Bug #17820. Handle REVKEYSIG and ERRSIG status lines in " .
+    "VerifyStatusHandler.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

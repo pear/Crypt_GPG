@@ -41,6 +41,8 @@ $apiState       = 'stable';
 $releaseVersion = '1.2.0';
 $releaseState   = 'stable';
 $releaseNotes   =
+    "This release features improved (though not perfect) support for GnuPG " .
+    "2.x and several other bug fixes and features:\n" .
     "Fix Bug #17512. Handle permissions error in addDecryptKey().\n" .
     "Fix Bug #17759. Work with localized versions of GnuPG by setting " .
     "LC_ALL=C.\n" .

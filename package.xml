@@ -23,11 +23,11 @@ This package requires PHP version 5.2.1 or greater.</description>
   <email>nathan@silverorange.com</email>
   <active>yes</active>
  </lead>
- <date>2010-05-07</date>
- <time>16:09:57</time>
+ <date>2010-11-16</date>
+ <time>22:48:14</time>
  <version>
-  <release>1.1.1</release>
-  <api>1.1.0</api>
+  <release>1.2.0</release>
+  <api>1.2.0</api>
  </version>
  <stability>
   <release>stable</release>
@@ -35,7 +35,15 @@ This package requires PHP version 5.2.1 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Fix Bug #17380. Specifying Trust DB breaks module.
+This release features improved (though not perfect) support for GnuPG 2.x and several other bug fixes and features:
+Fix Bug #17512. Handle permissions error in addDecryptKey().
+Fix Bug #17759. Work with localized versions of GnuPG by setting LC_ALL=C.
+Fix Bug #17760. Work with newer GnuPG responses.
+Fix Bug #17762. --no-use-agent is deprecated in GnuPG 2.x.
+Implement Req #17808. Add key id to signature object and parse results in verify methods.
+Fix Bug #17814. Set revoked status on parsed user ids. Added isRevoked method to sub-key object.
+Fix Bugs #17628 and #17817. Handle file permissions error better when listing keys.
+Fix Bug #17820. Handle REVKEYSIG and ERRSIG status lines in VerifyStatusHandler.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -119,17 +127,25 @@ Fix Bug #17380. Specifying Trust DB breaks module.
  <changelog>
   <release>
    <version>
-    <release>1.1.1</release>
-    <api>1.1.0</api>
+    <release>1.2.0</release>
+    <api>1.2.0</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2010-05-07</date>
+   <date>2010-11-16</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-Fix Bug #17380. Specifying Trust DB breaks module.
+This release features improved (though not perfect) support for GnuPG 2.x and several other bug fixes and features:
+Fix Bug #17512. Handle permissions error in addDecryptKey().
+Fix Bug #17759. Work with localized versions of GnuPG by setting LC_ALL=C.
+Fix Bug #17760. Work with newer GnuPG responses.
+Fix Bug #17762. --no-use-agent is deprecated in GnuPG 2.x.
+Implement Req #17808. Add key id to signature object and parse results in verify methods.
+Fix Bug #17814. Set revoked status on parsed user ids. Added isRevoked method to sub-key object.
+Fix Bugs #17628 and #17817. Handle file permissions error better when listing keys.
+Fix Bug #17820. Handle REVKEYSIG and ERRSIG status lines in VerifyStatusHandler.
    </notes>
   </release>
  </changelog>

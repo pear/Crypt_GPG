@@ -53,7 +53,7 @@
  */
 class Crypt_GPG_SubKey
 {
-    // {{{ class constants
+    // {{{ algorithm class constants
 
     /**
      * RSA encryption algorithm.
@@ -75,6 +75,29 @@ class Crypt_GPG_SubKey
      * used).
      */
     const ALGORITHM_ELGAMAL_ENC_SGN = 20;
+
+    // }}}
+    // {{{ usage class constants
+
+    /**
+     * Key can be used to encrypt
+     */
+    const USAGE_ENCRYPT = 1;
+
+    /**
+     * Key can be used to sign
+     */
+    const USAGE_SIGN = 2;
+
+    /**
+     * Key can be used to certify other keys
+     */
+    const USAGE_CERTIFY = 4;
+
+    /**
+     * Key can be used for authentication
+     */
+    const USAGE_AUTHENTICATION = 8;
 
     // }}}
     // {{{ class properties

@@ -34,7 +34,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2008 silverorange
+ * @copyright 2005-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -51,7 +51,7 @@ require_once 'TestCase.php';
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -163,6 +163,82 @@ class GeneralTestCase extends Crypt_GPG_TestCase
             $gpg,
             $homedirConstraint,
             'Engine was not set properly.'
+        );
+    }
+
+    // }}}
+
+    // fluent interface
+    // {{{ testFluentInterface
+
+    /**
+     * @group fluent
+     */
+    public function testFluentInterface()
+    {
+        $returnedGpg = $this->gpg->setEngine(
+            new Crypt_GPG_Engine($this->getOptions())
+        );
+        $this->assertEquals(
+            $this->gpg,
+            $returnedGpg,
+            'Failed asserting fluent interface works for setEngine() method.'
+        );
+
+        $returnedGpg = $this->gpg->addDecryptKey(
+            '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'test1'
+        );
+        $this->assertEquals(
+            $this->gpg,
+            $returnedGpg,
+            'Failed asserting fluent interface works for addDecryptKey() ' .
+            'method.'
+        );
+
+        $returnedGpg = $this->gpg->addEncryptKey(
+            '8D2299D9C5C211128B32BBB0C097D9EC94C06363'
+        );
+        $this->assertEquals(
+            $this->gpg,
+            $returnedGpg,
+            'Failed asserting fluent interface works for addEncryptKey() ' .
+            'method.'
+        );
+
+        $returnedGpg = $this->gpg->addSignKey(
+            '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'test1'
+        );
+        $this->assertEquals(
+            $this->gpg,
+            $returnedGpg,
+            'Failed asserting fluent interface works for addSignKey() ' .
+            'method.'
+        );
+
+        $returnedGpg = $this->gpg->clearDecryptKeys();
+        $this->assertEquals(
+            $this->gpg,
+            $returnedGpg,
+            'Failed asserting fluent interface works for clearDecryptKeys() ' .
+            'method.'
+        );
+
+        $returnedGpg = $this->gpg->clearEncryptKeys();
+        $this->assertEquals(
+            $this->gpg,
+            $returnedGpg,
+            'Failed asserting fluent interface works for clearEncryptKeys() ' .
+            'method.'
+        );
+
+        $returnedGpg = $this->gpg->clearSignKeys();
+        $this->assertEquals(
+            $this->gpg,
+            $returnedGpg,
+            'Failed asserting fluent interface works for clearSignKeys() ' .
+            'method.'
         );
     }
 

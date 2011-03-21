@@ -3,9 +3,9 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * Crypt_GPG is a package to use GPG from PHP
+ * Crypt_GPG is a package to use GnuPG from PHP
  *
- * This file contains an object that handles GPG's status output for the
+ * This file contains an object that handles GnuPG's status output for the
  * decrypt operation.
  *
  * PHP version 5
@@ -42,7 +42,7 @@
 require_once 'Crypt/GPG.php';
 
 /**
- * GPG exception classes
+ * Crypt_GPG exception classes
  */
 require_once 'Crypt/GPG/Exceptions.php';
 
@@ -55,8 +55,8 @@ require_once 'Crypt/GPG/Exceptions.php';
  *
  * This class is responsible for sending the passphrase commands when required
  * by the {@link Crypt_GPG::decrypt()} method. See <b>doc/DETAILS</b> in the
- * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
- * information on GPG's status output for the decrypt operation.
+ * {@link http://www.gnupg.org/download/ GnuPG distribution} for detailed
+ * information on GnuPG's status output for the decrypt operation.
  *
  * This class is also responsible for parsing error status and throwing a
  * meaningful exception in the event that decryption fails.

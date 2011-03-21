@@ -1221,7 +1221,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @param string $passphrase optional. The passphrase of the key required
      *                           for decryption.
      *
-     * @return void
+     * @return Crypt_GPG the current object, for fluent interface.
      *
      * @see Crypt_GPG::decrypt()
      * @see Crypt_GPG::decryptFile()
@@ -1234,6 +1234,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     public function addDecryptKey($key, $passphrase = null)
     {
         $this->_addKey($this->decryptKeys, true, false, $key, $passphrase);
+        return $this;
     }
 
     // }}}
@@ -1247,7 +1248,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                   {@link Crypt_GPG_SubKey}. The key must be able to
      *                   encrypt.
      *
-     * @return void
+     * @return Crypt_GPG the current object, for fluent interface.
      *
      * @see Crypt_GPG::encrypt()
      * @see Crypt_GPG::encryptFile()
@@ -1257,6 +1258,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     public function addEncryptKey($key)
     {
         $this->_addKey($this->encryptKeys, true, false, $key);
+        return $this;
     }
 
     // }}}
@@ -1272,7 +1274,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @param string $passphrase optional. The passphrase of the key required
      *                           for signing.
      *
-     * @return void
+     * @return Crypt_GPG the current object, for fluent interface.
      *
      * @see Crypt_GPG::sign()
      * @see Crypt_GPG::signFile()
@@ -1285,6 +1287,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     public function addSignKey($key, $passphrase = null)
     {
         $this->_addKey($this->signKeys, false, true, $key, $passphrase);
+        return $this;
     }
 
     // }}}
@@ -1293,7 +1296,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Clears all decryption keys
      *
-     * @return void
+     * @return Crypt_GPG the current object, for fluent interface.
      *
      * @see Crypt_GPG::decrypt()
      * @see Crypt_GPG::addDecryptKey()
@@ -1301,6 +1304,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     public function clearDecryptKeys()
     {
         $this->decryptKeys = array();
+        return $this;
     }
 
     // }}}
@@ -1309,7 +1313,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Clears all encryption keys
      *
-     * @return void
+     * @return Crypt_GPG the current object, for fluent interface.
      *
      * @see Crypt_GPG::encrypt()
      * @see Crypt_GPG::addEncryptKey()
@@ -1317,6 +1321,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     public function clearEncryptKeys()
     {
         $this->encryptKeys = array();
+        return $this;
     }
 
     // }}}
@@ -1325,7 +1330,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Clears all signing keys
      *
-     * @return void
+     * @return Crypt_GPG the current object, for fluent interface.
      *
      * @see Crypt_GPG::sign()
      * @see Crypt_GPG::addSignKey()
@@ -1333,6 +1338,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     public function clearSignKeys()
     {
         $this->signKeys = array();
+        return $this;
     }
 
     // }}}

@@ -189,11 +189,12 @@ abstract class Crypt_GPGAbstract
      *
      * @param Crypt_GPG_Engine $engine the engine to use.
      *
-     * @return void
+     * @return Crypt_GPGAbstract the current object, for fluent interface.
      */
     public function setEngine(Crypt_GPG_Engine $engine)
     {
         $this->engine = $engine;
+        return $this;
     }
 
     // }}}

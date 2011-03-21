@@ -47,13 +47,18 @@
  * @package   Crypt_GPG
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2010 silverorange
+ * @copyright 2005-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://pear.php.net/manual/en/package.encryption.crypt-gpg.php
  * @link      http://www.gnupg.org/
  */
+
+/**
+ * Base class for GPG methods
+ */
+require_once 'Crypt/GPGAbstract.php';
 
 /**
  * Signature handler class
@@ -64,31 +69,6 @@ require_once 'Crypt/GPG/VerifyStatusHandler.php';
  * Decryption handler class
  */
 require_once 'Crypt/GPG/DecryptStatusHandler.php';
-
-/**
- * GPG key class
- */
-require_once 'Crypt/GPG/Key.php';
-
-/**
- * GPG sub-key class
- */
-require_once 'Crypt/GPG/SubKey.php';
-
-/**
- * GPG user id class
- */
-require_once 'Crypt/GPG/UserId.php';
-
-/**
- * GPG process and I/O engine class
- */
-require_once 'Crypt/GPG/Engine.php';
-
-/**
- * GPG exception classes
- */
-require_once 'Crypt/GPG/Exceptions.php';
 
 // {{{ class Crypt_GPG
 
@@ -104,12 +84,12 @@ require_once 'Crypt/GPG/Exceptions.php';
  * @package   Crypt_GPG
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2010 silverorange
+ * @copyright 2005-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
  */
-class Crypt_GPG
+class Crypt_GPG extends Crypt_GPGAbstract
 {
     // {{{ class error constants
 
@@ -178,6 +158,11 @@ class Crypt_GPG
      * Error code returned when there is a problem reading GnuPG data files.
      */
     const ERROR_FILE_PERMISSIONS = 11;
+
+    /**
+     * Error code returned when a key could not be created.
+     */
+    const ERROR_KEY_NOT_CREATED = 12;
 
     // }}}
     // {{{ class constants for data signing modes
@@ -324,88 +309,6 @@ class Crypt_GPG
      * @see Crypt_GPG::clearDecryptKeys()
      */
     protected $decryptKeys = array();
-
-    // }}}
-    // {{{ __construct()
-
-    /**
-     * Creates a new GPG object
-     *
-     * Available options are:
-     *
-     * - <kbd>string  homedir</kbd>        - the directory where the GPG
-     *                                       keyring files are stored. If not
-     *                                       specified, Crypt_GPG uses the
-     *                                       default of <kbd>~/.gnupg</kbd>.
-     * - <kbd>string  publicKeyring</kbd>  - the file path of the public
-     *                                       keyring. Use this if the public
-     *                                       keyring is not in the homedir, or
-     *                                       if the keyring is in a directory
-     *                                       not writable by the process
-     *                                       invoking GPG (like Apache). Then
-     *                                       you can specify the path to the
-     *                                       keyring with this option
-     *                                       (/foo/bar/pubring.gpg), and specify
-     *                                       a writable directory (like /tmp)
-     *                                       using the <i>homedir</i> option.
-     * - <kbd>string  privateKeyring</kbd> - the file path of the private
-     *                                       keyring. Use this if the private
-     *                                       keyring is not in the homedir, or
-     *                                       if the keyring is in a directory
-     *                                       not writable by the process
-     *                                       invoking GPG (like Apache). Then
-     *                                       you can specify the path to the
-     *                                       keyring with this option
-     *                                       (/foo/bar/secring.gpg), and specify
-     *                                       a writable directory (like /tmp)
-     *                                       using the <i>homedir</i> option.
-     * - <kbd>string  trustDb</kbd>        - the file path of the web-of-trust
-     *                                       database. Use this if the trust
-     *                                       database is not in the homedir, or
-     *                                       if the database is in a directory
-     *                                       not writable by the process
-     *                                       invoking GPG (like Apache). Then
-     *                                       you can specify the path to the
-     *                                       trust database with this option
-     *                                       (/foo/bar/trustdb.gpg), and specify
-     *                                       a writable directory (like /tmp)
-     *                                       using the <i>homedir</i> option.
-     * - <kbd>string  binary</kbd>         - the location of the GPG binary. If
-     *                                       not specified, the driver attempts
-     *                                       to auto-detect the GPG binary
-     *                                       location using a list of known
-     *                                       default locations for the current
-     *                                       operating system. The option
-     *                                       <kbd>gpgBinary</kbd> is a
-     *                                       deprecated alias for this option.
-     * - <kbd>boolean debug</kbd>          - whether or not to use debug mode.
-     *                                       When debug mode is on, all
-     *                                       communication to and from the GPG
-     *                                       subprocess is logged. This can be
-     *
-     * @param array $options optional. An array of options used to create the
-     *                       GPG object. All options are optional and are
-     *                       represented as key-value pairs.
-     *
-     * @throws Crypt_GPG_FileException if the <kbd>homedir</kbd> does not exist
-     *         and cannot be created. This can happen if <kbd>homedir</kbd> is
-     *         not specified, Crypt_GPG is run as the web user, and the web
-     *         user has no home directory. This exception is also thrown if any
-     *         of the options <kbd>publicKeyring</kbd>,
-     *         <kbd>privateKeyring</kbd> or <kbd>trustDb</kbd> options are
-     *         specified but the files do not exist or are are not readable.
-     *         This can happen if the user running the Crypt_GPG process (for
-     *         example, the Apache user) does not have permission to read the
-     *         files.
-     *
-     * @throws PEAR_Exception if the provided <kbd>binary</kbd> is invalid, or
-     *         if no <kbd>binary</kbd> is provided and no suitable binary could
-     *         be found.
-     */
-    public function __construct(array $options = array())
-    {
-        $this->setEngine(new Crypt_GPG_Engine($options));
-    }
 
     // }}}
     // {{{ importKey()
@@ -705,171 +608,7 @@ class Crypt_GPG
      */
     public function getKeys($keyId = '')
     {
-        // get private key fingerprints
-        if ($keyId == '') {
-            $operation = '--list-secret-keys';
-        } else {
-            $operation = '--list-secret-keys ' . escapeshellarg($keyId);
-        }
-
-        // According to The file 'doc/DETAILS' in the GnuPG distribution, using
-        // double '--with-fingerprint' also prints the fingerprint for subkeys.
-        $arguments = array(
-            '--with-colons',
-            '--with-fingerprint',
-            '--with-fingerprint',
-            '--fixed-list-mode'
-        );
-
-        $output = '';
-
-        $this->engine->reset();
-        $this->engine->setOutput($output);
-        $this->engine->setOperation($operation, $arguments);
-        $this->engine->run();
-
-        $code = $this->engine->getErrorCode();
-
-        switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
-            // ignore not found key errors
-            break;
-        case Crypt_GPG::ERROR_FILE_PERMISSIONS:
-            $filename = $this->engine->getErrorFilename();
-            if ($filename) {
-                throw new Crypt_GPG_FileException(
-                    sprintf(
-                        'Error reading GnuPG data file \'%s\'. Check to make ' .
-                        'sure it is readable by the current user.',
-                        $filename
-                    ),
-                    $code,
-                    $filename
-                );
-            }
-            throw new Crypt_GPG_FileException(
-                'Error reading GnuPG data file. Check to make GnuPG data ' .
-                'files are readable by the current user.', $code);
-        default:
-            throw new Crypt_GPG_Exception(
-                'Unknown error getting keys. Please use the \'debug\' option ' .
-                'when creating the Crypt_GPG object, and file a bug report ' .
-                'at ' . self::BUG_URI, $code);
-        }
-
-        $privateKeyFingerprints = array();
-
-        $lines = explode(PHP_EOL, $output);
-        foreach ($lines as $line) {
-            $lineExp = explode(':', $line);
-            if ($lineExp[0] == 'fpr') {
-                $privateKeyFingerprints[] = $lineExp[9];
-            }
-        }
-
-        // get public keys
-        if ($keyId == '') {
-            $operation = '--list-public-keys';
-        } else {
-            $operation = '--list-public-keys ' . escapeshellarg($keyId);
-        }
-
-        $output = '';
-
-        $this->engine->reset();
-        $this->engine->setOutput($output);
-        $this->engine->setOperation($operation, $arguments);
-        $this->engine->run();
-
-        $code = $this->engine->getErrorCode();
-
-        switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
-            // ignore not found key errors
-            break;
-        case Crypt_GPG::ERROR_FILE_PERMISSIONS:
-            $filename = $this->engine->getErrorFilename();
-            if ($filename) {
-                throw new Crypt_GPG_FileException(
-                    sprintf(
-                        'Error reading GnuPG data file \'%s\'. Check to make ' .
-                        'sure it is readable by the current user.',
-                        $filename
-                    ),
-                    $code,
-                    $filename
-                );
-            }
-            throw new Crypt_GPG_FileException(
-                'Error reading GnuPG data file. Check to make GnuPG data ' .
-                'files are readable by the current user.', $code);
-        default:
-            throw new Crypt_GPG_Exception(
-                'Unknown error getting keys. Please use the \'debug\' option ' .
-                'when creating the Crypt_GPG object, and file a bug report ' .
-                'at ' . self::BUG_URI, $code);
-        }
-
-        $keys = array();
-
-        $key    = null; // current key
-        $subKey = null; // current sub-key
-
-        $lines = explode(PHP_EOL, $output);
-        foreach ($lines as $line) {
-            $lineExp = explode(':', $line);
-
-            if ($lineExp[0] == 'pub') {
-
-                // new primary key means last key should be added to the array
-                if ($key !== null) {
-                    $keys[] = $key;
-                }
-
-                $key = new Crypt_GPG_Key();
-
-                $subKey = Crypt_GPG_SubKey::parse($line);
-                $key->addSubKey($subKey);
-
-            } elseif ($lineExp[0] == 'sub') {
-
-                $subKey = Crypt_GPG_SubKey::parse($line);
-                $key->addSubKey($subKey);
-
-            } elseif ($lineExp[0] == 'fpr') {
-
-                $fingerprint = $lineExp[9];
-
-                // set current sub-key fingerprint
-                $subKey->setFingerprint($fingerprint);
-
-                // if private key exists, set has private to true
-                if (in_array($fingerprint, $privateKeyFingerprints)) {
-                    $subKey->setHasPrivate(true);
-                }
-
-            } elseif ($lineExp[0] == 'uid') {
-
-                $string = stripcslashes($lineExp[9]); // as per documentation
-                $userId = new Crypt_GPG_UserId($string);
-
-                if ($lineExp[1] == 'r') {
-                    $userId->setRevoked(true);
-                }
-
-                $key->addUserId($userId);
-
-            }
-        }
-
-        // add last key
-        if ($key !== null) {
-            $keys[] = $key;
-        }
-
-        return $keys;
+        return parent::_getKeys($keyId);
     }
 
     // }}}
@@ -1668,24 +1407,6 @@ class Crypt_GPG
     }
 
     // }}}
-    // {{{ setEngine()
-
-    /**
-     * Sets the I/O engine to use for GnuPG operations
-     *
-     * Normally this method does not need to be used. It provides a means for
-     * dependency injection.
-     *
-     * @param Crypt_GPG_Engine $engine the engine to use.
-     *
-     * @return void
-     */
-    public function setEngine(Crypt_GPG_Engine $engine)
-    {
-        $this->engine = $engine;
-    }
-
-    // }}}
     // {{{ _addKey()
 
     /**
@@ -1708,7 +1429,7 @@ class Crypt_GPG
      *
      * @sensitive $passphrase
      */
-    private function _addKey(array &$array, $encrypt, $sign, $key,
+    protected function _addKey(array &$array, $encrypt, $sign, $key,
         $passphrase = null
     ) {
         $subKeys = array();
@@ -1802,7 +1523,7 @@ class Crypt_GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    private function _importKey($key, $isFile)
+    protected function _importKey($key, $isFile)
     {
         $result = array();
 
@@ -1890,7 +1611,7 @@ class Crypt_GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    private function _encrypt($data, $isFile, $outputFile, $armor)
+    protected function _encrypt($data, $isFile, $outputFile, $armor)
     {
         if (count($this->encryptKeys) === 0) {
             throw new Crypt_GPG_KeyNotFoundException(
@@ -1986,7 +1707,7 @@ class Crypt_GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    private function _decrypt($data, $isFile, $outputFile)
+    protected function _decrypt($data, $isFile, $outputFile)
     {
         if ($isFile) {
             $input = @fopen($data, 'rb');
@@ -2090,7 +1811,7 @@ class Crypt_GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    private function _sign($data, $isFile, $outputFile, $mode, $armor,
+    protected function _sign($data, $isFile, $outputFile, $mode, $armor,
         $textmode
     ) {
         if (count($this->signKeys) === 0) {
@@ -2226,7 +1947,7 @@ class Crypt_GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    private function _encryptAndSign($data, $isFile, $outputFile, $armor)
+    protected function _encryptAndSign($data, $isFile, $outputFile, $armor)
     {
         if (count($this->signKeys) === 0) {
             throw new Crypt_GPG_KeyNotFoundException(
@@ -2345,7 +2066,7 @@ class Crypt_GPG
      *
      * @see Crypt_GPG_Signature
      */
-    private function _verify($data, $isFile, $signature)
+    protected function _verify($data, $isFile, $signature)
     {
         if ($signature == '') {
             $operation = '--verify';
@@ -2455,7 +2176,7 @@ class Crypt_GPG
      *
      * @see Crypt_GPG_Signature
      */
-    private function _decryptAndVerify($data, $isFile, $outputFile)
+    protected function _decryptAndVerify($data, $isFile, $outputFile)
     {
         if ($isFile) {
             $input = @fopen($data, 'rb');

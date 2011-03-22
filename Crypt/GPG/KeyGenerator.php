@@ -45,6 +45,8 @@ require_once 'Crypt/GPGAbstract.php';
  */
 require_once 'Crypt/GPG/KeyGeneratorStatusHandler.php';
 
+// {{{ class Crypt_GPG_KeyGenerator
+
 /**
  * GnuPG key generator
  *
@@ -75,10 +77,7 @@ require_once 'Crypt/GPG/KeyGeneratorStatusHandler.php';
  */
 class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
 {
-    /**
-     * @var Crypt_GPG_UserId
-     */
-    protected $_userId = null;
+    // {{{ protected properties
 
     /**
      * The expiration date of generated keys
@@ -159,10 +158,15 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     protected $_subKeyUsage = Crypt_GPG_SubKey::USAGE_ENCRYPT;
 
     /**
+     * The GnuPG status handler to use for key generation
+     *
      * @var Crypt_GPG_KeyGeneratorStatusHandler
+     *
+     * @see Crypt_GPG_KeyGenerator::setStatusHandler()
      */
     protected $_statusHandler = null;
 
+    // }}}
     // {{{ __construct()
 
     /**
@@ -247,27 +251,6 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     }
 
     // }}}
-
-    public function setUserId($name, $email = '', $comment = '')
-    {
-        if ($name instanceof Crypt_GPG_UserId) {
-            $userId = $name;
-        } else {
-            if ($email == '') {
-                throw new InvalidArgumentException(
-                    'If $name is specified, $email must also be specified.'
-                );
-            }
-
-            $userId = new Crypt_GPG_UserId();
-            $userId->setName($name)->setEmail($email)->setComment($comment);
-        }
-
-        $this->_userId = $userId;
-
-        return $this;
-    }
-
     // {{{ setExpirationDate()
 
     /**
@@ -409,7 +392,19 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     }
 
     // }}}
+    // {{{ setKeyStatusHandler()
 
+    /**
+     * Sets the status handler to use for key generation
+     *
+     * Normally this method does not need to be used. It provides a means for
+     * dependency injection.
+     *
+     * @param Crypt_GPG_KeyStatusHandler $handler the key status handler to
+     *                                            use.
+     *
+     * @return Crypt_GPG_KeyGenerator the current object, for fluent interface.
+     */
     public function setStatusHandler(
         Crypt_GPG_KeyGeneratorStatusHandler $handler
     ) {
@@ -417,9 +412,13 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         return $this;
     }
 
-    public function generateKey()
+    // }}}
+
+    public function generateKey($name, $email = '', $comment = '')
     {
         $handle = uniqid('key', true);
+
+        $userId = $this->getUserId($name, $email, $comment);
 
         $keyParams = array(
             'Key-Type'      => $this->_keyAlgorithm,
@@ -428,8 +427,8 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             'Subkey-Type'   => $this->_subKeyAlgorithm,
             'Subkey-Length' => $this->_subKeySize,
             'Subkey-Usage'  => $this->getUsage($this->_subKeyUsage),
-            'Name-Real'     => $this->_userId->getName(),
-            'Name-Email'    => $this->_userId->getEmail(),
+            'Name-Real'     => $userId->getName(),
+            'Name-Email'    => $userId->getEmail(),
             'Handle'        => $handle,
         );
 
@@ -443,8 +442,8 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $keyParams['Passphrase'] = $this->_passphrase;
         }
 
-        if ($this->_userId->getComment() != '') {
-            $keyParam['Name-Comment'] = $this->_userId->getComment();
+        if ($userId->getComment() != '') {
+            $keyParam['Name-Comment'] = $userId->getComment();
         }
 
         $keyParamsFormatted = array();
@@ -502,6 +501,21 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         return $keys[0];
     }
 
+    // {{{ getUsage()
+
+    /**
+     * Builds a GnuPG key usage string suitable for key generation
+     *
+     * See <b>doc/DETAILS</b> in the
+     * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
+     * information on the key usage format.
+     *
+     * @param integer $usage a bitwise combination of the key usages. This is
+     *                       a combination of the Crypt_GPG_SubKey::USAGE_*
+     *                       constants.
+     *
+     * @return string the key usage string.
+     */
     protected function getUsage($usage)
     {
         $map = array(
@@ -525,6 +539,49 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
 
         return implode(',', $usageArray);
     }
+
+    // }}}
+    // {{{ getUserId()
+
+    /**
+     * Gets a user id object from parameters
+     *
+     * @param string|Crypt_GPG_UserId $name    either a {@link Crypt_GPG_UserId}
+     *                                         object, or a string containing
+     *                                         the name of the user id.
+     * @param string                  $email   if <i>$name</i> is specified,
+     *                                         this must be the email address
+     *                                         of the user id.
+     * @param string                  $comment optional. If <i>$name</i> is
+     *                                         specified, this can specify the
+     *                                         comment of the user id.
+     *
+     * @return Crypt_GPG_UserId a user id object for the specified parameters.
+     *
+     * @throws InvalidArgumentException if a string is supplied for
+     *         <i>$name</i> and no <i>$email</i> is specified.
+     */
+    protected function getUserId($name, $email = '', $comment = '')
+    {
+        if ($name instanceof Crypt_GPG_UserId) {
+            $userId = $name;
+        } else {
+            if ($email == '') {
+                throw new InvalidArgumentException(
+                    'If $name is specified, $email must also be specified.'
+                );
+            }
+
+            $userId = new Crypt_GPG_UserId();
+            $userId->setName($name)->setEmail($email)->setComment($comment);
+        }
+
+        return $userId;
+    }
+
+    // }}}
 }
+
+// }}}
 
 ?>

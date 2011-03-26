@@ -273,7 +273,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      */
     public function setExpirationDate($date)
     {
-        if (ctype_digit($date)) {
+        if (is_int($date) || ctype_digit(strval($date))) {
             $expirationDate = intval($date);
         } else {
             $expirationDate = strtotime($date);
@@ -289,7 +289,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             );
         }
 
-        if ($expirationDate < time() + 86400) {
+        if ($expirationDate !== 0 && $expirationDate < time() + 86400) {
             throw new InvalidArgumentException(
                 'Expiration date must be at least a day in the future.'
             );
@@ -378,7 +378,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      */
     public function setSubKeyParams($algorithm, $size = '', $usage = 0)
     {
-        $this->_subSubKeyAlgorithm = intval($algorithm);
+        $this->_subKeyAlgorithm = intval($algorithm);
 
         if ($size != 0) {
             $this->_subKeySize = intval($size);
@@ -392,7 +392,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     }
 
     // }}}
-    // {{{ setKeyStatusHandler()
+    // {{{ setStatusHandler()
 
     /**
      * Sets the status handler to use for key generation
@@ -428,7 +428,6 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             'Subkey-Length' => $this->_subKeySize,
             'Subkey-Usage'  => $this->getUsage($this->_subKeyUsage),
             'Name-Real'     => $userId->getName(),
-            'Name-Email'    => $userId->getEmail(),
             'Handle'        => $handle,
         );
 
@@ -442,9 +441,14 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $keyParams['Passphrase'] = $this->_passphrase;
         }
 
-        if ($userId->getComment() != '') {
-            $keyParam['Name-Comment'] = $userId->getComment();
+        if ($userId->getEmail() != '') {
+            $keyParams['Name-Email'] = $userId->getEmail();
         }
+
+        if ($userId->getComment() != '') {
+            $keyParams['Name-Comment'] = $userId->getComment();
+        }
+
 
         $keyParamsFormatted = array();
         foreach ($keyParams as $name => $value) {
@@ -466,7 +470,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         $code = $this->engine->getErrorCode();
 
         switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
+        case self::ERROR_NONE:
             break;
         default:
             throw new Crypt_GPG_Exception(
@@ -478,9 +482,9 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         $code = $handler->getErrorCode();
 
         switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
+        case self::ERROR_NONE:
             break;
-        case Crypt_GPG::ERROR_KEY_NOT_CREATED:
+        case self::ERROR_KEY_NOT_CREATED:
             throw new Crypt_GPG_KeyNotCreatedException(
                 'Unable to create new key-pair. Invalid key parameters. ' .
                 'sure the specified key types are correct.', $code);
@@ -549,29 +553,20 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      * @param string|Crypt_GPG_UserId $name    either a {@link Crypt_GPG_UserId}
      *                                         object, or a string containing
      *                                         the name of the user id.
-     * @param string                  $email   if <i>$name</i> is specified,
-     *                                         this must be the email address
-     *                                         of the user id.
+     * @param string                  $email   optional. If <i>$name</i> is
+     *                                         specified as a string, this is
+     *                                         the email address of the user id.
      * @param string                  $comment optional. If <i>$name</i> is
-     *                                         specified, this can specify the
-     *                                         comment of the user id.
+     *                                         specified as a string, this is
+     *                                         the comment of the user id.
      *
      * @return Crypt_GPG_UserId a user id object for the specified parameters.
-     *
-     * @throws InvalidArgumentException if a string is supplied for
-     *         <i>$name</i> and no <i>$email</i> is specified.
      */
     protected function getUserId($name, $email = '', $comment = '')
     {
         if ($name instanceof Crypt_GPG_UserId) {
             $userId = $name;
         } else {
-            if ($email == '') {
-                throw new InvalidArgumentException(
-                    'If $name is specified, $email must also be specified.'
-                );
-            }
-
             $userId = new Crypt_GPG_UserId();
             $userId->setName($name)->setEmail($email)->setComment($comment);
         }

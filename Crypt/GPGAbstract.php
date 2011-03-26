@@ -85,6 +85,88 @@ require_once 'Crypt/GPG/Exceptions.php';
  */
 abstract class Crypt_GPGAbstract
 {
+    // {{{ class error constants
+
+    /**
+     * Error code returned when there is no error.
+     */
+    const ERROR_NONE = 0;
+
+    /**
+     * Error code returned when an unknown or unhandled error occurs.
+     */
+    const ERROR_UNKNOWN = 1;
+
+    /**
+     * Error code returned when a bad passphrase is used.
+     */
+    const ERROR_BAD_PASSPHRASE = 2;
+
+    /**
+     * Error code returned when a required passphrase is missing.
+     */
+    const ERROR_MISSING_PASSPHRASE = 3;
+
+    /**
+     * Error code returned when a key that is already in the keyring is
+     * imported.
+     */
+    const ERROR_DUPLICATE_KEY = 4;
+
+    /**
+     * Error code returned the required data is missing for an operation.
+     *
+     * This could be missing key data, missing encrypted data or missing
+     * signature data.
+     */
+    const ERROR_NO_DATA = 5;
+
+    /**
+     * Error code returned when an unsigned key is used.
+     */
+    const ERROR_UNSIGNED_KEY = 6;
+
+    /**
+     * Error code returned when a key that is not self-signed is used.
+     */
+    const ERROR_NOT_SELF_SIGNED = 7;
+
+    /**
+     * Error code returned when a public or private key that is not in the
+     * keyring is used.
+     */
+    const ERROR_KEY_NOT_FOUND = 8;
+
+    /**
+     * Error code returned when an attempt to delete public key having a
+     * private key is made.
+     */
+    const ERROR_DELETE_PRIVATE_KEY = 9;
+
+    /**
+     * Error code returned when one or more bad signatures are detected.
+     */
+    const ERROR_BAD_SIGNATURE = 10;
+
+    /**
+     * Error code returned when there is a problem reading GnuPG data files.
+     */
+    const ERROR_FILE_PERMISSIONS = 11;
+
+    /**
+     * Error code returned when a key could not be created.
+     */
+    const ERROR_KEY_NOT_CREATED = 12;
+
+    // }}}
+    // {{{ other class constants
+
+    /**
+     * URI at which package bugs may be reported.
+     */
+    const BUG_URI = 'http://pear.php.net/bugs/report.php?package=Crypt_GPG';
+
+    // }}}
     // {{{ protected class properties
 
     /**
@@ -92,7 +174,7 @@ abstract class Crypt_GPGAbstract
      *
      * @var Crypt_GPG_Engine
      *
-     * @see Crypt_GPG::setEngine()
+     * @see Crypt_GPGAbstract::setEngine()
      */
     protected $engine = null;
 
@@ -251,11 +333,11 @@ abstract class Crypt_GPGAbstract
         $code = $this->engine->getErrorCode();
 
         switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+        case self::ERROR_NONE:
+        case self::ERROR_KEY_NOT_FOUND:
             // ignore not found key errors
             break;
-        case Crypt_GPG::ERROR_FILE_PERMISSIONS:
+        case self::ERROR_FILE_PERMISSIONS:
             $filename = $this->engine->getErrorFilename();
             if ($filename) {
                 throw new Crypt_GPG_FileException(
@@ -305,11 +387,11 @@ abstract class Crypt_GPGAbstract
         $code = $this->engine->getErrorCode();
 
         switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+        case self::ERROR_NONE:
+        case self::ERROR_KEY_NOT_FOUND:
             // ignore not found key errors
             break;
-        case Crypt_GPG::ERROR_FILE_PERMISSIONS:
+        case self::ERROR_FILE_PERMISSIONS:
             $filename = $this->engine->getErrorFilename();
             if ($filename) {
                 throw new Crypt_GPG_FileException(

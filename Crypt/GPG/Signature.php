@@ -159,8 +159,6 @@ class Crypt_GPG_Signature
 
             if ($signature->_userId instanceof Crypt_GPG_UserId) {
                 $this->_userId = clone $signature->_userId;
-            } else {
-                $this->_userId = $signature->_userId;
             }
         }
 

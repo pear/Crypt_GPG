@@ -32,7 +32,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -55,6 +55,7 @@ require_once 'ExportPublicKeyTestCase.php';
 require_once 'GetFingerprintTestCase.php';
 require_once 'GetKeysTestCase.php';
 require_once 'ImportKeyTestCase.php';
+require_once 'KeyGeneratorTestCase.php';
 require_once 'KeyTestCase.php';
 require_once 'SignatureTestCase.php';
 require_once 'SignTestCase.php';
@@ -68,7 +69,7 @@ require_once 'VerifyTestCase.php';
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -98,6 +99,7 @@ class Crypt_GPG_AllTests
         $suite->addTestSuite('GetFingerprintTestCase');
         $suite->addTestSuite('GetKeysTestCase');
         $suite->addTestSuite('ImportKeyTestCase');
+        $suite->addTestSuite('KeyGeneratorTestCase');
         $suite->addTestSuite('KeyTestCase');
         $suite->addTestSuite('SignatureTestCase');
         $suite->addTestSuite('SignTestCase');

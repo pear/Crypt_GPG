@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * This is the unit test configuration file for Crypt_GPG
+ *
+ * This configuration allows key generation tests to be enabled. The key
+ * generation tests are disabled by default as they require true random numbers
+ * can can take a long time to run.
+ *
+ * @category  Encryption
+ * @package   Crypt_GPG
+ * @author    Michael Gauthier <mike@silverorange.com>
+ * @copyright 2011 silverorange
+ * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @version   CVS: $Id:$
+ * @link      http://pear.php.net/package/Crypt_GPG
+ */
+
+$GLOBALS['Crypt_GPG_Unittest_Config'] = array(
+    'enable-key-generation' => false,
+);
+
+?>

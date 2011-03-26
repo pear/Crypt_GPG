@@ -29,7 +29,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2008 silverorange
+ * @copyright 2005-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -108,7 +108,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
     {
         return array(
             'homedir' => dirname(__FILE__) . '/' . self::HOMEDIR,
-//            'debug'   => true
+            'debug'   => true
         );
     }
 
@@ -120,6 +120,33 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->_old_error_level = error_reporting(E_ALL | E_STRICT);
+
+        // load test configuration file if it exists
+        $configFilename = dirname(__FILE__).'/config.php';
+        if (file_exists($configFilename)) {
+            include $configFilename;
+
+            if (   !isset($GLOBALS['Crypt_GPG_Unittest_Config'])
+                || !is_array($GLOBALS['Crypt_GPG_Unittest_Config'])
+            ) {
+                $this->markTestSkipped(
+                    'Unit test configuration is incorrect. Please read the '
+                    . 'documentation in TestCase.php and fix the '
+                    . 'configuration file. See the configuration in '
+                    . '\'config.php.dist\' for an example.'
+                );
+            }
+
+            $this->config = $GLOBALS['Crypt_GPG_Unittest_Config'];
+        } else {
+            $this->config = array();
+        }
+
+        // default test config values
+        if (!isset($this->config['enable-key-generation'])) {
+            $this->config['enable-key-generation'] = false;
+        }
+
 
         $this->_setUpKeyring();
         $this->_setUpTempdir();

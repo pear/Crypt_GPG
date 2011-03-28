@@ -58,8 +58,8 @@ require_once 'Crypt/GPG/KeyGeneratorStatusHandler.php';
  * more entropy is available.
  *
  * If quick key generation is important, a hardware entropy generator, or an
- * entropy gathering daemon may be installed. For example, Debian systems may
- * want to install the 'randomsound' package.
+ * entropy gathering daemon may be installed. For example, administrators of
+ * Debian systems may want to install the 'randomsound' package.
  *
  * This class uses the experimental automated key generation support available
  * in GnuPG. See <b>doc/DETAILS</b> in the
@@ -421,7 +421,40 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     }
 
     // }}}
+    // {{{ generateKey()
 
+    /**
+     * Generates a new key-pair in the current keyring
+     *
+     * Secure key generation requires true random numbers, and as such can be
+     * solw. If the operating system runs out of entropy, key generation will
+     * block until more entropy is available.
+     *
+     * If quick key generation is important, a hardware entropy generator, or
+     * an entropy gathering daemon may be installed. For example,
+     * administrators of Debian systems may want to install the 'randomsound'
+     * package.
+     *
+     * @param string|Crypt_GPG_UserId $name    either a {@link Crypt_GPG_UserId}
+     *                                         object, or a string containing
+     *                                         the name of the user id.
+     * @param string                  $email   optional. If <i>$name</i> is
+     *                                         specified as a string, this is
+     *                                         the email address of the user id.
+     * @param string                  $comment optional. If <i>$name</i> is
+     *                                         specified as a string, this is
+     *                                         the comment of the user id.
+     *
+     * @return Crypt_GPG_Key the newly generated key.
+     *
+     * @throws Crypt_GPG_KeyNotCreatedException if the key parameters are
+     *         incorrect, if an unknown error occurs during key generation, or
+     *         if the newly generated key is not found in the keyring.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     */
     public function generateKey($name, $email = '', $comment = '')
     {
         $handle = uniqid('key', true);
@@ -495,7 +528,8 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         case self::ERROR_KEY_NOT_CREATED:
             throw new Crypt_GPG_KeyNotCreatedException(
                 'Unable to create new key-pair. Invalid key parameters. ' .
-                'sure the specified key types are correct.', $code);
+                'Make sure the specified key algorithms and sizes are ' .
+                'correct.', $code);
         }
 
         $fingerprint = $handler->getKeyFingerprint();
@@ -513,6 +547,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         return $keys[0];
     }
 
+    // }}}
     // {{{ getUsage()
 
     /**

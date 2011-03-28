@@ -209,8 +209,8 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
      */
     public function testSetExpirationDate_integer()
     {
-        $expectedDate = 4456753652;
-        $this->generator->setExpirationDate(4456753652);
+        $expectedDate = 2000000000;
+        $this->generator->setExpirationDate(2000000000);
 
         $this->assertAttributeEquals(
             $expectedDate,
@@ -228,8 +228,8 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
      */
     public function testSetExpirationDate_string()
     {
-        $expectedDate = 4475921734;
-        $this->generator->setExpirationDate('2111-11-02T11:35:34');
+        $expectedDate = 2000000000;
+        $this->generator->setExpirationDate('2033-05-18T00:33:20');
 
         $this->assertAttributeEquals(
             $expectedDate,
@@ -237,18 +237,6 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
             $this->generator,
             'Setting expiration date by string failed.'
         );
-    }
-
-    // }}}
-    // {{{ testSetExpirationDate_invalid_date()
-
-    /**
-     * @group mutators
-     * @expectedException InvalidArgumentException
-     */
-    public function testSetExpirationDate_invalid_date()
-    {
-        $this->generator->setExpirationDate(1301088055);
     }
 
     // }}}
@@ -261,6 +249,42 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
     public function testSetExpirationDate_invalid_format()
     {
         $this->generator->setExpirationDate('this is not a date');
+    }
+
+    // }}}
+    // {{{ testSetExpirationDate_too_early_date()
+
+    /**
+     * @group mutators
+     * @expectedException InvalidArgumentException
+     */
+    public function testSetExpirationDate_too_early_date()
+    {
+        $this->generator->setExpirationDate(1301088055);
+    }
+
+    // }}}
+    // {{{ testSetExpirationDate_today()
+
+    /**
+     * @group mutators
+     * @expectedException InvalidArgumentException
+     */
+    public function testSetExpirationDate_today()
+    {
+        $this->generator->setExpirationDate(time());
+    }
+
+    // }}}
+    // {{{ testSetExpirationDate_too_late_date()
+
+    /**
+     * @group mutators
+     * @expectedException InvalidArgumentException
+     */
+    public function testSetExpirationDate_too_late_date()
+    {
+        $this->generator->setExpirationDate(2147483648);
     }
 
     // }}}
@@ -828,7 +852,7 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
         $subKey = new Crypt_GPG_SubKey();
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
         $subKey->setLength(1024);
-        $subKey->setExpirationDate(4456753652);
+        $subKey->setExpirationDate(1999998000); // truncated to day
         $subKey->setCanSign(true);
         $subKey->setCanEncrypt(false);
         $subKey->setHasPrivate(true);
@@ -837,14 +861,14 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
         $subKey = new Crypt_GPG_SubKey();
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
         $subKey->setLength(2048);
-        $subKey->setExpirationDate(4456753652);
+        $subKey->setExpirationDate(1999998000); // truncated to day
         $subKey->setCanSign(false);
         $subKey->setCanEncrypt(true);
         $subKey->setHasPrivate(true);
         $expectedKey->addSubKey($subKey);
         // }}}
 
-        $key = $this->generator->setExpirationDate(4456753652)->generateKey(
+        $key = $this->generator->setExpirationDate(2000000000)->generateKey(
             new Crypt_GPG_UserId(
                 'Test Keypair <generate-test@example.com>'
             )

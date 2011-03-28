@@ -267,7 +267,8 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @throws InvalidArgumentException if the date is not a valid format, or
      *                                  if the date is not at least one day in
-     *                                  the future.
+     *                                  the future, or if the date is greater
+     *                                  than 2038-01-19T03:14:07.
      *
      * @return Crypt_GPG_KeyGenerator the current object, for fluent interface.
      */
@@ -292,6 +293,13 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         if ($expirationDate !== 0 && $expirationDate < time() + 86400) {
             throw new InvalidArgumentException(
                 'Expiration date must be at least a day in the future.'
+            );
+        }
+
+        // GnuPG suffers from the 2038 bug
+        if ($expirationDate > 2147483647) {
+            throw new InvalidArgumentException(
+                'Expiration date must not be greater than 2038-01-19T03:14:07.'
             );
         }
 

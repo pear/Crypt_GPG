@@ -158,6 +158,12 @@ abstract class Crypt_GPGAbstract
      */
     const ERROR_KEY_NOT_CREATED = 12;
 
+    /**
+     * Error code returned when bad key parameters are used during key
+     * generation.
+     */
+    const ERROR_BAD_KEY_PARAMS = 13;
+
     // }}}
     // {{{ other class constants
 

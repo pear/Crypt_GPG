@@ -45,6 +45,11 @@ require_once 'Crypt/GPGAbstract.php';
  */
 require_once 'Crypt/GPG/KeyGeneratorStatusHandler.php';
 
+/**
+ * Error output handler for key generation
+ */
+require_once 'Crypt/GPG/KeyGeneratorErrorHandler.php';
+
 // {{{ class Crypt_GPG_KeyGenerator
 
 /**
@@ -166,6 +171,15 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      */
     protected $_statusHandler = null;
 
+    /**
+     * The GnuPG error handler to use for key generation
+     *
+     * @var Crypt_GPG_KeyGeneratorErrorHandler
+     *
+     * @see Crypt_GPG_KeyGenerator::setErrorHandler()
+     */
+    protected $_errorHandler = null;
+
     // }}}
     // {{{ __construct()
 
@@ -248,6 +262,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         parent::__construct($options);
 
         $this->_statusHandler = new Crypt_GPG_KeyGeneratorStatusHandler();
+        $this->_errorHandler  = new Crypt_GPG_KeyGeneratorErrorHandler();
     }
 
     // }}}
@@ -337,7 +352,9 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      * @param integer $size      optional. The size of the key. Different
      *                           algorithms have different size requirements.
      *                           If not specified, the default size for the
-     *                           specified algorithm will be used.
+     *                           specified algorithm will be used. If an
+     *                           invalid key size is used, GnuPG will do its
+     *                           best to round it to a valid size.
      * @param integer $usage     optional. A bitwise combination of key usages.
      *                           If not specified, the primary key will be used
      *                           only to sign and certify. This is the default
@@ -350,14 +367,50 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      */
     public function setKeyParams($algorithm, $size = 0, $usage = 0)
     {
-        $this->_keyAlgorithm = intval($algorithm);
+        $apgorithm = intval($algorithm);
+
+        if ($algorithm === Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC) {
+            throw new Crypt_GPG_InvalidKeyParamsException(
+                'Primary key algorithm must be capable of signing. The ' .
+                'Elgamal algorithm can only encrypt.',
+                0,
+                $algorithm,
+                $size,
+                $usage
+            );
+        }
 
         if ($size != 0) {
-            $this->_keySize = intval($size);
+            $size = intval($size);
         }
 
         if ($usage != 0) {
-            $this->_keyUsage = intval($usage);
+            $usage = intval($usage);
+        }
+
+        if (   $algorithm === Crypt_GPG_SubKey::ALGORITHM_DSA
+            && ($usage & Crypt_GPG_SubKey::USAGE_ENCRYPT) ===
+                Crypt_GPG_SubKey::USAGE_ENCRYPT
+        ) {
+            throw new Crypt_GPG_InvalidKeyParamsException(
+                'The DSA algorithm is not capable of encrypting. Please ' .
+                'specify a different algorithm or do not include encryption ' .
+                'as a usage for the primary key.',
+                0,
+                $algorithm,
+                $size,
+                $usage
+            );
+        }
+
+        $this->_keyAlgorithm = $algorithm;
+
+        if ($size != 0) {
+            $this->_keySize = $size;
+        }
+
+        if ($usage != 0) {
+            $this->_keyUsage = $usage;
         }
 
         return $this;
@@ -375,7 +428,9 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      * @param integer $size      optional. The size of the key. Different
      *                           algorithms have different size requirements.
      *                           If not specified, the default size for the
-     *                           specified algorithm will be used.
+     *                           specified algorithm will be used. If an
+     *                           invalid key size is used, GnuPG will do its
+     *                           best to round it to a valid size.
      * @param integer $usage     optional. A bitwise combination of key usages.
      *                           If not specified, the sub-key will be used
      *                           only to encrypt. This is the default behavior
@@ -386,14 +441,54 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      */
     public function setSubKeyParams($algorithm, $size = '', $usage = 0)
     {
-        $this->_subKeyAlgorithm = intval($algorithm);
+        $apgorithm = intval($algorithm);
 
         if ($size != 0) {
-            $this->_subKeySize = intval($size);
+            $size = intval($size);
         }
 
         if ($usage != 0) {
-            $this->_subKeyUsage = intval($usage);
+            $usage = intval($usage);
+        }
+
+        if (   $algorithm === Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC
+            && ($usage & Crypt_GPG_SubKey::USAGE_SIGN) ===
+                Crypt_GPG_SubKey::USAGE_SIGN
+        ) {
+            throw new Crypt_GPG_InvalidKeyParamsException(
+                'The Elgamal algorithm is not capable of signing. Please ' .
+                'specify a different algorithm or do not include signing ' .
+                'as a usage for the sub-key.',
+                0,
+                $algorithm,
+                $size,
+                $usage
+            );
+        }
+
+        if (   $algorithm === Crypt_GPG_SubKey::ALGORITHM_DSA
+            && ($usage & Crypt_GPG_SubKey::USAGE_ENCRYPT) ===
+                Crypt_GPG_SubKey::USAGE_ENCRYPT
+        ) {
+            throw new Crypt_GPG_InvalidKeyParamsException(
+                'The DSA algorithm is not capable of encrypting. Please ' .
+                'specify a different algorithm or do not include encryption ' .
+                'as a usage for the sub-key.',
+                0,
+                $algorithm,
+                $size,
+                $usage
+            );
+        }
+
+        $this->_subKeyAlgorithm = $algorithm;
+
+        if ($size != 0) {
+            $this->_subKeySize = $size;
+        }
+
+        if ($usage != 0) {
+            $this->_subKeyUsage = $usage;
         }
 
         return $this;
@@ -417,6 +512,27 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         Crypt_GPG_KeyGeneratorStatusHandler $handler
     ) {
         $this->_statusHandler = $handler;
+        return $this;
+    }
+
+    // }}}
+    // {{{ setErrorHandler()
+
+    /**
+     * Sets the error handler to use for key generation
+     *
+     * Normally this method does not need to be used. It provides a means for
+     * dependency injection.
+     *
+     * @param Crypt_GPG_KeyErrorHandler $handler the key error handler to
+     *                                           use.
+     *
+     * @return Crypt_GPG_KeyGenerator the current object, for fluent interface.
+     */
+    public function setErrorHandler(
+        Crypt_GPG_KeyGeneratorErrorHandler $handler
+    ) {
+        $this->_errorHandler = $handler;
         return $this;
     }
 
@@ -498,15 +614,45 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
 
         $input = implode("\n", $keyParamsFormatted) . "\n%commit\n";
 
-        $handler = clone $this->_statusHandler;
-        $handler->setHandle($handle);
+        $statusHandler = clone $this->_statusHandler;
+        $statusHandler->setHandle($handle);
+
+        $errorHandler = clone $this->_errorHandler;
 
         $this->engine->reset();
-        $this->engine->addStatusHandler(array($handler, 'handle'));
+        $this->engine->addStatusHandler(array($statusHandler, 'handle'));
+        $this->engine->addErrorHandler(array($errorHandler, 'handle'));
         $this->engine->setInput($input);
         $this->engine->setOutput($output);
         $this->engine->setOperation('--gen-key', array('--batch'));
         $this->engine->run();
+
+        $code = $errorHandler->getErrorCode();
+        switch ($code) {
+        case self::ERROR_BAD_KEY_PARAMS:
+            switch ($errorHandler->getLineNumber()) {
+            case 1:
+                throw new Crypt_GPG_InvalidKeyParamsException(
+                    'Invalid primary key algorithm specified.',
+                    0,
+                    $this->_keyAlgorithm,
+                    $this->_keySize,
+                    $this->_keyUsage
+                );
+            case 4:
+                throw new Crypt_GPG_InvalidKeyParamsException(
+                    'Invalid sub-key algorithm specified.',
+                    0,
+                    $this->_subKeyAlgorithm,
+                    $this->_subKeySize,
+                    $this->_subKeyUsage
+                );
+            default:
+                throw new Crypt_GPG_InvalidKeyParamsException(
+                    'Invalid key algorithm specified.'
+                );
+            }
+        }
 
         $code = $this->engine->getErrorCode();
 
@@ -520,7 +666,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
                 'report at ' . self::BUG_URI, $code);
         }
 
-        $code = $handler->getErrorCode();
+        $code = $statusHandler->getErrorCode();
 
         switch ($code) {
         case self::ERROR_NONE:
@@ -532,7 +678,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
                 'correct.', $code);
         }
 
-        $fingerprint = $handler->getKeyFingerprint();
+        $fingerprint = $statusHandler->getKeyFingerprint();
         $keys        = $this->_getKeys($fingerprint);
 
         if (count($keys) === 0) {

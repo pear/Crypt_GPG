@@ -430,6 +430,34 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
+    // {{{ testSetKeyParams_invalid_algorithm()
+
+    /**
+     * @group mutators
+     * @expectedException Crypt_GPG_InvalidKeyParamsException
+     */
+    public function testSetKeyParams_invalid_algorithm()
+    {
+        $this->generator->setKeyParams(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+    }
+
+    // }}}
+    // {{{ testSetKeyParams_invalid_dsa_usage()
+
+    /**
+     * @group mutators
+     * @expectedException Crypt_GPG_InvalidKeyParamsException
+     */
+    public function testSetKeyParams_invalid_dsa_usage()
+    {
+        $this->generator->setKeyParams(
+            Crypt_GPG_SubKey::ALGORITHM_DSA,
+            2048,
+            Crypt_GPG_SubKey::USAGE_ENCRYPT | Crypt_GPG_SubKey::USAGE_CERTIFY
+        );
+    }
+
+    // }}}
     // {{{ testSetSubKeyParams_algorithm()
 
     /**
@@ -549,6 +577,38 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
+    // {{{ testSetSubKeyParams_invalid_elgamal_usage()
+
+    /**
+     * @group mutators
+     * @expectedException Crypt_GPG_InvalidKeyParamsException
+     */
+    public function testSetSubKeyParams_invalid_elgamal_usage()
+    {
+        $this->generator->setSubKeyParams(
+            Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            2048,
+            Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_ENCRYPT
+        );
+    }
+
+    // }}}
+    // {{{ testSetSubKeyParams_invalid_dsa_usage()
+
+    /**
+     * @group mutators
+     * @expectedException Crypt_GPG_InvalidKeyParamsException
+     */
+    public function testSetSubKeyParams_invalid_dsa_usage()
+    {
+        $this->generator->setSubKeyParams(
+            Crypt_GPG_SubKey::ALGORITHM_DSA,
+            2048,
+            Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_ENCRYPT
+        );
+    }
+
+    // }}}
     // {{{ testSetStatusHandler()
 
     /**
@@ -565,6 +625,26 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
             '_statusHandler',
             $this->generator,
             'Setting status handler failed.'
+        );
+    }
+
+    // }}}
+    // {{{ testSetErrorHandler()
+
+    /**
+     * @group mutators
+     */
+    public function testSetErrorHandler()
+    {
+        $errorHandler = new Crypt_GPG_KeyGeneratorErrorHandler();
+
+        $this->generator->setErrorHandler($errorHandler);
+
+        $this->assertAttributeEquals(
+            $errorHandler,
+            '_errorHandler',
+            $this->generator,
+            'Setting error handler failed.'
         );
     }
 
@@ -875,6 +955,58 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
         );
 
         $this->assertKeyEquals($expectedKey, $key);
+    }
+
+    // }}}
+    // {{{ testGenerateKeyWithInvalidPrimaryKeyAlgorithm()
+
+    /**
+     * @group generate-key
+     * @expectedException Crypt_GPG_InvalidKeyParamsException
+     */
+    public function testGenerateKeyWithInvalidPrimaryKeyAlgorithm()
+    {
+        if (!$this->config['enable-key-generation']) {
+            $this->markTestSkipped(
+                'Key generation tests are disabled. To run key generation '
+                . 'tests, enable them in the test configuration. See the '
+                . 'configuration in \'config.php.dist\' for an exampe.'
+            );
+        }
+
+        $key = $this->generator
+            ->setKeyParams(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN)
+            ->generateKey(
+                new Crypt_GPG_UserId(
+                    'Test Keypair <generate-test@example.com>'
+                )
+            );
+    }
+
+    // }}}
+    // {{{ testGenerateKeyWithInvalidSubKeyAlgorithm()
+
+    /**
+     * @group generate-key
+     * @expectedException Crypt_GPG_InvalidKeyParamsException
+     */
+    public function testGenerateKeyWithInvalidSubKeyAlgorithm()
+    {
+        if (!$this->config['enable-key-generation']) {
+            $this->markTestSkipped(
+                'Key generation tests are disabled. To run key generation '
+                . 'tests, enable them in the test configuration. See the '
+                . 'configuration in \'config.php.dist\' for an exampe.'
+            );
+        }
+
+        $key = $this->generator
+            ->setSubKeyParams(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN)
+            ->generateKey(
+                new Crypt_GPG_UserId(
+                    'Test Keypair <generate-test@example.com>'
+                )
+            );
     }
 
     // }}}

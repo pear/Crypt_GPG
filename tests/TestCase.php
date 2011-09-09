@@ -36,11 +36,6 @@
  */
 
 /**
- * PHPUnit3 framework
- */
-require_once 'PHPUnit/Framework.php';
-
-/**
  * The Crypt_GPG class to test
  */
 require_once 'Crypt/GPG.php';

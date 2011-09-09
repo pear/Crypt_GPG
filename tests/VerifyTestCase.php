@@ -153,7 +153,7 @@ TEXT;
         $expectedSignatures = array($signature);
 
         $signatures = $this->gpg->verify($normalSignedData);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -201,7 +201,7 @@ TEXT;
         $expectedSignatures = array($signature);
 
         $signatures = $this->gpg->verify($clearsignedData);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -247,7 +247,7 @@ TEXT;
         $expectedSignatures = array($signature);
 
         $signatures = $this->gpg->verify($data, $detachedSignature);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -311,7 +311,7 @@ TEXT;
         $expectedSignatures = array($firstSignature, $secondSignature);
 
         $signatures = $this->gpg->verify($dualNormalSignedData);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -377,7 +377,7 @@ TEXT;
         $expectedSignatures = array($firstSignature, $secondSignature);
 
         $signatures = $this->gpg->verify($dualClearsignedData);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -441,7 +441,7 @@ TEXT;
         $expectedSignatures = array($firstSignature, $secondSignature);
 
         $signatures = $this->gpg->verify($data, $dualDetachedSignature);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -480,7 +480,7 @@ TEXT;
         $expectedSignatures = array($signature);
 
         $signatures = $this->gpg->verify($modifiedData, $detachedSignature);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -531,7 +531,7 @@ TEXT;
         $expectedSignatures = array($firstSignature, $secondSignature);
 
         $signatures = $this->gpg->verify($modifiedData, $dualDetachedSignature);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -568,7 +568,7 @@ TEXT;
             $this->getDataFilename('testVerifyFileNormalSignedData.asc');
 
         $signatures = $this->gpg->verifyFile($filename);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -602,7 +602,7 @@ TEXT;
         $filename = $this->getDataFilename('testVerifyFileClearsignedData.asc');
 
         $signatures = $this->gpg->verifyFile($filename);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -648,7 +648,7 @@ TEXT;
         $filename = $this->getDataFilename('testFileMedium.plain');
 
         $signatures = $this->gpg->verifyFile($filename, $signatureData);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -700,7 +700,7 @@ TEXT;
             $this->getDataFilename('testVerifyFileDualNormalSignedData.asc');
 
         $signatures = $this->gpg->verifyFile($filename);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -752,7 +752,7 @@ TEXT;
             $this->getDataFilename('testVerifyFileDualClearsignedData.asc');
 
         $signatures = $this->gpg->verifyFile($filename);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}
@@ -816,7 +816,7 @@ TEXT;
         $filename = $this->getDataFilename('testFileMedium.plain');
 
         $signatures = $this->gpg->verifyFile($filename, $signatureData);
-        $this->assertEquals($expectedSignatures, $signatures);
+        $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
     // }}}

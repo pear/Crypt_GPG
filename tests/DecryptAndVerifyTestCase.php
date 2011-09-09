@@ -118,7 +118,7 @@ TEXT;
 
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
         $results = $this->gpg->decryptAndVerify($encryptedData);
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
     // }}}
@@ -181,7 +181,7 @@ TEXT;
         // }}}
 
         $results = $this->gpg->decryptAndVerify($encryptedData);
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
     // }}}
@@ -490,13 +490,13 @@ TEXT;
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
         $results = $this->gpg->decryptAndVerify($encryptedData);
         $this->gpg->clearDecryptKeys();
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
 
         // decrypt with second key
         $this->gpg->addDecryptKey('second-keypair@example.com', 'test2');
         $results = $this->gpg->decryptAndVerify($encryptedData);
         $this->gpg->clearDecryptKeys();
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
     // }}}
@@ -571,13 +571,13 @@ TEXT;
 
         // decrypt with no passphrase
         $results = $this->gpg->decryptAndVerify($encryptedData);
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
 
         // decrypt with first key
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
         $results = $this->gpg->decryptAndVerify($encryptedData);
         $this->gpg->clearDecryptKeys();
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
     // }}}
@@ -659,7 +659,7 @@ TEXT;
 
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
         $results = $this->gpg->decryptAndVerify($encryptedData);
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
     // }}}
@@ -709,7 +709,7 @@ TEXT;
         // }}}
 
         $results = $this->gpg->decryptAndVerify($signedData);
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
     // }}}
@@ -768,7 +768,7 @@ TEXT;
 
         $this->gpg->addDecryptKey('multiple-subkeys@example.com', 'test');
         $results = $this->gpg->decryptAndVerify($encryptedData);
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
     // }}}
@@ -827,7 +827,7 @@ TEXT;
 
         $this->gpg->addDecryptKey('multiple-subkeys@example.com', 'test');
         $results = $this->gpg->decryptAndVerify($encryptedData);
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
     // }}}
@@ -872,7 +872,7 @@ TEXT;
         // }}}
 
         $results = $this->gpg->decryptAndVerify($clearsignedData);
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
     // }}}
@@ -919,7 +919,7 @@ TEXT;
             $outputFilename
         );
 
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
 
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
@@ -965,7 +965,7 @@ TEXT;
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
         $results = $this->gpg->decryptAndVerifyFile($inputFilename);
 
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
     // }}}
@@ -1013,7 +1013,7 @@ TEXT;
             $outputFilename
         );
 
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
 
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
@@ -1125,7 +1125,7 @@ TEXT;
             $outputFilename
         );
         $this->gpg->clearDecryptKeys();
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
 
@@ -1136,7 +1136,7 @@ TEXT;
             $outputFilename
         );
         $this->gpg->clearDecryptKeys();
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
@@ -1202,7 +1202,7 @@ TEXT;
             $inputFilename,
             $outputFilename
         );
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
@@ -1252,7 +1252,7 @@ TEXT;
             $outputFilename
         );
         $this->gpg->clearDecryptKeys();
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
 
@@ -1263,7 +1263,7 @@ TEXT;
             $outputFilename
         );
         $this->gpg->clearDecryptKeys();
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
@@ -1327,7 +1327,7 @@ TEXT;
             $outputFilename
         );
 
-        $this->assertEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
 
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);

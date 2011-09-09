@@ -660,6 +660,129 @@ TEXT;
     }
 
     // }}}
+
+    // signature related assertions
+    // {{{ assertDecryptAndVerifyResultsEquals()
+
+    protected function assertDecryptAndVerifyResultsEquals(
+        array $expected,
+        array $actual
+    ) {
+        $this->assertEquals(
+            count($expected),
+            count($actual),
+            'Result counts are different.'
+        );
+
+        $this->assertArrayHasKey(
+            'data',
+            $expected,
+            'Expected result does not include data.'
+        );
+
+        $this->assertArrayHasKey(
+            'data',
+            $actual,
+            'Actual result does not include data.'
+        );
+
+        $this->assertArrayHasKey(
+            'signatures',
+            $expected,
+            'Expected result does not include signatures.'
+        );
+
+        $this->assertArrayHasKey(
+            'signatures',
+            $actual,
+            'Actual result does not include signatures.'
+        );
+
+        $this->assertEquals(
+            $expected['data'],
+            $actual['data'],
+            'Decrypted data does not match.'
+        );
+
+        $this->assertSignaturesEquals(
+            $expected['signatures'],
+            $actual['signatures']
+        );
+    }
+
+    // }}}
+    // {{{ assertSignaturesEquals()
+
+    protected function assertSignaturesEquals(
+        array $expected,
+        array $actual
+    ) {
+        $this->assertEquals(
+            count($expected),
+            count($actual),
+            'Signature counts are different.'
+        );
+
+        for ($i = 0; $i < count($expected); $i++) {
+            $this->assertSignatureEquals($expected[$i], $actual[$i]);
+        }
+    }
+
+    // }}}
+    // {{{ assertSignatureEquals()
+
+    protected function assertSignatureEquals(
+        Crypt_GPG_Signature $expected,
+        Crypt_GPG_Signature $actual
+    ) {
+        $expectedUserId = $expected->getUserId();
+        $actualUserId   = $actual->getUserId();
+
+        $this->assertEquals($expectedUserId, $actualUserId,
+            'Signature user ids do not match.'
+        );
+
+        $expectedId = $expected->getId();
+        $actualId = $actual->getId();
+
+        $this->assertEquals(
+            strlen($expectedId),
+            strlen($actualId),
+            'Signature IDs are of different length.'
+        );
+
+        $this->assertEquals(
+            $expected->getKeyFingerprint(),
+            $actual->getKeyFingerprint(),
+            'Signature key fingerprints do not match.'
+        );
+
+        $this->assertEquals(
+            $expected->getKeyId(),
+            $actual->getKeyId(),
+            'Signature key IDs do not match.'
+        );
+
+        $this->assertEquals(
+            $expected->getCreationDate(),
+            $actual->getCreationDate(),
+            'Signature creation dates do not match.'
+        );
+
+        $this->assertEquals(
+            $expected->getExpirationDate(),
+            $actual->getExpirationDate(),
+            'Signature expiration dates do not match.'
+        );
+
+        $this->assertEquals(
+            $expected->isValid(),
+            $actual->isValid(),
+            'Signature validity does match.'
+        );
+    }
+
+    // }}}
 }
 
 ?>

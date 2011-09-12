@@ -115,6 +115,7 @@ $package->addMaintainer(
 );
 
 $package->setPhpDep('5.2.1');
+$package->addExtensionDep('required', 'posix');
 $package->addOsDep('windows', true);
 $package->setPearinstallerDep('1.4.0');
 $package->generateContents();

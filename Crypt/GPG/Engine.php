@@ -1114,6 +1114,9 @@ class Crypt_GPG_Engine
         $fdCommand = $this->_pipes[self::FD_COMMAND];
         $fdMessage = $this->_pipes[self::FD_MESSAGE];
 
+        // select loop delay in milliseconds
+        $delay = 0;
+
         while (true) {
 
             $inputStreams     = array();
@@ -1421,6 +1424,20 @@ class Crypt_GPG_Engine
                 );
             }
 
+            if (count($outputStreams) === 0 || count($inputStreams) === 0) {
+                // we have an I/O imbalance, increase the select loop delay
+                // to smooth things out
+                $delay += 10;
+            } else {
+                // things are running smoothly, decrease the delay
+                $delay -= 8;
+                $delay = max(0, $delay);
+            }
+
+            if ($delay > 0) {
+                usleep($delay);
+            }
+
         } // end loop while streams are open
 
         $this->_debug('END PROCESSING');
@@ -1540,6 +1557,11 @@ class Crypt_GPG_Engine
         if (!is_resource($this->_process)) {
             throw new Crypt_GPG_OpenSubprocessException(
                 'Unable to open GPG subprocess.', 0, $commandLine);
+        }
+
+        // Set streams as non-blocking. See Bug #18618.
+        foreach ($this->_pipes as $pipe) {
+            stream_set_blocking($pipe, 0);
         }
 
         $this->_openPipes = $this->_pipes;

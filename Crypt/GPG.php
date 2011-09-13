@@ -160,6 +160,29 @@ class Crypt_GPG extends Crypt_GPGAbstract
     const FORMAT_X509 = 3;
 
     // }}}
+    // {{{ class constants for boolean options
+
+    /**
+     * Use to specify ASCII armored mode for returned data
+     */
+    const ARMOR_ASCII = true;
+
+    /**
+     * Use to specify binary mode for returned data
+     */
+    const ARMOR_BINARY = false;
+
+    /**
+     * Use to specify that line breaks in signed text should be normalized
+     */
+    const TEXT_NORMALIZED = true;
+
+    /**
+     * Use to specify that line breaks in signed text should not be normalized
+     */
+    const TEXT_RAW = false;
+
+    // }}}
     // {{{ protected class properties
 
     /**
@@ -341,7 +364,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         if ($fingerprint === null) {
             throw new Crypt_GPG_KeyNotFoundException(
                 'Public key not found: ' . $keyId,
-                Crypt_GPG::ERROR_KEY_NOT_FOUND, $keyId);
+                self::ERROR_KEY_NOT_FOUND, $keyId);
         }
 
         $keyData   = '';
@@ -355,7 +378,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
 
         $code = $this->engine->getErrorCode();
 
-        if ($code !== Crypt_GPG::ERROR_NONE) {
+        if ($code !== self::ERROR_NONE) {
             throw new Crypt_GPG_Exception(
                 'Unknown error exporting public key. Please use the ' .
                 '\'debug\' option when creating the Crypt_GPG object, and ' .
@@ -404,7 +427,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         if ($fingerprint === null) {
             throw new Crypt_GPG_KeyNotFoundException(
                 'Public key not found: ' . $keyId,
-                Crypt_GPG::ERROR_KEY_NOT_FOUND, $keyId);
+                self::ERROR_KEY_NOT_FOUND, $keyId);
         }
 
         $operation = '--delete-key ' . escapeshellarg($fingerprint);
@@ -420,9 +443,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $code = $this->engine->getErrorCode();
 
         switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
+        case self::ERROR_NONE:
             break;
-        case Crypt_GPG::ERROR_DELETE_PRIVATE_KEY:
+        case self::ERROR_DELETE_PRIVATE_KEY:
             throw new Crypt_GPG_DeletePrivateKeyException(
                 'Private key must be deleted before public key can be ' .
                 'deleted.', $code, $keyId);
@@ -468,7 +491,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         if ($fingerprint === null) {
             throw new Crypt_GPG_KeyNotFoundException(
                 'Private key not found: ' . $keyId,
-                Crypt_GPG::ERROR_KEY_NOT_FOUND, $keyId);
+                self::ERROR_KEY_NOT_FOUND, $keyId);
         }
 
         $operation = '--delete-secret-key ' . escapeshellarg($fingerprint);
@@ -484,9 +507,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $code = $this->engine->getErrorCode();
 
         switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
+        case self::ERROR_NONE:
             break;
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+        case self::ERROR_KEY_NOT_FOUND:
             throw new Crypt_GPG_KeyNotFoundException(
                 'Private key not found: ' . $keyId,
                 $code, $keyId);
@@ -562,7 +585,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function getFingerprint($keyId, $format = Crypt_GPG::FORMAT_NONE)
+    public function getFingerprint($keyId, $format = self::FORMAT_NONE)
     {
         $output    = '';
         $operation = '--list-keys ' . escapeshellarg($keyId);
@@ -579,8 +602,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $code = $this->engine->getErrorCode();
 
         switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+        case self::ERROR_NONE:
+        case self::ERROR_KEY_NOT_FOUND:
             // ignore not found key errors
             break;
         default:
@@ -599,13 +622,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
                 $fingerprint = $lineExp[9];
 
                 switch ($format) {
-                case Crypt_GPG::FORMAT_CANONICAL:
+                case self::FORMAT_CANONICAL:
                     $fingerprintExp = str_split($fingerprint, 4);
                     $format         = '%s %s %s %s %s  %s %s %s %s %s';
                     $fingerprint    = vsprintf($format, $fingerprintExp);
                     break;
 
-                case Crypt_GPG::FORMAT_X509:
+                case self::FORMAT_X509:
                     $fingerprintExp = str_split($fingerprint, 2);
                     $fingerprint    = implode(':', $fingerprintExp);
                     break;
@@ -643,7 +666,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @sensitive $data
      */
-    public function encrypt($data, $armor = true)
+    public function encrypt($data, $armor = self::ARMOR_ASCII)
     {
         return $this->_encrypt($data, false, null, $armor);
     }
@@ -679,8 +702,11 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function encryptFile($filename, $encryptedFile = null, $armor = true)
-    {
+    public function encryptFile(
+        $filename,
+        $encryptedFile = null,
+        $armor = self::ARMOR_ASCII
+    ) {
         return $this->_encrypt($filename, true, $encryptedFile, $armor);
     }
 
@@ -719,7 +745,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG::decryptAndVerify()
      */
-    public function encryptAndSign($data, $armor = true)
+    public function encryptAndSign($data, $armor = self::ARMOR_ASCII)
     {
         return $this->_encryptAndSign($data, false, null, $armor);
     }
@@ -770,8 +796,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG::decryptAndVerifyFile()
      */
-    public function encryptAndSignFile($filename, $signedFile = null,
-        $armor = true
+    public function encryptAndSignFile(
+        $filename,
+        $signedFile = null,
+        $armor = self::ARMOR_ASCII
     ) {
         return $this->_encryptAndSign($filename, true, $signedFile, $armor);
     }
@@ -982,8 +1010,11 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function sign($data, $mode = Crypt_GPG::SIGN_MODE_NORMAL,
-        $armor = true, $textmode = false
+    public function sign(
+        $data,
+        $mode = self::SIGN_MODE_NORMAL,
+        $armor = self::ARMOR_ASCII,
+        $textmode = self::TEXT_RAW
     ) {
         return $this->_sign($data, false, null, $mode, $armor, $textmode);
     }
@@ -1043,8 +1074,12 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function signFile($filename, $signedFile = null,
-        $mode = Crypt_GPG::SIGN_MODE_NORMAL, $armor = true, $textmode = false
+    public function signFile(
+        $filename,
+        $signedFile = null,
+        $mode = self::SIGN_MODE_NORMAL,
+        $armor = self::ARMOR_ASCII,
+        $textmode = self::TEXT_RAW
     ) {
         return $this->_sign(
             $filename,
@@ -1461,7 +1496,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
             $input = strval($key);
             if ($input == '') {
                 throw new Crypt_GPG_NoDataException(
-                    'No valid GPG key data found.', Crypt_GPG::ERROR_NO_DATA);
+                    'No valid GPG key data found.', self::ERROR_NO_DATA);
             }
         }
 
@@ -1491,11 +1526,11 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $code = $this->engine->getErrorCode();
 
         switch ($code) {
-        case Crypt_GPG::ERROR_DUPLICATE_KEY:
-        case Crypt_GPG::ERROR_NONE:
+        case self::ERROR_DUPLICATE_KEY:
+        case self::ERROR_NONE:
             // ignore duplicate key import errors
             break;
-        case Crypt_GPG::ERROR_NO_DATA:
+        case self::ERROR_NO_DATA:
             throw new Crypt_GPG_NoDataException(
                 'No valid GPG key data found.', $code);
         default:
@@ -1587,7 +1622,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
 
         $code = $this->engine->getErrorCode();
 
-        if ($code !== Crypt_GPG::ERROR_NONE) {
+        if ($code !== self::ERROR_NONE) {
             throw new Crypt_GPG_Exception(
                 'Unknown error encrypting data. Please use the \'debug\' ' .
                 'option when creating the Crypt_GPG object, and file a bug ' .
@@ -1644,7 +1679,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
             if ($input == '') {
                 throw new Crypt_GPG_NoDataException(
                     'Cannot decrypt data. No PGP encrypted data was found in '.
-                    'the provided data.', Crypt_GPG::ERROR_NO_DATA);
+                    'the provided data.', self::ERROR_NO_DATA);
             }
         }
 
@@ -1768,13 +1803,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
         }
 
         switch ($mode) {
-        case Crypt_GPG::SIGN_MODE_DETACHED:
+        case self::SIGN_MODE_DETACHED:
             $operation = '--detach-sign';
             break;
-        case Crypt_GPG::SIGN_MODE_CLEAR:
+        case self::SIGN_MODE_CLEAR:
             $operation = '--clearsign';
             break;
-        case Crypt_GPG::SIGN_MODE_NORMAL:
+        case self::SIGN_MODE_NORMAL:
         default:
             $operation = '--sign';
             break;
@@ -1812,17 +1847,17 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $code = $this->engine->getErrorCode();
 
         switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
+        case self::ERROR_NONE:
             break;
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+        case self::ERROR_KEY_NOT_FOUND:
             throw new Crypt_GPG_KeyNotFoundException(
                 'Cannot sign data. Private key not found. Import the '.
                 'private key before trying to sign data.', $code,
                 $this->engine->getErrorKeyId());
-        case Crypt_GPG::ERROR_BAD_PASSPHRASE:
+        case self::ERROR_BAD_PASSPHRASE:
             throw new Crypt_GPG_BadPassphraseException(
                 'Cannot sign data. Incorrect passphrase provided.', $code);
-        case Crypt_GPG::ERROR_MISSING_PASSPHRASE:
+        case self::ERROR_MISSING_PASSPHRASE:
             throw new Crypt_GPG_BadPassphraseException(
                 'Cannot sign data. No passphrase provided.', $code);
         default:
@@ -1938,18 +1973,18 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $code = $this->engine->getErrorCode();
 
         switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
+        case self::ERROR_NONE:
             break;
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+        case self::ERROR_KEY_NOT_FOUND:
             throw new Crypt_GPG_KeyNotFoundException(
                 'Cannot sign encrypted data. Private key not found. Import '.
                 'the private key before trying to sign the encrypted data.',
                 $code, $this->engine->getErrorKeyId());
-        case Crypt_GPG::ERROR_BAD_PASSPHRASE:
+        case self::ERROR_BAD_PASSPHRASE:
             throw new Crypt_GPG_BadPassphraseException(
                 'Cannot sign encrypted data. Incorrect passphrase provided.',
                 $code);
-        case Crypt_GPG::ERROR_MISSING_PASSPHRASE:
+        case self::ERROR_MISSING_PASSPHRASE:
             throw new Crypt_GPG_BadPassphraseException(
                 'Cannot sign encrypted data. No passphrase provided.', $code);
         default:
@@ -2014,7 +2049,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
             $input = strval($data);
             if ($input == '') {
                 throw new Crypt_GPG_NoDataException(
-                    'No valid signature data found.', Crypt_GPG::ERROR_NO_DATA);
+                    'No valid signature data found.', self::ERROR_NO_DATA);
             }
         }
 
@@ -2040,13 +2075,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $code = $this->engine->getErrorCode();
 
         switch ($code) {
-        case Crypt_GPG::ERROR_NONE:
-        case Crypt_GPG::ERROR_BAD_SIGNATURE:
+        case self::ERROR_NONE:
+        case self::ERROR_BAD_SIGNATURE:
             break;
-        case Crypt_GPG::ERROR_NO_DATA:
+        case self::ERROR_NO_DATA:
             throw new Crypt_GPG_NoDataException(
                 'No valid signature data found.', $code);
-        case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+        case self::ERROR_KEY_NOT_FOUND:
             throw new Crypt_GPG_KeyNotFoundException(
                 'Public key required for data verification not in keyring.',
                 $code, $this->engine->getErrorKeyId());
@@ -2114,7 +2149,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
             if ($input == '') {
                 throw new Crypt_GPG_NoDataException(
                     'No valid encrypted signed data found.',
-                    Crypt_GPG::ERROR_NO_DATA);
+                    self::ERROR_NO_DATA);
             }
         }
 

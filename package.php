@@ -27,7 +27,7 @@
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @author    Nathan Fredrikson <nathan@silverorange.com>
- * @copyright 2005-2010 silverorange
+ * @copyright 2005-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -35,27 +35,16 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.2.0';
+$apiVersion     = '1.3.0';
 $apiState       = 'stable';
 
-$releaseVersion = '1.2.0';
+$releaseVersion = '1.3.0';
 $releaseState   = 'stable';
 $releaseNotes   =
-    "This release features improved (though not perfect) support for GnuPG " .
-    "2.x and several other bug fixes and features:\n" .
-    "Fix Bug #17512. Handle permissions error in addDecryptKey().\n" .
-    "Fix Bug #17759. Work with localized versions of GnuPG by setting " .
-    "LC_ALL=C.\n" .
-    "Fix Bug #17760. Work with newer GnuPG responses.\n" .
-    "Fix Bug #17762. --no-use-agent is deprecated in GnuPG 2.x.\n" .
-    "Implement Req #17808. Add key id to signature object and parse results " .
-    "in verify methods.\n" .
-    "Fix Bug #17814. Set revoked status on parsed user ids. Added isRevoked " .
-    "method to sub-key object.\n" .
-    "Fix Bugs #17628 and #17817. Handle file permissions error better when " .
-    "listing keys.\n" .
-    "Fix Bug #17820. Handle REVKEYSIG and ERRSIG status lines in " .
-    "VerifyStatusHandler.\n";
+    "This release adds key generation to the list of supported operations " .
+    "and adds fluent interface support to the main Crypt_GPG class." .
+    "Additionally the following bug is fixed:\n" .
+    "Fix Bug #18618. Incorrect CHUNK_SIZE / Hang on file decryption\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

@@ -38,13 +38,14 @@ PEAR::setErrorHandling(PEAR_ERROR_DIE);
 $apiVersion     = '1.3.0';
 $apiState       = 'stable';
 
-$releaseVersion = '1.3.0';
+$releaseVersion = '1.3.1';
 $releaseState   = 'stable';
 $releaseNotes   =
     "This release adds key generation to the list of supported operations " .
     "and adds fluent interface support to the main Crypt_GPG class." .
     "Additionally the following bug is fixed:\n" .
-    "Fix Bug #18618. Incorrect CHUNK_SIZE / Hang on file decryption\n";
+    "Fix Bug #18618. Incorrect CHUNK_SIZE / Hang on file decryption.\n";
+    "Fix Bug #18869. Unnecessary dependency on posix extension.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .
@@ -104,7 +105,7 @@ $package->addMaintainer(
 );
 
 $package->setPhpDep('5.2.1');
-$package->addExtensionDep('required', 'posix');
+$package->addExtensionDep('optional', 'posix');
 $package->addOsDep('windows', true);
 $package->setPearinstallerDep('1.4.0');
 $package->generateContents();

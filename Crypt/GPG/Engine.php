@@ -472,9 +472,25 @@ class Crypt_GPG_Engine
         if (array_key_exists('homedir', $options)) {
             $this->_homedir = (string)$options['homedir'];
         } else {
-            // note: this requires the package OS dep exclude 'windows'
-            $info = posix_getpwuid(posix_getuid());
-            $this->_homedir = $info['dir'].'/.gnupg';
+            if (extension_loaded('posix')) {
+                // note: this requires the package OS dep exclude 'windows'
+                $info = posix_getpwuid(posix_getuid());
+                $this->_homedir = $info['dir'].'/.gnupg';
+            } else {
+                if (isset($_SERVER['HOME'])) {
+                    $this->_homedir = $_SERVER['HOME'];
+                } else {
+                    $this->_homedir = getenv('HOME');
+                }
+            }
+
+            if ($this->_homedir === false) {
+                throw new Crypt_GPG_FileException(
+                    'Could not locate homedir. Please specify the homedir ' .
+                    'to use with the \'homedir\' option when instantiating ' .
+                    'the Crypt_GPG object.');
+
+            }
         }
 
         // attempt to create homedir if it does not exist

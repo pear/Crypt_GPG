@@ -38,7 +38,7 @@ PEAR::setErrorHandling(PEAR_ERROR_DIE);
 $apiVersion     = '1.3.0';
 $apiState       = 'stable';
 
-$releaseVersion = '1.3.1';
+$releaseVersion = '1.3.2';
 $releaseState   = 'stable';
 $releaseNotes   =
     "This release adds key generation to the list of supported operations " .

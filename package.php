@@ -42,9 +42,9 @@ $releaseVersion = '1.3.1';
 $releaseState   = 'stable';
 $releaseNotes   =
     "This release adds key generation to the list of supported operations " .
-    "and adds fluent interface support to the main Crypt_GPG class." .
-    "Additionally the following bug is fixed:\n" .
-    "Fix Bug #18618. Incorrect CHUNK_SIZE / Hang on file decryption.\n";
+    "and adds fluent interface support to the main Crypt_GPG class. " .
+    "Additionally the following bugs are fixed:\n" .
+    "Fix Bug #18618. Incorrect CHUNK_SIZE / Hang on file decryption.\n" .
     "Fix Bug #18869. Unnecessary dependency on posix extension.\n";
 
 $description =

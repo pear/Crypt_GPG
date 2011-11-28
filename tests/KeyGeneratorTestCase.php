@@ -228,8 +228,10 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
      */
     public function testSetExpirationDate_string()
     {
+        date_default_timezone_set('UTC');
+
         $expectedDate = 2000000000;
-        $this->generator->setExpirationDate('2033-05-18T00:33:20');
+        $this->generator->setExpirationDate('2033-05-18T03:33:20');
 
         $this->assertAttributeEquals(
             $expectedDate,
@@ -248,6 +250,8 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
      */
     public function testSetExpirationDate_invalid_format()
     {
+        date_default_timezone_set('UTC');
+
         $this->generator->setExpirationDate('this is not a date');
     }
 

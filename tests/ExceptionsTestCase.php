@@ -34,7 +34,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -56,7 +56,7 @@ require_once 'Crypt/GPG/Exceptions.php';
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -67,7 +67,8 @@ class ExceptionsTestCase extends Crypt_GPG_TestCase
 
     /**
      * @group exception
-     * @expectedException Crypt_GPG_Exception test exception
+     * @expectedException Crypt_GPG_Exception
+     * @expectedExceptionMessage test exception
      */
     public function testException()
     {
@@ -81,7 +82,8 @@ class ExceptionsTestCase extends Crypt_GPG_TestCase
 
     /**
      * @group file-exception
-     * @expectedException Crypt_GPG_FileException test exception
+     * @expectedException Crypt_GPG_FileException
+     * @expectedExceptionMessage test exception
      */
     public function testFileException()
     {
@@ -109,7 +111,8 @@ class ExceptionsTestCase extends Crypt_GPG_TestCase
 
     /**
      * @group open-subprocess-exception
-     * @expectedException Crypt_GPG_OpenSubprocessException test exception
+     * @expectedException Crypt_GPG_OpenSubprocessException
+     * @expectedExceptionMessage test exception
      */
     public function testOpenSubprocessException()
     {
@@ -137,7 +140,8 @@ class ExceptionsTestCase extends Crypt_GPG_TestCase
 
     /**
      * @group invalid-operation-exception
-     * @expectedException Crypt_GPG_InvalidOperationException test exception
+     * @expectedException Crypt_GPG_InvalidOperationException
+     * @expectedExceptionMessage test exception
      */
     public function testInvalidOperationException()
     {
@@ -165,7 +169,8 @@ class ExceptionsTestCase extends Crypt_GPG_TestCase
 
     /**
      * @group key-not-found-exception
-     * @expectedException Crypt_GPG_KeyNotFoundException test exception
+     * @expectedException Crypt_GPG_KeyNotFoundException
+     * @expectedExceptionMessage test exception
      */
     public function testKeyNotFoundException()
     {
@@ -193,7 +198,8 @@ class ExceptionsTestCase extends Crypt_GPG_TestCase
 
     /**
      * @group no-data-exception
-     * @expectedException Crypt_GPG_NoDataException test exception
+     * @expectedException Crypt_GPG_NoDataException
+     * @expectedExceptionMessage test exception
      */
     public function testNoDataException()
     {
@@ -207,7 +213,8 @@ class ExceptionsTestCase extends Crypt_GPG_TestCase
 
     /**
      * @group bad-passphrase-exception
-     * @expectedException Crypt_GPG_BadPassphraseException test exception
+     * @expectedException Crypt_GPG_BadPassphraseException
+     * @expectedExceptionMessage test exception
      */
     public function testBadPassphraseException()
     {
@@ -259,7 +266,8 @@ class ExceptionsTestCase extends Crypt_GPG_TestCase
 
     /**
      * @group delete-private-key-exception
-     * @expectedException Crypt_GPG_DeletePrivateKeyException test exception
+     * @expectedException Crypt_GPG_DeletePrivateKeyException
+     * @expectedExceptionMessage test exception
      */
     public function testDeletePrivateKeyException()
     {

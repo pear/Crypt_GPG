@@ -92,18 +92,13 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
     protected $gpg;
 
     // }}}
-    // {{{ private properties
-
-    private $_old_error_level;
-
-    // }}}
     // {{{ getOptions()
 
     protected function getOptions()
     {
         return array(
             'homedir' => dirname(__FILE__) . '/' . self::HOMEDIR,
-            'debug'   => true
+//            'debug'   => true
         );
     }
 
@@ -114,8 +109,6 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->_old_error_level = error_reporting(E_ALL | E_STRICT);
-
         // load test configuration file if it exists
         $configFilename = dirname(__FILE__).'/config.php';
         if (file_exists($configFilename)) {
@@ -571,8 +564,6 @@ TEXT;
 
         $this->_tearDownKeyring();
         $this->_tearDownTempdir();
-
-        error_reporting($this->_old_error_level);
     }
 
     // }}}

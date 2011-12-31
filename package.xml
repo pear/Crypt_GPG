@@ -105,7 +105,6 @@ Fix Bug #18869. Unnecessary dependency on posix extension.
     <file name="UserIdTestCase.php" role="test" />
     <file name="VerifyTestCase.php" role="test" />
    </dir> <!-- /tests -->
-   <file name="ChangeLog" role="data" />
    <file name="LICENSE" role="doc" />
   </dir> <!-- / -->
  </contents>

@@ -3,6 +3,7 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 require_once 'Console/CommandLine.php';
+require_once 'Crypt/GPG/ByteUtils.php';
 
 class Crypt_GPG_PinEntry
 {
@@ -63,7 +64,7 @@ class Crypt_GPG_PinEntry
 
             $this->send($this->ok('Crypt_GPG pinentry ready and waiting'));
             while (($line = fgets($this->stdin, self::READ_BUFFER_LENGTH)) !== false) {
-                $this->parseCommand(substr($line, 0, -1));
+                $this->parseCommand(Crypt_GPG_ByteUtils::substr($line, 0, -1));
                 if ($this->moribund) {
                     break;
                 }
@@ -282,7 +283,7 @@ class Crypt_GPG_PinEntry
         // http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
         $data = rawurlencode($data);
 
-        if (strlen($data) > 1000) {
+        if (Crypt_GPG_ByteUtils::strlen($data) > 1000) {
             // TODO: break on multiple lines
         }
 
@@ -291,7 +292,7 @@ class Crypt_GPG_PinEntry
 
     protected function comment($data)
     {
-        if (strlen($data) > 1000) {
+        if (Crypt_GPG_ByteUtils::strlen($data) > 1000) {
             // TODO: break on multiple lines
         }
 

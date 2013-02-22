@@ -48,6 +48,11 @@ require_once 'Crypt/GPG.php';
 require_once 'Crypt/GPG/Exceptions.php';
 
 /**
+ * Byte string operations.
+ */
+require_once 'Crypt/GPG/ByteUtils.php';
+
+/**
  * Standard PEAR exception is used if GPG binary is not found.
  */
 require_once 'PEAR/Exception.php';
@@ -367,18 +372,6 @@ class Crypt_GPG_Engine
      */
     private $_version = '';
 
-    /**
-     * Cached value indicating whether or not mbstring function overloading is
-     * on for strlen
-     *
-     * This is cached for optimal performance inside the I/O loop.
-     *
-     * @var boolean
-     * @see Crypt_GPG_Engine::_byteLength()
-     * @see Crypt_GPG_Engine::_byteSubstring()
-     */
-    private static $_mbStringOverload = null;
-
     // }}}
     // {{{ __construct()
 
@@ -461,12 +454,6 @@ class Crypt_GPG_Engine
     public function __construct(array $options = array())
     {
         $this->_isDarwin = (strncmp(strtoupper(PHP_OS), 'DARWIN', 6) === 0);
-
-        // populate mbstring overloading cache if not set
-        if (self::$_mbStringOverload === null) {
-            self::$_mbStringOverload = (extension_loaded('mbstring')
-                && (ini_get('mbstring.func_overload') & 0x02) === 0x02);
-        }
 
         // get homedir
         if (array_key_exists('homedir', $options)) {
@@ -1231,13 +1218,13 @@ class Crypt_GPG_Engine
             if (in_array($fdInput, $outputStreams)) {
                 $this->_debug('GPG is ready for input');
 
-                $chunk = self::_byteSubstring(
+                $chunk = Crypt_GPG_ByteUtils::substr(
                     $inputBuffer,
                     0,
                     self::CHUNK_SIZE
                 );
 
-                $length = self::_byteLength($chunk);
+                $length = Crypt_GPG_ByteUtils::strlen($chunk);
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to GPG input'
@@ -1247,7 +1234,7 @@ class Crypt_GPG_Engine
 
                 $this->_debug('=> wrote ' . $length . ' bytes');
 
-                $inputBuffer = self::_byteSubstring(
+                $inputBuffer = Crypt_GPG_ByteUtils::substr(
                     $inputBuffer,
                     $length
                 );
@@ -1262,7 +1249,7 @@ class Crypt_GPG_Engine
                 );
 
                 $chunk        = fread($this->_input, self::CHUNK_SIZE);
-                $length       = self::_byteLength($chunk);
+                $length       = Crypt_GPG_ByteUtils::strlen($chunk);
                 $inputBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -1272,13 +1259,13 @@ class Crypt_GPG_Engine
             if (in_array($fdMessage, $outputStreams)) {
                 $this->_debug('GPG is ready for message data');
 
-                $chunk = self::_byteSubstring(
+                $chunk = Crypt_GPG_ByteUtils::substr(
                     $messageBuffer,
                     0,
                     self::CHUNK_SIZE
                 );
 
-                $length = self::_byteLength($chunk);
+                $length = Crypt_GPG_ByteUtils::strlen($chunk);
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to GPG message'
@@ -1287,7 +1274,10 @@ class Crypt_GPG_Engine
                 $length = fwrite($fdMessage, $chunk, $length);
                 $this->_debug('=> wrote ' . $length . ' bytes');
 
-                $messageBuffer = self::_byteSubstring($messageBuffer, $length);
+                $messageBuffer = Crypt_GPG_ByteUtils::substr(
+                    $messageBuffer,
+                    $length
+                );
             }
 
             // read message (from PHP stream)
@@ -1299,7 +1289,7 @@ class Crypt_GPG_Engine
                 );
 
                 $chunk          = fread($this->_message, self::CHUNK_SIZE);
-                $length         = self::_byteLength($chunk);
+                $length         = Crypt_GPG_ByteUtils::strlen($chunk);
                 $messageBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -1314,7 +1304,7 @@ class Crypt_GPG_Engine
                 );
 
                 $chunk         = fread($fdOutput, self::CHUNK_SIZE);
-                $length        = self::_byteLength($chunk);
+                $length        = Crypt_GPG_ByteUtils::strlen($chunk);
                 $outputBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -1324,13 +1314,13 @@ class Crypt_GPG_Engine
             if (in_array($this->_output, $outputStreams)) {
                 $this->_debug('output stream is ready for data');
 
-                $chunk = self::_byteSubstring(
+                $chunk = Crypt_GPG_ByteUtils::substr(
                     $outputBuffer,
                     0,
                     self::CHUNK_SIZE
                 );
 
-                $length = self::_byteLength($chunk);
+                $length = Crypt_GPG_ByteUtils::strlen($chunk);
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to output stream'
@@ -1340,7 +1330,10 @@ class Crypt_GPG_Engine
 
                 $this->_debug('=> wrote ' . $length . ' bytes');
 
-                $outputBuffer = self::_byteSubstring($outputBuffer, $length);
+                $outputBuffer = Crypt_GPG_ByteUtils::substr(
+                    $outputBuffer,
+                    $length
+                );
             }
 
             // read error (from GPG)
@@ -1352,14 +1345,14 @@ class Crypt_GPG_Engine
                 );
 
                 $chunk        = fread($fdError, self::CHUNK_SIZE);
-                $length       = self::_byteLength($chunk);
+                $length       = Crypt_GPG_ByteUtils::strlen($chunk);
                 $errorBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
 
                 // pass lines to error handlers
                 while (($pos = strpos($errorBuffer, PHP_EOL)) !== false) {
-                    $line = self::_byteSubstring($errorBuffer, 0, $pos);
+                    $line = Crypt_GPG_ByteUtils::substr($errorBuffer, 0, $pos);
                     foreach ($this->_errorHandlers as $handler) {
                         array_unshift($handler['args'], $line);
                         call_user_func_array(
@@ -1371,7 +1364,7 @@ class Crypt_GPG_Engine
                     }
                     $errorBuffer = self::_byteSubString(
                         $errorBuffer,
-                        $pos + self::_byteLength(PHP_EOL)
+                        $pos + Crypt_GPG_ByteUtils::strlen(PHP_EOL)
                     );
                 }
             }
@@ -1385,17 +1378,17 @@ class Crypt_GPG_Engine
                 );
 
                 $chunk         = fread($fdStatus, self::CHUNK_SIZE);
-                $length        = self::_byteLength($chunk);
+                $length        = Crypt_GPG_ByteUtils::strlen($chunk);
                 $statusBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
 
                 // pass lines to status handlers
                 while (($pos = strpos($statusBuffer, PHP_EOL)) !== false) {
-                    $line = self::_byteSubstring($statusBuffer, 0, $pos);
+                    $line = Crypt_GPG_ByteUtils::substr($statusBuffer, 0, $pos);
                     // only pass lines beginning with magic prefix
-                    if (self::_byteSubstring($line, 0, 9) == '[GNUPG:] ') {
-                        $line = self::_byteSubstring($line, 9);
+                    if (Crypt_GPG_ByteUtils::substr($line, 0, 9) == '[GNUPG:] ') {
+                        $line = Crypt_GPG_ByteUtils::substr($line, 9);
                         foreach ($this->_statusHandlers as $handler) {
                             array_unshift($handler['args'], $line);
                             call_user_func_array(
@@ -1408,7 +1401,7 @@ class Crypt_GPG_Engine
                     }
                     $statusBuffer = self::_byteSubString(
                         $statusBuffer,
-                        $pos + self::_byteLength(PHP_EOL)
+                        $pos + Crypt_GPG_ByteUtils::strlen(PHP_EOL)
                     );
                 }
             }
@@ -1418,13 +1411,13 @@ class Crypt_GPG_Engine
                 $this->_debug('GPG is ready for command data');
 
                 // send commands
-                $chunk = self::_byteSubstring(
+                $chunk = Crypt_GPG_ByteUtils::substr(
                     $this->_commandBuffer,
                     0,
                     self::CHUNK_SIZE
                 );
 
-                $length = self::_byteLength($chunk);
+                $length = Crypt_GPG_ByteUtils::strlen($chunk);
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to GPG command'
@@ -1434,7 +1427,7 @@ class Crypt_GPG_Engine
 
                 $this->_debug('=> wrote ' . $length);
 
-                $this->_commandBuffer = self::_byteSubstring(
+                $this->_commandBuffer = Crypt_GPG_ByteUtils::substr(
                     $this->_commandBuffer,
                     $length
                 );
@@ -1722,70 +1715,6 @@ class Crypt_GPG_Engine
                 }
             }
         }
-    }
-
-    // }}}
-    // {{{ _byteLength()
-
-    /**
-     * Gets the length of a string in bytes even if mbstring function
-     * overloading is turned on
-     *
-     * This is used for stream-based communication with the GPG subprocess.
-     *
-     * @param string $string the string for which to get the length.
-     *
-     * @return integer the length of the string in bytes.
-     *
-     * @see Crypt_GPG_Engine::$_mbStringOverload
-     */
-    private static function _byteLength($string)
-    {
-        if (self::$_mbStringOverload) {
-            return mb_strlen($string, '8bit');
-        }
-
-        return strlen((binary)$string);
-    }
-
-    // }}}
-    // {{{ _byteSubstring()
-
-    /**
-     * Gets the substring of a string in bytes even if mbstring function
-     * overloading is turned on
-     *
-     * This is used for stream-based communication with the GPG subprocess.
-     *
-     * @param string  $string the input string.
-     * @param integer $start  the starting point at which to get the substring.
-     * @param integer $length optional. The length of the substring.
-     *
-     * @return string the extracted part of the string. Unlike the default PHP
-     *                <kbd>substr()</kbd> function, the returned value is
-     *                always a string and never false.
-     *
-     * @see Crypt_GPG_Engine::$_mbStringOverload
-     */
-    private static function _byteSubstring($string, $start, $length = null)
-    {
-        if (self::$_mbStringOverload) {
-            if ($length === null) {
-                return mb_substr(
-                    $string,
-                    $start,
-                    self::_byteLength($string) - $start, '8bit'
-                );
-            }
-
-            return mb_substr($string, $start, $length, '8bit');
-        }
-
-        if ($length === null) {
-            return (string)substr((binary)$string, $start);
-        }
-
-        return (string)substr((binary)$string, $start, $length);
     }
 
     // }}}

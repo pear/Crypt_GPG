@@ -13,6 +13,6 @@
 		<long_name>--verbose</long_name>
 		<description>Sets verbosity level. Use multiples for more detail (e.g. "-vv").</description>
 		<action>Counter</action>
-		<default>1</default>
+		<default>0</default>
 	</option>
 </command>

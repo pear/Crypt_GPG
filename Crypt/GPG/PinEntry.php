@@ -1,190 +1,309 @@
 <?php
 
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+require_once 'Console/CommandLine.php';
+
 class Crypt_GPG_PinEntry
 {
-	protected $stdin = null;
-	protected $stdout = null;
-	protected $log = null;
-	protected $disconnect = false;
+    const VERBOSITY_NONE = 0;
+    const VERBOSITY_ERRORS = 1;
+    const VERBOSITY_ALL = 2;
 
-	public function run()
-	{
-		$this->connect();
-		$this->send($this->ok('Crypt_GPG pinentry ready and waiting'));
+    const READ_BUFFER_LENGTH = 8192;
 
-		while (($line = fgets($this->stdin, 8192)) !== false) {
-			$this->parseCommand(substr($line, 0, -1));
-			if ($this->disconnect) {
-				break;
-			}
-		}
+    /** 
+     * @var resource
+     */
+    protected $stdin = null;
 
-		$this->disconnect();
-	}
+    /** 
+     * @var resource
+     */
+    protected $stdout = null;
 
-	protected function parseCommand($line)
-	{
-		$this->log('<- ' . $line . "\n");
-		$parts = explode(' ', $line, 2);
+    /** 
+     * @var resource
+     */
+    protected $logFile = null;
 
-		$command = $parts[0];
+    /**
+     * @var string
+     */
+    protected $logFilename = '';
 
-		if (count($parts) === 2) {
-			$data = $parts[1];
-		} else {
-			$data = null;
-		}
+    /**
+     * Whether or not this pinentry is finished and is exiting
+     *
+     * @var boolean
+     */
+    protected $moribund = false;
 
-		switch ($command) {
-		case 'SETDESC':
-		case 'SETPROMPT':
-		case 'SETERROR':
-		case 'SETOK':
-		case 'SETNOTOK':
-		case 'SETCANCEL':
-		case 'SETQUALITYBAR':
-		case 'SETQUALITYBAR_TT':
-		case 'OPTION':
-			return $this->notImplementedOk();
+    /**
+     * @var integer
+     */
+    protected $verbosity = self::VERBOSITY_NONE;
 
-		case 'MESSAGE':
-			return $this->message();
+    /**
+     * @var Console_CommandLine
+     */
+    protected $parser = null;
 
-		case 'CONFIRM':
-			return $this->confirm();
+    public function __invoke()
+    {
+        $this->parser = $this->getParser();
 
-		case 'GETINFO':
-			return $this->getInfo($data);
+        try {
+            $result = $this->parser->parse();
 
-		case 'GETPIN':
-			return $this->getPin($data);
+            $this->setVerbosity($result->options['verbose']);
+            $this->logFilename = $result->options['log'];
 
-		case 'RESET':
-			return $this->reset();
+            $this->connect();
 
-		case 'BYE':
-			return $this->bye();
-		}
-	}
+            $this->send($this->ok('Crypt_GPG pinentry ready and waiting'));
+            while (($line = fgets($this->stdin, self::READ_BUFFER_LENGTH)) !== false) {
+                $this->parseCommand(substr($line, 0, -1));
+                if ($this->moribund) {
+                    break;
+                }
+            }
 
-	protected function connect()
-	{
-		$this->stdin = fopen('php://stdin', 'rb');
-		$this->stdout = fopen('php://stdout', 'wb');
-		$this->log = fopen(dirname(__FILE__).'/pinentry-log.txt', 'wb');
-	}
+            $this->disconnect();
 
-	protected function disconnect()
-	{
-		fflush($this->stdout);
-		fclose($this->stdout);
-		fclose($this->stdin);
-	}
+        } catch (Console_CommandLineException $e) {
+            $this->log($e->getMessage() . PHP_EOL, slf::VERBOSITY_ERRORS);
+            exit(1);
+        } catch (Exception $e) {
+            $this->log($e->getMessage() . PHP_EOL, self::VERBOSITY_ERRORS);
+            $this->log($e->getTraceAsString() . PHP_EOL, self::VERBOSITY_ERRORS);
+            exit(1);
+        }
+    }
 
-	protected function notImplementedOk()
-	{
-		// not implemented
-		$this->send($this->ok());
-	}
+    public function setVerbosity($verbosity)
+    {
+        $this->verbosity = (integer)$verbosity;
+    }
 
-	protected function confirm($text)
-	{
-		$this->send($this->buttonInfo('close'));
-	}
+    protected function getUIXML()
+    {
+        $dir = '@data-dir@' . DIRECTORY_SEPARATOR
+            . '@package-name@' . DIRECTORY_SEPARATOR . 'data';
 
-	protected function message($text)
-	{
-		$this->send($this->buttonInfo('close'));
-	}
+        // Check if we're running directly from a git checkout or if we're
+        // running from a PEAR-packaged version.
+        if ($dir[0] == '@') {
+            $dir = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..'
+                . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data';
+        }
 
-	protected function buttonInfo($text)
-	{
-		$this->send('BUTTON_INFO ' . $text . "\n");
-	}
+        return $dir . DIRECTORY_SEPARATOR . 'pinentry-cli.xml';
+    }
 
-	protected function getPin()
-	{
-		$this->send($this->data('test'));
-		$this->send($this->ok());
-	}
+    protected function getParser()
+    {
+        return Console_CommandLine::fromXmlFile($this->getUIXML());
+    }
 
-	protected function getInfo($data)
-	{
-		$parts = explode(' ', $data, 2);
-		$command = reset($parts);
+    protected function log($data, $level)
+    {
+        if ($this->verbosity >= $level) {
+            if (is_resource($this->log)) {
+                fwrite($this->log, $data);
+                fflush($this->log);
+            } else {
+                $this->parser->outputter->output($data);
+            }
+        }
+    }
 
-		switch ($command) {
-		case 'pid':
-			$this->getInfoPid();
-			$this->send($this->ok());
-			return;
-		default:
-			$this->send($this->ok());
-			return;
-		}
-	}
+    protected function parseCommand($line)
+    {
+        $this->log('<- ' . $line . PHP_EOL, self::VERBOSITY_ALL);
 
-	protected function getInfoPid()
-	{
-		return $this->send($this->data(getmypid()));
-	}
+        $parts = explode(' ', $line, 2);
 
-	protected function bye()
-	{
-		$this->send($this->ok('closing connection'));
-		$this->disconnect = true;
-	}
+        $command = $parts[0];
 
-	protected function reset()
-	{
-		$this->send($this->ok());
-	}
+        if (count($parts) === 2) {
+            $data = $parts[1];
+        } else {
+            $data = null;
+        }
 
-	protected function log($data)
-	{
-		fwrite($this->log, $data);
-		fflush($this->log);
-	}
+        switch ($command) {
+        case 'SETDESC':
+        case 'SETPROMPT':
+        case 'SETERROR':
+        case 'SETOK':
+        case 'SETNOTOK':
+        case 'SETCANCEL':
+        case 'SETQUALITYBAR':
+        case 'SETQUALITYBAR_TT':
+        case 'OPTION':
+            return $this->notImplementedOk();
 
-	protected function ok($data = null)
-	{
-		$return = 'OK';
+        case 'MESSAGE':
+            return $this->message();
 
-		if ($data) {
-			$return .= ' ' . $data;
-		}
+        case 'CONFIRM':
+            return $this->confirm();
 
-		return $return . "\n";
-	}
+        case 'GETINFO':
+            return $this->getInfo($data);
 
-	protected function data($data)
-	{
-		// escape. Only %, \n and \r need to be escaped but other values are
-		// allowed to be escaped. See http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
-		$data = rawurlencode($data);
+        case 'GETPIN':
+            return $this->getPin($data);
 
-		if (strlen($data) > 1000) {
-			// break on multiple lines
-		}
+        case 'RESET':
+            return $this->reset();
 
-		return 'D ' . $data . "\n";
-	}
+        case 'BYE':
+            return $this->bye();
+        }
+    }
 
-	protected function comment($data)
-	{
-		if (strlen($data) > 1000) {
-			// break on multiple lines
-		}
+    protected function connect()
+    {
+        $this->stdin  = fopen('php://stdin', 'rb');
+        $this->stdout = fopen('php://stdout', 'wb');
 
-		return '# ' . $data . "\n";
-	}
+        if (function_exists('stream_set_read_buffer')) {
+            stream_set_read_buffer($this->stdin, 0);
+        }
+        stream_set_write_buffer($this->stdout, 0);
 
-	protected function send($data)
-	{
-		$this->log('-> ' . $data);
-		fwrite($this->stdout, $data);
-		fflush($this->stdout);
-	}
+        if ($this->logFilename != '') {
+            if (($this->logFile = fopen($this->logFilename, 'wb')) === false) {
+                $this->log(
+                    'Unable to open log file "' . $this->logFilename . '" '
+                    . 'for writing.' . PHP_EOL,
+                    self::VERBOSITY_ERRORS
+                );
+                exit(1);
+            } else {
+                stream_set_write_buffer($this->logFile, 0);
+            }
+        }
+    }
+
+    protected function disconnect()
+    {
+        fflush($this->stdout);
+        fclose($this->stdout);
+        fclose($this->stdin);
+
+        $this->stdin  = null;
+        $this->stdout = null;
+
+        if (is_resource($this->logFile)) {
+            fflush($this->logFile);
+            fclose($this->logFile);
+            $this->logFile = null;
+        }
+    }
+
+    protected function notImplementedOk()
+    {
+        // not implemented
+        $this->send($this->ok());
+    }
+
+    protected function confirm($text)
+    {
+        $this->send($this->buttonInfo('close'));
+    }
+
+    protected function message($text)
+    {
+        $this->send($this->buttonInfo('close'));
+    }
+
+    protected function buttonInfo($text)
+    {
+        $this->send('BUTTON_INFO ' . $text . "\n");
+    }
+
+    protected function getPin()
+    {
+        // TODO: grab from pipe
+        $this->send($this->data('test'));
+        $this->send($this->ok());
+    }
+
+    protected function getInfo($data)
+    {
+        $parts = explode(' ', $data, 2);
+        $command = reset($parts);
+
+        switch ($command) {
+        case 'pid':
+            $this->getInfoPID();
+            $this->send($this->ok());
+            return;
+        default:
+            $this->send($this->ok());
+            return;
+        }
+    }
+
+    protected function getInfoPID()
+    {
+        return $this->send($this->data(getmypid()));
+    }
+
+    protected function bye()
+    {
+        $this->send($this->ok('closing connection'));
+        $this->moribund = true;
+    }
+
+    protected function reset()
+    {
+        $this->send($this->ok());
+    }
+
+    protected function ok($data = null)
+    {
+        $return = 'OK';
+
+        if ($data) {
+            $return .= ' ' . $data;
+        }
+
+        return $return . "\n";
+    }
+
+    protected function data($data)
+    {
+        // Escape data. Only %, \n and \r need to be escaped but other
+        // values are allowed to be escaped. See 
+        // http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
+        $data = rawurlencode($data);
+
+        if (strlen($data) > 1000) {
+            // TODO: break on multiple lines
+        }
+
+        return 'D ' . $data . "\n";
+    }
+
+    protected function comment($data)
+    {
+        if (strlen($data) > 1000) {
+            // TODO: break on multiple lines
+        }
+
+        return '# ' . $data . "\n";
+    }
+
+    protected function send($data)
+    {
+        $this->log('-> ' . $data, self::VERBOSITY_ALL);
+        fwrite($this->stdout, $data);
+        fflush($this->stdout);
+    }
 }
 
 ?>

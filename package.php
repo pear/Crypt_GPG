@@ -58,7 +58,7 @@ $package = new PEAR_PackageFileManager2();
 
 $package->setOptions(
     array(
-        'filelistgenerator' => 'svn',
+        'filelistgenerator' => 'file',
         'simpleoutput'      => true,
         'baseinstalldir'    => '/',
         'packagedirectory'  => './',
@@ -69,10 +69,15 @@ $package->setOptions(
         ),
         'exceptions'        => array(
             'LICENSE'       => 'doc',
+            'scripts/crypt-gpg-pinentry' => 'script'
         ),
         'ignore'            => array(
             'tools/',
-            'package.php'
+            'package.php',
+            '*.tgz'
+        )
+        'installexceptions'                   => array(
+            'scripts/crypt-gpg-pinentry' => '/'
         )
     )
 );
@@ -108,6 +113,13 @@ $package->setPhpDep('5.2.1');
 $package->addExtensionDep('optional', 'posix');
 $package->addOsDep('windows', true);
 $package->setPearinstallerDep('1.4.0');
+$package->addPackageDepWithChannel(
+    'required',
+    'Console_CommandLine',
+    'pear.php.net',
+    '1.1.10'
+);
+
 $package->generateContents();
 
 if (   isset($_GET['make'])

@@ -184,8 +184,12 @@ class Crypt_GPG_PinEntry
 
     protected function connect()
     {
-        $this->stdin  = fopen('php://stdin', 'rb');
-        $this->stdout = fopen('php://stdout', 'wb');
+        // Binary operations will not work on Windows with PHP < 5.2.6.
+        $rb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'r' : 'rb';
+        $wb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'w' : 'wb';
+
+        $this->stdin  = fopen('php://stdin', $rb);
+        $this->stdout = fopen('php://stdout', $wb);
 
         if (function_exists('stream_set_read_buffer')) {
             stream_set_read_buffer($this->stdin, 0);

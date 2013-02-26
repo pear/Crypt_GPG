@@ -137,6 +137,13 @@ $package->addReplacement(
     'bin_dir'
 );
 
+$package->addReplacement(
+    'script/crypt-gpg-pinentry',
+    'pear-config',
+    '@php-dir@',
+    'php_dir'
+);
+
 $package->setPhpDep('5.2.1');
 $package->addExtensionDep('optional', 'posix');
 $package->addExtensionDep('required', 'mbstring');

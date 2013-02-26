@@ -3,7 +3,6 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 require_once 'Console/CommandLine.php';
-require_once 'Crypt/GPG/ByteUtils.php';
 
 class Crypt_GPG_PinEntry
 {
@@ -64,7 +63,7 @@ class Crypt_GPG_PinEntry
 
             $this->send($this->ok('Crypt_GPG pinentry ready and waiting'));
             while (($line = fgets($this->stdin, self::READ_BUFFER_LENGTH)) !== false) {
-                $this->parseCommand(Crypt_GPG_ByteUtils::substr($line, 0, -1));
+                $this->parseCommand(mb_substr($line, 0, -1, '8bit'));
                 if ($this->moribund) {
                     break;
                 }
@@ -282,21 +281,13 @@ class Crypt_GPG_PinEntry
         // values are allowed to be escaped. See 
         // http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
         $data = rawurlencode($data);
-
-        if (Crypt_GPG_ByteUtils::strlen($data) > 1000) {
-            // TODO: break on multiple lines
-        }
-
-        return 'D ' . $data . "\n";
+        $data = $this->wordWrap($data, 'D');
+        return $data;
     }
 
     protected function comment($data)
     {
-        if (Crypt_GPG_ByteUtils::strlen($data) > 1000) {
-            // TODO: break on multiple lines
-        }
-
-        return '# ' . $data . "\n";
+        return $this->wordWrap($data, '#');
     }
 
     protected function send($data)
@@ -304,6 +295,41 @@ class Crypt_GPG_PinEntry
         $this->log('-> ' . $data, self::VERBOSITY_ALL);
         fwrite($this->stdout, $data);
         fflush($this->stdout);
+    }
+
+    /**
+     * @param string $data   
+     * @param string $prefix 
+     *
+     * Protocol strings are UTF-8 but maximum line length is 1,000 bytes.
+     * <kbd>mb_strcut()</kbd> is used so we can limit line length by bytes
+     * and not split characters across multiple lines.
+     *
+     * @see http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
+     */
+    protected function wordWrap($data, $prefix)
+    {
+        $lines = array();
+
+        do {
+            if (mb_strlen($data, '8bit') > 997) {
+                $line = $prefix . ' ' . mb_strcut($data, 0, 996, 'utf-8') . "\\\n";
+                $lines[] = $line;
+                $lineLength = mb_strlen($line, '8bit') - 1;
+                $dataLength = mb_substr($data, '8bit');
+                $data = mb_substr(
+                    $data,
+                    $lineLength,
+                    $dataLength - $lineLength,
+                    '8bit'
+                );
+            } else {
+                $lines[] = $prefix . ' ' . $data . "\n";
+                $data = '';
+            }
+        } while ($data != '');
+
+        return implode('', $lines);
     }
 }
 

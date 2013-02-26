@@ -168,6 +168,17 @@ class Crypt_GPG_Engine
     private $_binary = '';
 
     /**
+     * Location of GnuPG agent binary
+     *
+     * Only used for GnuPG 2.x
+     *
+     * @var string
+     * @see Crypt_GPG_Engine::__construct()
+     * @see Crypt_GPG_Engine::_getAgent()
+     */
+    private $_agent = '';
+
+    /**
      * Directory containing the GPG key files
      *
      * This property only contains the path when the <i>homedir</i> option
@@ -233,6 +244,15 @@ class Crypt_GPG_Engine
     private $_pipes = array();
 
     /**
+     * Array of pipes used for communication with the gpg-agent binary
+     *
+     * This is an array of file descriptor resources.
+     *
+     * @var array
+     */
+    private $_agentPipes = array();
+
+    /**
      * Array of currently opened pipes
      *
      * This array is used to keep track of remaining opened pipes so they can
@@ -251,6 +271,13 @@ class Crypt_GPG_Engine
      * @var resource
      */
     private $_process = null;
+
+    /**
+     * A handle for the gpg-agent process
+     *
+     * @var resource
+     */
+    private $_agentProcess = null;
 
     /**
      * Whether or not the operating system is Darwin (OS X)
@@ -425,6 +452,14 @@ class Crypt_GPG_Engine
      *                                       operating system. The option
      *                                       <kbd>gpgBinary</kbd> is a
      *                                       deprecated alias for this option.
+     * - <kbd>string  agent</kbd>          - the location of the GnuPG agent
+     *                                       binary. The gpg-agent is only
+     *                                       used for GnuPG 2.x. If not
+     *                                       specified, the engine attempts
+     *                                       to auto-detect the gpg-agent
+     *                                       binary location using a list of
+     *                                       know default locations for the
+     *                                       current operating system.
      * - <kbd>boolean debug</kbd>          - whether or not to use debug mode.
      *                                       When debug mode is on, all
      *                                       communication to and from the GPG
@@ -450,6 +485,10 @@ class Crypt_GPG_Engine
      * @throws PEAR_Exception if the provided <kbd>binary</kbd> is invalid, or
      *         if no <kbd>binary</kbd> is provided and no suitable binary could
      *         be found.
+     *
+     * @throws PEAR_Exception if the provided <kbd>agent</kbd> is invalid, or
+     *         if no <kbd>agent</kbd> is provided and no suitable gpg-agent
+     *         cound be found.
      */
     public function __construct(array $options = array())
     {
@@ -508,9 +547,26 @@ class Crypt_GPG_Engine
         }
 
         if ($this->_binary == '' || !is_executable($this->_binary)) {
-            throw new PEAR_Exception('GPG binary not found. If you are sure '.
-                'the GPG binary is installed, please specify the location of '.
-                'the GPG binary using the \'binary\' driver option.');
+            throw new PEAR_Exception(
+                'GPG binary not found. If you are sure the GPG binary is ' .
+                'installed, please specify the location of the GPG binary ' .
+                'using the \'binary\' driver option.'
+            );
+        }
+
+        // get agent 
+        if (array_key_exists('agent', $options)) {
+            $this->_agent = (string)$options['agent'];
+        } else {
+            $this->_agent = $this->_getAgent();
+        }
+
+        if ($this->_agent == '' || !is_executable($this->_agent)) {
+            throw new PEAR_Exception(
+                'gpg-agent binary not found. If you are sure the gpg-agent ' .
+                'is installed, please specify the location of the gpg-agent ' .
+                'binary using the \'agent\' driver option.'
+            );
         }
 
         /*
@@ -1475,11 +1531,74 @@ class Crypt_GPG_Engine
     {
         $version = $this->getVersion();
 
+        // Binary operations will not work on Windows with PHP < 5.2.6. This is
+        // in case stream_select() ever works on Windows.
+        $rb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'r' : 'rb';
+        $wb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'w' : 'wb';
+
         $env = $_ENV;
 
         // Newer versions of GnuPG return localized results. Crypt_GPG only
         // works with English, so set the locale to 'C' for the subprocess.
         $env['LC_ALL'] = 'C';
+
+        // If using GnuPG 2.x start the gpg-agent
+        if (version_compare($version, '2.0.0', 'ge')) {
+            $agentCommandLine = $this->_agent;
+
+            $agentArguments = array(
+                '--csh', // output is easier to parse
+                '--no-grab',
+                '--ignore-cache-for-signing',
+                '--pinentry-touch-file /dev/null',
+                '--disable-scdaemon',
+                '--no-use-standard-socket',
+                '--pinentry-program ' . escapeshellarg($this->_getPinEntry()),
+                '--daemon'
+            );
+
+            if ($this->_homedir) {
+                $agentArguments[] = '--homedir ' . escapeshellarg($this->_homedir);
+            }
+
+            $agentCommandLine .= ' ' . implode(' ', $agentArguments);
+
+            $agentDescriptorSpec = array(
+                self::FD_INPUT   => array('pipe', $rb), // stdin
+                self::FD_OUTPUT  => array('pipe', $wb), // stdout
+                self::FD_ERROR   => array('pipe', $wb)  // stderr
+            );
+
+            $this->_debug('OPENING GPG-AGENT SUBPROCESS WITH THE FOLLOWING COMMAND:');
+            $this->_debug($agentCommandLine);
+
+            $this->_agentProcess = proc_open(
+                $agentCommandLine,
+                $agentDescriptorSpec,
+                $this->_agentPipes,
+                null,
+                $env,
+                array('binary_pipes' => true)
+            );
+
+            if (!is_resource($this->_agentProcess)) {
+                throw new Crypt_GPG_OpenSubprocessException(
+                    'Unable to open gpg-agent subprocess.',
+                    0,
+                    $agentCommandLine
+                );
+            }
+
+            // Get GPG_AGENT_INFO and set environment variable for gpg process.
+            // This is a blocking read, but is only 1 line.
+            $agentInfo = fread(
+                $this->_agentPipes[self::FD_OUTPUT],
+                self::CHUNK_SIZE
+            );
+            $agentInfo = explode(' ', $agentInfo, 3);
+
+            $env['GPG_AGENT_INFO'] = $agentInfo[2];
+        }
 
         $commandLine = $this->_binary;
 
@@ -1537,11 +1656,6 @@ class Crypt_GPG_Engine
         $commandLine .= ' ' . implode(' ', $arguments) . ' ' .
             $this->_operation;
 
-        // Binary operations will not work on Windows with PHP < 5.2.6. This is
-        // in case stream_select() ever works on Windows.
-        $rb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'r' : 'rb';
-        $wb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'w' : 'wb';
-
         $descriptorSpec = array(
             self::FD_INPUT   => array('pipe', $rb), // stdin
             self::FD_OUTPUT  => array('pipe', $wb), // stdout
@@ -1551,7 +1665,7 @@ class Crypt_GPG_Engine
             self::FD_MESSAGE => array('pipe', $rb)  // message
         );
 
-        $this->_debug('OPENING SUBPROCESS WITH THE FOLLOWING COMMAND:');
+        $this->_debug('OPENING GPG SUBPROCESS WITH THE FOLLOWING COMMAND:');
         $this->_debug($commandLine);
 
         $this->_process = proc_open(
@@ -1594,7 +1708,7 @@ class Crypt_GPG_Engine
     private function _closeSubprocess()
     {
         if (is_resource($this->_process)) {
-            $this->_debug('CLOSING SUBPROCESS');
+            $this->_debug('CLOSING GPG SUBPROCESS');
 
             // close remaining open pipes
             foreach (array_keys($this->_openPipes) as $pipeNumber) {
@@ -1620,6 +1734,28 @@ class Crypt_GPG_Engine
 
             $this->_process = null;
             $this->_pipes   = array();
+        }
+
+        if (is_resource($this->_agentProcess)) {
+            $this->_debug('CLOSING GPG-AGENT SUBPROCESS');
+
+            // close agent pipes
+            foreach ($this->_agentPipes as $pipe) {
+                fflush($pipe);
+                fclose($pipe);
+            }
+
+            proc_terminate($this->_agentProcess);
+            $status = proc_get_status($this->_agentProcess);
+            while (is_array($status) && $status['running']) {
+                usleep(10000);
+                proc_terminate($this->_agentProcess);
+            }
+
+            $this->_agentProcess = null;
+            $this->_agentPipes   = array();
+
+            $this->_debug('GPG-AGENT SUBPROCESS CLOSED');
         }
     }
 
@@ -1689,6 +1825,55 @@ class Crypt_GPG_Engine
     }
 
     // }}}
+    // {{ _getAgent()
+
+    private function _getAgent()
+    {
+        $agent = '';
+
+        if ($this->_isDarwin) {
+            $agentFiles = array(
+                '/opt/local/bin/gpg-agent', // MacPorts
+                '/usr/local/bin/gpg-agent', // Mac GPG
+                '/sw/bin/gpg-agent',        // Fink
+                '/usr/bin/gpg-agent'
+            );
+        } else {
+            $agentFiles = array(
+                '/usr/bin/gpg-agent',
+                '/usr/local/bin/gpg-agent'
+            );
+        }
+
+        foreach ($agentFiles as $agentFile) {
+            if (is_executable($agentFile)) {
+                $agent = $agentFile;
+                break;
+            }
+        }
+
+        return $agent;
+    }
+
+    // }}
+    // {{ _getPinEntry()
+
+    private function _getPinEntry()
+    {
+        // Check if we're running directly from git or if we're using a
+        // PEAR-packaged version
+        $pinEntry = '@bin-dir@' . DIRECTORY_SEPARATOR . 'crypt-gpg-pinentry';
+
+        if ($pinEntry[0] === '@') {
+            $pinEntry = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..'
+                . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'scripts'
+                . DIRECTORY_SEPARATOR . 'crypt-gpg-pinentry';
+        }
+
+        return $pinEntry;
+    }
+
+    // }}
     // {{{ _debug()
 
     /**

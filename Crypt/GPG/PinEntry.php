@@ -49,6 +49,21 @@ class Crypt_GPG_PinEntry
      */
     protected $parser = null;
 
+    /**
+     * @var array
+     */
+    protected $pins = array();
+
+    /**
+     * @var array
+     */
+    protected $triedPins = array();
+
+    /**
+     * @var array|null
+     */
+    protected $currentPin = null;
+
     public function __invoke()
     {
         $this->parser = $this->getParser();
@@ -60,6 +75,7 @@ class Crypt_GPG_PinEntry
             $this->logFilename = $result->options['log'];
 
             $this->connect();
+            $this->initPinsFromEnv();
 
             $this->send($this->ok('Crypt_GPG pinentry ready and waiting'));
             while (($line = fgets($this->stdin, self::READ_BUFFER_LENGTH)) !== false) {
@@ -134,6 +150,8 @@ class Crypt_GPG_PinEntry
 
         switch ($command) {
         case 'SETDESC':
+            return $this->setDescription($data);
+
         case 'SETPROMPT':
         case 'SETERROR':
         case 'SETOK':
@@ -188,6 +206,20 @@ class Crypt_GPG_PinEntry
         }
     }
 
+    protected function initPinsFromEnv()
+    {
+        if (($userData = getenv('PINENTRY_USER_DATA')) !== false) {
+            $pins = json_decode($userData, true);
+            if ($pins !== null) {
+                $this->pins = $pins;
+            }
+            $this->log(
+                '-- got user data ' . $userData . PHP_EOL,
+                self::VERBOSITY_ALL
+            );
+        }
+    }
+
     protected function disconnect()
     {
         fflush($this->stdout);
@@ -204,9 +236,50 @@ class Crypt_GPG_PinEntry
         }
     }
 
+    /**
+     * Sends an OK response for a not implemented feature
+     *
+     * @return void
+     */
     protected function notImplementedOk()
     {
-        // not implemented
+        $this->send($this->ok());
+    }
+
+    /**
+     * Parses the currently requested key identifier and user identifier from
+     * the description passed to this pinentry
+     *
+     * @param string $text the raw description sent from gpg-agent.
+     *
+     * @return void
+     */
+    protected function setDescription($text)
+    {
+        $text = rawurldecode($text);
+        $matches = array();
+        // TODO: handle user id with quotation marks
+        $exp = '/\n"(.+)"\n.*\sID ([A-Z0-9]+),\n/mu';
+        if (preg_match($exp, $text, $matches) === 1) {
+            $userId = $matches[1];
+            $keyId  = $matches[2];
+
+            // only reset tried pins for new requested pin
+            if (   $this->currentPin === null
+                || $this->currentPin['keyId'] !== $keyId
+            ) {
+                $this->currentPin = array(
+                    'userId' => $userId,
+                    'keyId'  => $keyId
+                );
+                $this->triedPins = array();
+                $this->log(
+                    '-- looking for PIN for ' . $keyId . PHP_EOL,
+                    self::VERBOSITY_ALL
+                );
+            }
+        }
+
         $this->send($this->ok());
     }
 
@@ -227,8 +300,34 @@ class Crypt_GPG_PinEntry
 
     protected function getPin()
     {
-        // TODO: grab from pipe
-        $this->send($this->data('test'));
+        $foundPin = '';
+
+        if (is_array($this->currentPin)) {
+            $keyIdLength = mb_strlen($this->currentPin['keyId'], '8bit');
+
+            // search for the pin
+            foreach ($this->pins as $pin) {
+                // only check pins we haven't tried
+                if (!isset($this->triedPins[$pin['keyId']])) {
+
+                    // get last X characters of key identifier to compare
+                    $keyId = mb_substr(
+                        $pin['keyId'],
+                        -$keyIdLength,
+                        mb_strlen($pin['keyId'], '8bit'),
+                        '8bit'
+                    );
+
+                    if ($keyId === $this->currentPin['keyId']) {
+                        $foundPin = $pin['passphrase'];
+                        $this->triedPins[$pin['keyId']] = $pin;
+                        break;
+                    }
+                }
+            }
+        }
+
+        $this->send($this->data($foundPin));
         $this->send($this->ok());
     }
 

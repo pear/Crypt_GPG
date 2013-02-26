@@ -36,7 +36,7 @@
  * @package   Crypt_GPG
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2011 silverorange
+ * @copyright 2005-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id: GPG.php 305428 2010-11-17 02:47:56Z gauthierm $
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -78,7 +78,7 @@ require_once 'Crypt/GPG/Exceptions.php';
  * @package   Crypt_GPG
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2011 silverorange
+ * @copyright 2005-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
@@ -237,6 +237,14 @@ abstract class Crypt_GPGAbstract
      *                                       operating system. The option
      *                                       <kbd>gpgBinary</kbd> is a
      *                                       deprecated alias for this option.
+     * - <kbd>string  agent</kbd>          - the location of the GnuPG agent
+     *                                       binary. The gpg-agent is only
+     *                                       used for GnuPG 2.x. If not
+     *                                       specified, the engine attempts
+     *                                       to auto-detect the gpg-agent
+     *                                       binary location using a list of
+     *                                       know default locations for the
+     *                                       current operating system.
      * - <kbd>boolean debug</kbd>          - whether or not to use debug mode.
      *                                       When debug mode is on, all
      *                                       communication to and from the GPG
@@ -260,6 +268,10 @@ abstract class Crypt_GPGAbstract
      * @throws PEAR_Exception if the provided <kbd>binary</kbd> is invalid, or
      *         if no <kbd>binary</kbd> is provided and no suitable binary could
      *         be found.
+     *
+     * @throws PEAR_Exception if the provided <kbd>agent</kbd> is invalid, or
+     *         if no <kbd>agent</kbd> is provided and no suitable gpg-agent
+     *         cound be found.
      */
     public function __construct(array $options = array())
     {

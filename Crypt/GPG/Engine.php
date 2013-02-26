@@ -1889,7 +1889,7 @@ class Crypt_GPG_Engine
     private function _debug($text)
     {
         if ($this->_debug) {
-            if (array_key_exists('SHELL', $_ENV)) {
+            if (php_sapi_name() === 'cli') {
                 foreach (explode(PHP_EOL, $text) as $line) {
                     echo "Crypt_GPG DEBUG: ", $line, PHP_EOL;
                 }

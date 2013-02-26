@@ -1418,7 +1418,7 @@ class Crypt_GPG_Engine
 
                         array_shift($handler['args']);
                     }
-                    $errorBuffer = self::_byteSubString(
+                    $errorBuffer = Crypt_GPG_ByteUtils::substr(
                         $errorBuffer,
                         $pos + Crypt_GPG_ByteUtils::strlen(PHP_EOL)
                     );
@@ -1455,7 +1455,7 @@ class Crypt_GPG_Engine
                             array_shift($handler['args']);
                         }
                     }
-                    $statusBuffer = self::_byteSubString(
+                    $statusBuffer = Crypt_GPG_ByteUtils::substr(
                         $statusBuffer,
                         $pos + Crypt_GPG_ByteUtils::strlen(PHP_EOL)
                     );

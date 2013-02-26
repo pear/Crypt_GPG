@@ -109,9 +109,9 @@ class Crypt_GPG_PinEntry
     protected function log($data, $level)
     {
         if ($this->verbosity >= $level) {
-            if (is_resource($this->log)) {
-                fwrite($this->log, $data);
-                fflush($this->log);
+            if (is_resource($this->logFile)) {
+                fwrite($this->logFile, $data);
+                fflush($this->logFile);
             } else {
                 $this->parser->outputter->output($data);
             }

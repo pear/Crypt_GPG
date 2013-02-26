@@ -1711,6 +1711,9 @@ class Crypt_GPG_Engine
      */
     private function _closeSubprocess()
     {
+        // clear PINs from environment if they were set
+        $_ENV['PINENTRY_USER_DATA'] = null;
+
         if (is_resource($this->_process)) {
             $this->_debug('CLOSING GPG SUBPROCESS');
 

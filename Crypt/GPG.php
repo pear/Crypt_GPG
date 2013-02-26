@@ -47,7 +47,7 @@
  * @package   Crypt_GPG
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2011 silverorange
+ * @copyright 2005-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -84,7 +84,7 @@ require_once 'Crypt/GPG/DecryptStatusHandler.php';
  * @package   Crypt_GPG
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2011 silverorange
+ * @copyright 2005-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
@@ -1453,6 +1453,37 @@ class Crypt_GPG extends Crypt_GPGAbstract
     }
 
     // }}}
+    // {{{ _setPinEntryEnv()
+
+    /**
+     * Sets the PINENTRY_USER_DATA environment variable with the currently
+     * added keys and passphrases
+     *
+     * Keys and pasphrases are stored as an indexed array of associative
+     * arrays that is JSON encoded to a flat string.
+     *
+     * For GnuPG 2.x this is how passphrases are passed. For GnuPG 1.x the
+     * environment variable is set but not used.
+     *
+     * @param array $keys the internal key array to use.
+     *
+     * @return void
+     */
+    protected function _setPinEntryEnv(array $keys)
+    {
+        $envKeys = array();
+        foreach ($keys as $id => $key) {
+            $envKeys[] = array(
+                'keyId'       => $id,
+                'fingerprint' => $key['fingerprint'],
+                'passphrase'  => $key['passphrase']
+            );
+        }
+        $envKeys = json_encode($envKeys);
+        $_ENV['PINENTRY_USER_DATA'] = $envKeys;
+    }
+
+    // }}}
     // {{{ _importKey()
 
     /**
@@ -1697,8 +1728,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
             }
         }
 
-        $handler = new Crypt_GPG_DecryptStatusHandler($this->engine,
-            $this->decryptKeys);
+        $handler = new Crypt_GPG_DecryptStatusHandler(
+            $this->engine,
+            $this->decryptKeys
+        );
+
+        // If using gpg-agent, set the decrypt pins used by the pinentry
+        $this->_setPinEntryEnv($this->decryptKeys);
 
         $this->engine->reset();
         $this->engine->addStatusHandler(array($handler, 'handle'));
@@ -1828,6 +1864,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
             $arguments[] = '--local-user ' .
                 escapeshellarg($key['fingerprint']);
         }
+
+        // If using gpg-agent, set the sign pins used by the pinentry
+        $this->_setPinEntryEnv($this->signKeys);
 
         $this->engine->reset();
         $this->engine->addStatusHandler(array($this, 'handleSignStatus'));
@@ -2169,8 +2208,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
 
         $verifyHandler = new Crypt_GPG_VerifyStatusHandler();
 
-        $decryptHandler = new Crypt_GPG_DecryptStatusHandler($this->engine,
-            $this->decryptKeys);
+        $decryptHandler = new Crypt_GPG_DecryptStatusHandler(
+            $this->engine,
+            $this->decryptKeys
+        );
+
+        // If using gpg-agent, set the decrypt pins used by the pinentry
+        $this->_setPinEntryEnv($this->decryptKeys);
 
         $this->engine->reset();
         $this->engine->addStatusHandler(array($verifyHandler, 'handle'));

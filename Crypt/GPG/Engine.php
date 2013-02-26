@@ -1548,6 +1548,7 @@ class Crypt_GPG_Engine
 
             $agentArguments = array(
                 '--csh', // output is easier to parse
+                '--keep-display', // prevent passing --display to pinentry
                 '--no-grab',
                 '--ignore-cache-for-signing',
                 '--pinentry-touch-file /dev/null',

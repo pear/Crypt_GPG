@@ -109,8 +109,37 @@ $package->addMaintainer(
     'nathan@silverorange.com'
 );
 
+$package->addReplacement(
+    'data/pinentry-cli.xml',
+    'package-info',
+    '@package-version@',
+    'version'
+);
+
+$package->addReplacement(
+    'Crypt/GPG/PinEntry.php',
+    'package-info',
+    '@package-name@',
+    'name'
+);
+
+$package->addReplacement(
+    'Crypt/GPG/PinEntry.php',
+    'pear-config',
+    '@data-dir@',
+    'data_dir'
+);
+
+$package->addReplacement(
+    'Crypt/GPG/Engine.php',
+    'pear-config',
+    '@bin-dir@',
+    'bin_dir'
+);
+
 $package->setPhpDep('5.2.1');
 $package->addExtensionDep('optional', 'posix');
+$package->addExtensionDep('required', 'mbstring');
 $package->addOsDep('windows', true);
 $package->setPearinstallerDep('1.4.0');
 $package->addPackageDepWithChannel(

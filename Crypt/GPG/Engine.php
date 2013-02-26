@@ -1547,6 +1547,7 @@ class Crypt_GPG_Engine
             $agentCommandLine = $this->_agent;
 
             $agentArguments = array(
+                '--options /dev/null', // ignore any saved options
                 '--csh', // output is easier to parse
                 '--keep-display', // prevent passing --display to pinentry
                 '--no-grab',
@@ -1554,15 +1555,17 @@ class Crypt_GPG_Engine
                 '--pinentry-touch-file /dev/null',
                 '--disable-scdaemon',
                 '--no-use-standard-socket',
-                '--pinentry-program ' . escapeshellarg($this->_getPinEntry()),
-                '--daemon'
+                '--pinentry-program ' . escapeshellarg($this->_getPinEntry())
             );
 
             if ($this->_homedir) {
-                $agentArguments[] = '--homedir ' . escapeshellarg($this->_homedir);
+                $agentArguments[] = '--homedir ' .
+                    escapeshellarg($this->_homedir);
             }
 
-            $agentCommandLine .= ' ' . implode(' ', $agentArguments);
+
+            $agentCommandLine .= ' ' . implode(' ', $agentArguments)
+                . ' --daemon';
 
             $agentDescriptorSpec = array(
                 self::FD_INPUT   => array('pipe', $rb), // stdin

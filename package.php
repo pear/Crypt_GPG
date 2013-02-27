@@ -27,7 +27,7 @@
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @author    Nathan Fredrikson <nathan@silverorange.com>
- * @copyright 2005-2011 silverorange
+ * @copyright 2005-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -58,7 +58,7 @@ $package = new PEAR_PackageFileManager2();
 
 $package->setOptions(
     array(
-        'filelistgenerator' => 'svn',
+        'filelistgenerator' => 'file',
         'simpleoutput'      => true,
         'baseinstalldir'    => '/',
         'packagedirectory'  => './',
@@ -69,10 +69,15 @@ $package->setOptions(
         ),
         'exceptions'        => array(
             'LICENSE'       => 'doc',
+            'scripts/crypt-gpg-pinentry' => 'script'
         ),
         'ignore'            => array(
             'tools/',
-            'package.php'
+            'package.php',
+            '*.tgz'
+        )
+        'installexceptions'                   => array(
+            'scripts/crypt-gpg-pinentry' => '/'
         )
     )
 );
@@ -104,10 +109,53 @@ $package->addMaintainer(
     'nathan@silverorange.com'
 );
 
+$package->addReplacement(
+    'data/pinentry-cli.xml',
+    'package-info',
+    '@package-version@',
+    'version'
+);
+
+$package->addReplacement(
+    'Crypt/GPG/PinEntry.php',
+    'package-info',
+    '@package-name@',
+    'name'
+);
+
+$package->addReplacement(
+    'Crypt/GPG/PinEntry.php',
+    'pear-config',
+    '@data-dir@',
+    'data_dir'
+);
+
+$package->addReplacement(
+    'Crypt/GPG/Engine.php',
+    'pear-config',
+    '@bin-dir@',
+    'bin_dir'
+);
+
+$package->addReplacement(
+    'script/crypt-gpg-pinentry',
+    'pear-config',
+    '@php-dir@',
+    'php_dir'
+);
+
 $package->setPhpDep('5.2.1');
 $package->addExtensionDep('optional', 'posix');
+$package->addExtensionDep('required', 'mbstring');
 $package->addOsDep('windows', true);
 $package->setPearinstallerDep('1.4.0');
+$package->addPackageDepWithChannel(
+    'required',
+    'Console_CommandLine',
+    'pear.php.net',
+    '1.1.10'
+);
+
 $package->generateContents();
 
 if (   isset($_GET['make'])

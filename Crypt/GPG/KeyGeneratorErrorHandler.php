@@ -29,7 +29,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2011 silverorange
+ * @copyright 2011-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id:$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -45,7 +45,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2011 silverorange
+ * @copyright 2011-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
@@ -59,14 +59,14 @@ class Crypt_GPG_KeyGeneratorErrorHandler
      *
      * @var integer
      */
-    protected $_errorCode = Crypt_GPG::ERROR_NONE;
+    protected $errorCode = Crypt_GPG::ERROR_NONE;
 
     /**
      * Line number at which the error occurred
      *
      * @var integer
      */
-    protected $_lineNumber = null;
+    protected $lineNumber = null;
 
     // }}}
     // {{{ handle()
@@ -83,8 +83,8 @@ class Crypt_GPG_KeyGeneratorErrorHandler
         $matches = array();
         $pattern = '/:([0-9]+): invalid algorithm$/';
         if (preg_match($pattern, $line, $matches) === 1) {
-            $this->_errorCode  = Crypt_GPG::ERROR_BAD_KEY_PARAMS;
-            $this->_lineNumber = intval($matches[1]);
+            $this->errorCode  = Crypt_GPG::ERROR_BAD_KEY_PARAMS;
+            $this->lineNumber = intval($matches[1]);
         }
     }
 
@@ -98,7 +98,7 @@ class Crypt_GPG_KeyGeneratorErrorHandler
      */
     public function getErrorCode()
     {
-        return $this->_errorCode;
+        return $this->errorCode;
     }
 
     // }}}
@@ -112,7 +112,7 @@ class Crypt_GPG_KeyGeneratorErrorHandler
      */
     public function getLineNumber()
     {
-        return $this->_lineNumber;
+        return $this->lineNumber;
     }
 
     // }}}

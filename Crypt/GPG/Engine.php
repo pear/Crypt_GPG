@@ -53,6 +53,11 @@ require_once 'Crypt/GPG/Exceptions.php';
 require_once 'Crypt/GPG/ByteUtils.php';
 
 /**
+ * Process control methods.
+ */
+require_once 'Crypt/GPG/ProcessControl.php';
+
+/**
  * Standard PEAR exception is used if GPG binary is not found.
  */
 require_once 'PEAR/Exception.php';
@@ -278,6 +283,13 @@ class Crypt_GPG_Engine
      * @var resource
      */
     private $_agentProcess = null;
+
+    /**
+     * GPG agent daemon socket and PID for running gpg-agent
+     *
+     * @var string
+     */
+    private $_agentInfo = null;
 
     /**
      * Whether or not the operating system is Darwin (OS X)
@@ -1599,9 +1611,13 @@ class Crypt_GPG_Engine
                 $this->_agentPipes[self::FD_OUTPUT],
                 self::CHUNK_SIZE
             );
-            $agentInfo = explode(' ', $agentInfo, 3);
 
-            $env['GPG_AGENT_INFO'] = $agentInfo[2];
+            $agentInfo             = explode(' ', $agentInfo, 3);
+            $this->_agentInfo      = $agentInfo[2];
+            $env['GPG_AGENT_INFO'] = $this->_agentInfo;
+
+            // gpg-agent daemon is started, we can close the launching process
+            $this->_closeAgentLaunchProcess();
         }
 
         $commandLine = $this->_binary;
@@ -1743,8 +1759,36 @@ class Crypt_GPG_Engine
             $this->_pipes   = array();
         }
 
+        $this->_closeAgentLaunchProcess();
+
+        if ($this->_agentInfo !== null) {
+            $this->_debug('STOPPING GPG-AGENT DAEMON');
+
+            $parts   = explode(':', $this->_agentInfo, 3);
+            $pid     = $parts[1];
+            $process = new Crypt_GPG_ProcessControl($pid);
+
+            // terminate agent daemon
+            $process->terminate();
+
+            while ($process->isRunning()) {
+                usleep(10000); // 10 ms
+                $process->terminate();
+            }
+
+            $this->_agentInfo = null;
+
+            $this->_debug('GPG-AGENT DAEMON STOPPED');
+        }
+    }
+
+    // }}}
+    // {{ _closeAgentLaunchProcess()
+
+    private function _closeAgentLaunchProcess()
+    {
         if (is_resource($this->_agentProcess)) {
-            $this->_debug('CLOSING GPG-AGENT SUBPROCESS');
+            $this->_debug('CLOSING GPG-AGENT LAUNCH PROCESS');
 
             // close agent pipes
             foreach ($this->_agentPipes as $pipe) {
@@ -1752,21 +1796,17 @@ class Crypt_GPG_Engine
                 fclose($pipe);
             }
 
-            proc_terminate($this->_agentProcess);
-            $status = proc_get_status($this->_agentProcess);
-            while (is_array($status) && $status['running']) {
-                usleep(10000);
-                proc_terminate($this->_agentProcess);
-            }
+            // close agent launching process
+            proc_close($this->_agentProcess);
 
             $this->_agentProcess = null;
             $this->_agentPipes   = array();
 
-            $this->_debug('GPG-AGENT SUBPROCESS CLOSED');
+            $this->_debug('GPG-AGENT LAUNCH PROCESS CLOSED');
         }
     }
 
-    // }}}
+    // }}
     // {{{ _closePipe()
 
     /**

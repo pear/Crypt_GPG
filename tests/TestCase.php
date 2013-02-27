@@ -587,6 +587,16 @@ TEXT;
             }
         }
 
+        $dirnames = array(
+            $this->getKeyringFilename('private-keys-v1.d')
+        );
+
+        foreach ($dirnames as $dirname) {
+            if (file_exists($dirname)) {
+                rmdir($dirname);
+            }
+        }
+
         rmdir(dirname(__FILE__) . '/' . self::HOMEDIR);
     }
 

@@ -29,7 +29,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2011 silverorange
+ * @copyright 2011-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id:$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -51,7 +51,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2011 silverorange
+ * @copyright 2011-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
@@ -68,34 +68,44 @@ class Crypt_GPG_KeyGeneratorStatusHandler
      *
      * @var string
      */
-    protected $_keyFingerprint = '';
+    protected $keyFingerprint = '';
 
     /**
-     * The key handle used by this handler
+     * The unique key handle used by this handler
+     *
+     * The key handle is used to track GPG status output for a particular key
+     * before the key has its own identifier.
      *
      * @var string
      *
      * @see Crypt_GPG_KeyGeneratorStatusHandler::setHandle()
      */
-    protected $_handle = '';
+    protected $handle = '';
 
     /**
      * Error code (if any) caused by key generation
      *
      * @var integer
      */
-    protected $_errorCode = Crypt_GPG::ERROR_NONE;
+    protected $errorCode = Crypt_GPG::ERROR_NONE;
 
     // }}}
     // {{{ setHandle()
 
     /**
-     * @param string $handle the key handle this status handle will use
-     * @return
+     * Sets the unique key handle used by this handler
+     *
+     * The key handle is used to track GPG status output for a particular key
+     * before the key has its own identifier.
+     *
+     * @param string $handle the key handle this status handle will use.
+     *
+     * @return Crypt_GPG_KeyGeneratorStatusHandler the current object, for
+     *                                             fluent interface.
      */
     public function setHandle($handle)
     {
-        $this->_handle = strval($handle);
+        $this->handle = strval($handle);
         return $this;
     }
 
@@ -114,14 +124,14 @@ class Crypt_GPG_KeyGeneratorStatusHandler
         $tokens = explode(' ', $line);
         switch ($tokens[0]) {
         case 'KEY_CREATED':
-            if ($tokens[3] == $this->_handle) {
-                $this->_keyFingerprint = $tokens[2];
+            if ($tokens[3] == $this->handle) {
+                $this->keyFingerprint = $tokens[2];
             }
             break;
 
         case 'KEY_NOT_CREATED':
-            if ($tokens[1] == $this->_handle) {
-                $this->_errorCode = Crypt_GPG::ERROR_KEY_NOT_CREATED;
+            if ($tokens[1] == $this->handle) {
+                $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_CREATED;
             }
             break;
 
@@ -141,7 +151,7 @@ class Crypt_GPG_KeyGeneratorStatusHandler
      */
     public function getKeyFingerprint()
     {
-        return $this->_keyFingerprint;
+        return $this->keyFingerprint;
     }
 
     // }}}
@@ -154,7 +164,7 @@ class Crypt_GPG_KeyGeneratorStatusHandler
      */
     public function getErrorCode()
     {
-        return $this->_errorCode;
+        return $this->errorCode;
     }
 
     // }}}

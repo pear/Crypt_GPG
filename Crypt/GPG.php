@@ -2068,6 +2068,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
                 escapeshellarg($key['fingerprint']);
         }
 
+        // If using gpg-agent, set the sign pins used by the pinentry
+        $this->_setPinEntryEnv($this->signKeys);
+
         foreach ($this->encryptKeys as $key) {
             $arguments[] = '--recipient ' . escapeshellarg($key['fingerprint']);
         }

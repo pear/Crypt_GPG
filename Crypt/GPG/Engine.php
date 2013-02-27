@@ -526,8 +526,8 @@ class Crypt_GPG_Engine
                 throw new Crypt_GPG_FileException(
                     'Could not locate homedir. Please specify the homedir ' .
                     'to use with the \'homedir\' option when instantiating ' .
-                    'the Crypt_GPG object.');
-
+                    'the Crypt_GPG object.'
+                );
             }
         }
 
@@ -538,14 +538,38 @@ class Crypt_GPG_Engine
                 // with 0777, homedir is set to 0700.
                 chmod($this->_homedir, 0700);
             } else {
-                throw new Crypt_GPG_FileException('The \'homedir\' "' .
-                    $this->_homedir . '" is not readable or does not exist '.
-                    'and cannot be created. This can happen if \'homedir\' '.
-                    'is not specified in the Crypt_GPG options, Crypt_GPG is '.
-                    'run as the web user, and the web user has no home '.
-                    'directory.',
-                    0, $this->_homedir);
+                throw new Crypt_GPG_FileException(
+                    'The \'homedir\' "' . $this->_homedir . '" is not ' .
+                    'readable or does not exist and cannot be created. This ' .
+                    'can happen if \'homedir\' is not specified in the ' .
+                    'Crypt_GPG options, Crypt_GPG is run as the web user, ' .
+                    'and the web user has no home directory.',
+                    0,
+                    $this->_homedir
+                );
             }
+        }
+
+        // check homedir permissions (See Bug #19833)
+        if (!is_executable($this->_homedir)) {
+            throw new Crypt_GPG_FileException(
+                'The \'homedir\' "' . $this->_homedir . '" is not enterable ' .
+                'by the current user. Please check the permissions on your ' .
+                'homedir and make sure the current user can both enter and ' .
+                'write to the directory.',
+                0,
+                $this->_homedir
+            );
+        }
+        if (!is_writeable($this->_homedir)) {
+            throw new Crypt_GPG_FileException(
+                'The \'homedir\' "' . $this->_homedir . '" is not writable ' .
+                'by the current user. Please check the permissions on your ' .
+                'homedir and make sure the current user can both enter and ' .
+                'write to the directory.',
+                0,
+                $this->_homedir
+            );
         }
 
         // get binary

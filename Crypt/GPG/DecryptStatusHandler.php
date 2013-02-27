@@ -29,7 +29,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008-2009 silverorange
+ * @copyright 2008-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -64,7 +64,7 @@ require_once 'Crypt/GPG/Exceptions.php';
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
@@ -293,8 +293,10 @@ class Crypt_GPG_DecryptStatusHandler
             throw new Crypt_GPG_KeyNotFoundException(
                 'Cannot decrypt data. No suitable private key is in the ' .
                 'keyring. Import a suitable private key before trying to ' .
-                'decrypt this data.', $code, $keyId);
-
+                'decrypt this data.',
+                $code,
+                $keyId
+            );
         case Crypt_GPG::ERROR_BAD_PASSPHRASE:
             $badPassphrases = array_diff_key(
                 $this->badPassphrases,
@@ -316,17 +318,23 @@ class Crypt_GPG_DecryptStatusHandler
                     implode('", "', $badPassphrases) . '".';
             }
 
-            throw new Crypt_GPG_BadPassphraseException($message, $code,
-                $badPassphrases, $missingPassphrases);
-
+            throw new Crypt_GPG_BadPassphraseException(
+                $message,
+                $code,
+                $badPassphrases,
+                $missingPassphrases
+            );
         case Crypt_GPG::ERROR_NO_DATA:
             throw new Crypt_GPG_NoDataException(
                 'Cannot decrypt data. No PGP encrypted data was found in '.
-                'the provided data.', $code);
-
+                'the provided data.',
+                $code
+            );
         default:
             throw new Crypt_GPG_Exception(
-                'Unknown error decrypting data.', $code);
+                'Unknown error decrypting data.',
+                $code
+            );
         }
     }
 

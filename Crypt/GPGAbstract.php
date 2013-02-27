@@ -370,12 +370,16 @@ abstract class Crypt_GPGAbstract
             }
             throw new Crypt_GPG_FileException(
                 'Error reading GnuPG data file. Check to make GnuPG data ' .
-                'files are readable by the current user.', $code);
+                'files are readable by the current user.',
+                $code
+            );
         default:
             throw new Crypt_GPG_Exception(
                 'Unknown error getting keys. Please use the \'debug\' option ' .
                 'when creating the Crypt_GPG object, and file a bug report ' .
-                'at ' . self::BUG_URI, $code);
+                'at ' . self::BUG_URI,
+                $code
+            );
         }
 
         $privateKeyFingerprints = array();
@@ -424,12 +428,16 @@ abstract class Crypt_GPGAbstract
             }
             throw new Crypt_GPG_FileException(
                 'Error reading GnuPG data file. Check to make GnuPG data ' .
-                'files are readable by the current user.', $code);
+                'files are readable by the current user.',
+                $code
+            );
         default:
             throw new Crypt_GPG_Exception(
                 'Unknown error getting keys. Please use the \'debug\' option ' .
                 'when creating the Crypt_GPG object, and file a bug report ' .
-                'at ' . self::BUG_URI, $code);
+                'at ' . self::BUG_URI,
+                $code
+            );
         }
 
         $keys = array();

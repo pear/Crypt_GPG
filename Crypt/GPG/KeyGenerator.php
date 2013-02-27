@@ -91,7 +91,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_KeyGenerator::setExpirationDate()
      */
-    protected $_expirationDate = 0;
+    protected $expirationDate = 0;
 
     /**
      * The passphrase of generated keys
@@ -100,7 +100,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_KeyGenerator::setPassphrase()
      */
-    protected $_passphrase = '';
+    protected $passphrase = '';
 
     /**
      * The algorithm for generated primary keys
@@ -109,7 +109,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_KeyGenerator::setKeyParams()
      */
-    protected $_keyAlgorithm = Crypt_GPG_SubKey::ALGORITHM_DSA;
+    protected $keyAlgorithm = Crypt_GPG_SubKey::ALGORITHM_DSA;
 
     /**
      * The size of generated primary keys
@@ -118,7 +118,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_KeyGenerator::setKeyParams()
      */
-    protected $_keySize = 1024;
+    protected $keySize = 1024;
 
     /**
      * The usages of generated primary keys
@@ -130,7 +130,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_KeyGenerator::setKeyParams()
      */
-    protected $_keyUsage = 6; // USAGE_SIGN | USAGE_CERTIFY
+    protected $keyUsage = 6; // USAGE_SIGN | USAGE_CERTIFY
 
     /**
      * The algorithm for generated sub-keys
@@ -139,7 +139,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_KeyGenerator::setSubKeyParams()
      */
-    protected $_subKeyAlgorithm = Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC;
+    protected $subKeyAlgorithm = Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC;
 
     /**
      * The size of generated sub-keys
@@ -148,7 +148,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_KeyGenerator::setSubKeyParams()
      */
-    protected $_subKeySize = 2048;
+    protected $subKeySize = 2048;
 
     /**
      * The usages of generated sub-keys
@@ -160,7 +160,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_KeyGenerator::setSubKeyParams()
      */
-    protected $_subKeyUsage = Crypt_GPG_SubKey::USAGE_ENCRYPT;
+    protected $subKeyUsage = Crypt_GPG_SubKey::USAGE_ENCRYPT;
 
     /**
      * The GnuPG status handler to use for key generation
@@ -169,7 +169,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_KeyGenerator::setStatusHandler()
      */
-    protected $_statusHandler = null;
+    protected $statusHandler = null;
 
     /**
      * The GnuPG error handler to use for key generation
@@ -178,7 +178,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_KeyGenerator::setErrorHandler()
      */
-    protected $_errorHandler = null;
+    protected $errorHandler = null;
 
     // }}}
     // {{{ __construct()
@@ -273,8 +273,8 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     {
         parent::__construct($options);
 
-        $this->_statusHandler = new Crypt_GPG_KeyGeneratorStatusHandler();
-        $this->_errorHandler  = new Crypt_GPG_KeyGeneratorErrorHandler();
+        $this->statusHandler = new Crypt_GPG_KeyGeneratorStatusHandler();
+        $this->errorHandler  = new Crypt_GPG_KeyGeneratorErrorHandler();
     }
 
     // }}}
@@ -330,7 +330,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             );
         }
 
-        $this->_expirationDate = $expirationDate;
+        $this->expirationDate = $expirationDate;
 
         return $this;
     }
@@ -348,7 +348,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      */
     public function setPassphrase($passphrase)
     {
-        $this->_passphrase = strval($passphrase);
+        $this->passphrase = strval($passphrase);
         return $this;
     }
 
@@ -400,9 +400,10 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $usage = intval($usage);
         }
 
+        $usageEncrypt = Crypt_GPG_SubKey::USAGE_ENCRYPT;
+
         if (   $algorithm === Crypt_GPG_SubKey::ALGORITHM_DSA
-            && ($usage & Crypt_GPG_SubKey::USAGE_ENCRYPT) ===
-                Crypt_GPG_SubKey::USAGE_ENCRYPT
+            && ($usage & $usageEncrypt) === $usageEncrypt
         ) {
             throw new Crypt_GPG_InvalidKeyParamsException(
                 'The DSA algorithm is not capable of encrypting. Please ' .
@@ -415,14 +416,14 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             );
         }
 
-        $this->_keyAlgorithm = $algorithm;
+        $this->keyAlgorithm = $algorithm;
 
         if ($size != 0) {
-            $this->_keySize = $size;
+            $this->keySize = $size;
         }
 
         if ($usage != 0) {
-            $this->_keyUsage = $usage;
+            $this->keyUsage = $usage;
         }
 
         return $this;
@@ -463,9 +464,10 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $usage = intval($usage);
         }
 
+        $usageSign = Crypt_GPG_SubKey::USAGE_SIGN;
+
         if (   $algorithm === Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC
-            && ($usage & Crypt_GPG_SubKey::USAGE_SIGN) ===
-                Crypt_GPG_SubKey::USAGE_SIGN
+            && ($usage & $usageSign) === $usageSign
         ) {
             throw new Crypt_GPG_InvalidKeyParamsException(
                 'The Elgamal algorithm is not capable of signing. Please ' .
@@ -478,9 +480,10 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             );
         }
 
+        $usageEncrypt = Crypt_GPG_SubKey::USAGE_ENCRYPT;
+
         if (   $algorithm === Crypt_GPG_SubKey::ALGORITHM_DSA
-            && ($usage & Crypt_GPG_SubKey::USAGE_ENCRYPT) ===
-                Crypt_GPG_SubKey::USAGE_ENCRYPT
+            && ($usage & $usageEncrypt) === $usageEncrypt
         ) {
             throw new Crypt_GPG_InvalidKeyParamsException(
                 'The DSA algorithm is not capable of encrypting. Please ' .
@@ -493,14 +496,14 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             );
         }
 
-        $this->_subKeyAlgorithm = $algorithm;
+        $this->subKeyAlgorithm = $algorithm;
 
         if ($size != 0) {
-            $this->_subKeySize = $size;
+            $this->subKeySize = $size;
         }
 
         if ($usage != 0) {
-            $this->_subKeyUsage = $usage;
+            $this->subKeyUsage = $usage;
         }
 
         return $this;
@@ -523,7 +526,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     public function setStatusHandler(
         Crypt_GPG_KeyGeneratorStatusHandler $handler
     ) {
-        $this->_statusHandler = $handler;
+        $this->statusHandler = $handler;
         return $this;
     }
 
@@ -544,7 +547,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     public function setErrorHandler(
         Crypt_GPG_KeyGeneratorErrorHandler $handler
     ) {
-        $this->_errorHandler = $handler;
+        $this->errorHandler = $handler;
         return $this;
     }
 
@@ -590,24 +593,24 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         $userId = $this->getUserId($name, $email, $comment);
 
         $keyParams = array(
-            'Key-Type'      => $this->_keyAlgorithm,
-            'Key-Length'    => $this->_keySize,
-            'Key-Usage'     => $this->getUsage($this->_keyUsage),
-            'Subkey-Type'   => $this->_subKeyAlgorithm,
-            'Subkey-Length' => $this->_subKeySize,
-            'Subkey-Usage'  => $this->getUsage($this->_subKeyUsage),
+            'Key-Type'      => $this->keyAlgorithm,
+            'Key-Length'    => $this->keySize,
+            'Key-Usage'     => $this->getUsage($this->keyUsage),
+            'Subkey-Type'   => $this->subKeyAlgorithm,
+            'Subkey-Length' => $this->subKeySize,
+            'Subkey-Usage'  => $this->getUsage($this->subKeyUsage),
             'Name-Real'     => $userId->getName(),
             'Handle'        => $handle,
         );
 
-        if ($this->_expirationDate != 0) {
+        if ($this->expirationDate != 0) {
             // GnuPG only accepts granularity of days
-            $expirationDate = date('Y-m-d', $this->_expirationDate);
+            $expirationDate = date('Y-m-d', $this->expirationDate);
             $keyParams['Expire-Date'] = $expirationDate;
         }
 
-        if ($this->_passphrase != '') {
-            $keyParams['Passphrase'] = $this->_passphrase;
+        if ($this->passphrase != '') {
+            $keyParams['Passphrase'] = $this->passphrase;
         }
 
         if ($userId->getEmail() != '') {
@@ -626,10 +629,10 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
 
         $input = implode("\n", $keyParamsFormatted) . "\n%commit\n";
 
-        $statusHandler = clone $this->_statusHandler;
+        $statusHandler = clone $this->statusHandler;
         $statusHandler->setHandle($handle);
 
-        $errorHandler = clone $this->_errorHandler;
+        $errorHandler = clone $this->errorHandler;
 
         $this->engine->reset();
         $this->engine->addStatusHandler(array($statusHandler, 'handle'));
@@ -647,17 +650,17 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
                 throw new Crypt_GPG_InvalidKeyParamsException(
                     'Invalid primary key algorithm specified.',
                     0,
-                    $this->_keyAlgorithm,
-                    $this->_keySize,
-                    $this->_keyUsage
+                    $this->keyAlgorithm,
+                    $this->keySize,
+                    $this->keyUsage
                 );
             case 4:
                 throw new Crypt_GPG_InvalidKeyParamsException(
                     'Invalid sub-key algorithm specified.',
                     0,
-                    $this->_subKeyAlgorithm,
-                    $this->_subKeySize,
-                    $this->_subKeyUsage
+                    $this->subKeyAlgorithm,
+                    $this->subKeySize,
+                    $this->subKeyUsage
                 );
             default:
                 throw new Crypt_GPG_InvalidKeyParamsException(
@@ -675,7 +678,9 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             throw new Crypt_GPG_Exception(
                 'Unknown error generating key-pair. Please use the \'debug\' ' .
                 'option when creating the Crypt_GPG object, and file a bug ' .
-                'report at ' . self::BUG_URI, $code);
+                'report at ' . self::BUG_URI,
+                $code
+            );
         }
 
         $code = $statusHandler->getErrorCode();
@@ -687,7 +692,9 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             throw new Crypt_GPG_KeyNotCreatedException(
                 'Unable to create new key-pair. Invalid key parameters. ' .
                 'Make sure the specified key algorithms and sizes are ' .
-                'correct.', $code);
+                'correct.',
+                $code
+            );
         }
 
         $fingerprint = $statusHandler->getKeyFingerprint();

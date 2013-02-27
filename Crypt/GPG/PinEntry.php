@@ -2,8 +2,73 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/**
+ * Contains a class implementing automatic pinentry for gpg-agent
+ *
+ * PHP version 5
+ *
+ * LICENSE:
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * @category  Encryption
+ * @package   Crypt_GPG
+ * @author    Michael Gauthier <mike@silverorange.com>
+ * @copyright 2013 silverorange
+ * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @version   CVS: $Id$
+ * @link      http://pear.php.net/package/Crypt_GPG
+ */
+
+/**
+ * CLI user-interface and parser.
+ */
 require_once 'Console/CommandLine.php';
 
+// {{{ class Crypt_GPG_PinEntry
+
+/**
+ * A command-line dummy pinentry program for use with gpg-agent and Crypt_GPG
+ *
+ * This pinentry receives passphrases through en environment variable and
+ * automatically enters the PIN in response to gpg-agent requests. No user-
+ * interaction required.
+ *
+ * Thie pinentry can be run independently for testing and debugging with the
+ * following syntax:
+ *
+ * <pre>
+ * Usage:
+ *   crypt-gpg-pinentry [options]
+ *
+ * Options:
+ *   -l log, --log=log  Optional location to log pinentry activity.
+ *   -v, --verbose      Sets verbosity level. Use multiples for more detail
+ *                      (e.g. "-vv").
+ *   -h, --help         show this help message and exit
+ *   --version          show the program version and exit
+ * </pre>
+ *
+ * @category  Encryption
+ * @package   Crypt_GPG
+ * @author    Michael Gauthier <mike@silverorange.com>
+ * @copyright 2013 silverorange
+ * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      http://pear.php.net/package/Crypt_GPG
+ * @see       Crypt_GPG::getKeys()
+ */
 class Crypt_GPG_PinEntry
 {
     // {{{ class constants
@@ -804,5 +869,7 @@ class Crypt_GPG_PinEntry
 
     // }}}
 }
+
+// }}}
 
 ?>

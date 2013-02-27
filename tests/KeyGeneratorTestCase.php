@@ -195,7 +195,7 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $expectedDate,
-            '_expirationDate',
+            'expirationDate',
             $this->generator,
             'Setting expiration date to zero failed.'
         );
@@ -214,7 +214,7 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $expectedDate,
-            '_expirationDate',
+            'expirationDate',
             $this->generator,
             'Setting expiration date by integer failed.'
         );
@@ -235,7 +235,7 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $expectedDate,
-            '_expirationDate',
+            'expirationDate',
             $this->generator,
             'Setting expiration date by string failed.'
         );
@@ -304,7 +304,7 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $expectedPassphrase,
-            '_passphrase',
+            'passphrase',
             $this->generator,
             'Setting passphrase failed.'
         );
@@ -329,21 +329,21 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $expectedAlgorithm,
-            '_keyAlgorithm',
+            'keyAlgorithm',
             $this->generator,
             'Setting key algorithm failed.'
         );
 
         $this->assertAttributeEquals(
             $expectedSize,
-            '_keySize',
+            'keySize',
             $this->generator,
             'Setting key algorithm changed key size.'
         );
 
         $this->assertAttributeEquals(
             $expectedUsage,
-            '_keyUsage',
+            'keyUsage',
             $this->generator,
             'Setting key algorithm changed key usage.'
         );
@@ -369,21 +369,21 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $expectedAlgorithm,
-            '_keyAlgorithm',
+            'keyAlgorithm',
             $this->generator,
             'Setting key algorithm failed.'
         );
 
         $this->assertAttributeEquals(
             $expectedSize,
-            '_keySize',
+            'keySize',
             $this->generator,
             'Setting key size failed.'
         );
 
         $this->assertAttributeEquals(
             $expectedUsage,
-            '_keyUsage',
+            'keyUsage',
             $this->generator,
             'Setting key algorithm and size changed key usage.'
         );
@@ -413,21 +413,21 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $expectedAlgorithm,
-            '_keyAlgorithm',
+            'keyAlgorithm',
             $this->generator,
             'Setting key algorithm failed.'
         );
 
         $this->assertAttributeEquals(
             $expectedSize,
-            '_keySize',
+            'keySize',
             $this->generator,
             'Setting key size failed.'
         );
 
         $this->assertAttributeEquals(
             $expectedUsage,
-            '_keyUsage',
+            'keyUsage',
             $this->generator,
             'Setting key usage failed.'
         );
@@ -479,21 +479,21 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $expectedAlgorithm,
-            '_subKeyAlgorithm',
+            'subKeyAlgorithm',
             $this->generator,
             'Setting sub-key algorithm failed.'
         );
 
         $this->assertAttributeEquals(
             $expectedSize,
-            '_subKeySize',
+            'subKeySize',
             $this->generator,
             'Setting sub-key algorithm changed key size.'
         );
 
         $this->assertAttributeEquals(
             $expectedUsage,
-            '_subKeyUsage',
+            'subKeyUsage',
             $this->generator,
             'Setting sub-key algorithm changed key usage.'
         );
@@ -518,21 +518,21 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $expectedAlgorithm,
-            '_subKeyAlgorithm',
+            'subKeyAlgorithm',
             $this->generator,
             'Setting sub-key algorithm failed.'
         );
 
         $this->assertAttributeEquals(
             $expectedSize,
-            '_subKeySize',
+            'subKeySize',
             $this->generator,
             'Setting sub-key size failed.'
         );
 
         $this->assertAttributeEquals(
             $expectedUsage,
-            '_subKeyUsage',
+            'subKeyUsage',
             $this->generator,
             'Setting sub-key algorithm and size changed key usage.'
         );
@@ -560,21 +560,21 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $expectedAlgorithm,
-            '_subKeyAlgorithm',
+            'subKeyAlgorithm',
             $this->generator,
             'Setting sub-key algorithm failed.'
         );
 
         $this->assertAttributeEquals(
             $expectedSize,
-            '_subKeySize',
+            'subKeySize',
             $this->generator,
             'Setting sub-key size failed.'
         );
 
         $this->assertAttributeEquals(
             $expectedUsage,
-            '_subKeyUsage',
+            'subKeyUsage',
             $this->generator,
             'Setting sub-key usage failed.'
         );
@@ -626,7 +626,7 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $statusHandler,
-            '_statusHandler',
+            'statusHandler',
             $this->generator,
             'Setting status handler failed.'
         );
@@ -646,7 +646,7 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
 
         $this->assertAttributeEquals(
             $errorHandler,
-            '_errorHandler',
+            'errorHandler',
             $this->generator,
             'Setting error handler failed.'
         );

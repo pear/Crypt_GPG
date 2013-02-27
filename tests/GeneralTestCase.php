@@ -34,7 +34,7 @@
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2011 silverorange
+ * @copyright 2005-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
@@ -51,7 +51,7 @@ require_once 'TestCase.php';
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008-2011 silverorange
+ * @copyright 2008-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
@@ -105,18 +105,59 @@ class GeneralTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
-    // {{{ testHomedirFileException()
+    // {{{ testHomedirFileException_NoCreate()
 
     /**
      * @expectedException Crypt_GPG_FileException
+     * @expectedExceptionMessage cannot be created
      */
-    public function testHomedirFileException()
+    public function testHomedirFileException_NoCreate()
     {
         if (posix_getuid() === 0) {
             $this->markTestSkipped('Root can write to any homedir.');
         }
 
-        $nonWriteableDirectory = '//.gnupg';
+        $nonCreatableDirectory = '//.gnupg';
+        new Crypt_GPG(array('homedir' => $nonCreatableDirectory));
+    }
+
+    // }}}
+    // {{{ testHomedirFileException_NoExecute()
+
+    /**
+     * @expectedException Crypt_GPG_FileException
+     * @expectedExceptionMessage is not enterable
+     */
+    public function testHomedirFileException_NoExecute()
+    {
+        if (posix_getuid() === 0) {
+            $this->markTestSkipped('Root can do what it wants to any homedir.');
+        }
+
+        $nonExecutableDirectory = $this->getTempFilename('home-no-execute');
+        mkdir($nonExecutableDirectory);
+        chmod($nonExecutableDirectory, 0600); // rw- --- ---
+
+        new Crypt_GPG(array('homedir' => $nonExecutableDirectory));
+    }
+
+    // }}}
+    // {{{ testHomedirFileException_NoWrite()
+
+    /**
+     * @expectedException Crypt_GPG_FileException()
+     * @expectedExceptionMessage is not writeable
+     */
+    public function testHomedirFileException_NoWrite()
+    {
+        if (posix_getuid() === 0) {
+            $this->markTestSkipped('Root can write to any homedir.');
+        }
+
+        $nonWriteableDirectory = $this->getTempFilename('home-no-write');
+        mkdir($nonWriteableDirectory);
+        chmod($nonWriteableDirectory, 0300); // r-x --- ---
+
         new Crypt_GPG(array('homedir' => $nonWriteableDirectory));
     }
 

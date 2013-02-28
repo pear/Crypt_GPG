@@ -35,17 +35,21 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.3.0';
-$apiState       = 'stable';
+$apiVersion     = '1.4.0';
+$apiState       = 'beta';
 
-$releaseVersion = '1.3.2';
-$releaseState   = 'stable';
+$releaseVersion = '1.4.0b1';
+$releaseState   = 'beta';
 $releaseNotes   =
-    "This release adds key generation to the list of supported operations " .
-    "and adds fluent interface support to the main Crypt_GPG class. " .
-    "Additionally the following bugs are fixed:\n" .
-    "Fix Bug #18618. Incorrect CHUNK_SIZE / Hang on file decryption.\n" .
-    "Fix Bug #18869. Unnecessary dependency on posix extension.\n";
+    "This release adds support for GnuPG 2.x, supporting the latest version " .
+    "of RHEL and derivatives. Additionally, the following bugs are fixed:\n" .
+    "\n" .
+    "Fix Bug #17838. Passphrase operations don't work on GnuPG 2.x.\n" .
+    "Fix Bug #17628. Version regular expression on MAMP.\n" .
+    "Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.\n" .
+    "\n" .
+    "This release makes the mbstring extension a required dependency as the " .
+    "assuan protocol used in GnuPG 2.x uses UTF-8.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .
@@ -75,7 +79,7 @@ $package->setOptions(
             'tools/',
             'package.php',
             '*.tgz'
-        )
+        ),
         'installexceptions'                   => array(
             'scripts/crypt-gpg-pinentry' => '/'
         )

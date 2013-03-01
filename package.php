@@ -38,7 +38,7 @@ PEAR::setErrorHandling(PEAR_ERROR_DIE);
 $apiVersion     = '1.4.0';
 $apiState       = 'beta';
 
-$releaseVersion = '1.4.0b2';
+$releaseVersion = '1.4.0b3';
 $releaseState   = 'beta';
 $releaseNotes   =
     "This release adds support for GnuPG 2.x, supporting the latest version " .

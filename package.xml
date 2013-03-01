@@ -23,10 +23,10 @@ This package requires PHP version 5.2.1 or greater.</description>
   <email>nathan@silverorange.com</email>
   <active>yes</active>
  </lead>
- <date>2013-02-28</date>
- <time>22:42:24</time>
+ <date>2013-03-01</date>
+ <time>12:57:54</time>
  <version>
-  <release>1.4.0b2</release>
+  <release>1.4.0b3</release>
   <api>1.4.0</api>
  </version>
  <stability>
@@ -214,6 +214,29 @@ This release makes the mbstring extension a required dependency as the assuan pr
     <api>beta</api>
    </stability>
    <date>2013-02-28</date>
+   <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
+   <notes>
+This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:
+
+Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
+Fix Bug #17628. Version regular expression on MAMP.
+Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
+
+A workaround for PHP Bug #39598 is also provided in the event that GnuPG ends unexpectedly. This prevents infinite loops.
+
+This release makes the mbstring extension a required dependency as the assuan protocol used in GnuPG 2.x uses UTF-8.
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.4.0b3</release>
+    <api>1.4.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2013-03-01</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
 This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:

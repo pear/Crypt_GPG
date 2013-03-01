@@ -24,9 +24,9 @@ This package requires PHP version 5.2.1 or greater.</description>
   <active>yes</active>
  </lead>
  <date>2013-02-28</date>
- <time>00:37:50</time>
+ <time>22:42:24</time>
  <version>
-  <release>1.4.0b1</release>
+  <release>1.4.0b2</release>
   <api>1.4.0</api>
  </version>
  <stability>
@@ -41,94 +41,96 @@ Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
 Fix Bug #17628. Version regular expression on MAMP.
 Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
 
+A workaround for PHP Bug #39598 is also provided in the event that GnuPG ends unexpectedly. This prevents infinite loops.
+
 This release makes the mbstring extension a required dependency as the assuan protocol used in GnuPG 2.x uses UTF-8.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
    <dir name="Crypt">
     <dir name="GPG">
-     <file name="ByteUtils.php" role="php" />
-     <file name="DecryptStatusHandler.php" role="php" />
-     <file name="Engine.php" role="php">
+     <file baseinstalldir="/" name="ByteUtils.php" role="php" />
+     <file baseinstalldir="/" name="DecryptStatusHandler.php" role="php" />
+     <file baseinstalldir="/" name="Engine.php" role="php">
       <tasks:replace from="@bin-dir@" to="bin_dir" type="pear-config" />
      </file>
-     <file name="Exceptions.php" role="php" />
-     <file name="Key.php" role="php" />
-     <file name="KeyGenerator.php" role="php" />
-     <file name="KeyGeneratorErrorHandler.php" role="php" />
-     <file name="KeyGeneratorStatusHandler.php" role="php" />
-     <file name="PinEntry.php" role="php">
+     <file baseinstalldir="/" name="Exceptions.php" role="php" />
+     <file baseinstalldir="/" name="Key.php" role="php" />
+     <file baseinstalldir="/" name="KeyGenerator.php" role="php" />
+     <file baseinstalldir="/" name="KeyGeneratorErrorHandler.php" role="php" />
+     <file baseinstalldir="/" name="KeyGeneratorStatusHandler.php" role="php" />
+     <file baseinstalldir="/" name="PinEntry.php" role="php">
       <tasks:replace from="@package-name@" to="name" type="package-info" />
       <tasks:replace from="@data-dir@" to="data_dir" type="pear-config" />
      </file>
-     <file name="ProcessControl.php" role="php" />
-     <file name="Signature.php" role="php" />
-     <file name="SubKey.php" role="php" />
-     <file name="UserId.php" role="php" />
-     <file name="VerifyStatusHandler.php" role="php" />
+     <file baseinstalldir="/" name="ProcessControl.php" role="php" />
+     <file baseinstalldir="/" name="Signature.php" role="php" />
+     <file baseinstalldir="/" name="SubKey.php" role="php" />
+     <file baseinstalldir="/" name="UserId.php" role="php" />
+     <file baseinstalldir="/" name="VerifyStatusHandler.php" role="php" />
     </dir> <!-- /Crypt/GPG -->
-    <file name="GPG.php" role="php" />
-    <file name="GPGAbstract.php" role="php" />
+    <file baseinstalldir="/" name="GPG.php" role="php" />
+    <file baseinstalldir="/" name="GPGAbstract.php" role="php" />
    </dir> <!-- /Crypt -->
    <dir name="data">
-    <file name="pinentry-cli.xml" role="data">
+    <file baseinstalldir="/" name="pinentry-cli.xml" role="data">
      <tasks:replace from="@package-version@" to="version" type="package-info" />
     </file>
    </dir> <!-- /data -->
    <dir name="scripts">
-    <file baseinstalldir="/" name="crypt-gpg-pinentry" role="script" />
+    <file baseinstalldir="/" name="crypt-gpg-pinentry" role="script">
+     <tasks:replace from="@php-dir@" to="php_dir" type="pear-config" />
+    </file>
    </dir> <!-- /scripts -->
    <dir name="tests">
     <dir name="data-files">
-     <file name="testDecryptFile.asc" role="test" />
-     <file name="testDecryptFileDual.asc" role="test" />
-     <file name="testDecryptFileDualOnePassphrase.asc" role="test" />
-     <file name="testDecryptFileKeyNotFoundException.asc" role="test" />
-     <file name="testDecryptFileNoPassphrase.asc" role="test" />
-     <file name="testDecryptFileToString.asc" role="test" />
-     <file name="testDecryptVerifyFile.asc" role="test" />
-     <file name="testDecryptVerifyFileDual.asc" role="test" />
-     <file name="testDecryptVerifyFileDualOnePassphrase.asc" role="test" />
-     <file name="testDecryptVerifyFileDualSignatories.asc" role="test" />
-     <file name="testDecryptVerifyFileNoPassphrase.asc" role="test" />
-     <file name="testDecryptVerifyFileToString.asc" role="test" />
-     <file name="testFileEmpty.plain" role="test" />
-     <file name="testFileMedium.plain" role="test" />
-     <file name="testFileSmall.plain" role="test" />
-     <file name="testImportKeyFile_private.asc" role="test" />
-     <file name="testImportKeyFile_public.asc" role="test" />
-     <file name="testVerifyFileClearsignedData.asc" role="test" />
-     <file name="testVerifyFileDualClearsignedData.asc" role="test" />
-     <file name="testVerifyFileDualNormalSignedData.asc" role="test" />
-     <file name="testVerifyFileNormalSignedData.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptFile.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptFileDual.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptFileDualOnePassphrase.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptFileKeyNotFoundException.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptFileNoPassphrase.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptFileToString.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptVerifyFile.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptVerifyFileDual.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptVerifyFileDualOnePassphrase.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptVerifyFileDualSignatories.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptVerifyFileNoPassphrase.asc" role="test" />
+     <file baseinstalldir="/" name="testDecryptVerifyFileToString.asc" role="test" />
+     <file baseinstalldir="/" name="testFileEmpty.plain" role="test" />
+     <file baseinstalldir="/" name="testFileMedium.plain" role="test" />
+     <file baseinstalldir="/" name="testFileSmall.plain" role="test" />
+     <file baseinstalldir="/" name="testImportKeyFile_private.asc" role="test" />
+     <file baseinstalldir="/" name="testImportKeyFile_public.asc" role="test" />
+     <file baseinstalldir="/" name="testVerifyFileClearsignedData.asc" role="test" />
+     <file baseinstalldir="/" name="testVerifyFileDualClearsignedData.asc" role="test" />
+     <file baseinstalldir="/" name="testVerifyFileDualNormalSignedData.asc" role="test" />
+     <file baseinstalldir="/" name="testVerifyFileNormalSignedData.asc" role="test" />
     </dir> <!-- /tests/data-files -->
-    <file name="AllTests.php" role="test" />
-    <file name="config.php" role="test" />
-    <file name="config.php.dist" role="test" />
-    <file name="DecryptAndVerifyTestCase.php" role="test" />
-    <file name="DecryptTestCase.php" role="test" />
-    <file name="DeletePrivateKeyTestCase.php" role="test" />
-    <file name="DeletePublicKeyTestCase.php" role="test" />
-    <file name="EncryptAndSignTestCase.php" role="test" />
-    <file name="EncryptTestCase.php" role="test" />
-    <file name="ExceptionsTestCase.php" role="test" />
-    <file name="ExportPublicKeyTestCase.php" role="test" />
-    <file name="GeneralTestCase.php" role="test" />
-    <file name="GetFingerprintTestCase.php" role="test" />
-    <file name="GetKeysTestCase.php" role="test" />
-    <file name="ImportKeyTestCase.php" role="test" />
-    <file name="KeyGeneratorTestCase.php" role="test" />
-    <file name="KeyTestCase.php" role="test" />
-    <file name="SignatureTestCase.php" role="test" />
-    <file name="SignTestCase.php" role="test" />
-    <file name="SubKeyTestCase.php" role="test" />
-    <file name="TestCase.php" role="test" />
-    <file name="UserIdTestCase.php" role="test" />
-    <file name="VerifyTestCase.php" role="test" />
+    <file baseinstalldir="/" name="AllTests.php" role="test" />
+    <file baseinstalldir="/" name="config.php.dist" role="test" />
+    <file baseinstalldir="/" name="DecryptAndVerifyTestCase.php" role="test" />
+    <file baseinstalldir="/" name="DecryptTestCase.php" role="test" />
+    <file baseinstalldir="/" name="DeletePrivateKeyTestCase.php" role="test" />
+    <file baseinstalldir="/" name="DeletePublicKeyTestCase.php" role="test" />
+    <file baseinstalldir="/" name="EncryptAndSignTestCase.php" role="test" />
+    <file baseinstalldir="/" name="EncryptTestCase.php" role="test" />
+    <file baseinstalldir="/" name="ExceptionsTestCase.php" role="test" />
+    <file baseinstalldir="/" name="ExportPublicKeyTestCase.php" role="test" />
+    <file baseinstalldir="/" name="GeneralTestCase.php" role="test" />
+    <file baseinstalldir="/" name="GetFingerprintTestCase.php" role="test" />
+    <file baseinstalldir="/" name="GetKeysTestCase.php" role="test" />
+    <file baseinstalldir="/" name="ImportKeyTestCase.php" role="test" />
+    <file baseinstalldir="/" name="KeyGeneratorTestCase.php" role="test" />
+    <file baseinstalldir="/" name="KeyTestCase.php" role="test" />
+    <file baseinstalldir="/" name="SignatureTestCase.php" role="test" />
+    <file baseinstalldir="/" name="SignTestCase.php" role="test" />
+    <file baseinstalldir="/" name="SubKeyTestCase.php" role="test" />
+    <file baseinstalldir="/" name="TestCase.php" role="test" />
+    <file baseinstalldir="/" name="UserIdTestCase.php" role="test" />
+    <file baseinstalldir="/" name="VerifyTestCase.php" role="test" />
    </dir> <!-- /tests -->
-   <file name="LICENSE" role="doc" />
-   <file name="README.md" role="data" />
-   <file name="test.php" role="php" />
+   <file baseinstalldir="/" name="LICENSE" role="doc" />
+   <file baseinstalldir="/" name="README.md" role="doc" />
   </dir> <!-- / -->
  </contents>
  <dependencies>
@@ -158,7 +160,11 @@ This release makes the mbstring extension a required dependency as the assuan pr
    </extension>
   </optional>
  </dependencies>
- <phprelease />
+ <phprelease>
+  <filelist>
+   <install as="crypt-gpg-pinentry" name="scripts/crypt-gpg-pinentry" />
+  </filelist>
+ </phprelease>
  <changelog>
   <release>
    <version>
@@ -194,6 +200,29 @@ This release adds support for GnuPG 2.x, supporting the latest version of RHEL a
 Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
 Fix Bug #17628. Version regular expression on MAMP.
 Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
+
+This release makes the mbstring extension a required dependency as the assuan protocol used in GnuPG 2.x uses UTF-8.
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.4.0b2</release>
+    <api>1.4.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2013-02-28</date>
+   <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
+   <notes>
+This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:
+
+Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
+Fix Bug #17628. Version regular expression on MAMP.
+Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
+
+A workaround for PHP Bug #39598 is also provided in the event that GnuPG ends unexpectedly. This prevents infinite loops.
 
 This release makes the mbstring extension a required dependency as the assuan protocol used in GnuPG 2.x uses UTF-8.
    </notes>

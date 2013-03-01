@@ -38,7 +38,7 @@ PEAR::setErrorHandling(PEAR_ERROR_DIE);
 $apiVersion     = '1.4.0';
 $apiState       = 'beta';
 
-$releaseVersion = '1.4.0b1';
+$releaseVersion = '1.4.0b2';
 $releaseState   = 'beta';
 $releaseNotes   =
     "This release adds support for GnuPG 2.x, supporting the latest version " .
@@ -47,6 +47,9 @@ $releaseNotes   =
     "Fix Bug #17838. Passphrase operations don't work on GnuPG 2.x.\n" .
     "Fix Bug #17628. Version regular expression on MAMP.\n" .
     "Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.\n" .
+    "\n" .
+    "A workaround for PHP Bug #39598 is also provided in the event that " .
+    "GnuPG ends unexpectedly. This prevents infinite loops.\n" .
     "\n" .
     "This release makes the mbstring extension a required dependency as the " .
     "assuan protocol used in GnuPG 2.x uses UTF-8.\n";
@@ -69,18 +72,21 @@ $package->setOptions(
         'dir_roles'         => array(
             'Crypt'         => 'php',
             'Crypt/GPG'     => 'php',
-            'tests'         => 'test'
+            'tests'         => 'test',
+            'data'          => 'data'
         ),
         'exceptions'        => array(
             'LICENSE'       => 'doc',
+            'README.md'     => 'doc',
             'scripts/crypt-gpg-pinentry' => 'script'
         ),
         'ignore'            => array(
+            'tests/config.php',
             'tools/',
             'package.php',
             '*.tgz'
         ),
-        'installexceptions'                   => array(
+        'installexceptions' => array(
             'scripts/crypt-gpg-pinentry' => '/'
         )
     )
@@ -142,7 +148,7 @@ $package->addReplacement(
 );
 
 $package->addReplacement(
-    'script/crypt-gpg-pinentry',
+    'scripts/crypt-gpg-pinentry',
     'pear-config',
     '@php-dir@',
     'php_dir'
@@ -161,6 +167,12 @@ $package->addPackageDepWithChannel(
 );
 
 $package->generateContents();
+
+$package->addRelease();
+$package->addInstallAs(
+    'scripts/crypt-gpg-pinentry',
+    'crypt-gpg-pinentry'
+);
 
 if (   isset($_GET['make'])
     || (isset($_SERVER['argv']) && @$_SERVER['argv'][1] == 'make')

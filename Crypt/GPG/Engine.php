@@ -1264,15 +1264,15 @@ class Crypt_GPG_Engine
                 $outputStreams[] = $this->_output;
             }
 
-            if ($this->_commandBuffer != '') {
+            if ($this->_commandBuffer != '' && is_resource($fdCommand)) {
                 $outputStreams[] = $fdCommand;
             }
 
-            if ($messageBuffer != '') {
+            if ($messageBuffer != '' && is_resource($fdMessage)) {
                 $outputStreams[] = $fdMessage;
             }
 
-            if ($inputBuffer != '') {
+            if ($inputBuffer != '' && is_resource($fdInput)) {
                 $outputStreams[] = $fdInput;
             }
 
@@ -1323,13 +1323,21 @@ class Crypt_GPG_Engine
                 );
 
                 $length = fwrite($fdInput, $chunk, $length);
-
-                $this->_debug('=> wrote ' . $length . ' bytes');
-
-                $inputBuffer = Crypt_GPG_ByteUtils::substr(
-                    $inputBuffer,
-                    $length
-                );
+                if ($length === 0) {
+                    // If we wrote 0 bytes it was either EAGAIN or EPIPE. Since
+                    // the pipe was seleted for writing, we assume it was EPIPE.
+                    // There's no way to get the actual erorr code in PHP. See
+                    // PHP Bug #39598. https://bugs.php.net/bug.php?id=39598
+                    $this->_debug('=> broken pipe on GPG input');
+                    $this->_debug('=> closing pipe GPG input');
+                    $this->_closePipe(self::FD_INPUT);
+                } else {
+                    $this->_debug('=> wrote ' . $length . ' bytes');
+                    $inputBuffer = Crypt_GPG_ByteUtils::substr(
+                        $inputBuffer,
+                        $length
+                    );
+                }
             }
 
             // read input (from PHP stream)
@@ -1364,12 +1372,21 @@ class Crypt_GPG_Engine
                 );
 
                 $length = fwrite($fdMessage, $chunk, $length);
-                $this->_debug('=> wrote ' . $length . ' bytes');
-
-                $messageBuffer = Crypt_GPG_ByteUtils::substr(
-                    $messageBuffer,
-                    $length
-                );
+                if ($length === 0) {
+                    // If we wrote 0 bytes it was either EAGAIN or EPIPE. Since
+                    // the pipe was seleted for writing, we assume it was EPIPE.
+                    // There's no way to get the actual erorr code in PHP. See
+                    // PHP Bug #39598. https://bugs.php.net/bug.php?id=39598
+                    $this->_debug('=> broken pipe on GPG message');
+                    $this->_debug('=> closing pipe GPG message');
+                    $this->_closePipe(self::FD_MESSAGE);
+                } else {
+                    $this->_debug('=> wrote ' . $length . ' bytes');
+                    $messageBuffer = Crypt_GPG_ByteUtils::substr(
+                        $messageBuffer,
+                        $length
+                    );
+                }
             }
 
             // read message (from PHP stream)
@@ -1516,13 +1533,21 @@ class Crypt_GPG_Engine
                 );
 
                 $length = fwrite($fdCommand, $chunk, $length);
-
-                $this->_debug('=> wrote ' . $length);
-
-                $this->_commandBuffer = Crypt_GPG_ByteUtils::substr(
-                    $this->_commandBuffer,
-                    $length
-                );
+                if ($length === 0) {
+                    // If we wrote 0 bytes it was either EAGAIN or EPIPE. Since
+                    // the pipe was seleted for writing, we assume it was EPIPE.
+                    // There's no way to get the actual erorr code in PHP. See
+                    // PHP Bug #39598. https://bugs.php.net/bug.php?id=39598
+                    $this->_debug('=> broken pipe on GPG command');
+                    $this->_debug('=> closing pipe GPG command');
+                    $this->_closePipe(self::FD_COMMAND);
+                } else {
+                    $this->_debug('=> wrote ' . $length);
+                    $this->_commandBuffer = Crypt_GPG_ByteUtils::substr(
+                        $this->_commandBuffer,
+                        $length
+                    );
+                }
             }
 
             if (count($outputStreams) === 0 || count($inputStreams) === 0) {

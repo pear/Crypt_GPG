@@ -134,7 +134,7 @@ class Crypt_GPG_ProcessControl
     public function terminate()
     {
         if (function_exists('posix_kill')) {
-            posix_kill($this->pid, SIGTERM);
+            posix_kill($this->pid, 15);
         } elseif (PHP_OS === 'WINNT') {
             exec('taskkill /PID ' . escapeshellarg($this->pid));
         } else {

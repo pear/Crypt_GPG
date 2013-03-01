@@ -4,14 +4,19 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 // Check if we're running directly from git repo or if we're running
-// from a PEAR packaged version. A direct git repo needs to set the include
-// path as the pinentry program is not invoked in the current directory.
+// from a PEAR packaged version.
 $phpDir = '@php-dir@';
 if ($phpDir[0] === '@') {
+    // Git repo needs to set the include path as the pinentry program is not
+    // invoked in the current directory.
     set_include_path(
         dirname(__FILE__) . DIRECTORY_SEPARATOR . '..'
         . PATH_SEPARATOR . get_include_path()
     );
+} else {
+    // PEAR packaged version needs to set include path in case it is running
+    // in a local PEAR tree that's not in the system PHP include path.
+    set_include_path($phpDir);
 }
 
 require_once 'Crypt/GPG/PinEntry.php';

@@ -1307,7 +1307,7 @@ class Crypt_GPG_Engine
             }
 
             // write input (to GPG)
-            if (in_array($fdInput, $outputStreams)) {
+            if (in_array($fdInput, $outputStreams, true)) {
                 $this->_debug('GPG is ready for input');
 
                 $chunk = Crypt_GPG_ByteUtils::substr(
@@ -1341,7 +1341,7 @@ class Crypt_GPG_Engine
             }
 
             // read input (from PHP stream)
-            if (in_array($this->_input, $inputStreams)) {
+            if (in_array($this->_input, $inputStreams, true)) {
                 $this->_debug('input stream is ready for reading');
                 $this->_debug(
                     '=> about to read ' . self::CHUNK_SIZE .
@@ -1356,7 +1356,7 @@ class Crypt_GPG_Engine
             }
 
             // write message (to GPG)
-            if (in_array($fdMessage, $outputStreams)) {
+            if (in_array($fdMessage, $outputStreams, true)) {
                 $this->_debug('GPG is ready for message data');
 
                 $chunk = Crypt_GPG_ByteUtils::substr(
@@ -1390,7 +1390,7 @@ class Crypt_GPG_Engine
             }
 
             // read message (from PHP stream)
-            if (in_array($this->_message, $inputStreams)) {
+            if (in_array($this->_message, $inputStreams, true)) {
                 $this->_debug('message stream is ready for reading');
                 $this->_debug(
                     '=> about to read ' . self::CHUNK_SIZE .
@@ -1405,7 +1405,7 @@ class Crypt_GPG_Engine
             }
 
             // read output (from GPG)
-            if (in_array($fdOutput, $inputStreams)) {
+            if (in_array($fdOutput, $inputStreams, true)) {
                 $this->_debug('GPG output stream ready for reading');
                 $this->_debug(
                     '=> about to read ' . self::CHUNK_SIZE .
@@ -1420,7 +1420,7 @@ class Crypt_GPG_Engine
             }
 
             // write output (to PHP stream)
-            if (in_array($this->_output, $outputStreams)) {
+            if (in_array($this->_output, $outputStreams, true)) {
                 $this->_debug('output stream is ready for data');
 
                 $chunk = Crypt_GPG_ByteUtils::substr(
@@ -1446,7 +1446,7 @@ class Crypt_GPG_Engine
             }
 
             // read error (from GPG)
-            if (in_array($fdError, $inputStreams)) {
+            if (in_array($fdError, $inputStreams, true)) {
                 $this->_debug('GPG error stream ready for reading');
                 $this->_debug(
                     '=> about to read ' . self::CHUNK_SIZE .
@@ -1479,7 +1479,7 @@ class Crypt_GPG_Engine
             }
 
             // read status (from GPG)
-            if (in_array($fdStatus, $inputStreams)) {
+            if (in_array($fdStatus, $inputStreams, true)) {
                 $this->_debug('GPG status stream ready for reading');
                 $this->_debug(
                     '=> about to read ' . self::CHUNK_SIZE .
@@ -1516,7 +1516,7 @@ class Crypt_GPG_Engine
             }
 
             // write command (to GPG)
-            if (in_array($fdCommand, $outputStreams)) {
+            if (in_array($fdCommand, $outputStreams, true)) {
                 $this->_debug('GPG is ready for command data');
 
                 // send commands

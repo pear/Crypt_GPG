@@ -38,7 +38,7 @@ PEAR::setErrorHandling(PEAR_ERROR_DIE);
 $apiVersion     = '1.4.0';
 $apiState       = 'beta';
 
-$releaseVersion = '1.4.0b3';
+$releaseVersion = '1.4.0b4';
 $releaseState   = 'beta';
 $releaseNotes   =
     "This release adds support for GnuPG 2.x, supporting the latest version " .
@@ -47,6 +47,8 @@ $releaseNotes   =
     "Fix Bug #17838. Passphrase operations don't work on GnuPG 2.x.\n" .
     "Fix Bug #17628. Version regular expression on MAMP.\n" .
     "Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.\n" .
+    "Fix possible fread/fwrite to strings when the string values passed to " .
+    "Crypt_GPG are loosly equal to a stream resource handle.\n" .
     "\n" .
     "A workaround for PHP Bug #39598 is also provided in the event that " .
     "GnuPG ends unexpectedly. This prevents infinite loops.\n" .

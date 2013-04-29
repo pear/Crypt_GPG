@@ -1,0 +1,34 @@
+{
+	"name"        : "pear/crypt_gpg",
+	"description" : "Provides an object oriented interface to the GNU Privacy Guard (GnuPG). It requires the GnuPG executable to be on the system.",
+	"type"        : "library",
+	"keywords"    : [ "gpg", "gnupg", "encryption", "pgp" ],
+	"homepage"    : "https://github.com/pear/Crypt_GPG",
+	"license"     : "LGPL-2.1",
+	"authors"     : [
+		{
+			"name"  : "Michael Gauthier",
+			"email" : "mike@silverorange.com"
+		},
+		{
+			"name"  : "Nathan Fredrickson",
+			"email" : "nathan@silverorange.com"
+		}
+	],
+	"require"     : {
+		"php"                      : ">=5.2.1",
+		"ext-mbstring"             : "*",
+		"pear/console_commandline" : ">=1.1.10"
+	},
+	"suggest"     : {
+		"ext-posix"                : "Enables slightly more efficient process management for the pinentry program."
+	},
+	"bin"         : [
+		"scripts/crypt-gpg-pinentry"
+	],
+	"autoload": {
+		"psr-0": {
+			"Crypt_GPG" : ""
+		}
+	}
+}

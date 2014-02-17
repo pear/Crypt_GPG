@@ -23,7 +23,7 @@
     "require": {
         "php": ">=5.2.1",
         "ext-mbstring": "*",
-        "pear/console_commandline": ">=1.1.10",
+        "pear/console_commandline": "*",
         "pear/pear_exception": "*"
     },
     "suggest": {
@@ -34,7 +34,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "Crypt_GPG": ""
+            "Crypt": "./"
         }
     },
     "include-path": [

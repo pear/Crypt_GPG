@@ -1991,7 +1991,7 @@ class Crypt_GPG_Engine
             } else {
                 // running on a web server, format debug output nicely
                 foreach (explode(PHP_EOL, $text) as $line) {
-                    echo "Crypt_GPG DEBUG: <strong>", $line,
+                    echo "Crypt_GPG DEBUG: <strong>", htmlspecialchars($line),
                         '</strong><br />', PHP_EOL;
                 }
             }

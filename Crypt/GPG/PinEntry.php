@@ -320,11 +320,18 @@ class Crypt_GPG_PinEntry
         $dir = '@data-dir@' . DIRECTORY_SEPARATOR
             . '@package-name@' . DIRECTORY_SEPARATOR . 'data';
 
-        // Check if we're running directly from a git checkout or if we're
-        // running from a PEAR-packaged version.
-        if ($dir[0] == '@') {
+        // Check if we're running from a PEAR-packaged version
+        // or directly from a git checkout or other installation
+        // that does not resolve PEAR variables
+        if (strpos($dir, '@') !== false) {
             $dir = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..'
                 . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data';
+
+            // Workaround for composer installs (#20527)
+            $cdir = $dir . DIRECTORY_SEPARATOR . 'Crypt_GPG' . DIRECTORY_SEPARATOR . 'data';
+            if (@is_dir($cdir)) {
+                $dir = $cdir;
+            }
         }
 
         return $dir . DIRECTORY_SEPARATOR . 'pinentry-cli.xml';

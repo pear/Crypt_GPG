@@ -2,3 +2,5 @@
 composer.lock
 composer.phar
 vendor
+tests/config.php
+tests/test-keychain/

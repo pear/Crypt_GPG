@@ -1372,8 +1372,14 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $tokens = explode(' ', $line);
         switch ($tokens[0]) {
         case 'IMPORT_OK':
-            $result['fingerprint']    = $tokens[2];
-            $result['fingerprints'][] = $tokens[2];
+            $result['fingerprint'] = $tokens[2];
+
+            if (empty($result['fingerprints'])) {
+                $result['fingerprints'] = array($tokens[2]);
+            } else if (!in_array($tokens[2], $result['fingerprints'])) {
+                $result['fingerprints'][] = $tokens[2];
+            }
+
             break;
 
         case 'IMPORT_RES':

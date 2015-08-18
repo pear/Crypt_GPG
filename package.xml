@@ -107,28 +107,27 @@ This release makes the mbstring extension a required dependency as the assuan pr
      <file baseinstalldir="/" name="testVerifyFileDualNormalSignedData.asc" role="test" />
      <file baseinstalldir="/" name="testVerifyFileNormalSignedData.asc" role="test" />
     </dir> <!-- /tests/data-files -->
-    <file baseinstalldir="/" name="AllTests.php" role="test" />
     <file baseinstalldir="/" name="config.php.dist" role="test" />
-    <file baseinstalldir="/" name="DecryptAndVerifyTestCase.php" role="test" />
-    <file baseinstalldir="/" name="DecryptTestCase.php" role="test" />
-    <file baseinstalldir="/" name="DeletePrivateKeyTestCase.php" role="test" />
-    <file baseinstalldir="/" name="DeletePublicKeyTestCase.php" role="test" />
-    <file baseinstalldir="/" name="EncryptAndSignTestCase.php" role="test" />
-    <file baseinstalldir="/" name="EncryptTestCase.php" role="test" />
-    <file baseinstalldir="/" name="ExceptionsTestCase.php" role="test" />
-    <file baseinstalldir="/" name="ExportPublicKeyTestCase.php" role="test" />
-    <file baseinstalldir="/" name="GeneralTestCase.php" role="test" />
-    <file baseinstalldir="/" name="GetFingerprintTestCase.php" role="test" />
-    <file baseinstalldir="/" name="GetKeysTestCase.php" role="test" />
-    <file baseinstalldir="/" name="ImportKeyTestCase.php" role="test" />
-    <file baseinstalldir="/" name="KeyGeneratorTestCase.php" role="test" />
-    <file baseinstalldir="/" name="KeyTestCase.php" role="test" />
-    <file baseinstalldir="/" name="SignatureTestCase.php" role="test" />
-    <file baseinstalldir="/" name="SignTestCase.php" role="test" />
-    <file baseinstalldir="/" name="SubKeyTestCase.php" role="test" />
+    <file baseinstalldir="/" name="DecryptAndVerifyTest.php" role="test" />
+    <file baseinstalldir="/" name="DecryptTest.php" role="test" />
+    <file baseinstalldir="/" name="DeletePrivateKeyTest.php" role="test" />
+    <file baseinstalldir="/" name="DeletePublicKeyTest.php" role="test" />
+    <file baseinstalldir="/" name="EncryptAndSignTest.php" role="test" />
+    <file baseinstalldir="/" name="EncryptTest.php" role="test" />
+    <file baseinstalldir="/" name="ExceptionsTest.php" role="test" />
+    <file baseinstalldir="/" name="ExportPublicKeyTest.php" role="test" />
+    <file baseinstalldir="/" name="GeneralTest.php" role="test" />
+    <file baseinstalldir="/" name="GetFingerprintTest.php" role="test" />
+    <file baseinstalldir="/" name="GetKeysTest.php" role="test" />
+    <file baseinstalldir="/" name="ImportKeyTest.php" role="test" />
+    <file baseinstalldir="/" name="KeyGeneratorTest.php" role="test" />
+    <file baseinstalldir="/" name="KeyTest.php" role="test" />
+    <file baseinstalldir="/" name="SignatureTest.php" role="test" />
+    <file baseinstalldir="/" name="SignTest.php" role="test" />
+    <file baseinstalldir="/" name="SubKeyTest.php" role="test" />
     <file baseinstalldir="/" name="TestCase.php" role="test" />
-    <file baseinstalldir="/" name="UserIdTestCase.php" role="test" />
-    <file baseinstalldir="/" name="VerifyTestCase.php" role="test" />
+    <file baseinstalldir="/" name="UserIdTest.php" role="test" />
+    <file baseinstalldir="/" name="VerifyTest.php" role="test" />
    </dir> <!-- /tests -->
    <file baseinstalldir="/" name="LICENSE" role="doc" />
    <file baseinstalldir="/" name="README.md" role="doc" />

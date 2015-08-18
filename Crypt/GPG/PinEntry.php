@@ -328,9 +328,9 @@ class Crypt_GPG_PinEntry
                 . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data';
 
             // Workaround for composer installs (#20527)
-            $cdir = $dir . DIRECTORY_SEPARATOR . 'Crypt_GPG' . DIRECTORY_SEPARATOR . 'data';
-            if (@is_dir($cdir)) {
-                $dir = $cdir;
+            $composerDir = $dir . DIRECTORY_SEPARATOR . 'Crypt_GPG' . DIRECTORY_SEPARATOR . 'data';
+            if (is_dir($composerDir)) {
+                $dir = $composerDir;
             }
         }
 

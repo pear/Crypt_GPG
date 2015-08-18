@@ -67,6 +67,7 @@ class ImportKeyTestCase extends Crypt_GPG_TestCase
     {
         $expectedResult = array(
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
+            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 1,
@@ -127,6 +128,7 @@ TEXT;
     {
         $expectedResult = array(
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
+            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
             'public_imported'   => 1,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
@@ -226,6 +228,7 @@ TEXT;
 
         $expectedResult = array(
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
+            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 1,
@@ -238,6 +241,7 @@ TEXT;
 
         $expectedResult = array(
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
+            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
@@ -296,6 +300,7 @@ TEXT;
 
         $expectedResult = array(
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
+            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
             'public_imported'   => 1,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
@@ -308,6 +313,7 @@ TEXT;
 
         $expectedResult = array(
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
+            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 0,
@@ -357,6 +363,7 @@ TEXT;
     {
         $expectedResult = array(
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
+            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 1,
@@ -379,6 +386,7 @@ TEXT;
     {
         $expectedResult = array(
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
+            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
             'public_imported'   => 1,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
@@ -404,6 +412,7 @@ TEXT;
 
         $expectedResult = array(
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
+            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 1,
@@ -416,6 +425,7 @@ TEXT;
 
         $expectedResult = array(
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
+            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
@@ -438,6 +448,7 @@ TEXT;
 
         $expectedResult = array(
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
+            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
             'public_imported'   => 1,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
@@ -450,6 +461,7 @@ TEXT;
 
         $expectedResult = array(
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
+            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 0,

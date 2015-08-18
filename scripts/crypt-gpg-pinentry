@@ -16,9 +16,9 @@ if ($path[0] === '@') {
 }
 
 // Workaround for composer installs (#19914)
-$cdir = $path . DIRECTORY_SEPARATOR . '../Console_CommandLine';
-if (@is_dir($cdir)) {
-    $path .= PATH_SEPARATOR . $cdir;
+$composerDir = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Console_CommandLine';
+if (is_dir($composerDir)) {
+    $path .= PATH_SEPARATOR . $composerDir;
 }
 
 // We depend on Console_CommandLine, so we append also the default include path

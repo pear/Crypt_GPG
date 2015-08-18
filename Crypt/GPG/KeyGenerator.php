@@ -379,7 +379,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      */
     public function setKeyParams($algorithm, $size = 0, $usage = 0)
     {
-        $apgorithm = intval($algorithm);
+        $algorithm = intval($algorithm);
 
         if ($algorithm === Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC) {
             throw new Crypt_GPG_InvalidKeyParamsException(
@@ -454,7 +454,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      */
     public function setSubKeyParams($algorithm, $size = '', $usage = 0)
     {
-        $apgorithm = intval($algorithm);
+        $algorithm = intval($algorithm);
 
         if ($size != 0) {
             $size = intval($size);

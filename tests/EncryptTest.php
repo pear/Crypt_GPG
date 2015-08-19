@@ -57,7 +57,13 @@ require_once 'TestCase.php';
  */
 class EncryptTestCase extends Crypt_GPG_TestCase
 {
-    // string
+    public function testHasEncryptKeys()
+    {
+        $this->assertFalse($this->gpg->hasEncryptKeys());
+        $this->gpg->addEncryptKey('no-passphrase@example.com');
+        $this->assertTrue($this->gpg->hasEncryptKeys());
+    }
+
     // {{{ testEncrypt()
 
     /**

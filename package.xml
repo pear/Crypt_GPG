@@ -66,6 +66,7 @@ This release makes the mbstring extension a required dependency as the assuan pr
      </file>
      <file baseinstalldir="/" name="ProcessControl.php" role="php" />
      <file baseinstalldir="/" name="Signature.php" role="php" />
+     <file baseinstalldir="/" name="SignatureCreationInfo.php" role="php" />
      <file baseinstalldir="/" name="SubKey.php" role="php" />
      <file baseinstalldir="/" name="UserId.php" role="php" />
      <file baseinstalldir="/" name="VerifyStatusHandler.php" role="php" />
@@ -124,6 +125,7 @@ This release makes the mbstring extension a required dependency as the assuan pr
     <file baseinstalldir="/" name="KeyTest.php" role="test" />
     <file baseinstalldir="/" name="SignatureTest.php" role="test" />
     <file baseinstalldir="/" name="SignTest.php" role="test" />
+    <file baseinstalldir="/" name="SignatureCreationInfoTest.php" role="test" />
     <file baseinstalldir="/" name="SubKeyTest.php" role="test" />
     <file baseinstalldir="/" name="TestCase.php" role="test" />
     <file baseinstalldir="/" name="UserIdTest.php" role="test" />

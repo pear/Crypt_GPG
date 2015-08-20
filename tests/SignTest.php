@@ -609,6 +609,26 @@ class SignTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
+    // {{{ testGetLastSignatureInfo()
+
+    public function testGetLastSignatureInfo()
+    {
+        $this->gpg->addSignKey('first-keypair@example.com', 'test1');
+        $signedData = $this->gpg->sign('test', Crypt_GPG::SIGN_MODE_DETACHED);
+
+        $sigInfo = $this->gpg->getLastSignatureInfo();
+        $this->assertInstanceOf('Crypt_GPG_SignatureCreationInfo', $sigInfo);
+        $this->assertTrue($sigInfo->isValid());
+        $this->assertEquals(date('Y-m-d'), date('Y-m-d', $sigInfo->getTimestamp()));
+        $this->assertEquals(Crypt_GPG::SIGN_MODE_DETACHED, $sigInfo->getMode());
+        $this->assertEquals(
+            '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            $sigInfo->getKeyFingerprint()
+        );
+        $this->assertNotNull($sigInfo->getHashAlgorithmName());
+    }
+
+    // }}}
 }
 
 ?>

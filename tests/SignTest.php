@@ -57,7 +57,13 @@ require_once 'TestCase.php';
  */
 class SignTestCase extends Crypt_GPG_TestCase
 {
-    // string
+    public function testHasSignKeys()
+    {
+        $this->assertFalse($this->gpg->hasSignKeys());
+        $this->gpg->addSignKey('no-passphrase@example.com');
+        $this->assertTrue($this->gpg->hasSignKeys());
+    }
+
     // {{{ testSignKeyNotFoundException_invalid()
 
     /**

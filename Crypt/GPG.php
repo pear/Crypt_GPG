@@ -1392,6 +1392,27 @@ class Crypt_GPG extends Crypt_GPGAbstract
     }
 
     // }}}
+
+    /**
+     * Tell if there are encryption keys registered
+     *
+     * @return boolean True if the data shall be encrypted
+     */
+    public function hasEncryptKeys()
+    {
+        return count($this->encryptKeys) > 0;
+    }
+
+    /**
+     * Tell if there are signing keys registered
+     *
+     * @return boolean True if the data shall be signed
+     */
+    public function hasSignKeys()
+    {
+        return count($this->signKeys) > 0;
+    }
+
     // {{{ _addKey()
 
     /**
@@ -1646,7 +1667,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     protected function _encrypt($data, $isFile, $outputFile, $armor)
     {
-        if (count($this->encryptKeys) === 0) {
+        if (!$this->hasEncryptKeys()) {
             throw new Crypt_GPG_KeyNotFoundException(
                 'No encryption keys specified.'
             );
@@ -1871,7 +1892,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     protected function _sign($data, $isFile, $outputFile, $mode, $armor,
         $textmode
     ) {
-        if (count($this->signKeys) === 0) {
+        if (!$this->hasSignKeys()) {
             throw new Crypt_GPG_KeyNotFoundException(
                 'No signing keys specified.'
             );
@@ -2024,13 +2045,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     protected function _encryptAndSign($data, $isFile, $outputFile, $armor)
     {
-        if (count($this->signKeys) === 0) {
+        if (!$this->hasSignKeys()) {
             throw new Crypt_GPG_KeyNotFoundException(
                 'No signing keys specified.'
             );
         }
 
-        if (count($this->encryptKeys) === 0) {
+        if (!$this->hasEncryptKeys()) {
             throw new Crypt_GPG_KeyNotFoundException(
                 'No encryption keys specified.'
             );

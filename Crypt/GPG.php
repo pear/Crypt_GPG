@@ -70,6 +70,11 @@ require_once 'Crypt/GPG/VerifyStatusHandler.php';
  */
 require_once 'Crypt/GPG/DecryptStatusHandler.php';
 
+/**
+ * Information about a created signature
+ */
+require_once 'Crypt/GPG/SignatureCreationInfo.php';
+
 // {{{ class Crypt_GPG
 
 /**
@@ -250,6 +255,15 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @see Crypt_GPG::clearDecryptKeys()
      */
     protected $decryptKeys = array();
+
+    /**
+     * Information about the last signature that was generated.
+     * A string (line) beginning with "SIG_CREATED "
+     *
+     * @see handleSignStatus()
+     * @var string
+     */
+    protected $lastSignatureInfo = null;
 
     // }}}
     // {{{ importKey()
@@ -660,6 +674,21 @@ class Crypt_GPG extends Crypt_GPGAbstract
         return $fingerprint;
     }
 
+    // }}}
+    // {{{ getLastSignatureInfo()
+
+    /**
+     * Get information about the last signature that was created.
+     *
+     * @return Crypt_GPG_SignatureCreationInfo
+     */
+    public function getLastSignatureInfo()
+    {
+        if ($this->lastSignatureInfo === null) {
+            return null;
+        }
+        return new Crypt_GPG_SignatureCreationInfo($this->lastSignatureInfo);
+    }
     // }}}
     // {{{ encrypt()
 
@@ -1343,6 +1372,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
                 $this->engine->sendCommand('');
             }
             break;
+        case 'SIG_CREATED':
+            $this->lastSignatureInfo = $line;
+            break;
         }
     }
 
@@ -1892,6 +1924,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     protected function _sign($data, $isFile, $outputFile, $mode, $armor,
         $textmode
     ) {
+        $this->lastSignatureInfo = null;
         if (!$this->hasSignKeys()) {
             throw new Crypt_GPG_KeyNotFoundException(
                 'No signing keys specified.'

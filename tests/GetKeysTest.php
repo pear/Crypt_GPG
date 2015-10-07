@@ -83,7 +83,7 @@ class GetKeysTestCase extends Crypt_GPG_TestCase
         $subKey->setLength(1024);
         $subKey->setCreationDate(1221785805);
         $subKey->setExpirationDate(0);
-        $subKey->setCanSign(true);
+        $subKey->setUsage(Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_CERTIFY);
         $subKey->setCanEncrypt(false);
         $subKey->setHasPrivate(true);
         $key->addSubKey($subKey);
@@ -117,8 +117,7 @@ class GetKeysTestCase extends Crypt_GPG_TestCase
         $subKey->setLength(1024);
         $subKey->setCreationDate(1221785821);
         $subKey->setExpirationDate(0);
-        $subKey->setCanSign(true);
-        $subKey->setCanEncrypt(false);
+        $subKey->setUsage(Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_CERTIFY);
         $subKey->setHasPrivate(true);
         $key->addSubKey($subKey);
 
@@ -151,8 +150,7 @@ class GetKeysTestCase extends Crypt_GPG_TestCase
         $subKey->setLength(1024);
         $subKey->setCreationDate(1221785826);
         $subKey->setExpirationDate(0);
-        $subKey->setCanSign(true);
-        $subKey->setCanEncrypt(false);
+        $subKey->setUsage(Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_CERTIFY);
         $subKey->setHasPrivate(false);
         $key->addSubKey($subKey);
 
@@ -185,8 +183,7 @@ class GetKeysTestCase extends Crypt_GPG_TestCase
         $subKey->setLength(1024);
         $subKey->setCreationDate(1221785833);
         $subKey->setExpirationDate(0);
-        $subKey->setCanSign(true);
-        $subKey->setCanEncrypt(false);
+        $subKey->setUsage(Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_CERTIFY);
         $subKey->setHasPrivate(true);
         $key->addSubKey($subKey);
 
@@ -218,8 +215,7 @@ class GetKeysTestCase extends Crypt_GPG_TestCase
         $subKey->setLength(1024);
         $subKey->setCreationDate(1232605399);
         $subKey->setExpirationDate(0);
-        $subKey->setCanSign(true);
-        $subKey->setCanEncrypt(false);
+        $subKey->setUsage(Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_CERTIFY | Crypt_GPG_SubKey::USAGE_AUTHENTICATION);
         $subKey->setHasPrivate(true);
         $key->addSubKey($subKey);
 
@@ -280,8 +276,7 @@ class GetKeysTestCase extends Crypt_GPG_TestCase
         $subKey->setLength(1024);
         $subKey->setCreationDate(1221785805);
         $subKey->setExpirationDate(0);
-        $subKey->setCanSign(true);
-        $subKey->setCanEncrypt(false);
+        $subKey->setUsage(Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_CERTIFY);
         $subKey->setHasPrivate(true);
         $key->addSubKey($subKey);
 

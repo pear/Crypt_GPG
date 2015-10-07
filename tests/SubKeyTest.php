@@ -175,6 +175,14 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
         $subKey = Crypt_GPG_SubKey::parse($string);
 
         $this->assertEquals($expectedSubKey, $subKey);
+
+        // test parsing 'usage' flags
+        $string = 'sub:r:2048:16:8C37DBD2A01B7976:1221528655::::::esca:';
+        $subKey = Crypt_GPG_SubKey::parse($string);
+        $usage  = Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_ENCRYPT
+            | Crypt_GPG_SubKey::USAGE_CERTIFY | Crypt_GPG_SubKey::USAGE_AUTHENTICATION;
+
+        $this->assertEquals($usage, $subKey->usage());
     }
 
     // }}}
@@ -415,6 +423,44 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
         ));
 
         $this->assertFalse($subKey->canEncrypt());
+    }
+
+    // }}}
+    // {{{ testUsage()
+
+    /**
+     * @group accessors
+     */
+    public function testUsage()
+    {
+        $usage = Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_ENCRYPT
+            | Crypt_GPG_SubKey::USAGE_CERTIFY | Crypt_GPG_SubKey::USAGE_AUTHENTICATION;
+        $subKey = new Crypt_GPG_SubKey(array(
+            'id'          => '8C37DBD2A01B7976',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 2048,
+            'creation'    => 1221785858,
+            'expiration'  => 1421785858,
+            'usage'       => $usage,
+            'hasPrivate'  => true
+        ));
+
+        $this->assertSame($usage, $subKey->usage());
+
+        $subKey = new Crypt_GPG_SubKey(array(
+            'id'          => '8C37DBD2A01B7976',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 1024,
+            'creation'    => 1221785858,
+            'expiration'  => 1421785858,
+            'canSign'     => true,
+            'canEncrypt'  => false,
+            'hasPrivate'  => true
+        ));
+
+        $this->assertSame(Crypt_GPG_SubKey::USAGE_SIGN, $subKey->usage());
     }
 
     // }}}

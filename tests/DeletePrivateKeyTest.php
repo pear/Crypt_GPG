@@ -86,8 +86,7 @@ class DeletePrivateKeyTestCase extends Crypt_GPG_TestCase
         $subKey->setLength(1024);
         $subKey->setCreationDate(1221785805);
         $subKey->setExpirationDate(0);
-        $subKey->setCanSign(true);
-        $subKey->setCanEncrypt(false);
+        $subKey->setUsage(Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_CERTIFY);
         $subKey->setHasPrivate(false);
         $key->addSubKey($subKey);
 

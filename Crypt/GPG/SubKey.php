@@ -152,18 +152,11 @@ class Crypt_GPG_SubKey
     private $_expirationDate = 0;
 
     /**
-     * Whether or not this sub-key can sign data
+     * Contains usage flags of this sub-key
      *
-     * @var boolean
+     * @var int
      */
-    private $_canSign = false;
-
-    /**
-     * Whether or not this sub-key can encrypt data
-     *
-     * @var boolean
-     */
-    private $_canEncrypt = false;
+    private $_usage = 0;
 
     /**
      * Whether or not the private key for this sub-key exists in the keyring
@@ -204,6 +197,7 @@ class Crypt_GPG_SubKey
      *                                    used to sign data.
      * - <kbd>boolean canEncrypt</kbd>  - whether or not the sub-key can be
      *                                    used to encrypt data.
+     * - <kbd>integer usage</kbd>       - the sub-key usage flags
      * - <kbd>boolean hasPrivate</kbd>  - whether or not the private key for
      *                                    the sub-key exists in the keyring.
      * - <kbd>boolean isRevoked</kbd>   - whether or not this sub-key is
@@ -228,8 +222,7 @@ class Crypt_GPG_SubKey
             $this->_length         = $key->_length;
             $this->_creationDate   = $key->_creationDate;
             $this->_expirationDate = $key->_expirationDate;
-            $this->_canSign        = $key->_canSign;
-            $this->_canEncrypt     = $key->_canEncrypt;
+            $this->_usage          = $key->_usage;
             $this->_hasPrivate     = $key->_hasPrivate;
             $this->_isRevoked      = $key->_isRevoked;
         }
@@ -258,6 +251,10 @@ class Crypt_GPG_SubKey
 
             if (array_key_exists('expiration', $key)) {
                 $this->setExpirationDate($key['expiration']);
+            }
+
+            if (array_key_exists('usage', $key)) {
+                $this->setUsage($key['usage']);
             }
 
             if (array_key_exists('canSign', $key)) {
@@ -375,7 +372,7 @@ class Crypt_GPG_SubKey
      */
     public function canSign()
     {
-        return $this->_canSign;
+        return ($this->_usage & self::USAGE_SIGN) != 0;
     }
 
     // }}}
@@ -389,7 +386,20 @@ class Crypt_GPG_SubKey
      */
     public function canEncrypt()
     {
-        return $this->_canEncrypt;
+        return ($this->_usage & self::USAGE_ENCRYPT) != 0;
+    }
+
+    // }}}
+    // {{{ usage()
+
+    /**
+     * Gets usage flags of this sub-key
+     *
+     * @return int Sum of usage flags
+     */
+    public function usage()
+    {
+        return $this->_usage;
     }
 
     // }}}
@@ -525,7 +535,7 @@ class Crypt_GPG_SubKey
     // {{{ setCanSign()
 
     /**
-     * Sets whether of not this sub-key can sign data
+     * Sets whether or not this sub-key can sign data
      *
      * @param boolean $canSign true if this sub-key can sign data and false if
      *                         it can not.
@@ -534,7 +544,12 @@ class Crypt_GPG_SubKey
      */
     public function setCanSign($canSign)
     {
-        $this->_canSign = ($canSign) ? true : false;
+        if ($canSign) {
+            $this->_usage |= self::USAGE_SIGN;
+        } else {
+            $this->_usage &= ~self::USAGE_SIGN;
+        }
+
         return $this;
     }
 
@@ -542,7 +557,7 @@ class Crypt_GPG_SubKey
     // {{{ setCanEncrypt()
 
     /**
-     * Sets whether of not this sub-key can encrypt data
+     * Sets whether or not this sub-key can encrypt data
      *
      * @param boolean $canEncrypt true if this sub-key can encrypt data and
      *                            false if it can not.
@@ -551,7 +566,28 @@ class Crypt_GPG_SubKey
      */
     public function setCanEncrypt($canEncrypt)
     {
-        $this->_canEncrypt = ($canEncrypt) ? true : false;
+        if ($canEncrypt) {
+            $this->_usage |= self::USAGE_ENCRYPT;
+        } else {
+            $this->_usage &= ~self::USAGE_ENCRYPT;
+        }
+
+        return $this;
+    }
+
+    // }}}
+    // {{{ setUsage()
+
+    /**
+     * Sets usage flags of the sub-key
+     *
+     * @param integer $usage Usage flags
+     *
+     * @return Crypt_GPG_SubKey the current object, for fluent interface.
+     */
+    public function setUsage($usage)
+    {
+        $this->_usage = (int) $usage;
         return $this;
     }
 
@@ -620,13 +656,21 @@ class Crypt_GPG_SubKey
             $subKey->setRevoked(true);
         }
 
-        if (strpos($tokens[11], 's') !== false) {
-            $subKey->setCanSign(true);
+        $usage = 0;
+        $usage_map = array(
+            'a' => self::USAGE_AUTHENTICATION,
+            'c' => self::USAGE_CERTIFY,
+            'e' => self::USAGE_ENCRYPT,
+            's' => self::USAGE_SIGN,
+        );
+
+        foreach ($usage_map as $key => $flag) {
+            if (strpos($tokens[11], $key) !== false) {
+                $usage |= $flag;
+            }
         }
 
-        if (strpos($tokens[11], 'e') !== false) {
-            $subKey->setCanEncrypt(true);
-        }
+        $subKey->setUsage($usage);
 
         return $subKey;
     }

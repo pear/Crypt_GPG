@@ -127,6 +127,13 @@ $package->addMaintainer(
     'nathan@silverorange.com'
 );
 
+$package->addMaintainer(
+    'lead',
+    'alec',
+    'Aleksander Machniak',
+    'alec@alec.pl'
+);
+
 $package->addReplacement(
     'data/pinentry-cli.xml',
     'package-info',

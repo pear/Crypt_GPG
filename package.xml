@@ -23,6 +23,12 @@ This package requires PHP version 5.2.1 or greater.</description>
   <email>nathan@silverorange.com</email>
   <active>yes</active>
  </lead>
+ <lead>
+  <name>Aleksander Machniak</name>
+  <user>alec</user>
+  <email>alec@alec.pl</email>
+  <active>yes</active>
+ </lead>
  <date>2015-10-16</date>
  <time>13:08:32</time>
  <version>

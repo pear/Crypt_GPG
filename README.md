@@ -1,5 +1,5 @@
 # Crypt_GPG #
-Crypt_GPG is a PHP package to interact with the [GNU Privacy Guard 
+Crypt_GPG is a PHP package to interact with the [GNU Privacy Guard
 (GnuPG)](http://www.gnupg.org/). GnuPG is a free and open-source
 implementation of the [OpenPGP](http://www.ietf.org/rfc/rfc4880.txt)
 protocol, providing key management, data encryption and data signing.

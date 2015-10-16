@@ -23,20 +23,25 @@ This package requires PHP version 5.2.1 or greater.</description>
   <email>nathan@silverorange.com</email>
   <active>yes</active>
  </lead>
- <date>2013-03-13</date>
- <time>14:22:18</time>
+ <date>2015-10-16</date>
+ <time>13:08:32</time>
  <version>
-  <release>1.4.0b4</release>
+  <release>1.4.0</release>
   <api>1.4.0</api>
  </version>
  <stability>
-  <release>beta</release>
-  <api>beta</api>
+  <release>stable</release>
+  <api>stable</api>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
 This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:
 
+Fix Bug #19914. PinEntry can&apos;t find Console_CommandLine.
+Fix Bug #20512. Debug should use htmlspecialchars().
+Fix Bug #20527. Composer: @package-name@ in PinEntry.php is not resolved.
+Fix Bug #20939. Retrieve info if encryption or signing keys have been added.
+Fix Bug #20940. Determine algorithm used in signature.
 Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
 Fix Bug #17628. Version regular expression on MAMP.
 Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
@@ -123,9 +128,10 @@ This release makes the mbstring extension a required dependency as the assuan pr
     <file baseinstalldir="/" name="ImportKeyTest.php" role="test" />
     <file baseinstalldir="/" name="KeyGeneratorTest.php" role="test" />
     <file baseinstalldir="/" name="KeyTest.php" role="test" />
+    <file baseinstalldir="/" name="phpunit.xml" role="test" />
+    <file baseinstalldir="/" name="SignatureCreationInfoTest.php" role="test" />
     <file baseinstalldir="/" name="SignatureTest.php" role="test" />
     <file baseinstalldir="/" name="SignTest.php" role="test" />
-    <file baseinstalldir="/" name="SignatureCreationInfoTest.php" role="test" />
     <file baseinstalldir="/" name="SubKeyTest.php" role="test" />
     <file baseinstalldir="/" name="TestCase.php" role="test" />
     <file baseinstalldir="/" name="UserIdTest.php" role="test" />
@@ -266,6 +272,35 @@ This release makes the mbstring extension a required dependency as the assuan pr
    <notes>
 This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:
 
+Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
+Fix Bug #17628. Version regular expression on MAMP.
+Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
+Fix possible fread/fwrite to strings when the string values passed to Crypt_GPG are loosly equal to a stream resource handle.
+
+A workaround for PHP Bug #39598 is also provided in the event that GnuPG ends unexpectedly. This prevents infinite loops.
+
+This release makes the mbstring extension a required dependency as the assuan protocol used in GnuPG 2.x uses UTF-8.
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.4.0</release>
+    <api>1.4.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2015-10-16</date>
+   <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
+   <notes>
+This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:
+
+Fix Bug #19914. PinEntry can&apos;t find Console_CommandLine.
+Fix Bug #20512. Debug should use htmlspecialchars().
+Fix Bug #20527. Composer: @package-name@ in PinEntry.php is not resolved.
+Fix Bug #20939. Retrieve info if encryption or signing keys have been added.
+Fix Bug #20940. Determine algorithm used in signature.
 Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
 Fix Bug #17628. Version regular expression on MAMP.
 Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.

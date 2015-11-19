@@ -451,6 +451,7 @@ class Crypt_GPG_PinEntry
         case 'SETCANCEL':
         case 'SETQUALITYBAR':
         case 'SETQUALITYBAR_TT':
+        case 'SETKEYINFO':
         case 'OPTION':
             return $this->sendNotImplementedOK();
 

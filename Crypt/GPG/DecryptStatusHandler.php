@@ -315,7 +315,7 @@ class Crypt_GPG_DecryptStatusHandler
             }
             if (count($missingPassphrases) > 0) {
                 $message = ' No passphrase provided for keys: "' .
-                    implode('", "', $badPassphrases) . '".';
+                    implode('", "', $missingPassphrases) . '".';
             }
 
             throw new Crypt_GPG_BadPassphraseException(

@@ -16,7 +16,7 @@ if ($path[0] === '@') {
 }
 
 // Workaround for composer installs (#19914)
-$composerDir = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Console_CommandLine';
+$composerDir = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'console_commandline';
 if (is_dir($composerDir)) {
     $path .= PATH_SEPARATOR . $composerDir;
 }

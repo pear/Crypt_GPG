@@ -15,10 +15,16 @@ if ($path[0] === '@') {
     // in a local PEAR tree that's not in the system PHP include path.
 }
 
-// Workaround for composer installs (#19914)
-$composerDir = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'console_commandline';
-if (is_dir($composerDir)) {
-    $path .= PATH_SEPARATOR . $composerDir;
+// Workaround for composer installs (#19914).  Path used if installed via composer using PEAR as a repository.
+$composerDir_pear = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Console_CommandLine';
+if (is_dir($composerDir_pear)) {
+    $path .= PATH_SEPARATOR . $composerDir_pear;
+}
+
+//Path if installed via composer without supplying a repository
+$composerDir_composer = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'console_commandline';
+if (is_dir($composerDir_composer)) {
+    $path .= PATH_SEPARATOR . $composerDir_composer;
 }
 
 // We depend on Console_CommandLine, so we append also the default include path

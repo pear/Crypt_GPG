@@ -16,15 +16,15 @@ if ($path[0] === '@') {
 }
 
 // Workaround for composer installs (#19914).  Path used if installed via composer using PEAR as a repository.
-$composerDir_pear = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Console_CommandLine';
-if (is_dir($composerDir_pear)) {
-    $path .= PATH_SEPARATOR . $composerDir_pear;
+$composerDirForPearRepository = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Console_CommandLine';
+if (is_dir($composerDirForPearRepository)) {
+    $path .= PATH_SEPARATOR . $composerDirForPearRepository;
 }
 
-//Path if installed via composer without supplying a repository
-$composerDir_composer = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'console_commandline';
-if (is_dir($composerDir_composer)) {
-    $path .= PATH_SEPARATOR . $composerDir_composer;
+// Path if installed via composer without supplying a repository.
+$composerDirForComposer = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'console_commandline';
+if (is_dir($composerDirForComposer)) {
+    $path .= PATH_SEPARATOR . $composerDirForComposer;
 }
 
 // We depend on Console_CommandLine, so we append also the default include path

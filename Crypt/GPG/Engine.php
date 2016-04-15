@@ -593,16 +593,14 @@ class Crypt_GPG_Engine
         // get agent 
         if (array_key_exists('agent', $options)) {
             $this->_agent = (string)$options['agent'];
+
+            if ($this->_agent && !is_executable($this->_agent)) {
+                throw new PEAR_Exception(
+                    'Specified gpg-agent binary is not executable.'
+                );
+            }
         } else {
             $this->_agent = $this->_getAgent();
-        }
-
-        if ($this->_agent == '' || !is_executable($this->_agent)) {
-            throw new PEAR_Exception(
-                'gpg-agent binary not found. If you are sure the gpg-agent ' .
-                'is installed, please specify the location of the gpg-agent ' .
-                'binary using the \'agent\' driver option.'
-            );
         }
 
         /*
@@ -1605,9 +1603,16 @@ class Crypt_GPG_Engine
 
         // If using GnuPG 2.x start the gpg-agent
         if (version_compare($version, '2.0.0', 'ge')) {
-            $agentCommandLine = $this->_agent;
+            if (!$this->_agent) {
+                throw new Crypt_GPG_OpenSubprocessException(
+                    'Unable to open gpg-agent subprocess (gpg-agent not found). ' .
+                    'Please specify location of the gpg-agent binary ' .
+                    'using the \'agent\' driver option.'
+                );
+            }
 
             $agentArguments = array(
+                '--daemon',
                 '--options /dev/null', // ignore any saved options
                 '--csh', // output is easier to parse
                 '--keep-display', // prevent passing --display to pinentry
@@ -1624,9 +1629,7 @@ class Crypt_GPG_Engine
                     escapeshellarg($this->_homedir);
             }
 
-
-            $agentCommandLine .= ' ' . implode(' ', $agentArguments)
-                . ' --daemon';
+            $agentCommandLine = $this->_agent . ' ' . implode(' ', $agentArguments);
 
             $agentDescriptorSpec = array(
                 self::FD_INPUT   => array('pipe', $rb), // stdin

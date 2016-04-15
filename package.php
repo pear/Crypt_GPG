@@ -35,31 +35,20 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.4.0';
+$apiVersion     = '1.4.1';
 $apiState       = 'stable';
 
-$releaseVersion = '1.4.0';
+$releaseVersion = '1.4.1';
 $releaseState   = 'stable';
 $releaseNotes   =
-    "This release adds support for GnuPG 2.x, supporting the latest version " .
-    "of RHEL and derivatives. Additionally, the following bugs are fixed:\n" .
+    "This release fixes following bugs:\n" .
     "\n" .
-    "Fix Bug #19914. PinEntry can't find Console_CommandLine.\n" .
-    "Fix Bug #20512. Debug should use htmlspecialchars().\n" .
-    "Fix Bug #20527. Composer: @package-name@ in PinEntry.php is not resolved.\n" .
-    "Fix Bug #20939. Retrieve info if encryption or signing keys have been added.\n" .
-    "Fix Bug #20940. Determine algorithm used in signature.\n" .
-    "Fix Bug #17838. Passphrase operations don't work on GnuPG 2.x.\n" .
-    "Fix Bug #17628. Version regular expression on MAMP.\n" .
-    "Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.\n" .
-    "Fix possible fread/fwrite to strings when the string values passed to " .
-        "Crypt_GPG are loosly equal to a stream resource handle.\n" .
+    "Fix Bug #21016: Decryption hangs due to missing SETKEYINFO support (GnuPG 2.0.28 and up).\n" .
+    "Fix Bug #19925: Don't throw exception when specified gpg-agent does not exist on GnuPG 1.x.\n" .
+    "Fixed invalid error message in Crypt_GPG_BadPassphraseException.\n" .
+    "Fixed more PinEntry issues on composer installations.\n" .
     "\n" .
-    "A workaround for PHP Bug #39598 is also provided in the event that " .
-        "GnuPG ends unexpectedly. This prevents infinite loops.\n" .
-    "\n" .
-    "This release makes the mbstring extension a required dependency as the " .
-        "assuan protocol used in GnuPG 2.x uses UTF-8.\n";
+    "Additionally this release adds possibility to use external debug handler.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

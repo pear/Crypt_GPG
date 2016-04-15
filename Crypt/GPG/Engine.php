@@ -957,7 +957,6 @@ class Crypt_GPG_Engine
     public function getVersion()
     {
         if ($this->_version == '') {
-
             $options = array(
                 'homedir' => $this->_homedir,
                 'binary'  => $this->_binary,
@@ -1593,7 +1592,10 @@ class Crypt_GPG_Engine
     {
         $version = $this->getVersion();
 
-        $this->_debug('USING GPG ' . $version . 'with PHP ' . PHP_VERSION);
+        // log versions, but not when looking for the version number
+        if ($version !== '1.0.0') {
+            $this->_debug('USING GPG ' . $version . ' with PHP ' . PHP_VERSION);
+        }
 
         // Binary operations will not work on Windows with PHP < 5.2.6. This is
         // in case stream_select() ever works on Windows.

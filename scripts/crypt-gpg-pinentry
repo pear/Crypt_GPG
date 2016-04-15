@@ -4,31 +4,24 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 // Check if we're running directly from git repo or if we're running
-// from a PEAR packaged version.
-$path = '@php-dir@';
-if ($path[0] === '@') {
-    // Git repo needs to set the include path as the pinentry program is not
-    // invoked in the current directory.
-    $path = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..';
-} else {
-    // PEAR packaged version needs to set include path in case it is running
-    // in a local PEAR tree that's not in the system PHP include path.
-}
+// from a PEAR or Composer packaged version.
+$ds    = DIRECTORY_SEPARATOR;
+$root  = dirname(__FILE__) . $ds . '..' ;
+$paths = array(
+    '@php-dir@', // PEAR or Composer
+    $root, // Git (or Composer with wrong @php-dir@)
+    $root . $ds . '..' . $ds . 'Console_CommandLine', // Composer
+    $root . $ds . '..' . $ds . 'console_commandline', // Composer
+);
 
-// Workaround for composer installs (#19914).  Path used if installed via composer using PEAR as a repository.
-$composerDirForPearRepository = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Console_CommandLine';
-if (is_dir($composerDirForPearRepository)) {
-    $path .= PATH_SEPARATOR . $composerDirForPearRepository;
-}
-
-// Path if installed via composer without supplying a repository.
-$composerDirForComposer = $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'console_commandline';
-if (is_dir($composerDirForComposer)) {
-    $path .= PATH_SEPARATOR . $composerDirForComposer;
+foreach ($paths as $idx => $path) {
+    if (!is_dir($path)) {
+        unset($paths[$idx]);
+    }
 }
 
 // We depend on Console_CommandLine, so we append also the default include path
-set_include_path($path . PATH_SEPARATOR . get_include_path());
+set_include_path(implode(PATH_SEPARATOR, $paths) . PATH_SEPARATOR . get_include_path());
 
 require_once 'Crypt/GPG/PinEntry.php';
 

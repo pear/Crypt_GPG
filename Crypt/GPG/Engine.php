@@ -1961,17 +1961,20 @@ class Crypt_GPG_Engine
 
     private function _getPinEntry()
     {
-        // Check if we're running directly from git or if we're using a
-        // PEAR-packaged version
-        $pinEntry = '@bin-dir@' . DIRECTORY_SEPARATOR . 'crypt-gpg-pinentry';
+        // Find PinEntry program depending on the way how the package is installed
+        $ds    = DIRECTORY_SEPARATOR;
+        $root  = dirname(__FILE__) . $ds . '..' . $ds . '..' . $ds;
+        $paths = array(
+            '@bin-dir@', // PEAR
+             $root . 'scripts', // Git
+             $root . 'bin', // Composer
+        );
 
-        if ($pinEntry[0] === '@') {
-            $pinEntry = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..'
-                . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'scripts'
-                . DIRECTORY_SEPARATOR . 'crypt-gpg-pinentry';
+        foreach ($paths as $path) {
+            if (file_exists($path . $ds . 'crypt-gpg-pinentry')) {
+                return $path . $ds . 'crypt-gpg-pinentry';
+            }
         }
-
-        return $pinEntry;
     }
 
     // }}

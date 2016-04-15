@@ -317,24 +317,20 @@ class Crypt_GPG_PinEntry
      */
     protected function getUIXML()
     {
-        $dir = '@data-dir@' . DIRECTORY_SEPARATOR
-            . '@package-name@' . DIRECTORY_SEPARATOR . 'data';
+        // Find PinEntry config depending on the way how the package is installed
+        $ds    = DIRECTORY_SEPARATOR;
+        $root  = dirname(__FILE__) . $ds . '..' . $ds . '..' . $ds;
+        $paths = array(
+            '@data-dir@' . $ds . '@package-name@' . $ds . 'data', // PEAR
+            $root . 'data', // Git
+            $root . 'data' . $ds . 'Crypt_GPG' . $ds . 'data', // Composer
+        );
 
-        // Check if we're running from a PEAR-packaged version
-        // or directly from a git checkout or other installation
-        // that does not resolve PEAR variables
-        if (strpos($dir, '@') !== false) {
-            $dir = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..'
-                . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data';
-
-            // Workaround for composer installs (#20527)
-            $composerDir = $dir . DIRECTORY_SEPARATOR . 'Crypt_GPG' . DIRECTORY_SEPARATOR . 'data';
-            if (is_dir($composerDir)) {
-                $dir = $composerDir;
+        foreach ($paths as $path) {
+            if (file_exists($path . $ds . 'pinentry-cli.xml')) {
+                return $path . $ds . 'pinentry-cli.xml';
             }
         }
-
-        return $dir . DIRECTORY_SEPARATOR . 'pinentry-cli.xml';
     }
 
     // }}}

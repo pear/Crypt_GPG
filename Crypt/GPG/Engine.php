@@ -156,9 +156,12 @@ class Crypt_GPG_Engine
      * command. As a result, sensitive data is never displayed when debug is
      * enabled. Sensitive data includes private key data and passphrases.
      *
+     * This can be set to a callable function where first argument is the
+     * debug line to process.
+     *
      * Debugging is off by default.
      *
-     * @var boolean
+     * @var mixed
      * @see Crypt_GPG_Engine::__construct()
      */
     private $_debug = false;
@@ -472,7 +475,7 @@ class Crypt_GPG_Engine
      *                                       binary location using a list of
      *                                       know default locations for the
      *                                       current operating system.
-     * - <kbd>boolean debug</kbd>          - whether or not to use debug mode.
+     * - <kbd>mixed debug</kbd>            - whether or not to use debug mode.
      *                                       When debug mode is on, all
      *                                       communication to and from the GPG
      *                                       subprocess is logged. This can be
@@ -650,7 +653,7 @@ class Crypt_GPG_Engine
         }
 
         if (array_key_exists('debug', $options)) {
-            $this->_debug = (boolean)$options['debug'];
+            $this->_debug = $options['debug'];
         }
     }
 
@@ -1996,6 +1999,8 @@ class Crypt_GPG_Engine
                 foreach (explode(PHP_EOL, $text) as $line) {
                     echo "Crypt_GPG DEBUG: ", $line, PHP_EOL;
                 }
+            } else if (is_callable($this->_debug)) {
+                call_user_func($this->_debug, $text);
             } else {
                 // running on a web server, format debug output nicely
                 foreach (explode(PHP_EOL, $text) as $line) {

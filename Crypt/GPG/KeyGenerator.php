@@ -241,7 +241,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *                                       binary location using a list of
      *                                       know default locations for the
      *                                       current operating system.
-     * - <kbd>boolean debug</kbd>          - whether or not to use debug mode.
+     * - <kbd>mixed debug</kbd>            - whether or not to use debug mode.
      *                                       When debug mode is on, all
      *                                       communication to and from the GPG
      *                                       subprocess is logged. This can be

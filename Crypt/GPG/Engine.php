@@ -1590,6 +1590,8 @@ class Crypt_GPG_Engine
     {
         $version = $this->getVersion();
 
+        $this->_debug('USING GPG ' . $version . 'with PHP ' . PHP_VERSION);
+
         // Binary operations will not work on Windows with PHP < 5.2.6. This is
         // in case stream_select() ever works on Windows.
         $rb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'r' : 'rb';

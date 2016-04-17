@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+<package packagerversion="1.10.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
     http://pear.php.net/dtd/tasks-1.0.xsd
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
@@ -29,11 +29,11 @@ This package requires PHP version 5.2.1 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2015-10-16</date>
- <time>13:08:32</time>
+ <date>2016-04-17</date>
+ <time>09:12:33</time>
  <version>
-  <release>1.4.0</release>
-  <api>1.4.0</api>
+  <release>1.4.1</release>
+  <api>1.4.1</api>
  </version>
  <stability>
   <release>stable</release>
@@ -41,21 +41,15 @@ This package requires PHP version 5.2.1 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:
+This release fixes following bugs:
 
-Fix Bug #19914. PinEntry can&apos;t find Console_CommandLine.
-Fix Bug #20512. Debug should use htmlspecialchars().
-Fix Bug #20527. Composer: @package-name@ in PinEntry.php is not resolved.
-Fix Bug #20939. Retrieve info if encryption or signing keys have been added.
-Fix Bug #20940. Determine algorithm used in signature.
-Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
-Fix Bug #17628. Version regular expression on MAMP.
-Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
-Fix possible fread/fwrite to strings when the string values passed to Crypt_GPG are loosly equal to a stream resource handle.
+Fix Bug #21016: Decryption hangs due to missing SETKEYINFO support (GnuPG 2.0.28 and up).
+Fix Bug #19925: Don&apos;t throw exception when specified gpg-agent does not exist on GnuPG 1.x.
+Fix Bug #21034: Missing agent exception thrown when checking version.
+Fixed invalid error message in Crypt_GPG_BadPassphraseException.
+Fixed more PinEntry issues on composer installations.
 
-A workaround for PHP Bug #39598 is also provided in the event that GnuPG ends unexpectedly. This prevents infinite loops.
-
-This release makes the mbstring extension a required dependency as the assuan protocol used in GnuPG 2.x uses UTF-8.
+Additionally this release adds possibility to use external debug handler.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -182,139 +176,25 @@ This release makes the mbstring extension a required dependency as the assuan pr
  <changelog>
   <release>
    <version>
-    <release>1.3.2</release>
-    <api>1.3.0</api>
+    <release>1.4.1</release>
+    <api>1.4.1</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2011-09-26</date>
+   <date>2016-04-17</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-This release adds key generation to the list of supported operations and adds fluent interface support to the main Crypt_GPG class. Additionally the following bugs are fixed:
-Fix Bug #18618. Incorrect CHUNK_SIZE / Hang on file decryption.
-Fix Bug #18869. Unnecessary dependency on posix extension.
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>1.4.0b1</release>
-    <api>1.4.0</api>
-   </version>
-   <stability>
-    <release>beta</release>
-    <api>beta</api>
-   </stability>
-   <date>2013-02-28</date>
-   <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>
-This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:
+This release fixes following bugs:
 
-Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
-Fix Bug #17628. Version regular expression on MAMP.
-Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
+Fix Bug #21016: Decryption hangs due to missing SETKEYINFO support (GnuPG 2.0.28 and up).
+Fix Bug #19925: Don&apos;t throw exception when specified gpg-agent does not exist on GnuPG 1.x.
+Fix Bug #21034: Missing agent exception thrown when checking version.
+Fixed invalid error message in Crypt_GPG_BadPassphraseException.
+Fixed more PinEntry issues on composer installations.
 
-This release makes the mbstring extension a required dependency as the assuan protocol used in GnuPG 2.x uses UTF-8.
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>1.4.0b2</release>
-    <api>1.4.0</api>
-   </version>
-   <stability>
-    <release>beta</release>
-    <api>beta</api>
-   </stability>
-   <date>2013-02-28</date>
-   <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>
-This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:
-
-Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
-Fix Bug #17628. Version regular expression on MAMP.
-Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
-
-A workaround for PHP Bug #39598 is also provided in the event that GnuPG ends unexpectedly. This prevents infinite loops.
-
-This release makes the mbstring extension a required dependency as the assuan protocol used in GnuPG 2.x uses UTF-8.
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>1.4.0b3</release>
-    <api>1.4.0</api>
-   </version>
-   <stability>
-    <release>beta</release>
-    <api>beta</api>
-   </stability>
-   <date>2013-03-01</date>
-   <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>
-This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:
-
-Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
-Fix Bug #17628. Version regular expression on MAMP.
-Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
-
-A workaround for PHP Bug #39598 is also provided in the event that GnuPG ends unexpectedly. This prevents infinite loops.
-
-This release makes the mbstring extension a required dependency as the assuan protocol used in GnuPG 2.x uses UTF-8.
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>1.4.0b4</release>
-    <api>1.4.0</api>
-   </version>
-   <stability>
-    <release>beta</release>
-    <api>beta</api>
-   </stability>
-   <date>2013-03-13</date>
-   <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>
-This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:
-
-Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
-Fix Bug #17628. Version regular expression on MAMP.
-Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
-Fix possible fread/fwrite to strings when the string values passed to Crypt_GPG are loosly equal to a stream resource handle.
-
-A workaround for PHP Bug #39598 is also provided in the event that GnuPG ends unexpectedly. This prevents infinite loops.
-
-This release makes the mbstring extension a required dependency as the assuan protocol used in GnuPG 2.x uses UTF-8.
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>1.4.0</release>
-    <api>1.4.0</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2015-10-16</date>
-   <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>
-This release adds support for GnuPG 2.x, supporting the latest version of RHEL and derivatives. Additionally, the following bugs are fixed:
-
-Fix Bug #19914. PinEntry can&apos;t find Console_CommandLine.
-Fix Bug #20512. Debug should use htmlspecialchars().
-Fix Bug #20527. Composer: @package-name@ in PinEntry.php is not resolved.
-Fix Bug #20939. Retrieve info if encryption or signing keys have been added.
-Fix Bug #20940. Determine algorithm used in signature.
-Fix Bug #17838. Passphrase operations don&apos;t work on GnuPG 2.x.
-Fix Bug #17628. Version regular expression on MAMP.
-Fix Bug #19883. Better exception on unwriteable or unexecutable homedir.
-Fix possible fread/fwrite to strings when the string values passed to Crypt_GPG are loosly equal to a stream resource handle.
-
-A workaround for PHP Bug #39598 is also provided in the event that GnuPG ends unexpectedly. This prevents infinite loops.
-
-This release makes the mbstring extension a required dependency as the assuan protocol used in GnuPG 2.x uses UTF-8.
+Additionally this release adds possibility to use external debug handler.
    </notes>
   </release>
  </changelog>

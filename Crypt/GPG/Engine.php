@@ -960,7 +960,8 @@ class Crypt_GPG_Engine
             $options = array(
                 'homedir' => $this->_homedir,
                 'binary'  => $this->_binary,
-                'debug'   => $this->_debug
+                'debug'   => $this->_debug,
+                'agent'   => $this->_agent,
             );
 
             $engine = new self($options);
@@ -1672,7 +1673,7 @@ class Crypt_GPG_Engine
             );
 
             $agentInfo             = explode(' ', $agentInfo, 3);
-            $this->_agentInfo      = $agentInfo[2];
+            $this->_agentInfo      = isset($agentInfo[2]) ? $agentInfo[2] : null;
             $env['GPG_AGENT_INFO'] = $this->_agentInfo;
 
             // gpg-agent daemon is started, we can close the launching process

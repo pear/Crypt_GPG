@@ -45,6 +45,7 @@ $releaseNotes   =
     "\n" .
     "Fix Bug #21016: Decryption hangs due to missing SETKEYINFO support (GnuPG 2.0.28 and up).\n" .
     "Fix Bug #19925: Don't throw exception when specified gpg-agent does not exist on GnuPG 1.x.\n" .
+    "Fix Bug #21034: Missing agent exception thrown when checking version.\n" .
     "Fixed invalid error message in Crypt_GPG_BadPassphraseException.\n" .
     "Fixed more PinEntry issues on composer installations.\n" .
     "\n" .

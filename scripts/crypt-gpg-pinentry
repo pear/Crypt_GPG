@@ -12,6 +12,8 @@ $paths = array(
     $root, // Git (or Composer with wrong @php-dir@)
     $root . $ds . '..' . $ds . 'Console_CommandLine', // Composer
     $root . $ds . '..' . $ds . 'console_commandline', // Composer
+    // and composer-installed PEAR_Exception for Console_CommandLine (#21074)
+    $root . $ds . '..' . $ds . '..' . $ds . 'pear' . $ds . 'pear_exception',
 );
 
 foreach ($paths as $idx => $path) {

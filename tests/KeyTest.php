@@ -360,6 +360,35 @@ class KeyTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
+    // {{{ test__toString()
+
+    /**
+     * @group accessors
+     */
+    public function test__toString()
+    {
+        $key = new Crypt_GPG_Key();
+
+        $firstSubKey = new Crypt_GPG_SubKey(array(
+            'id'          => 'C097D9EC94C06363',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 1024,
+            'creation'    => 1221785805,
+            'expiration'  => 0,
+            'canSign'     => true,
+            'canEncrypt'  => false,
+            'hasPrivate'  => true
+        ));
+
+        $this->assertSame((string) $key, '');
+
+        $key->addSubKey($firstSubKey);
+
+        $this->assertSame((string) $key, $firstSubKey->getId());
+    }
+
+    // }}}
 
     // mutators
     // {{{ testAddSubKey()

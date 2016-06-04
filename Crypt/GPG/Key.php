@@ -216,6 +216,25 @@ class Crypt_GPG_Key
     }
 
     // }}}
+    // {{{ __toString()
+
+    /**
+     * String representation of the key
+     *
+     * @return string The key ID.
+     */
+    public function __toString()
+    {
+        foreach ($this->_subKeys as $subKey) {
+            if ($id = $subKey->getId()) {
+                return $id;
+            }
+        }
+
+        return '';
+    }
+
+    // }}}
 }
 
 // }}}

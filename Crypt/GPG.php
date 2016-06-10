@@ -1234,7 +1234,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function addDecryptKey($key, $passphrase = null)
     {
-        $this->_addKey($this->decryptKeys, true, false, $key, $passphrase);
+        $this->_addKey($this->decryptKeys, false, false, $key, $passphrase);
         return $this;
     }
 
@@ -1503,6 +1503,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
                 if (   ($encrypt && $sign && $canEncrypt && $canSign)
                     || ($encrypt && !$sign && $canEncrypt)
                     || (!$encrypt && $sign && $canSign)
+                    || (!$encrypt && !$sign)
                 ) {
                     // We add all subkeys that meet the requirements because we
                     // were not told which subkey is required.

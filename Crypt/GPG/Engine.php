@@ -92,14 +92,12 @@ class Crypt_GPG_Engine
     /**
      * Size of data chunks that are sent to and retrieved from the IPC pipes.
      *
-     * PHP reads 8192 bytes. If this is set to less than 8192, PHP reads 8192
-     * and buffers the rest so we might as well just read 8192.
+     * The value of 65536 has been choosen empirically
+     * as the one with best performance.
      *
-     * Using values other than 8192 also triggers PHP bugs.
-     *
-     * @see http://bugs.php.net/bug.php?id=35224
+     * @see https://pear.php.net/bugs/bug.php?id=21077
      */
-    const CHUNK_SIZE = 8192;
+    const CHUNK_SIZE = 65536;
 
     /**
      * Standard input file descriptor. This is used to pass data to the GPG
@@ -1762,9 +1760,24 @@ class Crypt_GPG_Engine
                 'Unable to open GPG subprocess.', 0, $commandLine);
         }
 
+        $setters = array('stream_set_write_buffer');
+
+        // @TODO: Bump minimum required version of PHP, and get rid
+        // of these checks in next major version
+        if (function_exists('stream_set_chunk_size')) {
+            $setters[] = 'stream_set_chunk_size'; // PHP >= 5.4.0
+        }
+        if (function_exists('stream_set_read_buffer')) {
+            $setters[] = 'stream_set_read_buffer'; // PHP >= 5.3.3
+        }
+
         // Set streams as non-blocking. See Bug #18618.
         foreach ($this->_pipes as $pipe) {
             stream_set_blocking($pipe, 0);
+
+            foreach ($setters as $function) {
+                $function($pipe, self::CHUNK_SIZE);
+            }
         }
 
         $this->_openPipes = $this->_pipes;

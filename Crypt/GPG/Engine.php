@@ -1210,9 +1210,9 @@ class Crypt_GPG_Engine
 
         // select loop delay in milliseconds
         $delay = 0;
+        $inputPosition = 0;
 
         while (true) {
-
             $inputStreams     = array();
             $outputStreams    = array();
             $exceptionStreams = array();
@@ -1311,7 +1311,7 @@ class Crypt_GPG_Engine
 
                 $chunk = Crypt_GPG_ByteUtils::substr(
                     $inputBuffer,
-                    0,
+                    $inputPosition,
                     self::CHUNK_SIZE
                 );
 
@@ -1332,15 +1332,26 @@ class Crypt_GPG_Engine
                     $this->_closePipe(self::FD_INPUT);
                 } else {
                     $this->_debug('=> wrote ' . $length . ' bytes');
-                    $inputBuffer = Crypt_GPG_ByteUtils::substr(
-                        $inputBuffer,
-                        $length
-                    );
+                    // Move the position pointer, don't modify $inputBuffer (#21081)
+                    if (is_string($this->_input)) {
+                        $inputPosition += $length;
+                    }
+                    else {
+                        $inputPosition = 0;
+                        $inputBuffer = Crypt_GPG_ByteUtils::substr(
+                            $inputBuffer,
+                            $length
+                        );
+                    }
                 }
             }
 
             // read input (from PHP stream)
-            if (in_array($this->_input, $inputStreams, true)) {
+            if (in_array($this->_input, $inputStreams, true)
+                // If the buffer is too big wait until it's smaller, we don't want
+                // to use too much memory
+                && Crypt_GPG_ByteUtils::strlen($inputBuffer) < self::CHUNK_SIZE
+            ) {
                 $this->_debug('input stream is ready for reading');
                 $this->_debug(
                     '=> about to read ' . self::CHUNK_SIZE .

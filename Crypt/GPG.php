@@ -341,6 +341,42 @@ class Crypt_GPG extends Crypt_GPGAbstract
     }
 
     // }}}
+    // {{{ exportPrivateKey()
+
+    /**
+     * Exports a private key from the keyring
+     *
+     * The exported key remains on the keyring. To delete the key, use
+     * {@link Crypt_GPG::deletePrivateKey()}.
+     *
+     * If more than one key fingerprint is available for the specified
+     * <kbd>$keyId</kbd> (for example, if you use a non-unique uid) only the
+     * first private key is exported.
+     *
+     * @param string  $keyId either the full uid of the private key, the email
+     *                       part of the uid of the private key or the key id of
+     *                       the private key. For example,
+     *                       "Test User (example) <test@example.com>",
+     *                       "test@example.com" or a hexadecimal string.
+     * @param boolean $armor optional. If true, ASCII armored data is returned;
+     *                       otherwise, binary data is returned. Defaults to
+     *                       true.
+     *
+     * @return string the private key data.
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if a private key with the given
+     *         <kbd>$keyId</kbd> is not found.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     */
+    public function exportPrivateKey($keyId, $armor = true)
+    {
+        return $this->_exportKey($keyId, $armor, true);
+    }
+
+    // }}}
     // {{{ exportPublicKey()
 
     /**
@@ -373,37 +409,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function exportPublicKey($keyId, $armor = true)
     {
-        $fingerprint = $this->getFingerprint($keyId);
-
-        if ($fingerprint === null) {
-            throw new Crypt_GPG_KeyNotFoundException(
-                'Public key not found: ' . $keyId,
-                self::ERROR_KEY_NOT_FOUND,
-                $keyId
-            );
-        }
-
-        $keyData   = '';
-        $operation = '--export ' . escapeshellarg($fingerprint);
-        $arguments = ($armor) ? array('--armor') : array();
-
-        $this->engine->reset();
-        $this->engine->setOutput($keyData);
-        $this->engine->setOperation($operation, $arguments);
-        $this->engine->run();
-
-        $code = $this->engine->getErrorCode();
-
-        if ($code !== self::ERROR_NONE) {
-            throw new Crypt_GPG_Exception(
-                'Unknown error exporting public key. Please use the ' .
-                '\'debug\' option when creating the Crypt_GPG object, and ' .
-                'file a bug report at ' . self::BUG_URI,
-                $code
-            );
-        }
-
-        return $keyData;
+        return $this->_exportKey($keyId, $armor, false);
     }
 
     // }}}
@@ -1669,6 +1675,68 @@ class Crypt_GPG extends Crypt_GPGAbstract
         }
 
         return $result;
+    }
+
+    // }}}
+    // {{{ _exportKey()
+
+    /**
+     * Exports a private or public key from the keyring
+     *
+     * If more than one key fingerprint is available for the specified
+     * <kbd>$keyId</kbd> (for example, if you use a non-unique uid) only the
+     * first key is exported.
+     *
+     * @param string  $keyId   either the full uid of the key, the email
+     *                         part of the uid of the key or the key id.
+     * @param boolean $armor   optional. If true, ASCII armored data is returned;
+     *                         otherwise, binary data is returned. Defaults to
+     *                         true.
+     * @param boolean $private return private instead of public key
+     *
+     * @return string the key data.
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if a key with the given
+     *         <kbd>$keyId</kbd> is not found.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     */
+    public function _exportKey($keyId, $armor = true, $private = false)
+    {
+        $fingerprint = $this->getFingerprint($keyId);
+
+        if ($fingerprint === null) {
+            throw new Crypt_GPG_KeyNotFoundException(
+                'Key not found: ' . $keyId,
+                self::ERROR_KEY_NOT_FOUND,
+                $keyId
+            );
+        }
+
+        $keyData   = '';
+        $operation = $private ? '--export-secret-keys' : '--export';
+        $operation .= ' ' . escapeshellarg($fingerprint);
+        $arguments = ($armor) ? array('--armor') : array();
+
+        $this->engine->reset();
+        $this->engine->setOutput($keyData);
+        $this->engine->setOperation($operation, $arguments);
+        $this->engine->run();
+
+        $code = $this->engine->getErrorCode();
+
+        if ($code !== self::ERROR_NONE) {
+            throw new Crypt_GPG_Exception(
+                'Unknown error exporting a key. Please use the ' .
+                '\'debug\' option when creating the Crypt_GPG object, and ' .
+                'file a bug report at ' . self::BUG_URI,
+                $code
+            );
+        }
+
+        return $keyData;
     }
 
     // }}}

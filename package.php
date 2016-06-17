@@ -35,21 +35,19 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.4.1';
+$apiVersion     = '1.4.2';
 $apiState       = 'stable';
 
-$releaseVersion = '1.4.1';
+$releaseVersion = '1.4.2';
 $releaseState   = 'stable';
 $releaseNotes   =
     "This release fixes following bugs:\n" .
     "\n" .
-    "Fix Bug #21016: Decryption hangs due to missing SETKEYINFO support (GnuPG 2.0.28 and up).\n" .
-    "Fix Bug #19925: Don't throw exception when specified gpg-agent does not exist on GnuPG 1.x.\n" .
-    "Fix Bug #21034: Missing agent exception thrown when checking version.\n" .
-    "Fixed invalid error message in Crypt_GPG_BadPassphraseException.\n" .
-    "Fixed more PinEntry issues on composer installations.\n" .
-    "\n" .
-    "Additionally this release adds possibility to use external debug handler.\n";
+    "Fix Bug #21074: Crypt-gpg-pinentry fails on system without PEAR/Exception.\n" .
+    "Fix Bug #21075: Fatal error: Object of class Crypt_GPG_Key could not be converted.\n" .
+    "Fix Bug #21077: Increase Crypt_GPG_Engine::CHUNK_SIZE for better performance\n" .
+    "Fix Bug #21081: Performance bottleneck in pipes handling.\n" .
+    "Feature #21079: Added Crypt_GPG::exportPrivateKey() method.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

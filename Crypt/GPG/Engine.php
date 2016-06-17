@@ -621,10 +621,12 @@ class Crypt_GPG_Engine
         if (array_key_exists('publicKeyring', $options)) {
             $this->_publicKeyring = (string)$options['publicKeyring'];
             if (!is_readable($this->_publicKeyring)) {
-                 throw new Crypt_GPG_FileException('The \'publicKeyring\' "' .
-                    $this->_publicKeyring . '" does not exist or is ' .
-                    'not readable. Check the location and ensure the file ' .
-                    'permissions are correct.', 0, $this->_publicKeyring);
+                throw new Crypt_GPG_FileException(
+                    'The \'publicKeyring\' "' . $this->_publicKeyring .
+                    '" does not exist or is not readable. Check the location ' .
+                    'and ensure the file permissions are correct.',
+                    0, $this->_publicKeyring
+                );
             }
         }
 
@@ -632,10 +634,12 @@ class Crypt_GPG_Engine
         if (array_key_exists('privateKeyring', $options)) {
             $this->_privateKeyring = (string)$options['privateKeyring'];
             if (!is_readable($this->_privateKeyring)) {
-                 throw new Crypt_GPG_FileException('The \'privateKeyring\' "' .
-                    $this->_privateKeyring . '" does not exist or is ' .
-                    'not readable. Check the location and ensure the file ' .
-                    'permissions are correct.', 0, $this->_privateKeyring);
+                throw new Crypt_GPG_FileException(
+                    'The \'privateKeyring\' "' . $this->_privateKeyring .
+                    '" does not exist or is not readable. Check the location ' .
+                    'and ensure the file permissions are correct.',
+                    0, $this->_privateKeyring
+                );
             }
         }
 
@@ -643,10 +647,12 @@ class Crypt_GPG_Engine
         if (array_key_exists('trustDb', $options)) {
             $this->_trustDb = (string)$options['trustDb'];
             if (!is_readable($this->_trustDb)) {
-                 throw new Crypt_GPG_FileException('The \'trustDb\' "' .
-                    $this->_trustDb . '" does not exist or is not readable. ' .
-                    'Check the location and ensure the file permissions are ' .
-                    'correct.', 0, $this->_trustDb);
+                throw new Crypt_GPG_FileException(
+                    'The \'trustDb\' "' . $this->_trustDb .
+                    '" does not exist or is not readable. Check the location ' .
+                    'and ensure the file permissions are correct.',
+                    0, $this->_trustDb
+                );
             }
         }
 
@@ -792,9 +798,10 @@ class Crypt_GPG_Engine
     public function run()
     {
         if ($this->_operation === '') {
-            throw new Crypt_GPG_InvalidOperationException('No GPG operation ' .
-                'specified. Use Crypt_GPG_Engine::setOperation() before ' .
-                'calling Crypt_GPG_Engine::run().');
+            throw new Crypt_GPG_InvalidOperationException(
+                'No GPG operation specified. Use Crypt_GPG_Engine::setOperation() ' .
+                'before calling Crypt_GPG_Engine::run().'
+            );
         }
 
         $this->_openSubprocess();
@@ -981,7 +988,8 @@ class Crypt_GPG_Engine
                     'Unknown error getting GnuPG version information. Please ' .
                     'use the \'debug\' option when creating the Crypt_GPG ' .
                     'object, and file a bug report at ' . Crypt_GPG::BUG_URI,
-                    $code);
+                    $code
+                );
             }
 
             $matches    = array();
@@ -992,14 +1000,16 @@ class Crypt_GPG_Engine
             } else {
                 throw new Crypt_GPG_Exception(
                     'No GnuPG version information provided by the binary "' .
-                    $this->_binary . '". Are you sure it is GnuPG?');
+                    $this->_binary . '". Are you sure it is GnuPG?'
+                );
             }
 
             if (version_compare($this->_version, self::MIN_VERSION, 'lt')) {
                 throw new Crypt_GPG_Exception(
                     'The version of GnuPG being used (' . $this->_version .
                     ') is not supported by Crypt_GPG. The minimum version ' .
-                    'required by Crypt_GPG is ' . self::MIN_VERSION);
+                    'required by Crypt_GPG is ' . self::MIN_VERSION
+                );
             }
         }
 
@@ -1295,14 +1305,16 @@ class Crypt_GPG_Engine
                 throw new Crypt_GPG_Exception(
                     'Error selecting stream for communication with GPG ' .
                     'subprocess. Please file a bug report at: ' .
-                    'http://pear.php.net/bugs/report.php?package=Crypt_GPG');
+                    'http://pear.php.net/bugs/report.php?package=Crypt_GPG'
+                );
             }
 
             if ($ready === 0) {
                 throw new Crypt_GPG_Exception(
                     'stream_select() returned 0. This can not happen! Please ' .
                     'file a bug report at: ' .
-                    'http://pear.php.net/bugs/report.php?package=Crypt_GPG');
+                    'http://pear.php.net/bugs/report.php?package=Crypt_GPG'
+                );
             }
 
             // write input (to GPG)
@@ -1335,8 +1347,7 @@ class Crypt_GPG_Engine
                     // Move the position pointer, don't modify $inputBuffer (#21081)
                     if (is_string($this->_input)) {
                         $inputPosition += $length;
-                    }
-                    else {
+                    } else {
                         $inputPosition = 0;
                         $inputBuffer = Crypt_GPG_ByteUtils::substr(
                             $inputBuffer,
@@ -1347,9 +1358,9 @@ class Crypt_GPG_Engine
             }
 
             // read input (from PHP stream)
+            // If the buffer is too big wait until it's smaller, we don't want
+            // to use too much memory
             if (in_array($this->_input, $inputStreams, true)
-                // If the buffer is too big wait until it's smaller, we don't want
-                // to use too much memory
                 && Crypt_GPG_ByteUtils::strlen($inputBuffer) < self::CHUNK_SIZE
             ) {
                 $this->_debug('input stream is ready for reading');
@@ -1768,7 +1779,8 @@ class Crypt_GPG_Engine
 
         if (!is_resource($this->_process)) {
             throw new Crypt_GPG_OpenSubprocessException(
-                'Unable to open GPG subprocess.', 0, $commandLine);
+                'Unable to open GPG subprocess.', 0, $commandLine
+            );
         }
 
         $setters = array('stream_set_write_buffer');
@@ -1869,6 +1881,17 @@ class Crypt_GPG_Engine
     // }}}
     // {{ _closeAgentLaunchProcess()
 
+    /**
+     * Closes a the internal GPG-AGENT subprocess
+     *
+     * Closes the internal GPG-AGENT subprocess. Sets the private class property
+     * {@link Crypt_GPG_Engine::$_agentProcess} to null.
+     *
+     * @return void
+     *
+     * @see Crypt_GPG_Engine::_openSubprocess()
+     * @see Crypt_GPG_Engine::$_agentProcess
+     */
     private function _closeAgentLaunchProcess()
     {
         if (is_resource($this->_agentProcess)) {
@@ -1958,6 +1981,13 @@ class Crypt_GPG_Engine
     // }}}
     // {{ _getAgent()
 
+    /**
+     * Gets the name of the GPG-AGENT binary for the current operating system
+     *
+     * @return string the name of the GPG-AGENT binary for the current operating
+     *                system. If no suitable binary could be found, an empty
+     *                string is returned.
+     */
     private function _getAgent()
     {
         $agent = '';
@@ -1989,6 +2019,11 @@ class Crypt_GPG_Engine
     // }}
     // {{ _getPinEntry()
 
+    /**
+     * Gets the location of the PinEntry script
+     *
+     * @return string the location of the PinEntry script.
+     */
     private function _getPinEntry()
     {
         // Find PinEntry program depending on the way how the package is installed

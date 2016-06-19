@@ -29,11 +29,11 @@ This package requires PHP version 5.2.1 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2016-04-17</date>
- <time>09:12:33</time>
+ <date>2016-06-19</date>
+ <time>09:44:35</time>
  <version>
-  <release>1.4.1</release>
-  <api>1.4.1</api>
+  <release>1.4.2</release>
+  <api>1.4.2</api>
  </version>
  <stability>
   <release>stable</release>
@@ -43,13 +43,11 @@ This package requires PHP version 5.2.1 or greater.</description>
  <notes>
 This release fixes following bugs:
 
-Fix Bug #21016: Decryption hangs due to missing SETKEYINFO support (GnuPG 2.0.28 and up).
-Fix Bug #19925: Don&apos;t throw exception when specified gpg-agent does not exist on GnuPG 1.x.
-Fix Bug #21034: Missing agent exception thrown when checking version.
-Fixed invalid error message in Crypt_GPG_BadPassphraseException.
-Fixed more PinEntry issues on composer installations.
-
-Additionally this release adds possibility to use external debug handler.
+Fix Bug #21074: Crypt-gpg-pinentry fails on system without PEAR/Exception.
+Fix Bug #21075: Fatal error: Object of class Crypt_GPG_Key could not be converted.
+Fix Bug #21077: Increase Crypt_GPG_Engine::CHUNK_SIZE for better performance
+Fix Bug #21081: Performance bottleneck in pipes handling.
+Feature #21079: Added Crypt_GPG::exportPrivateKey() method.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -121,6 +119,7 @@ Additionally this release adds possibility to use external debug handler.
     <file baseinstalldir="/" name="EncryptAndSignTest.php" role="test" />
     <file baseinstalldir="/" name="EncryptTest.php" role="test" />
     <file baseinstalldir="/" name="ExceptionsTest.php" role="test" />
+    <file baseinstalldir="/" name="ExportPrivateKeyTest.php" role="test" />
     <file baseinstalldir="/" name="ExportPublicKeyTest.php" role="test" />
     <file baseinstalldir="/" name="GeneralTest.php" role="test" />
     <file baseinstalldir="/" name="GetFingerprintTest.php" role="test" />
@@ -176,25 +175,23 @@ Additionally this release adds possibility to use external debug handler.
  <changelog>
   <release>
    <version>
-    <release>1.4.1</release>
-    <api>1.4.1</api>
+    <release>1.4.2</release>
+    <api>1.4.2</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2016-04-17</date>
+   <date>2016-06-19</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
 This release fixes following bugs:
 
-Fix Bug #21016: Decryption hangs due to missing SETKEYINFO support (GnuPG 2.0.28 and up).
-Fix Bug #19925: Don&apos;t throw exception when specified gpg-agent does not exist on GnuPG 1.x.
-Fix Bug #21034: Missing agent exception thrown when checking version.
-Fixed invalid error message in Crypt_GPG_BadPassphraseException.
-Fixed more PinEntry issues on composer installations.
-
-Additionally this release adds possibility to use external debug handler.
+Fix Bug #21074: Crypt-gpg-pinentry fails on system without PEAR/Exception.
+Fix Bug #21075: Fatal error: Object of class Crypt_GPG_Key could not be converted.
+Fix Bug #21077: Increase Crypt_GPG_Engine::CHUNK_SIZE for better performance
+Fix Bug #21081: Performance bottleneck in pipes handling.
+Feature #21079: Added Crypt_GPG::exportPrivateKey() method.
    </notes>
   </release>
  </changelog>

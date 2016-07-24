@@ -91,8 +91,9 @@ class Crypt_GPG_ProcessControl
     /**
      * Checks if the process is running
      *
-     * Uses <kbd>ps</kbd> on UNIX-like systems and <kbd>tasklist</kbd> on
-     * Windows.
+     * If the <kbd>posix</kbd> extension is available, <kbd>posix_getpgid()</kbd>
+     * is used. Otherwise <kbd>ps</kbd> is used on UNIX-like systems and
+     * <kbd>tasklist</kbd> on Windows.
      *
      * @return boolean true if the process is running, false if not.
      */

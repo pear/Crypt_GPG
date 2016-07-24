@@ -100,7 +100,9 @@ class Crypt_GPG_ProcessControl
     {
         $running = false;
 
-        if (PHP_OS === 'WINNT') {
+        if (function_exists('posix_getpgid')) {
+            $running = false !== posix_getpgid($this->pid);
+        } elseif (PHP_OS === 'WINNT') {
             $command = 'tasklist /fo csv /nh /fi '
                 . escapeshellarg('PID eq ' . $this->pid);
 

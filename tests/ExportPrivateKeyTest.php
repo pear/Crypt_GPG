@@ -104,6 +104,9 @@ WOad2BFLoSh6WM3H7KvMUg==
 TEXT;
         // }}}
 
+        // @TODO: This operation requires passphrase in GnuPG 2.1
+        //        Also no exception is thrown, script hangs on pinentry
+
         $keyData = $this->gpg->exportPrivateKey($keyId);
 
         // Check for containment rather than equality since the OpenPGP header

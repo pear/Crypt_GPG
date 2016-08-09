@@ -190,6 +190,16 @@ class Crypt_GPG_DecryptStatusHandler
 
             // this is the new key message
             $this->currentSubKeyId = $tokens[1];
+
+            // @FIXME: For some reason in GnuPG 2.1.11 I get only ENC_TO and no
+            //         NEED_PASSPHRASE/MISSING_PASSPHRASE/USERID_HINT
+            if (array_key_exists($this->currentSubKeyId, $this->keys)
+                && $this->keys[$this->currentSubKeyId]['passphrase']
+            ) {
+                $this->badPassphrases[$this->currentSubKeyId] = $this->currentSubKeyId;
+            } else {
+                $this->missingPassphrases[$this->currentSubKeyId] = $this->currentSubKeyId;
+            }
             break;
 
         case 'NEED_PASSPHRASE':
@@ -214,6 +224,7 @@ class Crypt_GPG_DecryptStatusHandler
             // if we got a good passphrase, remove the key from the list of
             // bad passphrases.
             unset($this->badPassphrases[$this->currentSubKeyId]);
+            unset($this->missingPassphrases[$this->currentSubKeyId]);
             break;
 
         case 'MISSING_PASSPHRASE':
@@ -226,6 +237,10 @@ class Crypt_GPG_DecryptStatusHandler
             // note: this message is also received if there are multiple
             // recipients and a previous key had a correct passphrase.
             $this->missingKeys[$tokens[1]] = $tokens[1];
+
+            // @FIXME: remove missing passphrase registered in ENC_TO handler above
+            //         This is for GnuPG 2.1
+            unset($this->missingPassphrases[$tokens[1]]);
             break;
 
         case 'NODATA':
@@ -271,6 +286,8 @@ class Crypt_GPG_DecryptStatusHandler
         if (!$this->decryptionOkay) {
             if (count($this->badPassphrases) > 0) {
                 $code = Crypt_GPG::ERROR_BAD_PASSPHRASE;
+            } elseif (count($this->missingPassphrases) > 0) {
+                $code = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
             } elseif (count($this->missingKeys) > 0) {
                 $code = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             } else {
@@ -297,7 +314,9 @@ class Crypt_GPG_DecryptStatusHandler
                 $code,
                 $keyId
             );
+
         case Crypt_GPG::ERROR_BAD_PASSPHRASE:
+        case Crypt_GPG::ERROR_MISSING_PASSPHRASE:
             $badPassphrases = array_diff_key(
                 $this->badPassphrases,
                 $this->missingPassphrases
@@ -324,12 +343,14 @@ class Crypt_GPG_DecryptStatusHandler
                 $badPassphrases,
                 $missingPassphrases
             );
+
         case Crypt_GPG::ERROR_NO_DATA:
             throw new Crypt_GPG_NoDataException(
                 'Cannot decrypt data. No PGP encrypted data was found in '.
                 'the provided data.',
                 $code
             );
+
         default:
             throw new Crypt_GPG_Exception(
                 'Unknown error decrypting data.',

@@ -1085,6 +1085,30 @@ class Crypt_GPG_Engine
             $this->_errorCode = Crypt_GPG::ERROR_BAD_SIGNATURE;
             break;
 
+        // GnuPG 2.1 uses FAILURE and ERROR responses
+        case 'FAILURE':
+        case 'ERROR':
+            $errnum  = (int) $tokens[2];
+            $source  = $errnum >> 24;
+            $errcode = $errnum & 0xFFFFFF;
+
+            switch ($errcode) {
+            case 11: // bad passphrase
+            case 87: // bad PIN
+                $this->_errorCode = Crypt_GPG::ERROR_BAD_PASSPHRASE;
+                break;
+
+            case 177: // no passphrase
+            case 178: // no PIN
+                $this->_errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+                break;
+
+            case 58:
+                $this->_errorCode = Crypt_GPG::ERROR_NO_DATA;
+                break;
+            }
+
+            break;
         }
     }
 
@@ -1657,6 +1681,17 @@ class Crypt_GPG_Engine
                     escapeshellarg($this->_homedir);
             }
 
+            if ($version21 = version_compare($version, '2.1.0', 'ge')) {
+                // This is needed to get socket file location in stderr output
+                $agentArguments[] = '--verbose';
+/*
+                // Remove socket file in homedir, otherwise the agent will not start
+                if ($this->_homedir) {
+                    @unlink($this->_homedir . '/S.gpg-agent');
+                }
+*/
+            }
+
             $agentCommandLine = $this->_agent . ' ' . implode(' ', $agentArguments);
 
             $agentDescriptorSpec = array(
@@ -1687,17 +1722,39 @@ class Crypt_GPG_Engine
 
             // Get GPG_AGENT_INFO and set environment variable for gpg process.
             // This is a blocking read, but is only 1 line.
-            $agentInfo = fread(
-                $this->_agentPipes[self::FD_OUTPUT],
-                self::CHUNK_SIZE
-            );
+            $agentInfo = fread($this->_agentPipes[self::FD_OUTPUT], self::CHUNK_SIZE);
 
-            $agentInfo             = explode(' ', $agentInfo, 3);
-            $this->_agentInfo      = isset($agentInfo[2]) ? $agentInfo[2] : null;
+            // For GnuPG 2.1 we need to read both stderr and stdout
+            if ($version21) {
+                $agentInfo .= "\n" . fread($this->_agentPipes[self::FD_ERROR], self::CHUNK_SIZE);
+            }
+
+            if ($agentInfo) {
+                foreach (explode("\n", $agentInfo) as $line) {
+                    if ($version21) {
+                        if (preg_match('/listening on socket \'([^\']+)/', $line, $m)) {
+                            $this->_agentInfo = $m[1];
+                        }
+                        else if (preg_match('/gpg-agent\[([0-9]+)\].* started/', $line, $m)) {
+                            $this->_agentInfo .= ':' . $m[1] . ':1';
+                        }
+                    }
+                    else if (preg_match('/GPG_AGENT_INFO=([^;]+)/', $line, $m)) {
+                        $this->_agentInfo = $m[1];
+                        break;
+                    }
+                }
+            }
+
+            $this->_debug('GPG-AGENT-INFO: ' . $this->_agentInfo);
+
             $env['GPG_AGENT_INFO'] = $this->_agentInfo;
 
             // gpg-agent daemon is started, we can close the launching process
             $this->_closeAgentLaunchProcess();
+
+            // Terminate processes if something went wrong
+            register_shutdown_function(array($this, '__destruct'));
         }
 
         $commandLine = $this->_binary;
@@ -1858,23 +1915,25 @@ class Crypt_GPG_Engine
         $this->_closeAgentLaunchProcess();
 
         if ($this->_agentInfo !== null) {
-            $this->_debug('STOPPING GPG-AGENT DAEMON');
+            $parts = explode(':', $this->_agentInfo, 3);
 
-            $parts   = explode(':', $this->_agentInfo, 3);
-            $pid     = $parts[1];
-            $process = new Crypt_GPG_ProcessControl($pid);
+            if (!empty($parts[1])) {
+                $this->_debug('STOPPING GPG-AGENT DAEMON');
 
-            // terminate agent daemon
-            $process->terminate();
+                $process = new Crypt_GPG_ProcessControl($parts[1]);
 
-            while ($process->isRunning()) {
-                usleep(10000); // 10 ms
+                // terminate agent daemon
                 $process->terminate();
+
+                while ($process->isRunning()) {
+                    usleep(10000); // 10 ms
+                    $process->terminate();
+                }
+
+                $this->_debug('GPG-AGENT DAEMON STOPPED');
             }
 
             $this->_agentInfo = null;
-
-            $this->_debug('GPG-AGENT DAEMON STOPPED');
         }
     }
 

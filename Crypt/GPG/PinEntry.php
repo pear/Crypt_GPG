@@ -649,8 +649,8 @@ class Crypt_GPG_PinEntry
             // search for the pin
             foreach ($this->pins as $pin) {
                 // only check pins we haven't tried
-                if (!isset($this->triedPins[$pin['keyId']])) {
-
+                // @FIXME: GnuPG 2.1 asks 3 times for passphrase if it is invalid
+                // if (!isset($this->triedPins[$pin['keyId']])) {
                     // get last X characters of key identifier to compare
                     $keyId = mb_substr(
                         $pin['keyId'],
@@ -664,7 +664,7 @@ class Crypt_GPG_PinEntry
                         $this->triedPins[$pin['keyId']] = $pin;
                         break;
                     }
-                }
+                // }
             }
         }
 

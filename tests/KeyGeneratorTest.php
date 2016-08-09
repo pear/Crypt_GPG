@@ -958,6 +958,8 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
             )
         );
 
+        // @TODO: I've got difference in expiration dates here
+
         $this->assertKeyEquals($expectedKey, $key);
     }
 

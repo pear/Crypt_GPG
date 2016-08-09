@@ -82,6 +82,8 @@ class DeletePublicKeyTestCase extends Crypt_GPG_TestCase
      */
     public function testDeletePublicKeyDeletePrivateKeyException()
     {
+        // @TODO: GnuPG 2.1 allows public key deletion in this case, skip this test
+
         $keyId = 'first-keypair@example.com';
         $this->gpg->deletePublicKey($keyId);
     }

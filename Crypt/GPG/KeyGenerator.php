@@ -621,10 +621,14 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $keyParams['Name-Comment'] = $userId->getComment();
         }
 
-
         $keyParamsFormatted = array();
         foreach ($keyParams as $name => $value) {
             $keyParamsFormatted[] = $name . ': ' . $value;
+        }
+
+        // This is required in GnuPG 2.1
+        if (strlen($this->passphrase) === 0) {
+            $keyParamsFormatted[] = '%no-protection';
         }
 
         $input = implode("\n", $keyParamsFormatted) . "\n%commit\n";

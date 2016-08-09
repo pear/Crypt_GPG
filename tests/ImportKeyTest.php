@@ -114,6 +114,12 @@ NN5B7Vl2JdxBuwWJrdfUb9UQzw==
 TEXT;
         // }}}
 
+        // @TODO: In GnuPG 2.1 importing private keys requires passphrase
+
+        // @TODO: In GnuPG 2.1 first operation on a keyring in v1 format
+        //        will cause format update and several IMPORT_OK responses
+        //        Need the way to clean the state first, or modify test assertions
+
         $result = $this->gpg->importKey($privateKeyData);
         $this->assertEquals($expectedResult, $result);
     }

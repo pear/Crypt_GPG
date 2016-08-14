@@ -1156,6 +1156,20 @@ class Crypt_GPG_Engine
                 $this->_errorCode = Crypt_GPG::ERROR_FILE_PERMISSIONS;
             }
         }
+
+        // GnuPG 2.1: It should return MISSING_PASSPHRASE, but it does not
+        // we have to detect it this way. This happens e.g. on private key import
+        if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
+            $matches = array();
+            $pattern = '/key ([0-9A-F]+).* (Bad|No) passphrase/';
+            if (preg_match($pattern, $line, $matches) === 1) {
+                if ($matches[2] == 'Bad') {
+                    $this->_errorCode = Crypt_GPG::ERROR_BAD_PASSPHRASE;
+                } else {
+                    $this->_errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+                }
+            }
+        }
     }
 
     // }}}
@@ -1683,13 +1697,8 @@ class Crypt_GPG_Engine
 
             if ($version21 = version_compare($version, '2.1.0', 'ge')) {
                 // This is needed to get socket file location in stderr output
+                // Note: This does not help when the agent already is running
                 $agentArguments[] = '--verbose';
-/*
-                // Remove socket file in homedir, otherwise the agent will not start
-                if ($this->_homedir) {
-                    @unlink($this->_homedir . '/S.gpg-agent');
-                }
-*/
             }
 
             $agentCommandLine = $this->_agent . ' ' . implode(' ', $agentArguments);

@@ -64,8 +64,6 @@ class DeletePrivateKeyTestCase extends Crypt_GPG_TestCase
      */
     public function testDeletePrivateKey()
     {
-        // @TODO: GnuPG 2.1 requires passphrase to delete private keys
-
         $keyId = 'first-keypair@example.com';
         $this->gpg->deletePrivateKey($keyId);
 

@@ -191,15 +191,6 @@ class Crypt_GPG extends Crypt_GPGAbstract
     // {{{ protected class properties
 
     /**
-     * Engine used to control the GPG subprocess
-     *
-     * @var Crypt_GPG_Engine
-     *
-     * @see Crypt_GPG::setEngine()
-     */
-    protected $engine = null;
-
-    /**
      * Keys used to encrypt
      *
      * The array is of the form:
@@ -257,6 +248,20 @@ class Crypt_GPG extends Crypt_GPGAbstract
     protected $decryptKeys = array();
 
     /**
+     * Passphrases used on import/export of private keys in GnuPG 2.1
+     *
+     * The array is of the form:
+     * <code>
+     * array($key_id => $passphrase);
+     * </code>
+     *
+     * @var array
+     * @see Crypt_GPG::addPassphrase()
+     * @see Crypt_GPG::clearPassphrases()
+     */
+    protected $passphrases = array();
+
+    /**
      * Information about the last signature that was generated.
      * A string (line) beginning with "SIG_CREATED "
      *
@@ -292,9 +297,16 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @throws Crypt_GPG_NoDataException if the key data is missing or if the
      *         data is is not valid key data.
      *
+     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     *         incorrect or if a required passphrase is not specified. See
+     *         {@link Crypt_GPG::addPassphrase()}.
+     *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
+     *
+     * @see addPassphrase()
+     * @see clearPassphrases()
      */
     public function importKey($data)
     {
@@ -331,6 +343,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @throws Crypt_GPG_FileException if the key file is not readable.
      *
+     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     *         incorrect or if a required passphrase is not specified. See
+     *         {@link Crypt_GPG::addPassphrase()}.
+     *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
@@ -366,6 +382,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @throws Crypt_GPG_KeyNotFoundException if a private key with the given
      *         <kbd>$keyId</kbd> is not found.
+     *
+     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     *         incorrect or if a required passphrase is not specified. See
+     *         {@link Crypt_GPG::addPassphrase()}.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
@@ -423,6 +443,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * first public key is deleted.
      *
      * The private key must be deleted first or an exception will be thrown.
+     * In GnuPG >= 2.1 this limitation does not exist.
      * See {@link Crypt_GPG::deletePrivateKey()}.
      *
      * @param string $keyId either the full uid of the public key, the email
@@ -438,7 +459,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @throws Crypt_GPG_DeletePrivateKeyException if the specified public key
      *         has an associated private key on the keyring. The private key
-     *         must be deleted first.
+     *         must be deleted first (when using GnuPG < 2.1).
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
@@ -1298,6 +1319,30 @@ class Crypt_GPG extends Crypt_GPGAbstract
     }
 
     // }}}
+    // {{{ addPassphrase()
+
+    /**
+     * Register a private key passphrase for import/export (GnuPG 2.1)
+     *
+     * @param mixed  $key        The key to use. This must be a key identifier,
+     *                           or fingerprint.
+     * @param string $passphrase The passphrase of the key.
+     *
+     * @return Crypt_GPG the current object, for fluent interface.
+     *
+     * @see Crypt_GPG::clearPassphrases()
+     * @see Crypt_GPG::importKey()
+     * @see Crypt_GPG::exportKey()
+     *
+     * @sensitive $passphrase
+     */
+    public function addPassphrase($key, $passphrase)
+    {
+        $this->passphrases[$key] = $passphrase;
+        return $this;
+    }
+
+    // }}}
     // {{{ clearDecryptKeys()
 
     /**
@@ -1345,6 +1390,24 @@ class Crypt_GPG extends Crypt_GPGAbstract
     public function clearSignKeys()
     {
         $this->signKeys = array();
+        return $this;
+    }
+
+    // }}}
+    // {{{ clearPassphrases()
+
+    /**
+     * Clears all private key passphrases
+     *
+     * @return Crypt_GPG the current object, for fluent interface.
+     *
+     * @see Crypt_GPG::importKey()
+     * @see Crypt_GPG::exportKey()
+     * @see Crypt_GPG::addPassphrase()
+     */
+    public function clearPassphrases()
+    {
+        $this->passphrases = array();
         return $this;
     }
 
@@ -1553,8 +1616,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * Sets the PINENTRY_USER_DATA environment variable with the currently
      * added keys and passphrases
      *
-     * Keys and pasphrases are stored as an indexed array of associative
-     * arrays that is JSON encoded to a flat string.
+     * Keys and pasphrases are stored as an indexed array of passphrases
+     * in JSON encoded to a flat string.
      *
      * For GnuPG 2.x this is how passphrases are passed. For GnuPG 1.x the
      * environment variable is set but not used.
@@ -1566,15 +1629,12 @@ class Crypt_GPG extends Crypt_GPGAbstract
     protected function _setPinEntryEnv(array $keys)
     {
         $envKeys = array();
-        foreach ($keys as $id => $key) {
-            $envKeys[] = array(
-                'keyId'       => $id,
-                'fingerprint' => $key['fingerprint'],
-                'passphrase'  => $key['passphrase']
-            );
+
+        foreach ($keys as $keyId => $key) {
+            $envKeys[$keyId] = is_array($key) ? $key['passphrase'] : $key;
         }
-        $envKeys = json_encode($envKeys);
-        $_ENV['PINENTRY_USER_DATA'] = $envKeys;
+
+        $_ENV['PINENTRY_USER_DATA'] = json_encode($envKeys);
     }
 
     // }}}
@@ -1602,6 +1662,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         data is is not valid key data.
      *
      * @throws Crypt_GPG_FileException if the key file is not readable.
+     *
+     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     *         incorrect or if a required passphrase is not specified. See
+     *         {@link Crypt_GPG::addPassphrase()}.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
@@ -1639,6 +1703,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
             $arguments[] = '--allow-secret-key-import';
         }
 
+        // If using gpg-agent, set the pins used by the pinentry
+        $this->_setPinEntryEnv($this->passphrases);
+
         $this->engine->reset();
         $this->engine->addStatusHandler(
             array($this, 'handleImportKeyStatus'),
@@ -1663,6 +1730,16 @@ class Crypt_GPG extends Crypt_GPGAbstract
         case self::ERROR_NO_DATA:
             throw new Crypt_GPG_NoDataException(
                 'No valid GPG key data found.',
+                $code
+            );
+        case self::ERROR_BAD_PASSPHRASE:
+            throw new Crypt_GPG_BadPassphraseException(
+                'Cannot import private key. Incorrect passphrase provided.',
+                $code
+            );
+        case self::ERROR_MISSING_PASSPHRASE:
+            throw new Crypt_GPG_BadPassphraseException(
+                'Cannot import private key. No passphrase provided.',
                 $code
             );
         default:
@@ -1699,6 +1776,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @throws Crypt_GPG_KeyNotFoundException if a key with the given
      *         <kbd>$keyId</kbd> is not found.
      *
+     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     *         incorrect or if a required passphrase is not specified. See
+     *         {@link Crypt_GPG::addPassphrase()}.
+     *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
@@ -1720,6 +1801,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $operation .= ' ' . escapeshellarg($fingerprint);
         $arguments = ($armor) ? array('--armor') : array();
 
+        // If using gpg-agent, set the sign pins used by the pinentry
+        $this->_setPinEntryEnv($this->passphrases);
+
         $this->engine->reset();
         $this->engine->setOutput($keyData);
         $this->engine->setOperation($operation, $arguments);
@@ -1727,7 +1811,23 @@ class Crypt_GPG extends Crypt_GPGAbstract
 
         $code = $this->engine->getErrorCode();
 
-        if ($code !== self::ERROR_NONE) {
+        switch ($code) {
+        case self::ERROR_NONE:
+            // ignore duplicate key import errors
+            break;
+        case self::ERROR_BAD_PASSPHRASE:
+            throw new Crypt_GPG_BadPassphraseException(
+                'Cannot export private key. Incorrect passphrase provided.',
+                $code,
+                array(substr($fingerprint, -8))
+            );
+        case self::ERROR_MISSING_PASSPHRASE:
+            throw new Crypt_GPG_BadPassphraseException(
+                'Cannot export private key. No passphrase provided.',
+                $code,
+                array(substr($fingerprint, -8))
+            );
+        default:
             throw new Crypt_GPG_Exception(
                 'Unknown error exporting a key. Please use the ' .
                 '\'debug\' option when creating the Crypt_GPG object, and ' .

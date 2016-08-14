@@ -609,7 +609,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $keyParams['Expire-Date'] = $expirationDate;
         }
 
-        if ($this->passphrase != '') {
+        if (strlen($this->passphrase)) {
             $keyParams['Passphrase'] = $this->passphrase;
         }
 
@@ -627,7 +627,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         }
 
         // This is required in GnuPG 2.1
-        if (strlen($this->passphrase) === 0) {
+        if (!strlen($this->passphrase)) {
             $keyParamsFormatted[] = '%no-protection';
         }
 

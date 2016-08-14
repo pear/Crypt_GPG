@@ -298,6 +298,19 @@ abstract class Crypt_GPGAbstract
     }
 
     // }}}
+    // {{{ getVersion()
+
+    /**
+     * Returns version of the engine (GnuPG) used for operation.
+     *
+     * @return string GnuPG version.
+     */
+    public function getVersion()
+    {
+        return $this->engine->getVersion();
+    }
+
+    // }}}
     // {{{ _getKeys()
 
     /**

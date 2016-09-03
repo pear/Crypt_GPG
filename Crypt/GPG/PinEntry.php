@@ -623,12 +623,22 @@ class Crypt_GPG_PinEntry
             $keyIdLength = mb_strlen($this->currentPin['keyId'], '8bit');
 
             // search for the pin
-            foreach ($this->pins as $keyId => $pin) {
-                // @FIXME: GnuPG 2.1 asks 3 times for passphrase if it is invalid
-                // get last X characters of key identifier to compare
-                $keyId = mb_substr($keyId, -$keyIdLength, mb_strlen($keyId, '8bit'), '8bit');
+            foreach ($this->pins as $_keyId => $pin) {
+                // Warning: GnuPG 2.1 asks 3 times for passphrase if it is invalid
+                $keyId        = $this->currentPin['keyId'];
+                $_keyIdLength = mb_strlen($_keyId, '8bit');
 
-                if ($keyId === $this->currentPin['keyId']) {
+                // Get last X characters of key identifier to compare
+                // Most GnuPG versions use 8 characters, but recent ones can use 16,
+                // We support 8 for backward compatibility
+                if ($keyIdLength < $_keyIdLength) {
+                    $_keyId = mb_substr($_keyId, -$keyIdLength, $keyIdLength, '8bit');
+                }
+                else if ($keyIdLength > $_keyIdLength) {
+                    $keyId = mb_substr($keyId, -$_keyIdLength, $_keyIdLength, '8bit');
+                }
+
+                if ($_keyId === $keyId) {
                     $foundPin = $pin;
                     break;
                 }

@@ -78,14 +78,15 @@ class ImportKeyTestCase extends Crypt_GPG_TestCase
      */
     public function testImportKey_private()
     {
-        // @TODO: GnuPG 2.1 returns private_imported: 2 in all *_private tests, why?
+        // Note: Some of GnuPG 2.1.x versions return different private_imported
+        // and private_uchanged values, bug? GnuPG 2.1.15 returns 1 as expected.
 
         $expectedResult = array(
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
             'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
             'public_unchanged'  => 1,
-            'private_imported'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 2 : 1,
+            'private_imported'  => 1,
             'private_unchanged' => 0
         );
 
@@ -252,7 +253,7 @@ TEXT;
             'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
             'public_unchanged'  => 1,
-            'private_imported'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 2 : 1,
+            'private_imported'  => 1,
             'private_unchanged' => 0
         );
 
@@ -266,7 +267,7 @@ TEXT;
             'public_imported'   => 0,
             'public_unchanged'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 1 : 0,
             'private_imported'  => 0,
-            'private_unchanged'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 2 : 1,
+            'private_unchanged'  => 1,
         );
 
         $this->assertEquals($expectedResult, $result);
@@ -387,7 +388,7 @@ TEXT;
             'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
             'public_unchanged'  => 1,
-            'private_imported'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 2 : 1,
+            'private_imported'  => 1,
             'private_unchanged' => 0
         );
 
@@ -442,7 +443,7 @@ TEXT;
             'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
             'public_unchanged'  => 1,
-            'private_imported'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 2 : 1,
+            'private_imported'  => 1,
             'private_unchanged' => 0
         );
 
@@ -456,7 +457,7 @@ TEXT;
             'public_imported'   => 0,
             'public_unchanged'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 1 : 0,
             'private_imported'  => 0,
-            'private_unchanged'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 2 : 1,
+            'private_unchanged'  => 1,
         );
 
         $this->assertEquals($expectedResult, $result);

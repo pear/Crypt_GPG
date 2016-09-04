@@ -270,6 +270,14 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     protected $lastSignatureInfo = null;
 
+    /**
+     * Information about the last KEY_CONSIDERED status identifier.
+     *
+     * @see handleExportKeyStatus()
+     * @var string
+     */
+    protected $lastKeyConsidered = null;
+
     // }}}
     // {{{ importKey()
 
@@ -1448,6 +1456,73 @@ class Crypt_GPG extends Crypt_GPGAbstract
     }
 
     // }}}
+    // {{{ handlePassphraseStatus()
+
+    /**
+     * Handles the status output from GPG for the key import/export operation
+     *
+     * This is needed for GnuPG >= 2.1.13
+     *
+     * This method is responsible for sending the passphrase commands when
+     * required by the {@link Crypt_GPG::importKey()} method. See <b>doc/DETAILS</b>
+     * in the {@link http://www.gnupg.org/download/ GPG distribution} for
+     * detailed information on GPG's status output.
+     *
+     * @param string $line the status line to handle.
+     *
+     * @return void
+     *
+     * @see Crypt_GPG::exportKey()
+     * @see Crypt_GPG::importKey()
+     */
+    public function handlePassphraseStatus($line)
+    {
+        $tokens = explode(' ', $line);
+        switch ($tokens[0]) {
+        case 'KEY_CONSIDERED':
+            // In GnuPG 2.1.x exporting/importing a secret key requires passphrase
+            // However, no NEED_PASSPRASE is returned, https://bugs.gnupg.org/gnupg/issue2667
+            // So, handling KEY_CONSIDERED and GET_HIDDEN is needed.
+            if ($this->lastKeyConsidered === null) {
+                $this->lastKeyConsidered = $tokens[1];
+            }
+            break;
+
+        case 'GET_HIDDEN':
+            if ($tokens[1] == 'passphrase.enter' && $this->lastKeyConsidered) {
+                $tokens[1] = $this->lastKeyConsidered;
+            }
+            else {
+                break;
+            }
+        case 'NEED_PASSPHRASE':
+            $passphrase  = '';
+            $keyIdLength = strlen($tokens[1]);
+
+            foreach ($this->passphrases as $_keyId => $pass) {
+                $keyId        = $tokens[1];
+                $_keyIdLength = strlen($_keyId);
+
+                // Get last X characters of key identifier to compare
+                if ($keyIdLength < $_keyIdLength) {
+                    $_keyId = substr($_keyId, -$keyIdLength);
+                }
+                else if ($keyIdLength > $_keyIdLength) {
+                    $keyId = substr($keyId, -$_keyIdLength);
+                }
+
+                if ($_keyId === $keyId) {
+                    $passphrase = $pass;
+                    break;
+                }
+            }
+
+            $this->engine->sendCommand($passphrase);
+            break;
+        }
+    }
+
+    // }}}
     // {{{ handleImportKeyStatus()
 
     /**
@@ -1707,6 +1782,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $this->_setPinEntryEnv($this->passphrases);
 
         $this->engine->reset();
+        $this->engine->addStatusHandler(array($this, 'handlePassphraseStatus'));
         $this->engine->addStatusHandler(
             array($this, 'handleImportKeyStatus'),
             array(&$result)
@@ -1805,6 +1881,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $this->_setPinEntryEnv($this->passphrases);
 
         $this->engine->reset();
+        $this->engine->addStatusHandler(array($this, 'handlePassphraseStatus'));
         $this->engine->setOutput($keyData);
         $this->engine->setOperation($operation, $arguments);
         $this->engine->run();

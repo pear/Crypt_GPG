@@ -99,7 +99,9 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
         return array(
             'homedir' => dirname(__FILE__) . '/' . self::HOMEDIR,
 //            'binary' => '/usr/bin/gpg2',
-//            'debug'   => true
+//            'binary' => '/usr/local/bin/gpg2',
+//            'agent'  => '/usr/local/bin/gpg-agent',
+//            'debug'  => true
         );
     }
 
@@ -135,7 +137,6 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
         if (!isset($this->config['enable-key-generation'])) {
             $this->config['enable-key-generation'] = false;
         }
-
 
         $this->_setUpKeyring();
         $this->_setUpTempdir();

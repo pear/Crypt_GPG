@@ -768,13 +768,13 @@ class Crypt_GPG_Engine
         $this->_statusHandlers = array();
         $this->_errorHandlers  = array();
 
-        $this->addStatusHandler(array($this, '_handleErrorStatus'));
-        $this->addErrorHandler(array($this, '_handleErrorError'));
-
         if ($this->_debug) {
             $this->addStatusHandler(array($this, '_handleDebugStatus'));
             $this->addErrorHandler(array($this, '_handleDebugError'));
         }
+
+        $this->addStatusHandler(array($this, '_handleErrorStatus'));
+        $this->addErrorHandler(array($this, '_handleErrorError'));
     }
 
     // }}}
@@ -1667,8 +1667,10 @@ class Crypt_GPG_Engine
         // works with English, so set the locale to 'C' for the subprocess.
         $env['LC_ALL'] = 'C';
 
-        // If using GnuPG 2.x start the gpg-agent
-        if (version_compare($version, '2.0.0', 'ge')) {
+        // If using GnuPG 2.x < 2.1.13 start the gpg-agent
+        if (version_compare($version, '2.0.0', 'ge')
+            && version_compare($version, '2.1.13', 'lt')
+        ) {
             if (!$this->_agent) {
                 throw new Crypt_GPG_OpenSubprocessException(
                     'Unable to open gpg-agent subprocess (gpg-agent not found). ' .
@@ -1792,6 +1794,11 @@ class Crypt_GPG_Engine
             $defaultArguments[] = '--trust-model always';
         } else {
             $defaultArguments[] = '--always-trust';
+        }
+
+        // Since 2.1.13 we can use "loopback mode" instead of gpg-agent
+        if (version_compare($version, '2.1.13', 'ge')) {
+            $defaultArguments[] = '--pinentry-mode loopback';
         }
 
         $arguments = array_merge($defaultArguments, $this->_arguments);

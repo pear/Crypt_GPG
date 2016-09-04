@@ -1691,7 +1691,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * Sets the PINENTRY_USER_DATA environment variable with the currently
      * added keys and passphrases
      *
-     * Keys and pasphrases are stored as an indexed array of passphrases
+     * Keys and passphrases are stored as an indexed array of passphrases
      * in JSON encoded to a flat string.
      *
      * For GnuPG 2.x this is how passphrases are passed. For GnuPG 1.x the
@@ -1877,7 +1877,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $operation .= ' ' . escapeshellarg($fingerprint);
         $arguments = ($armor) ? array('--armor') : array();
 
-        // If using gpg-agent, set the sign pins used by the pinentry
+        // If using gpg-agent, set the pins used by the pinentry
         $this->_setPinEntryEnv($this->passphrases);
 
         $this->engine->reset();

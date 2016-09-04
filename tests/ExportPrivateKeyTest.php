@@ -104,7 +104,7 @@ WOad2BFLoSh6WM3H7KvMUg==
 TEXT;
         // }}}
 
-        // @TODO: This operation requires passphrase in GnuPG 2.1(.11)
+        // @TODO: This operation requires passphrase in GnuPG 2.1
         //        because of https://bugs.gnupg.org/gnupg/issue2070.
 
         $keyData = $this->gpg->exportPrivateKey($keyId);
@@ -128,7 +128,7 @@ TEXT;
 
         $keyId = 'first-keypair@example.com';
 
-        // This operation requires passphrase in GnuPG 2.1(.11)
+        // This operation requires passphrase in GnuPG 2.1
         $this->gpg->addPassphrase('94C06363', 'test1');
 
         $keyData = $this->gpg->exportPrivateKey($keyId);
@@ -153,7 +153,7 @@ TEXT;
 
         $keyId = 'first-keypair@example.com';
 
-        // This operation requires passphrase in GnuPG 2.1(.11)
+        // This operation requires passphrase in GnuPG 2.1
         $this->gpg->addPassphrase('94C06363', 'bad');
 
         $keyData = $this->gpg->exportPrivateKey($keyId);

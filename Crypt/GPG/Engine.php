@@ -185,6 +185,17 @@ class Crypt_GPG_Engine
     private $_agent = '';
 
     /**
+     * Location of GnuPG conf binary
+     *
+     * Only used for GnuPG 2.1.x
+     *
+     * @var string
+     * @see Crypt_GPG_Engine::__construct()
+     * @see Crypt_GPG_Engine::_getGPGConf()
+     */
+    private $_gpgconf = null;
+
+    /**
      * Directory containing the GPG key files
      *
      * This property only contains the path when the <i>homedir</i> option
@@ -473,6 +484,14 @@ class Crypt_GPG_Engine
      *                                       binary location using a list of
      *                                       know default locations for the
      *                                       current operating system.
+     * - <kbd>string|false gpgconf</kbd>   - the location of the GnuPG conf
+     *                                       binary. The gpgconf is only
+     *                                       used for GnuPG >= 2.1. If not
+     *                                       specified, the engine attempts
+     *                                       to auto-detect the location using
+     *                                       a list of know default locations.
+     *                                       When set to FALSE `gpgconf --kill`
+     *                                       will not be executed via destructor.
      * - <kbd>mixed debug</kbd>            - whether or not to use debug mode.
      *                                       When debug mode is on, all
      *                                       communication to and from the GPG
@@ -591,7 +610,7 @@ class Crypt_GPG_Engine
             );
         }
 
-        // get agent 
+        // get agent
         if (array_key_exists('agent', $options)) {
             $this->_agent = (string)$options['agent'];
 
@@ -602,6 +621,16 @@ class Crypt_GPG_Engine
             }
         } else {
             $this->_agent = $this->_getAgent();
+        }
+
+        if (array_key_exists('gpgconf', $options)) {
+            $this->_gpgconf = $options['gpgconf'];
+
+            if ($this->_gpgconf && !is_executable($this->_gpgconf)) {
+                throw new PEAR_Exception(
+                    'Specified gpgconf binary is not executable.'
+                );
+            }
         }
 
         /*
@@ -673,6 +702,7 @@ class Crypt_GPG_Engine
     public function __destruct()
     {
         $this->_closeSubprocess();
+        $this->_closeIdleAgents();
     }
 
     // }}}
@@ -1768,6 +1798,15 @@ class Crypt_GPG_Engine
             register_shutdown_function(array($this, '__destruct'));
         }
 
+        // "Register" GPGConf existence for _closeIdleAgents()
+        if (version_compare($version, '2.1.0', 'ge')) {
+            if ($this->_gpgconf === null) {
+                $this->_gpgconf = $this->_getGPGConf();
+            }
+        } else {
+            $this->_gpgconf = false;
+        }
+
         $commandLine = $this->_binary;
 
         $defaultArguments = array(
@@ -1954,7 +1993,7 @@ class Crypt_GPG_Engine
     }
 
     // }}}
-    // {{ _closeAgentLaunchProcess()
+    // {{{ _closeAgentLaunchProcess()
 
     /**
      * Closes a the internal GPG-AGENT subprocess
@@ -1988,7 +2027,7 @@ class Crypt_GPG_Engine
         }
     }
 
-    // }}
+    // }}}
     // {{{ _closePipe()
 
     /**
@@ -2013,6 +2052,31 @@ class Crypt_GPG_Engine
     }
 
     // }}}
+    // {{{ _closeIdleAgents()
+
+    /**
+     * Forces automatically started gpg-agent process to cleanup and exit
+     * within a minute.
+     *
+     * This is needed in GnuPG 2.1 where agents are started
+     * automatically by gpg process, not our code.
+     *
+     * @return void
+     */
+    private function _closeIdleAgents()
+    {
+        if ($this->_gpgconf) {
+            // before 2.1.13 --homedir wasn't supported, use env variable
+            $env = array('GNUPGHOME' => $this->_homedir);
+            $cmd = $this->_gpgconf . ' --kill gpg-agent';
+
+            if ($process = proc_open($cmd, array(), $pipes, null, $env)) {
+                proc_close($process);
+            }
+        }
+    }
+
+    // }}}
     // {{{ _getBinary()
 
     /**
@@ -2027,34 +2091,15 @@ class Crypt_GPG_Engine
      */
     private function _getBinary()
     {
-        $binary = '';
-
-        if ($this->_isDarwin) {
-            $binaryFiles = array(
-                '/opt/local/bin/gpg', // MacPorts
-                '/usr/local/bin/gpg', // Mac GPG
-                '/sw/bin/gpg',        // Fink
-                '/usr/bin/gpg'
-            );
-        } else {
-            $binaryFiles = array(
-                '/usr/bin/gpg',
-                '/usr/local/bin/gpg'
-            );
+        if ($binary = $this->_findBinary('gpg')) {
+            return $binary;
         }
 
-        foreach ($binaryFiles as $binaryFile) {
-            if (is_executable($binaryFile)) {
-                $binary = $binaryFile;
-                break;
-            }
-        }
-
-        return $binary;
+        return $this->_findBinary('gpg2');
     }
 
     // }}}
-    // {{ _getAgent()
+    // {{{ _getAgent()
 
     /**
      * Gets the name of the GPG-AGENT binary for the current operating system
@@ -2065,34 +2110,66 @@ class Crypt_GPG_Engine
      */
     private function _getAgent()
     {
-        $agent = '';
+        return $this->_findBinary('gpg-agent');
+    }
+
+    // }}}
+    // {{{ _getGPGConf()
+
+    /**
+     * Gets the name of the GPGCONF binary for the current operating system
+     *
+     * @return string the name of the GPGCONF binary for the current operating
+     *                system. If no suitable binary could be found, an empty
+     *                string is returned.
+     */
+    private function _getGPGConf()
+    {
+        return $this->_findBinary('gpgconf');
+    }
+
+    // }}}
+    // {{{ _findBinary()
+
+    /**
+     * Gets the location of a binary for the current operating system
+     *
+     * @param string $name Name of a binary program
+     *
+     * @return string The location of the binary for the current operating
+     *                system. If no suitable binary could be found, an empty
+     *                string is returned.
+     */
+    private function _findBinary($name)
+    {
+        $binary = '';
 
         if ($this->_isDarwin) {
-            $agentFiles = array(
-                '/opt/local/bin/gpg-agent', // MacPorts
-                '/usr/local/bin/gpg-agent', // Mac GPG
-                '/sw/bin/gpg-agent',        // Fink
-                '/usr/bin/gpg-agent'
+            $confFiles = array(
+                '/opt/local/bin/', // MacPorts
+                '/usr/local/bin/', // Mac GPG
+                '/sw/bin/',        // Fink
+                '/usr/bin/'
             );
         } else {
-            $agentFiles = array(
-                '/usr/bin/gpg-agent',
-                '/usr/local/bin/gpg-agent'
+            $confFiles = array(
+                '/usr/bin/',
+                '/usr/local/bin/'
             );
         }
 
-        foreach ($agentFiles as $agentFile) {
-            if (is_executable($agentFile)) {
-                $agent = $agentFile;
+        foreach ($confFiles as $confFile) {
+            if (is_executable($confFile . $name)) {
+                $binary = $confFile . $name;
                 break;
             }
         }
 
-        return $agent;
+        return $binary;
     }
 
-    // }}
-    // {{ _getPinEntry()
+    // }}}
+    // {{{ _getPinEntry()
 
     /**
      * Gets the location of the PinEntry script
@@ -2117,7 +2194,7 @@ class Crypt_GPG_Engine
         }
     }
 
-    // }}
+    // }}}
     // {{{ _debug()
 
     /**

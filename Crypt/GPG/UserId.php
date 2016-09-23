@@ -339,13 +339,14 @@ class Crypt_GPG_UserId
     public static function parse($string)
     {
         $userId  = new Crypt_GPG_UserId();
+        $name    = '';
         $email   = '';
         $comment = '';
 
         // get email address from end of string if it exists
         $matches = array();
-        if (preg_match('/^(.+?) <([^>]+)>$/', $string, $matches) === 1) {
-            $string = $matches[1];
+        if (preg_match('/^(.*?)<([^>]+)>$/', $string, $matches) === 1) {
+            $string = trim($matches[1]);
             $email  = $matches[2];
         }
 
@@ -356,7 +357,12 @@ class Crypt_GPG_UserId
             $comment = $matches[2];
         }
 
-        $name = $string;
+        // there can be an email without a name
+        if (!$email && preg_match('/^[\S]+@[\S]+$/', $string, $matches) === 1) {
+            $email = $string;
+        } else {
+            $name = $string;
+        }
 
         $userId->setName($name);
         $userId->setComment($comment);

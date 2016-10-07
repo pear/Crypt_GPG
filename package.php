@@ -35,19 +35,17 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.4.2';
+$apiVersion     = '1.4.3';
 $apiState       = 'stable';
 
-$releaseVersion = '1.4.2';
+$releaseVersion = '1.4.3';
 $releaseState   = 'stable';
 $releaseNotes   =
     "This release fixes following bugs:\n" .
     "\n" .
-    "Fix Bug #21074: Crypt-gpg-pinentry fails on system without PEAR/Exception.\n" .
-    "Fix Bug #21075: Fatal error: Object of class Crypt_GPG_Key could not be converted.\n" .
-    "Fix Bug #21077: Increase Crypt_GPG_Engine::CHUNK_SIZE for better performance\n" .
-    "Fix Bug #21081: Performance bottleneck in pipes handling.\n" .
-    "Feature #21079: Added Crypt_GPG::exportPrivateKey() method.\n";
+    "Fix Bug #21121: Searching for keys with pattern containing non-ascii characters.\n" .
+    "Fix Bug #21119: Parsing of user identifier without name.\n" .
+    "Added POSIX method to isRunning() consistent with terminate().";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

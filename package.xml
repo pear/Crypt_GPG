@@ -29,11 +29,11 @@ This package requires PHP version 5.2.1 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2016-06-19</date>
- <time>09:44:35</time>
+ <date>2016-10-07</date>
+ <time>15:50:18</time>
  <version>
-  <release>1.4.2</release>
-  <api>1.4.2</api>
+  <release>1.4.3</release>
+  <api>1.4.3</api>
  </version>
  <stability>
   <release>stable</release>
@@ -43,11 +43,9 @@ This package requires PHP version 5.2.1 or greater.</description>
  <notes>
 This release fixes following bugs:
 
-Fix Bug #21074: Crypt-gpg-pinentry fails on system without PEAR/Exception.
-Fix Bug #21075: Fatal error: Object of class Crypt_GPG_Key could not be converted.
-Fix Bug #21077: Increase Crypt_GPG_Engine::CHUNK_SIZE for better performance
-Fix Bug #21081: Performance bottleneck in pipes handling.
-Feature #21079: Added Crypt_GPG::exportPrivateKey() method.
+Fix Bug #21121: Searching for keys with pattern containing non-ascii characters.
+Fix Bug #21119: Parsing of user identifier without name.
+Added POSIX method to isRunning() consistent with terminate().
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -175,23 +173,21 @@ Feature #21079: Added Crypt_GPG::exportPrivateKey() method.
  <changelog>
   <release>
    <version>
-    <release>1.4.2</release>
-    <api>1.4.2</api>
+    <release>1.4.3</release>
+    <api>1.4.3</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2016-06-19</date>
+   <date>2016-10-06</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
 This release fixes following bugs:
 
-Fix Bug #21074: Crypt-gpg-pinentry fails on system without PEAR/Exception.
-Fix Bug #21075: Fatal error: Object of class Crypt_GPG_Key could not be converted.
-Fix Bug #21077: Increase Crypt_GPG_Engine::CHUNK_SIZE for better performance
-Fix Bug #21081: Performance bottleneck in pipes handling.
-Feature #21079: Added Crypt_GPG::exportPrivateKey() method.
+Fix Bug #21121: Searching for keys with pattern containing non-ascii characters.
+Fix Bug #21119: Parsing of user identifier without name.
+Added POSIX method to isRunning() consistent with terminate().
    </notes>
   </release>
  </changelog>

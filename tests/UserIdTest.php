@@ -207,6 +207,30 @@ class UserIdTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
+    // {{{ testParseEmailOnly()
+
+    /**
+     * @group parse
+     */
+    public function testParseEmailOnly()
+    {
+        $expectedUserId = new Crypt_GPG_UserId(array(
+            'name'  => '',
+            'email' => 'test@example.com'
+        ));
+
+        $string = '<test@example.com>';
+        $userId = Crypt_GPG_UserId::parse($string);
+
+        $this->assertEquals($expectedUserId, $userId);
+
+        $string = 'test@example.com';
+        $userId = Crypt_GPG_UserId::parse($string);
+
+        $this->assertEquals($expectedUserId, $userId);
+    }
+
+    // }}}
 
     // to-string
     // {{{ testToStringFull()

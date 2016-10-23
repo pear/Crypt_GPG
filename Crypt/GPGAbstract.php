@@ -64,11 +64,6 @@ require_once 'Crypt/GPG/UserId.php';
  */
 require_once 'Crypt/GPG/Engine.php';
 
-/**
- * GPG exception classes
- */
-require_once 'Crypt/GPG/Exceptions.php';
-
 // {{{ class Crypt_GPGAbstract
 
 /**
@@ -304,6 +299,10 @@ abstract class Crypt_GPGAbstract
      * Returns version of the engine (GnuPG) used for operation.
      *
      * @return string GnuPG version.
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
      */
     public function getVersion()
     {
@@ -361,44 +360,9 @@ abstract class Crypt_GPGAbstract
         $this->engine->setOperation($operation, $arguments);
         $this->engine->run();
 
-        $code = $this->engine->getErrorCode();
-
-        switch ($code) {
-        case self::ERROR_NONE:
-        case self::ERROR_KEY_NOT_FOUND:
-            // ignore not found key errors
-            break;
-        case self::ERROR_FILE_PERMISSIONS:
-            $filename = $this->engine->getErrorFilename();
-            if ($filename) {
-                throw new Crypt_GPG_FileException(
-                    sprintf(
-                        'Error reading GnuPG data file \'%s\'. Check to make ' .
-                        'sure it is readable by the current user.',
-                        $filename
-                    ),
-                    $code,
-                    $filename
-                );
-            }
-            throw new Crypt_GPG_FileException(
-                'Error reading GnuPG data file. Check to make GnuPG data ' .
-                'files are readable by the current user.',
-                $code
-            );
-        default:
-            throw new Crypt_GPG_Exception(
-                'Unknown error getting keys. Please use the \'debug\' option ' .
-                'when creating the Crypt_GPG object, and file a bug report ' .
-                'at ' . self::BUG_URI,
-                $code
-            );
-        }
-
         $privateKeyFingerprints = array();
 
-        $lines = explode(PHP_EOL, $output);
-        foreach ($lines as $line) {
+        foreach (explode(PHP_EOL, $output) as $line) {
             $lineExp = explode(':', $line);
             if ($lineExp[0] == 'fpr') {
                 $privateKeyFingerprints[] = $lineExp[9];
@@ -419,47 +383,11 @@ abstract class Crypt_GPGAbstract
         $this->engine->setOperation($operation, $arguments);
         $this->engine->run();
 
-        $code = $this->engine->getErrorCode();
-
-        switch ($code) {
-        case self::ERROR_NONE:
-        case self::ERROR_KEY_NOT_FOUND:
-            // ignore not found key errors
-            break;
-        case self::ERROR_FILE_PERMISSIONS:
-            $filename = $this->engine->getErrorFilename();
-            if ($filename) {
-                throw new Crypt_GPG_FileException(
-                    sprintf(
-                        'Error reading GnuPG data file \'%s\'. Check to make ' .
-                        'sure it is readable by the current user.',
-                        $filename
-                    ),
-                    $code,
-                    $filename
-                );
-            }
-            throw new Crypt_GPG_FileException(
-                'Error reading GnuPG data file. Check to make GnuPG data ' .
-                'files are readable by the current user.',
-                $code
-            );
-        default:
-            throw new Crypt_GPG_Exception(
-                'Unknown error getting keys. Please use the \'debug\' option ' .
-                'when creating the Crypt_GPG object, and file a bug report ' .
-                'at ' . self::BUG_URI,
-                $code
-            );
-        }
-
-        $keys = array();
-
+        $keys   = array();
         $key    = null; // current key
         $subKey = null; // current sub-key
 
-        $lines = explode(PHP_EOL, $output);
-        foreach ($lines as $line) {
+        foreach (explode(PHP_EOL, $output) as $line) {
             $lineExp = explode(':', $line);
 
             if ($lineExp[0] == 'pub') {

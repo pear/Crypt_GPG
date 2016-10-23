@@ -53,9 +53,19 @@ require_once 'Crypt/GPG/Exceptions.php';
 require_once 'Crypt/GPG/ByteUtils.php';
 
 /**
+ * Status/Error handler class.
+ */
+require_once 'Crypt/GPG/ProcessHandler.php';
+
+/**
  * Process control methods.
  */
 require_once 'Crypt/GPG/ProcessControl.php';
+
+/**
+ * Information about a created signature
+ */
+require_once 'Crypt/GPG/SignatureCreationInfo.php';
 
 /**
  * Standard PEAR exception is used if GPG binary is not found.
@@ -319,6 +329,13 @@ class Crypt_GPG_Engine
     private $_commandBuffer = '';
 
     /**
+     * A status/error handler
+     *
+     * @var Crypt_GPG_ProcessHanler
+     */
+    private $_processHandler = null;
+
+    /**
      * Array of status line handlers
      *
      * @var array
@@ -333,40 +350,6 @@ class Crypt_GPG_Engine
      * @see Crypt_GPG_Engine::addErrorHandler()
      */
     private $_errorHandlers = array();
-
-    /**
-     * The error code of the current operation
-     *
-     * @var integer
-     * @see Crypt_GPG_Engine::getErrorCode()
-     */
-    private $_errorCode = Crypt_GPG::ERROR_NONE;
-
-    /**
-     * File related to the error code of the current operation
-     *
-     * @var string
-     * @see Crypt_GPG_Engine::getErrorFilename()
-     */
-    private $_errorFilename = '';
-
-    /**
-     * Key id related to the error code of the current operation
-     *
-     * @var string
-     * @see Crypt_GPG_Engine::getErrorKeyId()
-     */
-    private $_errorkeyId = '';
-
-    /**
-     * The number of currently needed passphrases
-     *
-     * If this is not zero when the GPG command is completed, the error code is
-     * set to {@link Crypt_GPG::ERROR_MISSING_PASSPHRASE}.
-     *
-     * @var integer
-     */
-    private $_needPassphrase = 0;
 
     /**
      * The input source
@@ -791,8 +774,6 @@ class Crypt_GPG_Engine
         $this->_input          = null;
         $this->_message        = null;
         $this->_output         = '';
-        $this->_errorCode      = Crypt_GPG::ERROR_NONE;
-        $this->_needPassphrase = 0;
         $this->_commandBuffer  = '';
 
         $this->_statusHandlers = array();
@@ -803,17 +784,20 @@ class Crypt_GPG_Engine
             $this->addErrorHandler(array($this, '_handleDebugError'));
         }
 
-        $this->addStatusHandler(array($this, '_handleErrorStatus'));
-        $this->addErrorHandler(array($this, '_handleErrorError'));
+        $this->_processHandler = new Crypt_GPG_ProcessHandler($this);
+
+        $this->addStatusHandler(array($this->_processHandler, 'handleStatus'));
+        $this->addErrorHandler(array($this->_processHandler, 'handleError'));
     }
 
     // }}}
     // {{{ run()
 
     /**
-     * Runs the current GPG operation
+     * Runs the current GPG operation.
      *
      * This creates and manages the GPG subprocess.
+     * This will close input/output file handles.
      *
      * The operation must be set with {@link Crypt_GPG_Engine::setOperation()}
      * before this method is called.
@@ -821,6 +805,7 @@ class Crypt_GPG_Engine
      * @return void
      *
      * @throws Crypt_GPG_InvalidOperationException if no operation is specified.
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *
      * @see Crypt_GPG_Engine::reset()
      * @see Crypt_GPG_Engine::setOperation()
@@ -837,58 +822,6 @@ class Crypt_GPG_Engine
         $this->_openSubprocess();
         $this->_process();
         $this->_closeSubprocess();
-    }
-
-    // }}}
-    // {{{ getErrorCode()
-
-    /**
-     * Gets the error code of the last executed operation
-     *
-     * This value is only meaningful after {@link Crypt_GPG_Engine::run()} has
-     * been executed.
-     *
-     * @return integer the error code of the last executed operation.
-     */
-    public function getErrorCode()
-    {
-        return $this->_errorCode;
-    }
-
-    // }}}
-    // {{{ getErrorFilename()
-
-    /**
-     * Gets the file related to the error code of the last executed operation
-     *
-     * This value is only meaningful after {@link Crypt_GPG_Engine::run()} has
-     * been executed. If there is no file related to the error, an empty string
-     * is returned.
-     *
-     * @return string the file related to the error code of the last executed
-     *                operation.
-     */
-    public function getErrorFilename()
-    {
-        return $this->_errorFilename;
-    }
-
-    // }}}
-    // {{{ getErrorKeyId()
-
-    /**
-     * Gets the key id related to the error code of the last executed operation
-     *
-     * This value is only meaningful after {@link Crypt_GPG_Engine::run()} has
-     * been executed. If there is no key id related to the error, an empty
-     * string is returned.
-     *
-     * @return string the key id related to the error code of the last executed
-     *                operation.
-     */
-    public function getErrorKeyId()
-    {
-        return $this->_errorKeyId;
     }
 
     // }}}
@@ -970,6 +903,36 @@ class Crypt_GPG_Engine
     {
         $this->_operation = $operation;
         $this->_arguments = $arguments;
+
+        $this->_processHandler->setOperation($operation);
+    }
+
+    // }}}
+    // {{{ setPins()
+
+    /**
+     * Sets the PINENTRY_USER_DATA environment variable with the currently
+     * added keys and passphrases
+     *
+     * Keys and passphrases are stored as an indexed array of passphrases
+     * in JSON encoded to a flat string.
+     *
+     * For GnuPG 2.x this is how passphrases are passed. For GnuPG 1.x the
+     * environment variable is set but not used.
+     *
+     * @param array $keys the internal key array to use.
+     *
+     * @return void
+     */
+    public function setPins(array $keys)
+    {
+        $envKeys = array();
+
+        foreach ($keys as $keyId => $key) {
+            $envKeys[$keyId] = is_array($key) ? $key['passphrase'] : $key;
+        }
+
+        $_ENV['PINENTRY_USER_DATA'] = json_encode($envKeys);
     }
 
     // }}}
@@ -1011,17 +974,6 @@ class Crypt_GPG_Engine
             $engine->setOperation('--version');
             $engine->run();
 
-            $code = $this->getErrorCode();
-
-            if ($code !== Crypt_GPG::ERROR_NONE) {
-                throw new Crypt_GPG_Exception(
-                    'Unknown error getting GnuPG version information. Please ' .
-                    'use the \'debug\' option when creating the Crypt_GPG ' .
-                    'object, and file a bug report at ' . Crypt_GPG::BUG_URI,
-                    $code
-                );
-            }
-
             $matches    = array();
             $expression = '#gpg \(GnuPG[A-Za-z0-9/]*?\) (\S+)#';
 
@@ -1048,160 +1000,51 @@ class Crypt_GPG_Engine
     }
 
     // }}}
-    // {{{ _handleErrorStatus()
+    // {{{ getProcessData()
 
     /**
-     * Handles error values in the status output from GPG
+     * Get data from the last process execution.
      *
-     * This method is responsible for setting the
-     * {@link Crypt_GPG_Engine::$_errorCode}. See <b>doc/DETAILS</b> in the
-     * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
-     * information on GPG's status output.
+     * @param string $name Data element name (e.g. 'SignatureInfo')
      *
-     * @param string $line the status line to handle.
-     *
-     * @return void
+     * @return mixed
+     * @see    Crypt_GPG_ProcessHandler::getData()
      */
-    private function _handleErrorStatus($line)
+    public function getProcessData($name)
     {
-        $tokens = explode(' ', $line);
-        switch ($tokens[0]) {
-        case 'BAD_PASSPHRASE':
-            $this->_errorCode = Crypt_GPG::ERROR_BAD_PASSPHRASE;
-            break;
-
-        case 'MISSING_PASSPHRASE':
-            $this->_errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
-            break;
-
-        case 'NODATA':
-            $this->_errorCode = Crypt_GPG::ERROR_NO_DATA;
-            break;
-
-        case 'DELETE_PROBLEM':
-            if ($tokens[1] == '1') {
-                $this->_errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
-                break;
-            } elseif ($tokens[1] == '2') {
-                $this->_errorCode = Crypt_GPG::ERROR_DELETE_PRIVATE_KEY;
-                break;
-            }
-            break;
-
-        case 'IMPORT_RES':
-            if ($tokens[12] > 0) {
-                $this->_errorCode = Crypt_GPG::ERROR_DUPLICATE_KEY;
-            }
-            break;
-
-        case 'NO_PUBKEY':
-        case 'NO_SECKEY':
-            $this->_errorKeyId = $tokens[1];
-            $this->_errorCode  = Crypt_GPG::ERROR_KEY_NOT_FOUND;
-            break;
-
-        case 'NEED_PASSPHRASE':
-            $this->_needPassphrase++;
-            break;
-
-        case 'GOOD_PASSPHRASE':
-            $this->_needPassphrase--;
-            break;
-
-        case 'EXPSIG':
-        case 'EXPKEYSIG':
-        case 'REVKEYSIG':
-        case 'BADSIG':
-            $this->_errorCode = Crypt_GPG::ERROR_BAD_SIGNATURE;
-            break;
-
-        // GnuPG 2.1 uses FAILURE and ERROR responses
-        case 'FAILURE':
-        case 'ERROR':
-            $errnum  = (int) $tokens[2];
-            $source  = $errnum >> 24;
-            $errcode = $errnum & 0xFFFFFF;
-
-            switch ($errcode) {
-            case 11: // bad passphrase
-            case 87: // bad PIN
-                $this->_errorCode = Crypt_GPG::ERROR_BAD_PASSPHRASE;
-                break;
-
-            case 177: // no passphrase
-            case 178: // no PIN
-                $this->_errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
-                break;
-
-            case 58:
-                $this->_errorCode = Crypt_GPG::ERROR_NO_DATA;
-                break;
-            }
-
-            break;
-        }
-    }
-
-    // }}}
-    // {{{ _handleErrorError()
-
-    /**
-     * Handles error values in the error output from GPG
-     *
-     * This method is responsible for setting the
-     * {@link Crypt_GPG_Engine::$_errorCode}.
-     *
-     * @param string $line the error line to handle.
-     *
-     * @return void
-     */
-    private function _handleErrorError($line)
-    {
-        if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
-            $pattern = '/no valid OpenPGP data found/';
-            if (preg_match($pattern, $line) === 1) {
-                $this->_errorCode = Crypt_GPG::ERROR_NO_DATA;
-            }
-        }
-
-        if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
-            $pattern = '/No secret key|secret key not available/';
-            if (preg_match($pattern, $line) === 1) {
-                $this->_errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
-            }
-        }
-
-        if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
-            $pattern = '/No public key|public key not found/';
-            if (preg_match($pattern, $line) === 1) {
-                $this->_errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
-            }
-        }
-
-        if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
-            $matches = array();
-            $pattern = '/can\'t (?:access|open) `(.*?)\'/';
-            if (preg_match($pattern, $line, $matches) === 1) {
-                $this->_errorFilename = $matches[1];
-                $this->_errorCode = Crypt_GPG::ERROR_FILE_PERMISSIONS;
-            }
-        }
-
-        // GnuPG 2.1: It should return MISSING_PASSPHRASE, but it does not
-        // we have to detect it this way. This happens e.g. on private key import
-        if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
-            $matches = array();
-            $pattern = '/key ([0-9A-F]+).* (Bad|No) passphrase/';
-            if (preg_match($pattern, $line, $matches) === 1) {
-                if ($matches[2] == 'Bad') {
-                    $this->_errorCode = Crypt_GPG::ERROR_BAD_PASSPHRASE;
-                } else {
-                    $this->_errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+        if ($this->_processHandler) {
+            switch ($name) {
+            case 'SignatureInfo':
+                if ($data = $this->_processHandler->getData('SigCreated')) {
+                    return new Crypt_GPG_SignatureCreationInfo($data);
                 }
+                break;
+
+            case 'Signatures':
+                return (array) $this->_processHandler->getData('Signatures');
+
+            default:
+                return $this->_processHandler->getData($name);
             }
         }
     }
+    // }}}
+    // {{{ setProcessData()
 
+    /**
+     * Set some data for the process execution.
+     *
+     * @param string $name  Data element name (e.g. 'Handle')
+     * @param mixed  $value Data value
+     *
+     * @return void
+     */
+    public function setProcessData($name, $value)
+    {
+        if ($this->_processHandler) {
+            $this->_processHandler->setData($name, $value);
+        }
+    }
     // }}}
     // {{{ _handleDebugStatus()
 
@@ -1775,12 +1618,10 @@ class Crypt_GPG_Engine
                     if ($version21) {
                         if (preg_match('/listening on socket \'([^\']+)/', $line, $m)) {
                             $this->_agentInfo = $m[1];
-                        }
-                        else if (preg_match('/gpg-agent\[([0-9]+)\].* started/', $line, $m)) {
+                        } else if (preg_match('/gpg-agent\[([0-9]+)\].* started/', $line, $m)) {
                             $this->_agentInfo .= ':' . $m[1] . ':1';
                         }
-                    }
-                    else if (preg_match('/GPG_AGENT_INFO=([^;]+)/', $line, $m)) {
+                    } else if (preg_match('/GPG_AGENT_INFO=([^;]+)/', $line, $m)) {
                         $this->_agentInfo = $m[1];
                         break;
                     }
@@ -1916,7 +1757,6 @@ class Crypt_GPG_Engine
         }
 
         $this->_openPipes = $this->_pipes;
-        $this->_errorCode = Crypt_GPG::ERROR_NONE;
     }
 
     // }}}
@@ -1953,18 +1793,21 @@ class Crypt_GPG_Engine
                     '=> subprocess returned an unexpected exit code: ' .
                     $exitCode
                 );
-
-                if ($this->_errorCode === Crypt_GPG::ERROR_NONE) {
-                    if ($this->_needPassphrase > 0) {
-                        $this->_errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
-                    } else {
-                        $this->_errorCode = Crypt_GPG::ERROR_UNKNOWN;
-                    }
-                }
             }
 
             $this->_process = null;
             $this->_pipes   = array();
+
+            // close file handles before throwing an exception
+            if (is_resource($this->_input)) {
+                fclose($this->_input);
+            }
+
+            if (is_resource($this->_output)) {
+                fclose($this->_output);
+            }
+
+            $this->_processHandler->throwException($exitCode);
         }
 
         $this->_closeAgentLaunchProcess();

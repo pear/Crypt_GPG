@@ -633,8 +633,7 @@ class Crypt_GPG_PinEntry
                 // We support 8 for backward compatibility
                 if ($keyIdLength < $_keyIdLength) {
                     $_keyId = mb_substr($_keyId, -$keyIdLength, $keyIdLength, '8bit');
-                }
-                else if ($keyIdLength > $_keyIdLength) {
+                } else if ($keyIdLength > $_keyIdLength) {
                     $keyId = mb_substr($keyId, -$_keyIdLength, $_keyIdLength, '8bit');
                 }
 
@@ -753,7 +752,7 @@ class Crypt_GPG_PinEntry
      *
      * @return string the properly escaped, formatted data.
      *
-     * @see  http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
+     * @see http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
      */
     protected function getData($data)
     {
@@ -775,7 +774,7 @@ class Crypt_GPG_PinEntry
      *
      * @return string the properly formatted comment.
      *
-     * @see  http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
+     * @see http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
      */
     protected function getComment($data)
     {

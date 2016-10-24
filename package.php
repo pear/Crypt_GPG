@@ -35,17 +35,13 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.4.3';
-$apiState       = 'stable';
+$apiVersion     = '2.0.0';
+$apiState       = 'beta';
 
-$releaseVersion = '1.4.3';
-$releaseState   = 'stable';
+$releaseVersion = '2.0.0b1';
+$releaseState   = 'beta';
 $releaseNotes   =
-    "This release fixes following bugs:\n" .
-    "\n" .
-    "Fix Bug #21121: Searching for keys with pattern containing non-ascii characters.\n" .
-    "Fix Bug #21119: Parsing of user identifier without name.\n" .
-    "Added POSIX method to isRunning() consistent with terminate().";
+    "This release adds GnuPG 2.1 support"
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

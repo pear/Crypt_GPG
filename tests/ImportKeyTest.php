@@ -57,7 +57,20 @@ require_once 'TestCase.php';
  */
 class ImportKeyTestCase extends Crypt_GPG_TestCase
 {
-    // string
+    // set up
+    // {{{ setUp()
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        // In GnuPG 2.1 first operation on a keyring in v1 format
+        // will cause format update and several IMPORT_OK responses
+        // This way we clean the state first
+        $this->gpg->getKeys();
+    }
+
+    // }}}
     // {{{ testImportKey_private()
 
     /**
@@ -65,6 +78,9 @@ class ImportKeyTestCase extends Crypt_GPG_TestCase
      */
     public function testImportKey_private()
     {
+        // Note: Some of GnuPG 2.1.x versions return different private_imported
+        // and private_uchanged values, bug? GnuPG 2.1.15 returns 1 as expected.
+
         $expectedResult = array(
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
             'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
@@ -113,6 +129,9 @@ NN5B7Vl2JdxBuwWJrdfUb9UQzw==
 
 TEXT;
         // }}}
+
+        // In GnuPG 2.1 importing private keys requires passphrase
+        $this->gpg->addPassphrase('4E8C0DEB', 'test');
 
         $result = $this->gpg->importKey($privateKeyData);
         $this->assertEquals($expectedResult, $result);
@@ -224,6 +243,9 @@ NN5B7Vl2JdxBuwWJrdfUb9UQzw==
 TEXT;
         // }}}
 
+        // In GnuPG 2.1 importing private keys requires passphrase
+        $this->gpg->addPassphrase('4E8C0DEB', 'test');
+
         $result = $this->gpg->importKey($privateKeyData);
 
         $expectedResult = array(
@@ -243,9 +265,9 @@ TEXT;
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
             'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
-            'public_unchanged'  => 0,
+            'public_unchanged'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 1 : 0,
             'private_imported'  => 0,
-            'private_unchanged' => 1
+            'private_unchanged'  => 1,
         );
 
         $this->assertEquals($expectedResult, $result);
@@ -370,6 +392,9 @@ TEXT;
             'private_unchanged' => 0
         );
 
+        // In GnuPG 2.1 importing private keys requires passphrase
+        $this->gpg->addPassphrase('4E8C0DEB', 'test');
+
         $filename = $this->getDataFilename('testImportKeyFile_private.asc');
         $result   = $this->gpg->importKeyFile($filename);
 
@@ -407,6 +432,9 @@ TEXT;
      */
     public function testImportKeyFileAlreadyImported_private()
     {
+        // In GnuPG 2.1 importing private keys requires passphrase
+        $this->gpg->addPassphrase('4E8C0DEB', 'test');
+
         $filename = $this->getDataFilename('testImportKeyFile_private.asc');
         $result   = $this->gpg->importKeyFile($filename);
 
@@ -427,9 +455,9 @@ TEXT;
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
             'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
             'public_imported'   => 0,
-            'public_unchanged'  => 0,
+            'public_unchanged'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 1 : 0,
             'private_imported'  => 0,
-            'private_unchanged' => 1
+            'private_unchanged'  => 1,
         );
 
         $this->assertEquals($expectedResult, $result);

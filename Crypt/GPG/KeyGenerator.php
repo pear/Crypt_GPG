@@ -30,7 +30,6 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2011-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id:$
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
  */
@@ -39,16 +38,6 @@
  * Base class for GPG methods
  */
 require_once 'Crypt/GPGAbstract.php';
-
-/**
- * Status output handler for key generation
- */
-require_once 'Crypt/GPG/KeyGeneratorStatusHandler.php';
-
-/**
- * Error output handler for key generation
- */
-require_once 'Crypt/GPG/KeyGeneratorErrorHandler.php';
 
 // {{{ class Crypt_GPG_KeyGenerator
 
@@ -162,24 +151,6 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      */
     protected $subKeyUsage = Crypt_GPG_SubKey::USAGE_ENCRYPT;
 
-    /**
-     * The GnuPG status handler to use for key generation
-     *
-     * @var Crypt_GPG_KeyGeneratorStatusHandler
-     *
-     * @see Crypt_GPG_KeyGenerator::setStatusHandler()
-     */
-    protected $statusHandler = null;
-
-    /**
-     * The GnuPG error handler to use for key generation
-     *
-     * @var Crypt_GPG_KeyGeneratorErrorHandler
-     *
-     * @see Crypt_GPG_KeyGenerator::setErrorHandler()
-     */
-    protected $errorHandler = null;
-
     // }}}
     // {{{ __construct()
 
@@ -272,9 +243,6 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     public function __construct(array $options = array())
     {
         parent::__construct($options);
-
-        $this->statusHandler = new Crypt_GPG_KeyGeneratorStatusHandler();
-        $this->errorHandler  = new Crypt_GPG_KeyGeneratorErrorHandler();
     }
 
     // }}}
@@ -402,7 +370,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
 
         $usageEncrypt = Crypt_GPG_SubKey::USAGE_ENCRYPT;
 
-        if (   $algorithm === Crypt_GPG_SubKey::ALGORITHM_DSA
+        if ($algorithm === Crypt_GPG_SubKey::ALGORITHM_DSA
             && ($usage & $usageEncrypt) === $usageEncrypt
         ) {
             throw new Crypt_GPG_InvalidKeyParamsException(
@@ -466,7 +434,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
 
         $usageSign = Crypt_GPG_SubKey::USAGE_SIGN;
 
-        if (   $algorithm === Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC
+        if ($algorithm === Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC
             && ($usage & $usageSign) === $usageSign
         ) {
             throw new Crypt_GPG_InvalidKeyParamsException(
@@ -482,7 +450,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
 
         $usageEncrypt = Crypt_GPG_SubKey::USAGE_ENCRYPT;
 
-        if (   $algorithm === Crypt_GPG_SubKey::ALGORITHM_DSA
+        if ($algorithm === Crypt_GPG_SubKey::ALGORITHM_DSA
             && ($usage & $usageEncrypt) === $usageEncrypt
         ) {
             throw new Crypt_GPG_InvalidKeyParamsException(
@@ -506,48 +474,6 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $this->subKeyUsage = $usage;
         }
 
-        return $this;
-    }
-
-    // }}}
-    // {{{ setStatusHandler()
-
-    /**
-     * Sets the status handler to use for key generation
-     *
-     * Normally this method does not need to be used. It provides a means for
-     * dependency injection.
-     *
-     * @param Crypt_GPG_KeyStatusHandler $handler the key status handler to
-     *                                            use.
-     *
-     * @return Crypt_GPG_KeyGenerator the current object, for fluent interface.
-     */
-    public function setStatusHandler(
-        Crypt_GPG_KeyGeneratorStatusHandler $handler
-    ) {
-        $this->statusHandler = $handler;
-        return $this;
-    }
-
-    // }}}
-    // {{{ setErrorHandler()
-
-    /**
-     * Sets the error handler to use for key generation
-     *
-     * Normally this method does not need to be used. It provides a means for
-     * dependency injection.
-     *
-     * @param Crypt_GPG_KeyErrorHandler $handler the key error handler to
-     *                                           use.
-     *
-     * @return Crypt_GPG_KeyGenerator the current object, for fluent interface.
-     */
-    public function setErrorHandler(
-        Crypt_GPG_KeyGeneratorErrorHandler $handler
-    ) {
-        $this->errorHandler = $handler;
         return $this;
     }
 
@@ -609,7 +535,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $keyParams['Expire-Date'] = $expirationDate;
         }
 
-        if ($this->passphrase != '') {
+        if (strlen($this->passphrase)) {
             $keyParams['Passphrase'] = $this->passphrase;
         }
 
@@ -621,31 +547,28 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $keyParams['Name-Comment'] = $userId->getComment();
         }
 
-
         $keyParamsFormatted = array();
         foreach ($keyParams as $name => $value) {
             $keyParamsFormatted[] = $name . ': ' . $value;
         }
 
+        // This is required in GnuPG 2.1
+        if (!strlen($this->passphrase)) {
+            $keyParamsFormatted[] = '%no-protection';
+        }
+
         $input = implode("\n", $keyParamsFormatted) . "\n%commit\n";
 
-        $statusHandler = clone $this->statusHandler;
-        $statusHandler->setHandle($handle);
-
-        $errorHandler = clone $this->errorHandler;
-
         $this->engine->reset();
-        $this->engine->addStatusHandler(array($statusHandler, 'handle'));
-        $this->engine->addErrorHandler(array($errorHandler, 'handle'));
+        $this->engine->setProcessData('Handle', $handle);
         $this->engine->setInput($input);
         $this->engine->setOutput($output);
         $this->engine->setOperation('--gen-key', array('--batch'));
-        $this->engine->run();
 
-        $code = $errorHandler->getErrorCode();
-        switch ($code) {
-        case self::ERROR_BAD_KEY_PARAMS:
-            switch ($errorHandler->getLineNumber()) {
+        try {
+            $this->engine->run();
+        } catch (Crypt_GPG_InvalidKeyParamsException $e) {
+            switch ($this->engine->getProcessData('LineNumber')) {
             case 1:
                 throw new Crypt_GPG_InvalidKeyParamsException(
                     'Invalid primary key algorithm specified.',
@@ -663,41 +586,11 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
                     $this->subKeyUsage
                 );
             default:
-                throw new Crypt_GPG_InvalidKeyParamsException(
-                    'Invalid key algorithm specified.'
-                );
+                throw $e;
             }
         }
 
-        $code = $this->engine->getErrorCode();
-
-        switch ($code) {
-        case self::ERROR_NONE:
-            break;
-        default:
-            throw new Crypt_GPG_Exception(
-                'Unknown error generating key-pair. Please use the \'debug\' ' .
-                'option when creating the Crypt_GPG object, and file a bug ' .
-                'report at ' . self::BUG_URI,
-                $code
-            );
-        }
-
-        $code = $statusHandler->getErrorCode();
-
-        switch ($code) {
-        case self::ERROR_NONE:
-            break;
-        case self::ERROR_KEY_NOT_CREATED:
-            throw new Crypt_GPG_KeyNotCreatedException(
-                'Unable to create new key-pair. Invalid key parameters. ' .
-                'Make sure the specified key algorithms and sizes are ' .
-                'correct.',
-                $code
-            );
-        }
-
-        $fingerprint = $statusHandler->getKeyFingerprint();
+        $fingerprint = $this->engine->getProcessData('KeyCreated');
         $keys        = $this->_getKeys($fingerprint);
 
         if (count($keys) === 0) {

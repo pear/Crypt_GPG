@@ -28,7 +28,6 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
@@ -177,17 +176,6 @@ class Crypt_GPG_PinEntry
      * @see Crypt_GPG_PinEntry::initPinsFromENV()
      */
     protected $pins = array();
-
-    /**
-     * PINs that have been tried for the current PIN
-     *
-     * This is an associative array indexed by the key identifier with
-     * values being the same as elements in the {@link Crypt_GPG_PinEntry::$pins}
-     * array.
-     *
-     * @var array
-     */
-    protected $triedPins = array();
 
     /**
      * The PIN currently being requested by the Assuan server
@@ -440,17 +428,6 @@ class Crypt_GPG_PinEntry
         case 'SETDESC':
             return $this->sendSetDescription($data);
 
-        case 'SETPROMPT':
-        case 'SETERROR':
-        case 'SETOK':
-        case 'SETNOTOK':
-        case 'SETCANCEL':
-        case 'SETQUALITYBAR':
-        case 'SETQUALITYBAR_TT':
-        case 'SETKEYINFO':
-        case 'OPTION':
-            return $this->sendNotImplementedOK();
-
         case 'MESSAGE':
             return $this->sendMessage();
 
@@ -468,6 +445,9 @@ class Crypt_GPG_PinEntry
 
         case 'BYE':
             return $this->sendBye();
+
+        default:
+            return $this->sendNotImplementedOK();
         }
     }
 
@@ -567,15 +547,11 @@ class Crypt_GPG_PinEntry
             $userId = $matches[1];
             $keyId  = $matches[2];
 
-            // only reset tried pins for new requested pin
-            if (   $this->currentPin === null
-                || $this->currentPin['keyId'] !== $keyId
-            ) {
+            if ($this->currentPin === null || $this->currentPin['keyId'] !== $keyId) {
                 $this->currentPin = array(
                     'userId' => $userId,
                     'keyId'  => $keyId
                 );
-                $this->triedPins = array();
                 $this->log(
                     '-- looking for PIN for ' . $keyId . PHP_EOL,
                     self::VERBOSITY_ALL
@@ -590,14 +566,13 @@ class Crypt_GPG_PinEntry
     // {{{ sendConfirm()
 
     /**
-     * Tells the assuan server the PIN entry was confirmed (not cancelled)
-     * by pressing the fake 'close' button
+     * Tells the assuan server to confirm the operation
      *
      * @return Crypt_GPG_PinEntry the current object, for fluent interface.
      */
     protected function sendConfirm()
     {
-        return $this->sendButtonInfo('close');
+        return $this->send($this->getOK());
     }
 
     // }}}
@@ -647,23 +622,23 @@ class Crypt_GPG_PinEntry
             $keyIdLength = mb_strlen($this->currentPin['keyId'], '8bit');
 
             // search for the pin
-            foreach ($this->pins as $pin) {
-                // only check pins we haven't tried
-                if (!isset($this->triedPins[$pin['keyId']])) {
+            foreach ($this->pins as $_keyId => $pin) {
+                // Warning: GnuPG 2.1 asks 3 times for passphrase if it is invalid
+                $keyId        = $this->currentPin['keyId'];
+                $_keyIdLength = mb_strlen($_keyId, '8bit');
 
-                    // get last X characters of key identifier to compare
-                    $keyId = mb_substr(
-                        $pin['keyId'],
-                        -$keyIdLength,
-                        mb_strlen($pin['keyId'], '8bit'),
-                        '8bit'
-                    );
+                // Get last X characters of key identifier to compare
+                // Most GnuPG versions use 8 characters, but recent ones can use 16,
+                // We support 8 for backward compatibility
+                if ($keyIdLength < $_keyIdLength) {
+                    $_keyId = mb_substr($_keyId, -$keyIdLength, $keyIdLength, '8bit');
+                } else if ($keyIdLength > $_keyIdLength) {
+                    $keyId = mb_substr($keyId, -$_keyIdLength, $_keyIdLength, '8bit');
+                }
 
-                    if ($keyId === $this->currentPin['keyId']) {
-                        $foundPin = $pin['passphrase'];
-                        $this->triedPins[$pin['keyId']] = $pin;
-                        break;
-                    }
+                if ($_keyId === $keyId) {
+                    $foundPin = $pin;
+                    break;
                 }
             }
         }
@@ -740,7 +715,6 @@ class Crypt_GPG_PinEntry
     protected function sendReset()
     {
         $this->currentPin = null;
-        $this->triedPins = array();
         return $this->send($this->getOK());
     }
 
@@ -777,7 +751,7 @@ class Crypt_GPG_PinEntry
      *
      * @return string the properly escaped, formatted data.
      *
-     * @see  http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
+     * @see http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
      */
     protected function getData($data)
     {
@@ -799,7 +773,7 @@ class Crypt_GPG_PinEntry
      *
      * @return string the properly formatted comment.
      *
-     * @see  http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
+     * @see http://www.gnupg.org/documentation/manuals/assuan/Server-responses.html
      */
     protected function getComment($data)
     {

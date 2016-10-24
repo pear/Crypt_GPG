@@ -98,7 +98,11 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
     {
         return array(
             'homedir' => dirname(__FILE__) . '/' . self::HOMEDIR,
-//            'debug'   => true
+//            'binary' => '/usr/bin/gpg2',
+//            'binary' => '/usr/local/bin/gpg2',
+//            'agent'  => '/usr/local/bin/gpg-agent',
+//            'gpgconf'  => '/usr/local/bin/gpgconf',
+//            'debug'  => true
         );
     }
 
@@ -134,7 +138,6 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
         if (!isset($this->config['enable-key-generation'])) {
             $this->config['enable-key-generation'] = false;
         }
-
 
         $this->_setUpKeyring();
         $this->_setUpTempdir();
@@ -571,33 +574,33 @@ TEXT;
 
     private function _tearDownKeyring()
     {
-        $filenames = array(
-            $this->getKeyringFilename('pubring.gpg~'),
-            $this->getKeyringFilename('secring.gpg~'),
-            $this->getKeyringFilename('trustdb.gpg~'),
-            $this->getKeyringFilename('pubring.gpg'),
-            $this->getKeyringFilename('secring.gpg'),
-            $this->getKeyringFilename('trustdb.gpg'),
-            $this->getKeyringFilename('random_seed')
-        );
-
-        foreach ($filenames as $filename) {
-            if (file_exists($filename)) {
-                unlink($filename);
-            }
-        }
-
         $dirnames = array(
-            $this->getKeyringFilename('private-keys-v1.d')
+            $this->getKeyringFilename('private-keys-v1.d'),
+            $this->getKeyringFilename('openpgp-revocs.d')
         );
 
         foreach ($dirnames as $dirname) {
             if (file_exists($dirname)) {
+                $iterator = new DirectoryIterator($dirname);
+                foreach ($iterator as $file) {
+                    if (!$file->isDot()) {
+                        unlink($dirname . '/' . $file->getFilename());
+                    }
+                }
                 rmdir($dirname);
             }
         }
 
-        rmdir(dirname(__FILE__) . '/' . self::HOMEDIR);
+        $homedir  = dirname(__FILE__) . '/' . self::HOMEDIR;
+        $iterator = new DirectoryIterator($homedir);
+
+        foreach ($iterator as $file) {
+            if (!$file->isDot()) {
+                unlink($homedir . '/' . $file->getFilename());
+            }
+        }
+
+        rmdir($homedir);
     }
 
     // }}}

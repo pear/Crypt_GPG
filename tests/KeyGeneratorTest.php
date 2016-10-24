@@ -613,46 +613,6 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
-    // {{{ testSetStatusHandler()
-
-    /**
-     * @group mutators
-     */
-    public function testSetStatusHandler()
-    {
-        $statusHandler = new Crypt_GPG_KeyGeneratorStatusHandler();
-
-        $this->generator->setStatusHandler($statusHandler);
-
-        $this->assertAttributeEquals(
-            $statusHandler,
-            'statusHandler',
-            $this->generator,
-            'Setting status handler failed.'
-        );
-    }
-
-    // }}}
-    // {{{ testSetErrorHandler()
-
-    /**
-     * @group mutators
-     */
-    public function testSetErrorHandler()
-    {
-        $errorHandler = new Crypt_GPG_KeyGeneratorErrorHandler();
-
-        $this->generator->setErrorHandler($errorHandler);
-
-        $this->assertAttributeEquals(
-            $errorHandler,
-            'errorHandler',
-            $this->generator,
-            'Setting error handler failed.'
-        );
-    }
-
-    // }}}
 
     // generate key tests
     // {{{ testGenerateKeyWithName()
@@ -958,6 +918,8 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
             )
         );
 
+        // @TODO: I've got difference in expiration dates here
+
         $this->assertKeyEquals($expectedKey, $key);
     }
 
@@ -1011,27 +973,6 @@ class KeyGeneratorTestCase extends Crypt_GPG_TestCase
                     'Test Keypair <generate-test@example.com>'
                 )
             );
-    }
-
-    // }}}
-
-    // fluent interface
-    // {{{ testFluentInterface
-
-    /**
-     * @group fluent
-     */
-    public function testFluentInterface()
-    {
-        $returnedGenerator = $this->generator->setStatusHandler(
-            new Crypt_GPG_KeyGeneratorStatusHandler()
-        );
-        $this->assertEquals(
-            $this->generator,
-            $returnedGenerator,
-            'Failed asserting fluent interface works for setStatusHandler() ' .
-            'method.'
-        );
     }
 
     // }}}

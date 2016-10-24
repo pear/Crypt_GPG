@@ -104,11 +104,59 @@ WOad2BFLoSh6WM3H7KvMUg==
 TEXT;
         // }}}
 
+        // @TODO: This operation requires passphrase in GnuPG 2.1
+        //        because of https://bugs.gnupg.org/gnupg/issue2070.
+
         $keyData = $this->gpg->exportPrivateKey($keyId);
 
         // Check for containment rather than equality since the OpenPGP header
         // varies from system to system.
         $this->assertContains($expectedKeyData, $keyData);
+    }
+
+    // }}}
+    // {{{ testExportPrivateKey_with_good_pass()
+
+    /**
+     * @group export
+     */
+    public function testExportPrivateKey_with_good_pass()
+    {
+        if (version_compare($this->gpg->getVersion(), '2.1.0', 'lt')) {
+            $this->markTestSkipped('GnuPG >= 2.1 requires passphrase to export private key.');
+        }
+
+        $keyId = 'first-keypair@example.com';
+
+        // This operation requires passphrase in GnuPG 2.1
+        $this->gpg->addPassphrase('94C06363', 'test1');
+
+        $keyData = $this->gpg->exportPrivateKey($keyId);
+
+        // Here we're really testing only the passphrase handling in GnuPG 2.1
+        $this->assertContains('PGP PRIVATE KEY', $keyData);
+    }
+
+    // }}}
+    // {{{ testExportPrivateKey_with_bad_pass()
+
+    /**
+     * @expectedException Crypt_GPG_BadPassphraseException
+     *
+     * @group export
+     */
+    public function testExportPrivateKey_with_bad_pass()
+    {
+        if (version_compare($this->gpg->getVersion(), '2.1.0', 'lt')) {
+            $this->markTestSkipped('GnuPG >= 2.1 requires passphrase to export private key.');
+        }
+
+        $keyId = 'first-keypair@example.com';
+
+        // This operation requires passphrase in GnuPG 2.1
+        $this->gpg->addPassphrase('94C06363', 'bad');
+
+        $keyData = $this->gpg->exportPrivateKey($keyId);
     }
 
     // }}}

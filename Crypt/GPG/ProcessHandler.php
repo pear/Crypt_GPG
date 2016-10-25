@@ -42,11 +42,6 @@
 require_once 'Crypt/GPG/Exceptions.php';
 
 /**
- * Byte string operations.
- */
-require_once 'Crypt/GPG/ByteUtils.php';
-
-/**
  * Signature object class definition
  */
 require_once 'Crypt/GPG/Signature.php';
@@ -241,7 +236,7 @@ class Crypt_GPG_ProcessHandler
             // recipients and a previous key had a correct passphrase.
             $this->data['MissingKeys'][$tokens[1]] = $tokens[1];
 
-            // @FIXME: remove missing passphrase registered in ENC_TO handler above
+            // @FIXME: remove missing passphrase registered in ENC_TO handler
             //         This is for GnuPG 2.1
             unset($this->data['MissingPassphrases'][$tokens[1]]);
             break;
@@ -319,29 +314,10 @@ class Crypt_GPG_ProcessHandler
             } else {
                 break;
             }
+            // no break
+
         case 'NEED_PASSPHRASE':
-            $passphrase  = '';
-            $keyIdLength = strlen($tokens[1]);
-
-            if (!empty($_ENV['PINENTRY_USER_DATA'])) {
-                $passphrases = json_decode($_ENV['PINENTRY_USER_DATA'], true);
-                foreach ($passphrases as $_keyId => $pass) {
-                    $keyId        = $tokens[1];
-                    $_keyIdLength = strlen($_keyId);
-
-                    // Get last X characters of key identifier to compare
-                    if ($keyIdLength < $_keyIdLength) {
-                        $_keyId = substr($_keyId, -$keyIdLength);
-                    } else if ($keyIdLength > $_keyIdLength) {
-                        $keyId = substr($keyId, -$_keyIdLength);
-                    }
-
-                    if ($_keyId === $keyId) {
-                        $passphrase = $pass;
-                        break;
-                    }
-                }
-            }
+            $passphrase = $this->getPin($tokens[1]);
 
             $this->engine->sendCommand($passphrase);
 
@@ -366,6 +342,7 @@ class Crypt_GPG_ProcessHandler
         case 'BADSIG':
         case 'ERRSIG':
             $this->errorCode = Crypt_GPG::ERROR_BAD_SIGNATURE;
+            // no break
         case 'GOODSIG':
             $signature = new Crypt_GPG_Signature();
 
@@ -850,6 +827,44 @@ class Crypt_GPG_ProcessHandler
             $badPassphrases,
             $missingPassphrases
         );
+    }
+
+    // }}}
+    // {{{ getPin()
+
+    /**
+     * Get registered passphrase for specified key.
+     *
+     * @param string $key Key identifier
+     *
+     * @return string Passphrase
+     */
+    protected function getPin($key)
+    {
+        $passphrase  = '';
+        $keyIdLength = strlen($key);
+
+        if ($keyIdLength && !empty($_ENV['PINENTRY_USER_DATA'])) {
+            $passphrases = json_decode($_ENV['PINENTRY_USER_DATA'], true);
+            foreach ($passphrases as $_keyId => $pass) {
+                $keyId        = $key;
+                $_keyIdLength = strlen($_keyId);
+
+                // Get last X characters of key identifier to compare
+                if ($keyIdLength < $_keyIdLength) {
+                    $_keyId = substr($_keyId, -$keyIdLength);
+                } else if ($keyIdLength > $_keyIdLength) {
+                    $keyId = substr($keyId, -$_keyIdLength);
+                }
+
+                if ($_keyId === $keyId) {
+                    $passphrase = $pass;
+                    break;
+                }
+            }
+        }
+
+        return $passphrase;
     }
 
     // }}}

@@ -285,8 +285,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see addPassphrase()
-     * @see clearPassphrases()
+     * @see Crypt_GPG::addPassphrase()
+     * @see Crypt_GPG::clearPassphrases()
      */
     public function importKey($data)
     {
@@ -635,6 +635,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     {
         return $this->engine->getProcessData('SignatureInfo');
     }
+
     // }}}
     // {{{ encrypt()
 
@@ -1329,6 +1330,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     }
 
     // }}}
+    // {{{ hasEncryptKeys()
 
     /**
      * Tell if there are encryption keys registered
@@ -1340,6 +1342,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
         return count($this->encryptKeys) > 0;
     }
 
+    // }}}
+    // {{{ hasSignKeys()
+
     /**
      * Tell if there are signing keys registered
      *
@@ -1350,6 +1355,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         return count($this->signKeys) > 0;
     }
 
+    // }}}
     // {{{ _addKey()
 
     /**
@@ -1381,8 +1387,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
             $keys = $this->getKeys($key);
             if (count($keys) == 0) {
                 throw new Crypt_GPG_KeyNotFoundException(
-                    'Key "' . $key . '" not found.',
-                    0,
+                    'Key not found: ' . $key,
+                    self::ERROR_KEY_NOT_FOUND,
                     $key
                 );
             }
@@ -1565,7 +1571,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $keyData   = '';
         $operation = $private ? '--export-secret-keys' : '--export';
         $operation .= ' ' . escapeshellarg($fingerprint);
-        $arguments = ($armor) ? array('--armor') : array();
+        $arguments = $armor ? array('--armor') : array();
 
         $this->engine->reset();
         $this->engine->setPins($this->passphrases);
@@ -1642,7 +1648,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
             }
         }
 
-        $arguments = ($armor) ? array('--armor') : array();
+        $arguments = $armor ? array('--armor') : array();
         foreach ($this->encryptKeys as $key) {
             $arguments[] = '--recipient ' . escapeshellarg($key['fingerprint']);
         }
@@ -1946,7 +1952,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
             }
         }
 
-        $arguments  = ($armor) ? array('--armor') : array();
+        $arguments  = $armor ? array('--armor') : array();
 
         foreach ($this->signKeys as $key) {
             $arguments[] = '--local-user ' .

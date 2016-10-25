@@ -1027,6 +1027,7 @@ class Crypt_GPG_Engine
             }
         }
     }
+
     // }}}
     // {{{ setProcessData()
 
@@ -1044,6 +1045,7 @@ class Crypt_GPG_Engine
             $this->_processHandler->setData($name, $value);
         }
     }
+
     // }}}
     // {{{ _handleDebugStatus()
 
@@ -1762,7 +1764,7 @@ class Crypt_GPG_Engine
     // {{{ _closeSubprocess()
 
     /**
-     * Closes a the internal GPG subprocess
+     * Closes the internal GPG subprocess
      *
      * Closes the internal GPG subprocess. Sets the private class property
      * {@link Crypt_GPG_Engine::$_process} to null.
@@ -1987,22 +1989,22 @@ class Crypt_GPG_Engine
         $binary = '';
 
         if ($this->_isDarwin) {
-            $confFiles = array(
+            $locations = array(
                 '/opt/local/bin/', // MacPorts
                 '/usr/local/bin/', // Mac GPG
                 '/sw/bin/',        // Fink
                 '/usr/bin/'
             );
         } else {
-            $confFiles = array(
+            $locations = array(
                 '/usr/bin/',
                 '/usr/local/bin/'
             );
         }
 
-        foreach ($confFiles as $confFile) {
-            if (is_executable($confFile . $name)) {
-                $binary = $confFile . $name;
+        foreach ($locations as $location) {
+            if (is_executable($location . $name)) {
+                $binary = $location . $name;
                 break;
             }
         }

@@ -3,7 +3,7 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * PHPUnit AllTests suite for the Services_Akismet2 package.
+ * PHPUnit AllTests suite for the Crypt_GPG package.
  *
  * These tests require the PHPUnit 3.6 or greater package to be installed.
  * PHPUnit is installable using PEAR. See the
@@ -31,7 +31,6 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 

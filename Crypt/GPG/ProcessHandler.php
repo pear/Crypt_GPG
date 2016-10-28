@@ -124,7 +124,7 @@ class Crypt_GPG_ProcessHandler
     /**
      * Creates a new instance
      *
-     * @param Crypt_GPG_Engine Engine object
+     * @param Crypt_GPG_Engine $engine Engine object
      */
     public function __construct($engine)
     {
@@ -772,12 +772,12 @@ class Crypt_GPG_ProcessHandler
     /**
      * Set data for the process execution.
      *
-     * @param string $name Data element name:
+     * @param string $name  Data element name:
      *               - Handle: The unique key handle used by this handler
      *                         The key handle is used to track GPG status output
      *                         for a particular key on --gen-key command before
      *                         the key has its own identifier.
-     * @param mixed $value Data element value
+     * @param mixed  $value Data element value
      *
      * @return void
      */

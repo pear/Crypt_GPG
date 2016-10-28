@@ -151,7 +151,7 @@ $package->addReplacement(
     'php_dir'
 );
 
-$package->setPhpDep('5.2.1');
+$package->setPhpDep('5.4.8');
 $package->addExtensionDep('optional', 'posix');
 $package->addExtensionDep('required', 'mbstring');
 $package->addOsDep('windows', true);

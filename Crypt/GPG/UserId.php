@@ -226,15 +226,15 @@ class Crypt_GPG_UserId
     {
         $components = array();
 
-        if (strlen($this->_name) > 0) {
+        if (mb_strlen($this->_name, '8bit') > 0) {
             $components[] = $this->_name;
         }
 
-        if (strlen($this->_comment) > 0) {
+        if (mb_strlen($this->_comment, '8bit') > 0) {
             $components[] = '(' . $this->_comment . ')';
         }
 
-        if (strlen($this->_email) > 0) {
+        if (mb_strlen($this->_email, '8bit') > 0) {
             $components[] = '<' . $this->_email. '>';
         }
 

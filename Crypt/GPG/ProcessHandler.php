@@ -157,7 +157,8 @@ class Crypt_GPG_ProcessHandler
             $op = trim($operation, '- ');
         } else if (preg_match($regexp, $operation, $matches, PREG_OFFSET_CAPTURE)) {
             $op      = trim($matches[0][0], '-');
-            $command = substr($operation, $matches[0][1] + strlen($op) + 3);
+            $op_len  = $matches[0][1] + mb_strlen($op, '8bit') + 3;
+            $command = mb_substr($operation, $op_len, null, '8bit');
 
             // we really need the argument if it is a key ID/fingerprint or email
             // address se we can use simplified regexp to "revert escapeshellarg()"
@@ -357,9 +358,9 @@ class Crypt_GPG_ProcessHandler
             // 16 or 8 hexadecimal characters. Fingerprints are strings of 40
             // hexadecimal characters. The key id is the last 16 characters of
             // the key fingerprint.
-            if (strlen($tokens[1]) > 16) {
+            if (mb_strlen($tokens[1], '8bit') > 16) {
                 $signature->setKeyFingerprint($tokens[1]);
-                $signature->setKeyId(substr($tokens[1], -16));
+                $signature->setKeyId(mb_substr($tokens[1], -16, null, '8bit'));
             } else {
                 $signature->setKeyId($tokens[1]);
             }
@@ -842,19 +843,19 @@ class Crypt_GPG_ProcessHandler
     protected function getPin($key)
     {
         $passphrase  = '';
-        $keyIdLength = strlen($key);
+        $keyIdLength = mb_strlen($key, '8bit');
 
         if ($keyIdLength && !empty($_ENV['PINENTRY_USER_DATA'])) {
             $passphrases = json_decode($_ENV['PINENTRY_USER_DATA'], true);
             foreach ($passphrases as $_keyId => $pass) {
                 $keyId        = $key;
-                $_keyIdLength = strlen($_keyId);
+                $_keyIdLength = mb_strlen($_keyId, '8bit');
 
                 // Get last X characters of key identifier to compare
                 if ($keyIdLength < $_keyIdLength) {
-                    $_keyId = substr($_keyId, -$keyIdLength);
+                    $_keyId = mb_substr($_keyId, -$keyIdLength, null, '8bit');
                 } else if ($keyIdLength > $_keyIdLength) {
-                    $keyId = substr($keyId, -$_keyIdLength);
+                    $keyId = mb_substr($keyId, -$_keyIdLength, null, '8bit');
                 }
 
                 if ($_keyId === $keyId) {

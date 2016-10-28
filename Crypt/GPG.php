@@ -599,7 +599,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $fingerprint = null;
 
         foreach (explode(PHP_EOL, $output) as $line) {
-            if (substr($line, 0, 3) == 'fpr') {
+            if (mb_substr($line, 0, 3, '8bit') == 'fpr') {
                 $lineExp     = explode(':', $line);
                 $fingerprint = $lineExp[9];
 

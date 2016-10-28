@@ -47,11 +47,6 @@ require_once 'Crypt/GPG.php';
 require_once 'Crypt/GPG/Exceptions.php';
 
 /**
- * Byte string operations.
- */
-require_once 'Crypt/GPG/ByteUtils.php';
-
-/**
  * Status/Error handler class.
  */
 require_once 'Crypt/GPG/ProcessHandler.php';
@@ -1131,8 +1126,9 @@ class Crypt_GPG_Engine
         $fdMessage = $this->_pipes[self::FD_MESSAGE];
 
         // select loop delay in milliseconds
-        $delay = 0;
+        $delay         = 0;
         $inputPosition = 0;
+        $eolLength     = mb_strlen(PHP_EOL, '8bit');
 
         while (true) {
             $inputStreams     = array();
@@ -1233,13 +1229,8 @@ class Crypt_GPG_Engine
             if (in_array($fdInput, $outputStreams, true)) {
                 $this->_debug('GPG is ready for input');
 
-                $chunk = Crypt_GPG_ByteUtils::substr(
-                    $inputBuffer,
-                    $inputPosition,
-                    self::CHUNK_SIZE
-                );
-
-                $length = Crypt_GPG_ByteUtils::strlen($chunk);
+                $chunk  = mb_substr($inputBuffer, $inputPosition, self::CHUNK_SIZE, '8bit');
+                $length = mb_strlen($chunk, '8bit');
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to GPG input'
@@ -1261,10 +1252,7 @@ class Crypt_GPG_Engine
                         $inputPosition += $length;
                     } else {
                         $inputPosition = 0;
-                        $inputBuffer = Crypt_GPG_ByteUtils::substr(
-                            $inputBuffer,
-                            $length
-                        );
+                        $inputBuffer   = mb_substr($inputBuffer, $length, null, '8bit');
                     }
                 }
             }
@@ -1273,7 +1261,7 @@ class Crypt_GPG_Engine
             // If the buffer is too big wait until it's smaller, we don't want
             // to use too much memory
             if (in_array($this->_input, $inputStreams, true)
-                && Crypt_GPG_ByteUtils::strlen($inputBuffer) < self::CHUNK_SIZE
+                && mb_strlen($inputBuffer, '8bit') < self::CHUNK_SIZE
             ) {
                 $this->_debug('input stream is ready for reading');
                 $this->_debug(
@@ -1282,7 +1270,7 @@ class Crypt_GPG_Engine
                 );
 
                 $chunk        = fread($this->_input, self::CHUNK_SIZE);
-                $length       = Crypt_GPG_ByteUtils::strlen($chunk);
+                $length       = mb_strlen($chunk, '8bit');
                 $inputBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -1292,13 +1280,8 @@ class Crypt_GPG_Engine
             if (in_array($fdMessage, $outputStreams, true)) {
                 $this->_debug('GPG is ready for message data');
 
-                $chunk = Crypt_GPG_ByteUtils::substr(
-                    $messageBuffer,
-                    0,
-                    self::CHUNK_SIZE
-                );
-
-                $length = Crypt_GPG_ByteUtils::strlen($chunk);
+                $chunk  = mb_substr($messageBuffer, 0, self::CHUNK_SIZE, '8bit');
+                $length = mb_strlen($chunk, '8bit');
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to GPG message'
@@ -1315,10 +1298,7 @@ class Crypt_GPG_Engine
                     $this->_closePipe(self::FD_MESSAGE);
                 } else {
                     $this->_debug('=> wrote ' . $length . ' bytes');
-                    $messageBuffer = Crypt_GPG_ByteUtils::substr(
-                        $messageBuffer,
-                        $length
-                    );
+                    $messageBuffer = mb_substr($messageBuffer, $length, null, '8bit');
                 }
             }
 
@@ -1331,7 +1311,7 @@ class Crypt_GPG_Engine
                 );
 
                 $chunk          = fread($this->_message, self::CHUNK_SIZE);
-                $length         = Crypt_GPG_ByteUtils::strlen($chunk);
+                $length         = mb_strlen($chunk, '8bit');
                 $messageBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -1346,7 +1326,7 @@ class Crypt_GPG_Engine
                 );
 
                 $chunk         = fread($fdOutput, self::CHUNK_SIZE);
-                $length        = Crypt_GPG_ByteUtils::strlen($chunk);
+                $length        = mb_strlen($chunk, '8bit');
                 $outputBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -1356,26 +1336,17 @@ class Crypt_GPG_Engine
             if (in_array($this->_output, $outputStreams, true)) {
                 $this->_debug('output stream is ready for data');
 
-                $chunk = Crypt_GPG_ByteUtils::substr(
-                    $outputBuffer,
-                    0,
-                    self::CHUNK_SIZE
-                );
-
-                $length = Crypt_GPG_ByteUtils::strlen($chunk);
+                $chunk  = mb_substr($outputBuffer, 0, self::CHUNK_SIZE, '8bit');
+                $length = mb_strlen($chunk, '8bit');
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to output stream'
                 );
 
-                $length = fwrite($this->_output, $chunk, $length);
+                $length       = fwrite($this->_output, $chunk, $length);
+                $outputBuffer = mb_substr($outputBuffer, $length, null, '8bit');
 
                 $this->_debug('=> wrote ' . $length . ' bytes');
-
-                $outputBuffer = Crypt_GPG_ByteUtils::substr(
-                    $outputBuffer,
-                    $length
-                );
             }
 
             // read error (from GPG)
@@ -1387,14 +1358,14 @@ class Crypt_GPG_Engine
                 );
 
                 $chunk        = fread($fdError, self::CHUNK_SIZE);
-                $length       = Crypt_GPG_ByteUtils::strlen($chunk);
+                $length       = mb_strlen($chunk, '8bit');
                 $errorBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
 
                 // pass lines to error handlers
                 while (($pos = strpos($errorBuffer, PHP_EOL)) !== false) {
-                    $line = Crypt_GPG_ByteUtils::substr($errorBuffer, 0, $pos);
+                    $line = mb_substr($errorBuffer, 0, $pos, '8bit');
                     foreach ($this->_errorHandlers as $handler) {
                         array_unshift($handler['args'], $line);
                         call_user_func_array(
@@ -1404,10 +1375,8 @@ class Crypt_GPG_Engine
 
                         array_shift($handler['args']);
                     }
-                    $errorBuffer = Crypt_GPG_ByteUtils::substr(
-                        $errorBuffer,
-                        $pos + Crypt_GPG_ByteUtils::strlen(PHP_EOL)
-                    );
+
+                    $errorBuffer = mb_substr($errorBuffer, $pos + $eolLength, null, '8bit');
                 }
             }
 
@@ -1420,17 +1389,17 @@ class Crypt_GPG_Engine
                 );
 
                 $chunk         = fread($fdStatus, self::CHUNK_SIZE);
-                $length        = Crypt_GPG_ByteUtils::strlen($chunk);
+                $length        = mb_strlen($chunk, '8bit');
                 $statusBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
 
                 // pass lines to status handlers
                 while (($pos = strpos($statusBuffer, PHP_EOL)) !== false) {
-                    $line = Crypt_GPG_ByteUtils::substr($statusBuffer, 0, $pos);
+                    $line = mb_substr($statusBuffer, 0, $pos, '8bit');
                     // only pass lines beginning with magic prefix
-                    if (Crypt_GPG_ByteUtils::substr($line, 0, 9) == '[GNUPG:] ') {
-                        $line = Crypt_GPG_ByteUtils::substr($line, 9);
+                    if (mb_substr($line, 0, 9, '8bit') == '[GNUPG:] ') {
+                        $line = mb_substr($line, 9, null, '8bit');
                         foreach ($this->_statusHandlers as $handler) {
                             array_unshift($handler['args'], $line);
                             call_user_func_array(
@@ -1441,10 +1410,8 @@ class Crypt_GPG_Engine
                             array_shift($handler['args']);
                         }
                     }
-                    $statusBuffer = Crypt_GPG_ByteUtils::substr(
-                        $statusBuffer,
-                        $pos + Crypt_GPG_ByteUtils::strlen(PHP_EOL)
-                    );
+
+                    $statusBuffer = mb_substr($statusBuffer, $pos + $eolLength, null, '8bit');
                 }
             }
 
@@ -1453,13 +1420,8 @@ class Crypt_GPG_Engine
                 $this->_debug('GPG is ready for command data');
 
                 // send commands
-                $chunk = Crypt_GPG_ByteUtils::substr(
-                    $this->_commandBuffer,
-                    0,
-                    self::CHUNK_SIZE
-                );
-
-                $length = Crypt_GPG_ByteUtils::strlen($chunk);
+                $chunk  = mb_substr($this->_commandBuffer, 0, self::CHUNK_SIZE, '8bit');
+                $length = mb_strlen($chunk, '8bit');
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to GPG command'
@@ -1476,10 +1438,7 @@ class Crypt_GPG_Engine
                     $this->_closePipe(self::FD_COMMAND);
                 } else {
                     $this->_debug('=> wrote ' . $length);
-                    $this->_commandBuffer = Crypt_GPG_ByteUtils::substr(
-                        $this->_commandBuffer,
-                        $length
-                    );
+                    $this->_commandBuffer = mb_substr($this->_commandBuffer, $length, null, '8bit');
                 }
             }
 

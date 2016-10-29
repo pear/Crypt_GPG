@@ -49,7 +49,7 @@ $description =
     "Guard (GnuPG). It requires the GnuPG executable to be on the system.\n\n" .
     "Though GnuPG can support symmetric-key cryptography, this package is " .
     "intended only to facilitate public-key cryptography.\n\n" .
-    "This package requires PHP version 5.2.1 or greater.";
+    "This package requires PHP version 5.4.8 or greater.";
 
 $package = new PEAR_PackageFileManager2();
 

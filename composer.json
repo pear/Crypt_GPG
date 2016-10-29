@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "php": ">=5.2.1",
+        "php": ">=5.4.8",
         "ext-mbstring": "*",
         "pear/console_commandline": "*",
         "pear/pear_exception": "*"

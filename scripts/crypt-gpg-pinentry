@@ -6,7 +6,7 @@
 // Check if we're running directly from git repo or if we're running
 // from a PEAR or Composer packaged version.
 $ds    = DIRECTORY_SEPARATOR;
-$root  = dirname(__FILE__) . $ds . '..' ;
+$root  = __DIR__ . $ds . '..' ;
 $paths = array(
     '@php-dir@', // PEAR or Composer
     $root, // Git (or Composer with wrong @php-dir@)

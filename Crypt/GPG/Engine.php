@@ -1696,24 +1696,12 @@ class Crypt_GPG_Engine
             );
         }
 
-        $setters = array('stream_set_write_buffer');
-
-        // @TODO: Bump minimum required version of PHP, and get rid
-        // of these checks in next major version
-        if (function_exists('stream_set_chunk_size')) {
-            $setters[] = 'stream_set_chunk_size'; // PHP >= 5.4.0
-        }
-        if (function_exists('stream_set_read_buffer')) {
-            $setters[] = 'stream_set_read_buffer'; // PHP >= 5.3.3
-        }
-
         // Set streams as non-blocking. See Bug #18618.
         foreach ($this->_pipes as $pipe) {
             stream_set_blocking($pipe, 0);
-
-            foreach ($setters as $function) {
-                $function($pipe, self::CHUNK_SIZE);
-            }
+            stream_set_write_buffer($pipe, self::CHUNK_SIZE);
+            stream_set_chunk_size($pipe, self::CHUNK_SIZE);
+            stream_set_read_buffer($pipe, self::CHUNK_SIZE);
         }
 
         $this->_openPipes = $this->_pipes;

@@ -307,7 +307,7 @@ class Crypt_GPG_PinEntry
     {
         // Find PinEntry config depending on the way how the package is installed
         $ds    = DIRECTORY_SEPARATOR;
-        $root  = dirname(__FILE__) . $ds . '..' . $ds . '..' . $ds;
+        $root  = __DIR__ . $ds . '..' . $ds . '..' . $ds;
         $paths = array(
             '@data-dir@' . $ds . '@package-name@' . $ds . 'data', // PEAR
             $root . 'data', // Git

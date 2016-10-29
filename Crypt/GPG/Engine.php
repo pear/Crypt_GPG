@@ -1971,7 +1971,7 @@ class Crypt_GPG_Engine
     {
         // Find PinEntry program depending on the way how the package is installed
         $ds    = DIRECTORY_SEPARATOR;
-        $root  = dirname(__FILE__) . $ds . '..' . $ds . '..' . $ds;
+        $root  = __DIR__ . $ds . '..' . $ds . '..' . $ds;
         $paths = array(
             '@bin-dir@', // PEAR
              $root . 'scripts', // Git

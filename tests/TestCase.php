@@ -96,7 +96,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
     protected function getOptions()
     {
         return array(
-            'homedir' => dirname(__FILE__) . '/' . self::HOMEDIR,
+            'homedir' => __DIR__ . '/' . self::HOMEDIR,
 //            'binary' => '/usr/bin/gpg2',
 //            'binary' => '/usr/local/bin/gpg2',
 //            'agent'  => '/usr/local/bin/gpg-agent',
@@ -113,7 +113,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         // load test configuration file if it exists
-        $configFilename = dirname(__FILE__).'/config.php';
+        $configFilename = __DIR__ . '/config.php';
         if (file_exists($configFilename)) {
             include $configFilename;
 
@@ -520,7 +520,7 @@ NfH1l4n9va0EcqKEwb25
 TEXT;
         // }}}
 
-        $directoryName = dirname(__FILE__) . '/' . self::HOMEDIR;
+        $directoryName = __DIR__ . '/' . self::HOMEDIR;
         if (!file_exists($directoryName)) {
             mkdir($directoryName);
         }
@@ -549,7 +549,7 @@ TEXT;
 
     private function _setUpTempdir()
     {
-        $directoryName = dirname(__FILE__) . '/' . self::TEMPDIR;
+        $directoryName = __DIR__ . '/' . self::TEMPDIR;
         if (!file_exists($directoryName)) {
             mkdir($directoryName);
         }
@@ -590,7 +590,7 @@ TEXT;
             }
         }
 
-        $homedir  = dirname(__FILE__) . '/' . self::HOMEDIR;
+        $homedir  = __DIR__ . '/' . self::HOMEDIR;
         $iterator = new DirectoryIterator($homedir);
 
         foreach ($iterator as $file) {
@@ -607,7 +607,7 @@ TEXT;
 
     private function _tearDownTempdir()
     {
-        $directoryName = dirname(__FILE__) . '/' . self::TEMPDIR;
+        $directoryName = __DIR__ . '/' . self::TEMPDIR;
 
         // remove temporary files and temporary directory
         $iterator = new DirectoryIterator($directoryName);
@@ -647,7 +647,7 @@ TEXT;
 
     protected function getKeyringFilename($filename)
     {
-        return dirname(__FILE__) . '/'. self::HOMEDIR . '/' . $filename;
+        return __DIR__ . '/'. self::HOMEDIR . '/' . $filename;
     }
 
     // }}}
@@ -655,7 +655,7 @@ TEXT;
 
     protected function getDataFilename($filename)
     {
-        return dirname(__FILE__) . '/'. self::DATADIR . '/' . $filename;
+        return __DIR__ . '/'. self::DATADIR . '/' . $filename;
     }
 
     // }}}
@@ -663,7 +663,7 @@ TEXT;
 
     protected function getTempFilename($filename)
     {
-        return dirname(__FILE__) . '/' . self::TEMPDIR . '/' . $filename;
+        return __DIR__ . '/' . self::TEMPDIR . '/' . $filename;
     }
 
     // }}}

@@ -195,7 +195,7 @@ class GeneralTestCase extends Crypt_GPG_TestCase
         $homedirConstraint = $this->attribute(
             $this->attributeEqualTo(
                 '_homedir',
-                dirname(__FILE__) . '/' . self::HOMEDIR
+                __DIR__ . '/' . self::HOMEDIR
             ),
             'engine'
         );

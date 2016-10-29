@@ -129,7 +129,6 @@ Internal API has been refactored.
     <file baseinstalldir="/" name="VerifyTest.php" role="test" />
    </dir> <!-- /tests -->
    <file baseinstalldir="/" name="LICENSE" role="doc" />
-   <file baseinstalldir="/" name="package" role="data" />
    <file baseinstalldir="/" name="README.md" role="doc" />
   </dir> <!-- / -->
  </contents>

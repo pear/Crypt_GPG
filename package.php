@@ -35,10 +35,10 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '2.0.0';
+$apiVersion     = '1.6.0';
 $apiState       = 'beta';
 
-$releaseVersion = '2.0.0b1';
+$releaseVersion = '1.6.0b1';
 $releaseState   = 'beta';
 $releaseNotes   =
     "This release adds GnuPG 2.1 support\n" .

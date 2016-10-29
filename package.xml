@@ -32,8 +32,8 @@ This package requires PHP version 5.2.1 or greater.</description>
  <date>2016-10-29</date>
  <time>09:59:05</time>
  <version>
-  <release>2.0.0b1</release>
-  <api>2.0.0</api>
+  <release>1.6.0b1</release>
+  <api>1.6.0</api>
  </version>
  <stability>
   <release>beta</release>
@@ -167,8 +167,8 @@ Internal API has been refactored.
  <changelog>
   <release>
    <version>
-    <release>2.0.0b1</release>
-    <api>2.0.0</api>
+    <release>1.6.0b1</release>
+    <api>1.6.0</api>
    </version>
    <stability>
     <release>beta</release>

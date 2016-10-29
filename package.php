@@ -41,7 +41,8 @@ $apiState       = 'beta';
 $releaseVersion = '2.0.0b1';
 $releaseState   = 'beta';
 $releaseNotes   =
-    "This release adds GnuPG 2.1 support"
+    "This release adds GnuPG 2.1 support\n" .
+    "Internal API has been refactored.";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

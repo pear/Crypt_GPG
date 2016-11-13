@@ -231,7 +231,12 @@ class Crypt_GPG_ProcessHandler
         case 'NO_PUBKEY':
         case 'NO_SECKEY':
             $this->data['ErrorKeyId'] = $tokens[1];
-            $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+
+            if ($this->errorCode != Crypt_GPG::ERROR_MISSING_PASSPHRASE
+                && $this->errorCode != Crypt_GPG::ERROR_BAD_PASSPHRASE
+            ) {
+                $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+            }
 
             // note: this message is also received if there are multiple
             // recipients and a previous key had a correct passphrase.
@@ -564,6 +569,7 @@ class Crypt_GPG_ProcessHandler
             case Crypt_GPG::ERROR_KEY_NOT_FOUND:
                 // ignore not found key errors
                 break;
+
             case Crypt_GPG::ERROR_FILE_PERMISSIONS:
                 if (!empty($this->data['ErrorFilename'])) {
                     throw new Crypt_GPG_FileException(
@@ -581,6 +587,7 @@ class Crypt_GPG_ProcessHandler
                     'GnuPG data files are readable by the current user.',
                     $code
                 );
+
             default:
                 throw new Crypt_GPG_Exception(
                     'Unknown error getting keys. ' . $note, $code
@@ -597,6 +604,7 @@ class Crypt_GPG_ProcessHandler
                     $code,
                     $this->operationArg
                 );
+
             case Crypt_GPG::ERROR_DELETE_PRIVATE_KEY:
                 throw new Crypt_GPG_DeletePrivateKeyException(
                     'Private key must be deleted before public key can be ' .
@@ -604,6 +612,7 @@ class Crypt_GPG_ProcessHandler
                     $code,
                     $this->operationArg
                 );
+
             default:
                 throw new Crypt_GPG_Exception(
                     'Unknown error deleting key. ' . $note, $code
@@ -655,14 +664,17 @@ class Crypt_GPG_ProcessHandler
                     $code,
                     !empty($this->data['ErrorKeyId']) ? $this->data['ErrorKeyId'] : null
                 );
+
             case Crypt_GPG::ERROR_BAD_PASSPHRASE:
                 throw new Crypt_GPG_BadPassphraseException(
                     'Cannot sign data. Incorrect passphrase provided.', $code
                 );
+
             case Crypt_GPG::ERROR_MISSING_PASSPHRASE:
                 throw new Crypt_GPG_BadPassphraseException(
                     'Cannot sign data. No passphrase provided.', $code
                 );
+
             default:
                 throw new Crypt_GPG_Exception(
                     "Unknown error {$this->operation}ing data. $note", $code
@@ -675,16 +687,19 @@ class Crypt_GPG_ProcessHandler
             case Crypt_GPG::ERROR_BAD_SIGNATURE:
                 // ignore bad signature errors
                 break;
+
             case Crypt_GPG::ERROR_NO_DATA:
                 throw new Crypt_GPG_NoDataException(
                     'No valid signature data found.', $code
                 );
+
             case Crypt_GPG::ERROR_KEY_NOT_FOUND:
                 throw new Crypt_GPG_KeyNotFoundException(
                     'Public key required for data verification not in keyring.',
                     $code,
                     !empty($this->data['ErrorKeyId']) ? $this->data['ErrorKeyId'] : null
                 );
+
             default:
                 throw new Crypt_GPG_Exception(
                     'Unknown error validating signature details. ' . $note,
@@ -698,6 +713,7 @@ class Crypt_GPG_ProcessHandler
             case Crypt_GPG::ERROR_BAD_SIGNATURE:
                 // ignore bad signature errors
                 break;
+
             case Crypt_GPG::ERROR_KEY_NOT_FOUND:
                 if (!empty($this->data['MissingKeys'])) {
                     $keyId = reset($this->data['MissingKeys']);
@@ -737,6 +753,7 @@ class Crypt_GPG_ProcessHandler
                 throw new Crypt_GPG_InvalidKeyParamsException(
                     'Invalid key algorithm specified.', $code
                 );
+
             default:
                 throw new Crypt_GPG_Exception(
                     'Unknown error generating key-pair. ' . $note, $code

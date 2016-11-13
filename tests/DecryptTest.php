@@ -399,6 +399,63 @@ TEXT;
     }
 
     // }}}
+    // {{{ testDecryptDualNoPassphraseKeyMissing()
+
+    /**
+     * @expectedException Crypt_GPG_BadPassphraseException
+     *
+     * @group string
+     */
+    public function testDecryptDualNoPassphraseKeyMissing()
+    {
+        // encrypted with both first-keypair@example.com and
+        // second-keypair@example.com
+        // {{{ dual encrypted data
+        $encryptedData = <<<TEXT
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+hQIOA5+T+RFnKO8SEAf7BO/zLK6gDt5epMOEnHc9ESdSTy8yExdoSxHhvTFxWfwi
+AwMtBEur8sotSVt+Q87xYzjzE77+FQYS9oYCivlK/Nedblj3MiRuUWhM+Q9tbP3b
+KbwEwaQlrpNphQsKZOWkliZWmFJWnQ1s1Pm6lPlhwTNhcwkapm8EXuWFExJnY9yW
+EZjUOhVmnkitKykKup8Brvfm2QpGXoFZtHFKXTi162Lue9N0tDm6s3JnCIhMFQgI
+fyAikcsJKpbUgeGmzlWJO8QkH81QMuKpqfUb8R1dswhDp6RKXhoXS43zkhH8QSbM
+Cp9AWdv3qsWBUqzWavCxjtIsogYO+gFLl/Vuw5Y87Af/b7OQgLP1v6xKZcrTvFCF
+hxGxn+5M8E2GyJaKpQ1GZ+Wv+IzPGetm7rWf6q71hchAkxFMczIPSK7aARm9CNVo
+7tCdcUmUTgLhG1/0OfmkbwJUjdSpOtz8+TvIZa20Jj9a1G8WT3KTeivKMqBPhgk4
+sD7OJPDCYQNSQEw6pAn4oBrhJlDUkpCK6wIbUhzeq3MUwtM1e+qpCr/k4In4NVq6
+cmoC7W//9J69ecuxmiUHRhZ4CALRxQMAsSxMRnNJ26JY4ko82Rfvbrz8QEmKcIyT
+bTdAMsZ18m9XXrnc2ACDDMQyUkneQDUZSt7V67ZiN4Upi295CynIbNEMmcH/13Aa
+aoUCDgOy9U5HV+IkUBAIALGICOFzyfquWZ0ZhPGVdDWx1yNcApnzIgZx1JbBpMyc
+2jb9aQHwGId26gv/ym/M/3FJ0lv+IAcktMjO4dwYLnUuBa6BOFFybZi3gYvXtSuy
+iW4ygVjIsYixhvbsyaVCoB/MsNBFrQAHEShaxALBkI/dv+yyD8BifU4Yj9LFcAZO
+mFDraOgYfHsur5eevYTXozf5wU7phu9v6zo5bk8zgZSqs8AgyscstZWCqCtR/cG0
+t9lAIovGPsIcA12qvkm/A0WiBMEWhGryzHTv9oRsFztOFtqH+MmLdlvWjElw8hKt
+fFJB+bhHNO9BUIrwnuH79cA4aXOy1+xG+ECs7oJbcisIANqJKalQLgBYEjbucpDg
+O8i/c4RmV9J7VczpZp7ZREMpTmv9nV849OFXT1strsb/+vXOXOyLToG1gOxRfJr2
+q9jFjpyMAtrr/aHhXMKK1OMhhcdkQMEKuHTvon5KleZOQoVmIqa3kUtWNW1vFBIP
+UfJFH202EJLOLC25rXCtzRsJE0HWiYDyLqKMQcSQhTcngLBLmeDLH3DeGUIDwcZe
+oWgUg8wB/oSoU4AchShzO+yM6bcmffcaHFqwll9gdu9walnJAAOb8+r6LGGlsGTV
+qhnR0LM3Khp+HOFdaxcQT6BV1aw/D6Z5hIi+Am0VTi0HlFr/gwleyYaP+742Z6K0
+s8bSVgFT2Pjik+byARWzRwWjmi0jT7QsgITM73aBKPDXiArEPkv8YtC9HzUj0lCY
+gX7Eg2ZqISULFydBckMJ6drojMMQiqZBeEc09GupSBL1zldnKHfiXBTw
+=QYjj
+-----END PGP MESSAGE-----
+
+TEXT;
+        // }}}
+
+        // #21148: Make sure that proper exception is thrown
+        // when decrypting without specyfying a passphrase
+
+        // in this case we remove one of private keys to make
+        // sure proper exception is thrown also in this case
+        $this->gpg->deletePrivateKey('first-keypair@example.com');
+
+        $this->gpg->decrypt($encryptedData);
+    }
+
+    // }}}
     // {{{ testDecryptSignedData()
 
     /**

@@ -29,10 +29,10 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2016-10-29</date>
- <time>09:59:05</time>
+ <date>2016-11-25</date>
+ <time>17:02:41</time>
  <version>
-  <release>1.6.0b1</release>
+  <release>1.6.0b2</release>
   <api>1.6.0</api>
  </version>
  <stability>
@@ -43,11 +43,14 @@ This package requires PHP version 5.4.8 or greater.</description>
  <notes>
 This release adds GnuPG 2.1 support
 Internal API has been refactored.
+
+Fixed Bug #21148: Throw bad-passphrase exception instead of key-not-found exception on decryption
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
    <dir name="Crypt">
     <dir name="GPG">
+     <file baseinstalldir="/" name="aaa" role="php" />
      <file baseinstalldir="/" name="Engine.php" role="php">
       <tasks:replace from="@bin-dir@" to="bin_dir" type="pear-config" />
      </file>
@@ -60,6 +63,7 @@ Internal API has been refactored.
      </file>
      <file baseinstalldir="/" name="ProcessControl.php" role="php" />
      <file baseinstalldir="/" name="ProcessHandler.php" role="php" />
+     <file baseinstalldir="/" name="qqq" role="php" />
      <file baseinstalldir="/" name="Signature.php" role="php" />
      <file baseinstalldir="/" name="SignatureCreationInfo.php" role="php" />
      <file baseinstalldir="/" name="SubKey.php" role="php" />
@@ -107,6 +111,7 @@ Internal API has been refactored.
     <file baseinstalldir="/" name="DecryptTest.php" role="test" />
     <file baseinstalldir="/" name="DeletePrivateKeyTest.php" role="test" />
     <file baseinstalldir="/" name="DeletePublicKeyTest.php" role="test" />
+    <file baseinstalldir="/" name="eee" role="test" />
     <file baseinstalldir="/" name="EncryptAndSignTest.php" role="test" />
     <file baseinstalldir="/" name="EncryptTest.php" role="test" />
     <file baseinstalldir="/" name="ExceptionsTest.php" role="test" />
@@ -167,18 +172,20 @@ Internal API has been refactored.
  <changelog>
   <release>
    <version>
-    <release>1.6.0b1</release>
+    <release>1.6.0b2</release>
     <api>1.6.0</api>
    </version>
    <stability>
     <release>beta</release>
     <api>beta</api>
    </stability>
-   <date>2016-10-29</date>
+   <date>2016-11-25</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
 This release adds GnuPG 2.1 support
 Internal API has been refactored.
+
+Fixed Bug #21148: Throw bad-passphrase exception instead of key-not-found exception on decryption
    </notes>
   </release>
  </changelog>

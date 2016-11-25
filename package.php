@@ -38,11 +38,12 @@ PEAR::setErrorHandling(PEAR_ERROR_DIE);
 $apiVersion     = '1.6.0';
 $apiState       = 'beta';
 
-$releaseVersion = '1.6.0b1';
+$releaseVersion = '1.6.0b2';
 $releaseState   = 'beta';
 $releaseNotes   =
     "This release adds GnuPG 2.1 support\n" .
-    "Internal API has been refactored.";
+    "Internal API has been refactored.\n\n" .
+    "Fixed Bug #21148: Throw bad-passphrase exception instead of key-not-found exception on decryption";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

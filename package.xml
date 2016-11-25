@@ -50,7 +50,6 @@ Fixed Bug #21148: Throw bad-passphrase exception instead of key-not-found except
   <dir baseinstalldir="/" name="/">
    <dir name="Crypt">
     <dir name="GPG">
-     <file baseinstalldir="/" name="aaa" role="php" />
      <file baseinstalldir="/" name="Engine.php" role="php">
       <tasks:replace from="@bin-dir@" to="bin_dir" type="pear-config" />
      </file>
@@ -63,7 +62,6 @@ Fixed Bug #21148: Throw bad-passphrase exception instead of key-not-found except
      </file>
      <file baseinstalldir="/" name="ProcessControl.php" role="php" />
      <file baseinstalldir="/" name="ProcessHandler.php" role="php" />
-     <file baseinstalldir="/" name="qqq" role="php" />
      <file baseinstalldir="/" name="Signature.php" role="php" />
      <file baseinstalldir="/" name="SignatureCreationInfo.php" role="php" />
      <file baseinstalldir="/" name="SubKey.php" role="php" />
@@ -111,7 +109,6 @@ Fixed Bug #21148: Throw bad-passphrase exception instead of key-not-found except
     <file baseinstalldir="/" name="DecryptTest.php" role="test" />
     <file baseinstalldir="/" name="DeletePrivateKeyTest.php" role="test" />
     <file baseinstalldir="/" name="DeletePublicKeyTest.php" role="test" />
-    <file baseinstalldir="/" name="eee" role="test" />
     <file baseinstalldir="/" name="EncryptAndSignTest.php" role="test" />
     <file baseinstalldir="/" name="EncryptTest.php" role="test" />
     <file baseinstalldir="/" name="ExceptionsTest.php" role="test" />
@@ -123,7 +120,6 @@ Fixed Bug #21148: Throw bad-passphrase exception instead of key-not-found except
     <file baseinstalldir="/" name="ImportKeyTest.php" role="test" />
     <file baseinstalldir="/" name="KeyGeneratorTest.php" role="test" />
     <file baseinstalldir="/" name="KeyTest.php" role="test" />
-    <file baseinstalldir="/" name="phpunit" role="test" />
     <file baseinstalldir="/" name="phpunit.xml" role="test" />
     <file baseinstalldir="/" name="SignatureCreationInfoTest.php" role="test" />
     <file baseinstalldir="/" name="SignatureTest.php" role="test" />

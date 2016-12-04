@@ -1581,7 +1581,7 @@ class Crypt_GPG_Engine
                         } else if (preg_match('/gpg-agent\[([0-9]+)\].* started/', $line, $m)) {
                             $this->_agentInfo .= ':' . $m[1] . ':1';
                         }
-                    } else if (preg_match('/GPG_AGENT_INFO=([^;]+)/', $line, $m)) {
+                    } else if (preg_match('/GPG_AGENT_INFO[=\s]([^;]+)/', $line, $m)) {
                         $this->_agentInfo = $m[1];
                         break;
                     }

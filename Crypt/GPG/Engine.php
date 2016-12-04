@@ -151,6 +151,19 @@ class Crypt_GPG_Engine
     // {{{ private class properties
 
     /**
+     * Whether or not to use strict mode
+     *
+     * When set to true, any clock problems (e.g. keys generate in future)
+     * are errors, otherwise they are just warnings.
+     *
+     * Strict mode is disabled by default.
+     *
+     * @var boolean
+     * @see Crypt_GPG_Engine::__construct()
+     */
+    private $_strict = false;
+
+    /**
      * Whether or not to use debugging mode
      *
      * When set to true, every GPG command is echoed before it is run. Sensitive
@@ -469,6 +482,10 @@ class Crypt_GPG_Engine
      *                                       a list of know default locations.
      *                                       When set to FALSE `gpgconf --kill`
      *                                       will not be executed via destructor.
+     * - <kbd>boolean strict</kbd>         - In strict mode clock problems on
+     *                                       subkeys and signatures are not ignored
+     *                                       (--ignore-time-conflict
+     *                                       and --ignore-valid-from options)
      * - <kbd>mixed debug</kbd>            - whether or not to use debug mode.
      *                                       When debug mode is on, all
      *                                       communication to and from the GPG
@@ -665,6 +682,8 @@ class Crypt_GPG_Engine
         if (array_key_exists('debug', $options)) {
             $this->_debug = $options['debug'];
         }
+
+        $this->_strict = !empty($options['strict']);
     }
 
     // }}}
@@ -1639,6 +1658,11 @@ class Crypt_GPG_Engine
         // Since 2.1.13 we can use "loopback mode" instead of gpg-agent
         if (version_compare($version, '2.1.13', 'ge')) {
             $defaultArguments[] = '--pinentry-mode loopback';
+        }
+
+        if (!$this->_strict) {
+            $defaultArguments[] = '--ignore-time-conflict';
+            $defaultArguments[] = '--ignore-valid-from';
         }
 
         $arguments = array_merge($defaultArguments, $this->_arguments);

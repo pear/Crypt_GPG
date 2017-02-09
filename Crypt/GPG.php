@@ -290,7 +290,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function importKey($data)
     {
-        return $this->_importKey($data, false);
+        return $this->_importKey($data, false, false);
     }
 
     // }}}
@@ -304,6 +304,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * {@link Crypt_GPG::deletePrivateKey()}.
      *
      * @param string $filename the key file to be imported.
+     * @param boolean $batchMode flag to specify if the file is to be imported
+     *	      in batch mode, so does not request passphrase for a secret key.
      *
      * @return array an associative array containing the following elements:
      *               - <kbd>fingerprint</kbd>       - the fingerprint of the
@@ -331,9 +333,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function importKeyFile($filename)
+    public function importKeyFile($filename,$batchMode = false)
     {
-        return $this->_importKey($filename, true);
+        return $this->_importKey($filename, true, $batchMode);
     }
 
     // }}}
@@ -1457,8 +1459,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Imports a public or private key into the keyring
      *
-     * @param string  $key    the key to be imported.
-     * @param boolean $isFile whether or not the input is a filename.
+     * @param string  $key		the key to be imported.
+     * @param boolean $isFile		whether or not the input is a filename.
+     * @param boolean $batchMode	whether or not to import in batch mode.
      *
      * @return array an associative array containing the following elements:
      *               - <kbd>fingerprint</kbd>       - the fingerprint of the
@@ -1485,7 +1488,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    protected function _importKey($key, $isFile)
+    protected function _importKey($key, $isFile, $batchMode)
     {
         $result = array();
 
@@ -1515,6 +1518,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
             && version_compare($version, '1.0.7', 'lt')
         ) {
             $arguments[] = '--allow-secret-key-import';
+        }
+
+        if ($batchMode) {
+            $arguments[] = '--batch';
         }
 
         $this->engine->reset();

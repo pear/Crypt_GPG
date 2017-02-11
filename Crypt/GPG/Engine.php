@@ -96,7 +96,7 @@ class Crypt_GPG_Engine
     /**
      * Size of data chunks that are sent to and retrieved from the IPC pipes.
      *
-     * The value of 65536 has been choosen empirically
+     * The value of 65536 has been chosen empirically
      * as the one with best performance.
      *
      * @see https://pear.php.net/bugs/bug.php?id=21077
@@ -1259,7 +1259,7 @@ class Crypt_GPG_Engine
                 if ($length === 0) {
                     // If we wrote 0 bytes it was either EAGAIN or EPIPE. Since
                     // the pipe was seleted for writing, we assume it was EPIPE.
-                    // There's no way to get the actual erorr code in PHP. See
+                    // There's no way to get the actual error code in PHP. See
                     // PHP Bug #39598. https://bugs.php.net/bug.php?id=39598
                     $this->_debug('=> broken pipe on GPG input');
                     $this->_debug('=> closing pipe GPG input');
@@ -1310,7 +1310,7 @@ class Crypt_GPG_Engine
                 if ($length === 0) {
                     // If we wrote 0 bytes it was either EAGAIN or EPIPE. Since
                     // the pipe was seleted for writing, we assume it was EPIPE.
-                    // There's no way to get the actual erorr code in PHP. See
+                    // There's no way to get the actual error code in PHP. See
                     // PHP Bug #39598. https://bugs.php.net/bug.php?id=39598
                     $this->_debug('=> broken pipe on GPG message');
                     $this->_debug('=> closing pipe GPG message');
@@ -1450,7 +1450,7 @@ class Crypt_GPG_Engine
                 if ($length === 0) {
                     // If we wrote 0 bytes it was either EAGAIN or EPIPE. Since
                     // the pipe was seleted for writing, we assume it was EPIPE.
-                    // There's no way to get the actual erorr code in PHP. See
+                    // There's no way to get the actual error code in PHP. See
                     // PHP Bug #39598. https://bugs.php.net/bug.php?id=39598
                     $this->_debug('=> broken pipe on GPG command');
                     $this->_debug('=> closing pipe GPG command');

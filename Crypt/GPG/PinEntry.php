@@ -45,7 +45,7 @@ require_once 'Console/CommandLine.php';
  * automatically enters the PIN in response to gpg-agent requests. No user-
  * interaction required.
  *
- * Thie pinentry can be run independently for testing and debugging with the
+ * The pinentry can be run independently for testing and debugging with the
  * following syntax:
  *
  * <pre>

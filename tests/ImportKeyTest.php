@@ -130,9 +130,6 @@ NN5B7Vl2JdxBuwWJrdfUb9UQzw==
 TEXT;
         // }}}
 
-        // In GnuPG 2.1 importing private keys requires passphrase
-        $this->gpg->addPassphrase('4E8C0DEB', 'test');
-
         $result = $this->gpg->importKey($privateKeyData);
         $this->assertEquals($expectedResult, $result);
     }
@@ -242,9 +239,6 @@ NN5B7Vl2JdxBuwWJrdfUb9UQzw==
 
 TEXT;
         // }}}
-
-        // In GnuPG 2.1 importing private keys requires passphrase
-        $this->gpg->addPassphrase('4E8C0DEB', 'test');
 
         $result = $this->gpg->importKey($privateKeyData);
 
@@ -392,9 +386,6 @@ TEXT;
             'private_unchanged' => 0
         );
 
-        // In GnuPG 2.1 importing private keys requires passphrase
-        $this->gpg->addPassphrase('4E8C0DEB', 'test');
-
         $filename = $this->getDataFilename('testImportKeyFile_private.asc');
         $result   = $this->gpg->importKeyFile($filename);
 
@@ -432,9 +423,6 @@ TEXT;
      */
     public function testImportKeyFileAlreadyImported_private()
     {
-        // In GnuPG 2.1 importing private keys requires passphrase
-        $this->gpg->addPassphrase('4E8C0DEB', 'test');
-
         $filename = $this->getDataFilename('testImportKeyFile_private.asc');
         $result   = $this->gpg->importKeyFile($filename);
 

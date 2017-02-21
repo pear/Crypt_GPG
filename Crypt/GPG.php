@@ -1517,6 +1517,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
             $arguments[] = '--allow-secret-key-import';
         }
 
+        if (empty($this->passphrases)) {
+            $arguments[] = '--batch';
+        }
+
         $this->engine->reset();
         $this->engine->setPins($this->passphrases);
         $this->engine->setOperation('--import', $arguments);

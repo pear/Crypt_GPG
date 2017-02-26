@@ -539,7 +539,7 @@ class Crypt_GPG_ProcessHandler
      */
     public function throwException($exitcode = 0)
     {
-        if ($exitcode != 0 && $this->errorCode === Crypt_GPG::ERROR_NONE) {
+        if ($exitcode > 0 && $this->errorCode === Crypt_GPG::ERROR_NONE) {
             if ($this->needPassphrase > 0) {
                 $this->errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
             } else if ($this->operation != 'import') {

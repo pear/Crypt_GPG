@@ -1758,9 +1758,16 @@ class Crypt_GPG_Engine
                 $this->_closePipe($pipeNumber);
             }
 
+            $status   = proc_get_status($this->_process);
             $exitCode = proc_close($this->_process);
 
-            if ($exitCode != 0) {
+            // proc_close() can return -1 in some cases,
+            // get the real exit code from the process status
+            if ($exitCode < 0 && $status && !$status['running']) {
+                $exitCode = $status['exitcode'];
+            }
+
+            if ($exitCode > 0) {
                 $this->_debug(
                     '=> subprocess returned an unexpected exit code: ' .
                     $exitCode

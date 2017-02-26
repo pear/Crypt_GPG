@@ -29,14 +29,14 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2016-12-06</date>
- <time>10:09:32</time>
+ <date>2017-02-26</date>
+ <time>09:16:13</time>
  <version>
-  <release>1.6.0b3</release>
+  <release>1.6.0</release>
   <api>1.6.0</api>
  </version>
  <stability>
-  <release>beta</release>
+  <release>stable</release>
   <api>beta</api>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
@@ -44,8 +44,8 @@ This package requires PHP version 5.4.8 or greater.</description>
 This release adds GnuPG 2.1 support
 Internal API has been refactored.
 
-Fix Bug #21151: GPG-AGENT process is not automatically closed when using GnuPG 2.0
-Fix Bug #21152: Ignore time conflicts (by default)
+Fix Bug #21182: Ignore invalid proc_close() exit code
+Fix Bug G#28:   Use --batch argument for key imports when no passphrase is provided.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -169,21 +169,21 @@ Fix Bug #21152: Ignore time conflicts (by default)
  <changelog>
   <release>
    <version>
-    <release>1.6.0b3</release>
+    <release>1.6.0</release>
     <api>1.6.0</api>
    </version>
    <stability>
-    <release>beta</release>
+    <release>stable</release>
     <api>beta</api>
    </stability>
-   <date>2016-12-06</date>
+   <date>2017-02-26</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
 This release adds GnuPG 2.1 support
 Internal API has been refactored.
 
-Fix Bug #21151: GPG-AGENT process is not automatically closed when using GnuPG 2.0
-Fix Bug #21152: Ignore time conflicts (by default)
+Fix Bug #21182: Ignore invalid proc_close() exit code
+Fix Bug G#28:   Use --batch argument for key imports when no passphrase is provided.
    </notes>
   </release>
  </changelog>

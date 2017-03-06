@@ -97,6 +97,10 @@ class Crypt_GPG_SignatureCreationInfo
         5 => 'md2',
         6 => 'tiger192',
         7 => 'haval-5-160',
+        8 => 'sha256',
+        9 => 'sha384',
+        10 => 'sha512',
+        11 => 'sha224',
     );
 
     /**

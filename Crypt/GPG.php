@@ -1660,7 +1660,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
 
         $this->engine->reset();
         $this->engine->setPins($this->decryptKeys);
-        $this->engine->setOperation('--decrypt');
+        $this->engine->setOperation('--decrypt --skip-verify');
         $this->engine->setInput($input);
         $this->engine->setOutput($output);
         $this->engine->run();

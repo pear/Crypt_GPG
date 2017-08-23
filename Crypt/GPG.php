@@ -1487,28 +1487,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     protected function _importKey($key, $isFile)
     {
-        $result = array();
-
-        if ($isFile) {
-            $input = @fopen($key, 'rb');
-            if ($input === false) {
-                throw new Crypt_GPG_FileException(
-                    'Could not open key file "' . $key . '" for importing.',
-                    0,
-                    $key
-                );
-            }
-        } else {
-            $input = strval($key);
-            if ($input == '') {
-                throw new Crypt_GPG_NoDataException(
-                    'No valid GPG key data found.',
-                    self::ERROR_NO_DATA
-                );
-            }
-        }
-
+        $result    = array();
         $arguments = array();
+        $input     = $this->_prepareInput($key, $isFile, false);
         $version   = $this->engine->getVersion();
 
         if (version_compare($version, '1.0.5', 'ge')
@@ -1621,38 +1602,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
             );
         }
 
-        if ($isFile) {
-            $input = @fopen($data, 'rb');
-            if ($input === false) {
-                throw new Crypt_GPG_FileException(
-                    'Could not open input file "' . $data .
-                    '" for encryption.',
-                    0,
-                    $data
-                );
-            }
-        } else {
-            $input = strval($data);
-        }
-
-        if ($outputFile === null) {
-            $output = '';
-        } else {
-            $output = @fopen($outputFile, 'wb');
-            if ($output === false) {
-                if ($isFile) {
-                    fclose($input);
-                }
-                throw new Crypt_GPG_FileException(
-                    'Could not open output file "' . $outputFile .
-                    '" for storing encrypted data.',
-                    0,
-                    $outputFile
-                );
-            }
-        }
-
+        $input     = $this->_prepareInput($data, $isFile);
+        $output    = $this->_prepareOutput($outputFile, $input);
         $arguments = $armor ? array('--armor') : array();
+
         foreach ($this->encryptKeys as $key) {
             $arguments[] = '--recipient ' . escapeshellarg($key['fingerprint']);
         }
@@ -1702,43 +1655,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     protected function _decrypt($data, $isFile, $outputFile)
     {
-        if ($isFile) {
-            $input = @fopen($data, 'rb');
-            if ($input === false) {
-                throw new Crypt_GPG_FileException(
-                    'Could not open input file "' . $data .
-                    '" for decryption.',
-                    0,
-                    $data
-                );
-            }
-        } else {
-            $input = strval($data);
-            if ($input == '') {
-                throw new Crypt_GPG_NoDataException(
-                    'Cannot decrypt data. No PGP encrypted data was found in '.
-                    'the provided data.',
-                    self::ERROR_NO_DATA
-                );
-            }
-        }
-
-        if ($outputFile === null) {
-            $output = '';
-        } else {
-            $output = @fopen($outputFile, 'wb');
-            if ($output === false) {
-                if ($isFile) {
-                    fclose($input);
-                }
-                throw new Crypt_GPG_FileException(
-                    'Could not open output file "' . $outputFile .
-                    '" for storing decrypted data.',
-                    0,
-                    $outputFile
-                );
-            }
-        }
+        $input  = $this->_prepareInput($data, $isFile, false);
+        $output = $this->_prepareOutput($outputFile, $input);
 
         $this->engine->reset();
         $this->engine->setPins($this->decryptKeys);
@@ -1807,35 +1725,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
             );
         }
 
-        if ($isFile) {
-            $input = @fopen($data, 'rb');
-            if ($input === false) {
-                throw new Crypt_GPG_FileException(
-                    'Could not open input file "' . $data . '" for signing.',
-                    0,
-                    $data
-                );
-            }
-        } else {
-            $input = strval($data);
-        }
-
-        if ($outputFile === null) {
-            $output = '';
-        } else {
-            $output = @fopen($outputFile, 'wb');
-            if ($output === false) {
-                if ($isFile) {
-                    fclose($input);
-                }
-                throw new Crypt_GPG_FileException(
-                    'Could not open output file "' . $outputFile .
-                    '" for storing signed data.',
-                    0,
-                    $outputFile
-                );
-            }
-        }
+        $input  = $this->_prepareInput($data, $isFile);
+        $output = $this->_prepareOutput($outputFile, $input);
 
         switch ($mode) {
         case self::SIGN_MODE_DETACHED:
@@ -1850,7 +1741,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
             break;
         }
 
-        $arguments  = array();
+        $arguments = array();
 
         if ($armor) {
             $arguments[] = '--armor';
@@ -1924,39 +1815,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
             );
         }
 
-
-        if ($isFile) {
-            $input = @fopen($data, 'rb');
-            if ($input === false) {
-                throw new Crypt_GPG_FileException(
-                    'Could not open input file "' . $data .
-                    '" for encrypting and signing.',
-                    0,
-                    $data
-                );
-            }
-        } else {
-            $input = strval($data);
-        }
-
-        if ($outputFile === null) {
-            $output = '';
-        } else {
-            $output = @fopen($outputFile, 'wb');
-            if ($output === false) {
-                if ($isFile) {
-                    fclose($input);
-                }
-                throw new Crypt_GPG_FileException(
-                    'Could not open output file "' . $outputFile .
-                    '" for storing encrypted, signed data.',
-                    0,
-                    $outputFile
-                );
-            }
-        }
-
-        $arguments  = $armor ? array('--armor') : array();
+        $input     = $this->_prepareInput($data, $isFile);
+        $output    = $this->_prepareOutput($outputFile, $input);
+        $arguments = $armor ? array('--armor') : array();
 
         foreach ($this->signKeys as $key) {
             $arguments[] = '--local-user ' .
@@ -2017,24 +1878,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
             $arguments = array('--enable-special-filenames');
         }
 
-        if ($isFile) {
-            $input = @fopen($data, 'rb');
-            if ($input === false) {
-                throw new Crypt_GPG_FileException(
-                    'Could not open input file "' . $data . '" for verifying.',
-                    0,
-                    $data
-                );
-            }
-        } else {
-            $input = strval($data);
-            if ($input == '') {
-                throw new Crypt_GPG_NoDataException(
-                    'No valid signature data found.',
-                    self::ERROR_NO_DATA
-                );
-            }
-        }
+        $input = $this->_prepareInput($data, $isFile, false);
 
         $this->engine->reset();
 
@@ -2095,42 +1939,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     protected function _decryptAndVerify($data, $isFile, $outputFile)
     {
-        if ($isFile) {
-            $input = @fopen($data, 'rb');
-            if ($input === false) {
-                throw new Crypt_GPG_FileException(
-                    'Could not open input file "' . $data .
-                    '" for decrypting and verifying.',
-                    0,
-                    $data
-                );
-            }
-        } else {
-            $input = strval($data);
-            if ($input == '') {
-                throw new Crypt_GPG_NoDataException(
-                    'No valid encrypted signed data found.',
-                    self::ERROR_NO_DATA
-                );
-            }
-        }
-
-        if ($outputFile === null) {
-            $output = '';
-        } else {
-            $output = @fopen($outputFile, 'wb');
-            if ($output === false) {
-                if ($isFile) {
-                    fclose($input);
-                }
-                throw new Crypt_GPG_FileException(
-                    'Could not open output file "' . $outputFile .
-                    '" for storing decrypted data.',
-                    0,
-                    $outputFile
-                );
-            }
-        }
+        $input  = $this->_prepareInput($data, $isFile, false);
+        $output = $this->_prepareOutput($outputFile, $input);
 
         $this->engine->reset();
         $this->engine->setPins($this->decryptKeys);
@@ -2149,6 +1959,78 @@ class Crypt_GPG extends Crypt_GPGAbstract
         }
 
         return $return;
+    }
+
+    // }}}
+    // {{{ _prepareInput()
+
+    /**
+     * Prepares command input
+     *
+     * @param string  $data       the input data.
+     * @param boolean $isFile     whether or not the input is a filename.
+     * @param boolean $allowEmpty whether to check if the input is not empty.
+     *
+     * @throws Crypt_GPG_NoDataException if the key data is missing.
+     * @throws Crypt_GPG_FileException if the file is not readable.
+     */
+    protected function _prepareInput($data, $isFile = false, $allowEmpty = true)
+    {
+        if ($isFile) {
+            $input = @fopen($data, 'rb');
+            if ($input === false) {
+                throw new Crypt_GPG_FileException(
+                    'Could not open input file "' . $data . '"',
+                    0,
+                    $data
+                );
+            }
+        } else {
+            $input = strval($data);
+            if (!$allowEmpty && $input === '') {
+                throw new Crypt_GPG_NoDataException(
+                    'No valid input data found.',
+                    self::ERROR_NO_DATA
+                );
+            }
+        }
+
+        return $input;
+    }
+
+    // }}}
+    // {{{ _prepareOutput()
+
+    /**
+     * Prepares command output
+     *
+     * @param string  $outputFile the name of the file in which the output
+     *                            data should be stored. If null, the output
+     *                            data is returned as a string.
+     * @param boolean $input      the input resource, in case it would need
+     *                            to be released (closed) on exception.
+     *
+     * @throws Crypt_GPG_FileException if the file is not writeable.
+     */
+    protected function _prepareOutput($outputFile, $input = null)
+    {
+        if ($outputFile === null) {
+            $output = '';
+        } else {
+            $output = @fopen($outputFile, 'wb');
+            if ($output === false) {
+                if (is_resource($input)) {
+                    fclose($input);
+                }
+                throw new Crypt_GPG_FileException(
+                    'Could not open output file "' . $outputFile . '"',
+                    0,
+                    $outputFile
+                );
+            }
+        }
+
+        return $output;
     }
 
     // }}}

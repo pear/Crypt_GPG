@@ -896,7 +896,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *               {@link Crypt_GPG_Signature} objects for the signed data.
      *
      * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
-     *         decrypt the data is not in the user's keyring.
+     *         decrypt the data or the public key to verify the signature
+     *         is not in the user's keyring.
      *
      * @throws Crypt_GPG_NoDataException if specified data does not contain
      *         GPG encrypted data.
@@ -940,7 +941,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *               element is null.
      *
      * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
-     *         decrypt the data is not in the user's keyring.
+     *         decrypt the data or the public key to verify the signature
+     *         is not in the user's keyring.
      *
      * @throws Crypt_GPG_NoDataException if specified data does not contain
      *         GPG encrypted data.
@@ -1106,6 +1108,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *               signed data. For each signature that is valid, the
      *               {@link Crypt_GPG_Signature::isValid()} will return true.
      *
+     * @throws Crypt_GPG_KeyNotFoundException if the public key needed for
+     *         signature verification is not in the user's keyring.
+     *
      * @throws Crypt_GPG_NoDataException if the provided data is not signed
      *         data.
      *
@@ -1139,6 +1144,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @return array an array of {@link Crypt_GPG_Signature} objects for the
      *               signed data. For each signature that is valid, the
      *               {@link Crypt_GPG_Signature::isValid()} will return true.
+     *
+     * @throws Crypt_GPG_KeyNotFoundException if the public key needed for
+     *         signature verification is not in the user's keyring.
      *
      * @throws Crypt_GPG_NoDataException if the provided data is not signed
      *         data.
@@ -1855,6 +1863,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @return array an array of {@link Crypt_GPG_Signature} objects for the
      *               signed data.
      *
+     * @throws Crypt_GPG_KeyNotFoundException if the public key needed for
+     *         signature verification is not in the user's keyring.
+     *
      * @throws Crypt_GPG_NoDataException if the provided data is not signed
      *         data.
      *
@@ -1918,7 +1929,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *               element is null.
      *
      * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
-     *         decrypt the data is not in the user's keyring or it the public
+     *         decrypt the data is not in the user's keyring or if the public
      *         key needed for verification is not in the user's keyring.
      *
      * @throws Crypt_GPG_NoDataException if specified data does not contain

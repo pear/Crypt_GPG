@@ -540,11 +540,7 @@ class Crypt_GPG_ProcessHandler
     public function throwException($exitcode = 0)
     {
         if ($exitcode > 0 && $this->errorCode === Crypt_GPG::ERROR_NONE) {
-            if ($this->needPassphrase > 0) {
-                $this->errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
-            } else if (!$this->checkExitCode($exitcode)) {
-                $this->errorCode = Crypt_GPG::ERROR_UNKNOWN;
-            }
+            $this->errorCode = $this->setErrorCode($exitcode);
         }
 
         if ($this->errorCode === Crypt_GPG::ERROR_NONE) {
@@ -715,10 +711,6 @@ class Crypt_GPG_ProcessHandler
                 break;
 
             case Crypt_GPG::ERROR_KEY_NOT_FOUND:
-                if (!empty($this->data['IgnoreVerifyErrors']) && !empty($this->data['DecryptionOkay'])) {
-                    break;
-                }
-
                 if (!empty($this->data['MissingKeys'])) {
                     $keyId = reset($this->data['MissingKeys']);
                 } else {
@@ -774,12 +766,28 @@ class Crypt_GPG_ProcessHandler
      *
      * @param int $exitcode GPG process exit code
      *
-     * @return boolean True if the error code should be ignored
+     * @return int Internal error code
      */
-    protected function checkExitCode($exitcode)
+    protected function setErrorCode($exitcode)
     {
-        return $this->operation == 'import'
-            || ($this->operation == 'decrypt' && !empty($this->data['DecryptionOkay']));
+        if ($this->needPassphrase > 0) {
+            return Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+        }
+
+        if ($this->operation == 'import') {
+            return Crypt_GPG::ERROR_NONE;
+        }
+
+        if ($this->operation == 'decrypt' && !empty($this->data['DecryptionOkay'])) {
+            if (!empty($this->data['IgnoreVerifyErrors'])) {
+                return Crypt_GPG::ERROR_NONE;
+            }
+            if (!empty($this->data['MissingKeys'])) {
+                return Crypt_GPG::ERROR_KEY_NOT_FOUND;
+            }
+        }
+
+        return Crypt_GPG::ERROR_UNKNOWN;
     }
 
     // }}}

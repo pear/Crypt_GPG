@@ -368,8 +368,6 @@ TEXT;
     }
 
     // }}}
-
-    // file
     // {{{ testImportKeyFile_private()
 
     /**

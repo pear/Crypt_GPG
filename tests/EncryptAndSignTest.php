@@ -296,8 +296,6 @@ class EncryptAndSignTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
-
-    // file
     // {{{ testEncryptAndSignFileNoPassphrase()
 
     /**

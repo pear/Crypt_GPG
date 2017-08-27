@@ -542,7 +542,7 @@ class Crypt_GPG_ProcessHandler
         if ($exitcode > 0 && $this->errorCode === Crypt_GPG::ERROR_NONE) {
             if ($this->needPassphrase > 0) {
                 $this->errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
-            } else if ($this->operation != 'import') {
+            } else if (!$this->checkExitCode($exitcode)) {
                 $this->errorCode = Crypt_GPG::ERROR_UNKNOWN;
             }
         }
@@ -715,6 +715,10 @@ class Crypt_GPG_ProcessHandler
                 break;
 
             case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+                if (!empty($this->data['IgnoreVerifyErrors']) && !empty($this->data['DecryptionOkay'])) {
+                    break;
+                }
+
                 if (!empty($this->data['MissingKeys'])) {
                     $keyId = reset($this->data['MissingKeys']);
                 } else {
@@ -763,6 +767,22 @@ class Crypt_GPG_ProcessHandler
     }
 
     // }}}
+    // {{{ throwException()
+
+    /**
+     * Check exit code of the GPG operation.
+     *
+     * @param int $exitcode GPG process exit code
+     *
+     * @return boolean True if the error code should be ignored
+     */
+    protected function checkExitCode($exitcode)
+    {
+        return $this->operation == 'import'
+            || ($this->operation == 'decrypt' && !empty($this->data['DecryptionOkay']));
+    }
+
+    // }}}
     // {{{ getData()
 
     /**
@@ -794,6 +814,9 @@ class Crypt_GPG_ProcessHandler
      *                         The key handle is used to track GPG status output
      *                         for a particular key on --gen-key command before
      *                         the key has its own identifier.
+     *               - IgnoreVerifyErrors: Do not throw exceptions
+     *                         when signature verification failes because
+     *                         of a missing public key.
      * @param mixed  $value Data element value
      *
      * @return void
@@ -803,6 +826,10 @@ class Crypt_GPG_ProcessHandler
         switch ($name) {
         case 'Handle':
             $this->data[$name] = strval($value);
+            break;
+
+        case 'IgnoreVerifyErrors':
+            $this->data[$name] = (bool) $value;
             break;
         }
     }

@@ -535,8 +535,6 @@ TEXT;
     }
 
     // }}}
-
-    // file
     // {{{ testVerifyFileNormalSignedData()
 
     /**

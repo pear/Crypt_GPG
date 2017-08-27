@@ -556,8 +556,6 @@ TEXT;
     }
 
     // }}}
-
-    // tear down
     // {{{ tearDown()
 
     public function tearDown()
@@ -626,8 +624,6 @@ TEXT;
     }
 
     // }}}
-
-    // file related helper methods
     // {{{ getMd5Sum()
 
     protected function getMd5Sum($filename)
@@ -667,8 +663,6 @@ TEXT;
     }
 
     // }}}
-
-    // signature related assertions
     // {{{ assertDecryptAndVerifyResultsEquals()
 
     protected function assertDecryptAndVerifyResultsEquals(

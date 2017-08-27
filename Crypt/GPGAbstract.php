@@ -239,10 +239,12 @@ abstract class Crypt_GPGAbstract
      *                                       binary location using a list of
      *                                       know default locations for the
      *                                       current operating system.
-     * - <kbd>boolean debug</kbd>          - whether or not to use debug mode.
+     * - <kbd>mixed debug</kbd>            - whether or not to use debug mode.
      *                                       When debug mode is on, all
      *                                       communication to and from the GPG
      *                                       subprocess is logged. This can be
+     *                                       useful to diagnose errors when
+     *                                       using Crypt_GPG.
      *
      * @param array $options optional. An array of options used to create the
      *                       GPG object. All options are optional and are

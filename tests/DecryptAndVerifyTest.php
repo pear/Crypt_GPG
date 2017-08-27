@@ -306,6 +306,63 @@ TEXT;
     }
 
     // }}}
+    // {{{ testDecryptVerifyKeyNotFoundVerifyIgnoreErrors()
+
+    /**
+     * @group string
+     */
+    public function testDecryptVerifyKeyNotFoundIgnoreVerifyErrors()
+    {
+        $signature = new Crypt_GPG_Signature();
+        $signature->setKeyId('8E3D36B1EA5AC75E');
+
+        $expectedResults = array(
+            'data'       => 'Hello, Alice! Goodbye, Bob!',
+            'signatures' => array($signature)
+        );
+
+        // was encrypted with first-keypair@example.com, signed with
+        // missing-key@example.com
+        // {{{ encrypted data
+        $encryptedData = <<<TEXT
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1
+
+hQIOA5+T+RFnKO8SEAgAnQrKNrq6O4F0tlex+I5aklo7ElBbSPfa0k4SvX80m+n3
+raM84mpnUzpoXrRa6zSM2IxzF7oWLHHAkBkWaTYdFFWegPbQk4G5rlURZDsLtamb
+y3tXcOMuSMhj3b9XrR2YzfREj0AnuEvYOsd++KpjcEYgcVZOb5tCn+9UKfjop/pZ
+i9sAJMYbdavxoa8DUuIMT6v0C/zNiuSFlQ23kRWB+LUR0tTIoHpb+0U0ITFLSMIr
+jc9K6Zz805Tbu6xX8UXRMIdfJTJkmVWTOD8u8OUPGBxhBuZmbVfH4x+fKybcSVJJ
+akqX28LjaqI+WvD/zh9l78V7foMEWd7porUzBC7z+wgAzh3LBHb2naFg4CZSVlYa
+uuQ64G1ct0uxwVr0p0/4jA5nEK+WgFABPu1YPnIO3md8dBnkfs92g+0msKgB3FOn
+T5+FlgkR+p2Y4knNggSmJGErCMYAq17lCu3bAlHFKwaowCBFoXrFCGBH2qgXD+CM
+Rgq5gWXPLrcqnGPefdV56i+8X+t7oHCzIxX836IQICWMpOdhWMzDz44ctC5IBTJp
+bDgx2pmkU+i51Q+PfK7k8eBIvlrvBGCQcUiNjCoPKAM3OjGNAQF0JraWPG2q0OSM
+aZXKg9aCrQRHceCjwTf8dYRDm6yqGNeVzOnkDibPT3ySYmXKaVDbB8AquS72wE1n
+ktLAxwGOjaM4MSQOGT+8eggngFidGak7957SWZRaqsXdeh6HtxKWni+XTBmWAg2m
+6MnCIiVxD5A75m75ncdbRgtx2Sl9B/kCTC6Ak6hQ3iFpJKuQSZcD2gyGRSE8Ly7u
+cX4jPXcYQaWLi+wVpLaYr3hSsjx2WgVk4oz+X2Kt0qQw+yWIkRw7ErmMl0ML0L7j
+YePAE6UbBSR131nDKmXDUlLsV4GavAclENL5Kp6Yd8ia3h1Jdtl0waH5cCLswhf3
+oi0u0bIalnZwDkFSDGiWgDQyJ8XgPFcUx8fp3dC8FVxXbd3quMxZU6/5K/dQ0LIh
++Ldlz797sLtl1lHmlaLEzTzJZriLiEiOCZeOrhbgqcGMLurzfsCWYH+BZFzH8iFJ
+yDoUVsWLlvY+6gelAE9Dlzdq9m8rIALwf0Udlsdn/NBaFxarT0nl68u5fSJo8UA2
+MuZd2EB/BKXWvAo5Ea9CQ3DrrDkbwlE3PKrWlMos6dFb/SWxtmKfEeNYhYJsbwsv
+x5MBl/I2kBCHeH4=
+=hojs
+-----END PGP MESSAGE-----
+
+TEXT;
+        // }}}
+
+        $this->gpg = new Crypt_GPG(array_merge(array('ignoreVerifyKeyErrors' => true) + $this->getOptions()));
+
+        $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
+        $results = $this->gpg->decryptAndVerify($encryptedData, true);
+
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
+    }
+
+    // }}}
     // {{{ testDecryptVerifyNoDataException_invalid()
 
     /**
@@ -933,8 +990,6 @@ TEXT;
     }
 
     // }}}
-
-    // file
     // {{{ testDecryptVerifyFile()
 
     /**

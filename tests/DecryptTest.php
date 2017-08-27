@@ -562,8 +562,6 @@ TEXT;
     }
 
     // }}}
-
-    // file
     // {{{ testDecryptFile()
 
     /**

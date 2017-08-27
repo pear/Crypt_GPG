@@ -887,8 +887,12 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * private key to the keyring, use the {@link Crypt_GPG::importKey()} or
      * {@link Crypt_GPG::importKeyFile()} methods.
      *
-     * @param string $encryptedData the encrypted, signed data to be decrypted
-     *                              and verified.
+     * @param string  $encryptedData      the encrypted, signed data to be decrypted
+     *                                    and verified.
+     * @param boolean $ignoreVerifyErrors enables ignoring of signature
+     *                                    verification errors caused by missing public key
+     *                                    When enabled Crypt_GPG_KeyNotFoundException
+     *                                    will not be thrown.
      *
      * @return array two element array. The array has an element 'data'
      *               containing the decrypted data and an element
@@ -910,9 +914,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function decryptAndVerify($encryptedData)
+    public function decryptAndVerify($encryptedData, $ignoreVerifyErrors = false)
     {
-        return $this->_decryptAndVerify($encryptedData, false, null);
+        return $this->_decryptAndVerify($encryptedData, false, null, $ignoreVerifyErrors);
     }
 
     // }}}
@@ -926,12 +930,16 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * private key to the keyring, use the {@link Crypt_GPG::importKey()} or
      * {@link Crypt_GPG::importKeyFile()} methods.
      *
-     * @param string $encryptedFile the name of the signed, encrypted file to
-     *                              to decrypt and verify.
-     * @param string $decryptedFile optional. The name of the file to which the
-     *                              decrypted data should be written. If null
-     *                              or unspecified, the decrypted data is
-     *                              returned in the results array.
+     * @param string  $encryptedFile      the name of the signed, encrypted file to
+     *                                    to decrypt and verify.
+     * @param string  $decryptedFile      optional. The name of the file to which the
+     *                                    decrypted data should be written. If null
+     *                                    or unspecified, the decrypted data is
+     *                                    returned in the results array.
+     * @param boolean $ignoreVerifyErrors enables ignoring of signature
+     *                                    verification errors caused by missing public key
+     *                                    When enabled Crypt_GPG_KeyNotFoundException
+     *                                    will not be thrown.
      *
      * @return array two element array. The array has an element 'data'
      *               containing the decrypted data and an element
@@ -958,9 +966,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function decryptAndVerifyFile($encryptedFile, $decryptedFile = null)
+    public function decryptAndVerifyFile($encryptedFile, $decryptedFile = null, $ignoreVerifyErrors = false)
     {
-        return $this->_decryptAndVerify($encryptedFile, true, $decryptedFile);
+        return $this->_decryptAndVerify($encryptedFile, true, $decryptedFile, $ignoreVerifyErrors);
     }
 
     // }}}
@@ -1914,12 +1922,16 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Decrypts and verifies encrypted, signed data
      *
-     * @param string  $data       the encrypted signed data to be decrypted and
-     *                            verified.
-     * @param boolean $isFile     whether or not the data is a filename.
-     * @param string  $outputFile the name of the file to which the decrypted
-     *                            data should be written. If null, the decrypted
-     *                            data is returned in the results array.
+     * @param string  $data               the encrypted signed data to be decrypted and
+     *                                    verified.
+     * @param boolean $isFile             whether or not the data is a filename.
+     * @param string  $outputFile         the name of the file to which the decrypted
+     *                                    data should be written. If null, the decrypted
+     *                                    data is returned in the results array.
+     * @param boolean $ignoreVerifyErrors enables ignoring of signature verification
+     *                                    errors caused by missing public key.
+     *                                    When enabled Crypt_GPG_KeyNotFoundException
+     *                                    will not be thrown.
      *
      * @return array two element array. The array has an element 'data'
      *               containing the decrypted data and an element
@@ -1948,7 +1960,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_Signature
      */
-    protected function _decryptAndVerify($data, $isFile, $outputFile)
+    protected function _decryptAndVerify($data, $isFile, $outputFile, $ignoreVerifyErrors = false)
     {
         $input  = $this->_prepareInput($data, $isFile, false);
         $output = $this->_prepareOutput($outputFile, $input);
@@ -1958,6 +1970,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $this->engine->setInput($input);
         $this->engine->setOutput($output);
         $this->engine->setOperation('--decrypt');
+        $this->engine->setProcessData('IgnoreVerifyErrors', $ignoreVerifyErrors);
         $this->engine->run();
 
         $return = array(

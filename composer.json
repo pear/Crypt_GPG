@@ -18,6 +18,10 @@
         {
             "name": "Nathan Fredrickson",
             "email": "nathan@silverorange.com"
+        },
+        {
+            "name": "Aleksander Machniak",
+            "email": "alec@alec.pl"
         }
     ],
     "require": {

@@ -35,16 +35,15 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.6.0';
-$apiState       = 'beta';
+$apiVersion     = '1.6.1';
+$apiState       = 'stable';
 
-$releaseVersion = '1.6.0';
+$releaseVersion = '1.6.1';
 $releaseState   = 'stable';
 $releaseNotes   =
-    "This release adds GnuPG 2.1 support\n" .
-    "Internal API has been refactored.\n\n" .
-    "Fix Bug #21182: Ignore invalid proc_close() exit code\n" .
-    "Fix Bug G#28:   Use --batch argument for key imports when no passphrase is provided.";
+    "Fix Bug #21237: Use --skip-verify in decrypt() method\n" .
+    "Update list of hash algorithm names\n" .
+    "Add option to ignore signature verification errors on decrypt.";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

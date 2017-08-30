@@ -328,6 +328,20 @@ class Crypt_GPG_Engine
     private $_isDarwin = false;
 
     /**
+     * Message digest algorithm.
+     *
+     * @var string
+     */
+    private $_digest_algo = null;
+
+    /**
+     * Symmetric cipher algorithm.
+     *
+     * @var string
+     */
+    private $_cipher_algo = null;
+
+    /**
      * Commands to be sent to GPG's command input stream
      *
      * @var string
@@ -482,6 +496,8 @@ class Crypt_GPG_Engine
      *                                       a list of know default locations.
      *                                       When set to FALSE `gpgconf --kill`
      *                                       will not be executed via destructor.
+     * - <kbd>string digest-algo</kbd>     - Sets the message digest algorithm.
+     * - <kbd>string cipher-algo</kbd>     - Sets the symmetric cipher.
      * - <kbd>boolean strict</kbd>         - In strict mode clock problems on
      *                                       subkeys and signatures are not ignored
      *                                       (--ignore-time-conflict
@@ -684,6 +700,14 @@ class Crypt_GPG_Engine
         }
 
         $this->_strict = !empty($options['strict']);
+
+        if (!empty($options['digest-algo'])) {
+            $this->_digest_algo = $options['digest-algo'];
+        }
+
+        if (!empty($options['cipher-algo'])) {
+            $this->_cipher_algo = $options['cipher-algo'];
+        }
     }
 
     // }}}
@@ -1663,6 +1687,16 @@ class Crypt_GPG_Engine
         if (!$this->_strict) {
             $defaultArguments[] = '--ignore-time-conflict';
             $defaultArguments[] = '--ignore-valid-from';
+        }
+
+        if (!empty($this->_digest_algo)) {
+            $defaultArguments[] = '--digest-algo ' . escapeshellarg($this->_digest_algo);
+            $defaultArguments[] = '--s2k-digest-algo ' . escapeshellarg($this->_digest_algo);
+        }
+
+        if (!empty($this->_cipher_algo)) {
+            $defaultArguments[] = '--cipher-algo ' . escapeshellarg($this->_cipher_algo);
+            $defaultArguments[] = '--s2k-cipher-algo ' . escapeshellarg($this->_cipher_algo);
         }
 
         $arguments = array_merge($defaultArguments, $this->_arguments);

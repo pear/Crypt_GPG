@@ -239,6 +239,20 @@ abstract class Crypt_GPGAbstract
      *                                       binary location using a list of
      *                                       know default locations for the
      *                                       current operating system.
+     * - <kbd>string|false gpgconf</kbd>   - the location of the GnuPG conf
+     *                                       binary. The gpgconf is only
+     *                                       used for GnuPG >= 2.1. If not
+     *                                       specified, the engine attempts
+     *                                       to auto-detect the location using
+     *                                       a list of know default locations.
+     *                                       When set to FALSE `gpgconf --kill`
+     *                                       will not be executed via destructor.
+     * - <kbd>string digest-algo</kbd>     - Sets the message digest algorithm.
+     * - <kbd>string cipher-algo</kbd>     - Sets the symmetric cipher.
+     * - <kbd>boolean strict</kbd>         - In strict mode clock problems on
+     *                                       subkeys and signatures are not ignored
+     *                                       (--ignore-time-conflict
+     *                                       and --ignore-valid-from options)
      * - <kbd>mixed debug</kbd>            - whether or not to use debug mode.
      *                                       When debug mode is on, all
      *                                       communication to and from the GPG

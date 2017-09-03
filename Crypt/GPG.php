@@ -982,14 +982,14 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
      * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
      *
-     * @param string  $data     the data to be signed.
-     * @param boolean $mode     optional. The data signing mode to use. Should
+     * @param string   $data    the data to be signed.
+     * @param int|bool $mode    optional. The data signing mode to use. Should
      *                          be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
      *                          {@link Crypt_GPG::SIGN_MODE_CLEAR} or
      *                          {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
      *                          specified, defaults to
      *                          <kbd>Crypt_GPG::SIGN_MODE_NORMAL</kbd>.
-     * @param boolean $armor    optional. If true, ASCII armored data is
+     * @param boolean  $armor   optional. If true, ASCII armored data is
      *                          returned; otherwise, binary data is returned.
      *                          Defaults to true. This has no effect if the
      *                          mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is

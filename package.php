@@ -35,15 +35,13 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.6.1';
+$apiVersion     = '1.6.2';
 $apiState       = 'stable';
 
-$releaseVersion = '1.6.1';
+$releaseVersion = '1.6.2';
 $releaseState   = 'stable';
 $releaseNotes   =
-    "Fix Bug #21237: Use --skip-verify in decrypt() method\n" .
-    "Update list of hash algorithm names\n" .
-    "Add option to ignore signature verification errors on decrypt.";
+    "Added options to configure digest/cipher algorithms.";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

@@ -29,11 +29,11 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2017-08-27</date>
- <time>13:29:49</time>
+ <date>2017-09-03</date>
+ <time>08:49:02</time>
  <version>
-  <release>1.6.1</release>
-  <api>1.6.1</api>
+  <release>1.6.2</release>
+  <api>1.6.2</api>
  </version>
  <stability>
   <release>stable</release>
@@ -41,9 +41,7 @@ This package requires PHP version 5.4.8 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Fix Bug #21237: Use --skip-verify in decrypt() method
-Update list of hash algorithm names
-Add option to ignore signature verification errors on decrypt.
+Added options to configure digest/cipher algorithms.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -167,19 +165,17 @@ Add option to ignore signature verification errors on decrypt.
  <changelog>
   <release>
    <version>
-    <release>1.6.1</release>
-    <api>1.6.1</api>
+    <release>1.6.2</release>
+    <api>1.6.2</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2017-08-27</date>
+   <date>2017-09-03</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-Fix Bug #21237: Use --skip-verify in decrypt() method
-Update list of hash algorithm names
-Add option to ignore signature verification errors on decrypt.
+Added options to configure digest/cipher algorithms.
    </notes>
   </release>
  </changelog>

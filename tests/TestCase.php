@@ -583,7 +583,10 @@ TEXT;
                 $iterator = new DirectoryIterator($dirname);
                 foreach ($iterator as $file) {
                     if (!$file->isDot()) {
-                        unlink($dirname . '/' . $file->getFilename());
+                        $filename = $dirname . '/' . $file->getFilename();
+                        if (file_exists($filename)) {
+                            unlink($filename);
+                        }
                     }
                 }
                 rmdir($dirname);
@@ -595,7 +598,10 @@ TEXT;
 
         foreach ($iterator as $file) {
             if (!$file->isDot()) {
-                unlink($homedir . '/' . $file->getFilename());
+                $filename = $homedir . '/' . $file->getFilename();
+                if (file_exists($filename)) {
+                    unlink($filename);
+                }
             }
         }
 
@@ -614,10 +620,12 @@ TEXT;
         foreach ($iterator as $file) {
             if (!$file->isDot()) {
                 $filename = $this->getTempFilename($file->getFilename());
-                if (is_dir($filename)) {
-                    rmdir($filename);
-                } else {
-                    unlink($filename);
+                if (file_exists($filename)) {
+                    if (is_dir($filename)) {
+                        rmdir($filename);
+                    } else {
+                        unlink($filename);
+                    }
                 }
             }
         }

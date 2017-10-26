@@ -2045,6 +2045,38 @@ class Crypt_GPG extends Crypt_GPGAbstract
     }
 
     // }}}
+    // {{{ _armor()
+
+    /**
+     * Handle armor argument.
+     *
+     * @param string  $method the method you want to add/remove the armor argument for.
+     * @param boolean $armor  If true, the ASCII armored argument is added;
+     *                        otherwise, it is removed.
+     * 
+     */
+    protected function _armor($method, $armor)
+    {
+        if ($armor) {
+            if (!array_key_exists($method, $this->arguments)) {
+                $this->arguments[$method] = array('--armor');
+            } else {
+                if (!array_search('--armor', $this->arguments[$method])) {
+                    $this->arguments[$method][] = '--armor';
+                }
+            }
+        } else {
+            if (array_key_exists($method, $this->arguments)) {
+                while (
+                    ($key = array_search('--armor', $this->arguments[$method])) !== false
+                )  {
+                    unset($this->arguments[$method][$key]);
+                }
+            }
+        }
+    }
+
+    // }}}
 }
 
 // }}}

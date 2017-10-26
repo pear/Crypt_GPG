@@ -401,10 +401,11 @@ abstract class Crypt_GPGAbstract
      * {@link http://www.gnupg.org/download/ GPG package} for a detailed
      * description of how the GPG command output is parsed.
      *
-     * @param string $keyId optional. Only keys with that match the specified
-     *                      pattern are returned. The pattern may be part of
-     *                      a user id, a key id or a key fingerprint. If not
-     *                      specified, all keys are returned.
+     * @param string $keyId      optional. Only keys with that match the specified
+     *                           pattern are returned. The pattern may be part of
+     *                           a user id, a key id or a key fingerprint. If not
+     *                           specified, all keys are returned.
+     * @param array  $arguments  user supplied arguments for the operation.
      *
      * @return array an array of {@link Crypt_GPG_Key} objects. If no keys
      *               match the specified <kbd>$keyId</kbd> an empty array is
@@ -416,7 +417,7 @@ abstract class Crypt_GPGAbstract
      *
      * @see Crypt_GPG_Key
      */
-    protected function _getKeys($keyId = '')
+    protected function _getKeys($keyId = '', $arguments)
     {
         // get private key fingerprints
         if ($keyId == '') {
@@ -427,12 +428,12 @@ abstract class Crypt_GPGAbstract
 
         // According to The file 'doc/DETAILS' in the GnuPG distribution, using
         // double '--with-fingerprint' also prints the fingerprint for subkeys.
-        $arguments = array(
+        $arguments = array_merge($arguments, array(
             '--with-colons',
             '--with-fingerprint',
             '--with-fingerprint',
             '--fixed-list-mode'
-        );
+        ));
 
         $output = '';
 

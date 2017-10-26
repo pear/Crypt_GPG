@@ -1473,8 +1473,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Imports a public or private key into the keyring
      *
-     * @param string  $key    the key to be imported.
-     * @param boolean $isFile whether or not the input is a filename.
+     * @param string  $key        the key to be imported.
+     * @param boolean $isFile     whether or not the input is a filename.
+     * @param array   $arguments  user supplied arguments for the operation.
      *
      * @return array an associative array containing the following elements:
      *               - <kbd>fingerprint</kbd>       - the fingerprint of the
@@ -1501,10 +1502,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    protected function _importKey($key, $isFile)
+    protected function _importKey($key, $isFile, $arguments)
     {
         $result    = array();
-        $arguments = array();
         $input     = $this->_prepareInput($key, $isFile, false);
         $version   = $this->engine->getVersion();
 
@@ -1537,12 +1537,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * <kbd>$keyId</kbd> (for example, if you use a non-unique uid) only the
      * first key is exported.
      *
-     * @param string  $keyId   either the full uid of the key, the email
-     *                         part of the uid of the key or the key id.
-     * @param boolean $armor   optional. If true, ASCII armored data is returned;
-     *                         otherwise, binary data is returned. Defaults to
-     *                         true.
-     * @param boolean $private return private instead of public key
+     * @param string  $keyId     either the full uid of the key, the email
+     *                           part of the uid of the key or the key id.
+     * @param boolean $private   return private instead of public key
+     * @param array   $arguments optional. User supplied arguments for the operation.
      *
      * @return string the key data.
      *
@@ -1557,7 +1555,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    protected function _exportKey($keyId, $armor = true, $private = false)
+    protected function _exportKey($keyId, $private = false, $arguments)
     {
         $fingerprint = $this->getFingerprint($keyId);
 
@@ -1572,7 +1570,6 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $keyData   = '';
         $operation = $private ? '--export-secret-keys' : '--export';
         $operation .= ' ' . escapeshellarg($fingerprint);
-        $arguments = $armor ? array('--armor') : array();
 
         $this->engine->reset();
         $this->engine->setPins($this->passphrases);
@@ -1594,8 +1591,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @param string  $outputFile the filename of the file in which to store
      *                            the encrypted data. If null, the encrypted
      *                            data is returned as a string.
-     * @param boolean $armor      if true, ASCII armored data is returned;
-     *                            otherwise, binary data is returned.
+     * @param array   $arguments  optional. User supplied arguments for the operation.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the encrypted data is returned.
@@ -1610,7 +1606,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    protected function _encrypt($data, $isFile, $outputFile, $armor)
+    protected function _encrypt($data, $isFile, $outputFile, $arguments)
     {
         if (!$this->hasEncryptKeys()) {
             throw new Crypt_GPG_KeyNotFoundException(
@@ -1620,7 +1616,6 @@ class Crypt_GPG extends Crypt_GPGAbstract
 
         $input     = $this->_prepareInput($data, $isFile);
         $output    = $this->_prepareOutput($outputFile, $input);
-        $arguments = $armor ? array('--armor') : array();
 
         foreach ($this->encryptKeys as $key) {
             $arguments[] = '--recipient ' . escapeshellarg($key['fingerprint']);
@@ -1648,6 +1643,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @param string  $outputFile the name of the file to which the decrypted
      *                            data should be written. If null, the decrypted
      *                            data is returned as a string.
+     * @param array   $arguments  user supplied arguments for the operation.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the decrypted data is returned.
@@ -1669,14 +1665,14 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    protected function _decrypt($data, $isFile, $outputFile)
+    protected function _decrypt($data, $isFile, $outputFile, $arguments)
     {
         $input  = $this->_prepareInput($data, $isFile, false);
         $output = $this->_prepareOutput($outputFile, $input);
 
         $this->engine->reset();
         $this->engine->setPins($this->decryptKeys);
-        $this->engine->setOperation('--decrypt --skip-verify');
+        $this->engine->setOperation('--decrypt --skip-verify', $arguments);
         $this->engine->setInput($input);
         $this->engine->setOutput($output);
         $this->engine->run();
@@ -1701,11 +1697,6 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                            {@link Crypt_GPG::SIGN_MODE_NORMAL},
      *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or
      *                            {@link Crypt_GPG::SIGN_MODE_DETACHED}.
-     * @param boolean $armor      if true, ASCII armored data is returned;
-     *                            otherwise, binary data is returned. This has
-     *                            no effect if the mode
-     *                            <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
-     *                            used.
      * @param boolean $textmode   if true, line-breaks in signed data be
      *                            normalized. Use this option when signing
      *                            e-mail, or for greater compatibility between
@@ -1713,6 +1704,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                            Defaults to false. This has no effect if the
      *                            mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
      *                            used as clear-signing always uses textmode.
+     * @param array   $arguments  user supplied arguments for the operation.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the signed data (or the signature
@@ -1732,8 +1724,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    protected function _sign($data, $isFile, $outputFile, $mode, $armor,
-        $textmode
+    protected function _sign($data, $isFile, $outputFile, $mode,
+        $textmode, $arguments
     ) {
         if (!$this->hasSignKeys()) {
             throw new Crypt_GPG_KeyNotFoundException(
@@ -1757,11 +1749,6 @@ class Crypt_GPG extends Crypt_GPGAbstract
             break;
         }
 
-        $arguments = array();
-
-        if ($armor) {
-            $arguments[] = '--armor';
-        }
         if ($textmode) {
             $arguments[] = '--textmode';
         }
@@ -1795,8 +1782,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                            signed data should be stored. If null, the
      *                            encrypted, signed data is returned as a
      *                            string.
-     * @param boolean $armor      if true, ASCII armored data is returned;
-     *                            otherwise, binary data is returned.
+     * @param array   $arguments  user supplied arguments for the operation.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the encrypted, signed data is
@@ -1817,7 +1803,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    protected function _encryptAndSign($data, $isFile, $outputFile, $armor)
+    protected function _encryptAndSign($data, $isFile, $outputFile, $arguments)
     {
         if (!$this->hasSignKeys()) {
             throw new Crypt_GPG_KeyNotFoundException(
@@ -1833,7 +1819,6 @@ class Crypt_GPG extends Crypt_GPGAbstract
 
         $input     = $this->_prepareInput($data, $isFile);
         $output    = $this->_prepareOutput($outputFile, $input);
-        $arguments = $armor ? array('--armor') : array();
 
         foreach ($this->signKeys as $key) {
             $arguments[] = '--local-user ' .
@@ -1867,6 +1852,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @param string  $signature if verifying a file signed using a detached
      *                           signature, this must be the detached signature
      *                           data. Otherwise, specify ''.
+     * @param array   $arguments user supplied arguments for the operation.
      *
      * @return array an array of {@link Crypt_GPG_Signature} objects for the
      *               signed data.
@@ -1885,16 +1871,15 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_Signature
      */
-    protected function _verify($data, $isFile, $signature)
+    protected function _verify($data, $isFile, $signature, $arguments)
     {
         if ($signature == '') {
             $operation = '--verify';
-            $arguments = array();
         } else {
             // Signed data goes in FD_MESSAGE, detached signature data goes in
             // FD_INPUT.
             $operation = '--verify - "-&' . Crypt_GPG_Engine::FD_MESSAGE. '"';
-            $arguments = array('--enable-special-filenames');
+            $arguments[] = '--enable-special-filenames';
         }
 
         $input = $this->_prepareInput($data, $isFile, false);
@@ -1932,6 +1917,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                                    errors caused by missing public key.
      *                                    When enabled Crypt_GPG_KeyNotFoundException
      *                                    will not be thrown.
+     * @param array   $arguments          user supplied arguments for the
+     *                                    operation.
      *
      * @return array two element array. The array has an element 'data'
      *               containing the decrypted data and an element
@@ -1960,7 +1947,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @see Crypt_GPG_Signature
      */
-    protected function _decryptAndVerify($data, $isFile, $outputFile, $ignoreVerifyErrors = false)
+    protected function _decryptAndVerify($data, $isFile, $outputFile, $ignoreVerifyErrors = false, $arguments)
     {
         $input  = $this->_prepareInput($data, $isFile, false);
         $output = $this->_prepareOutput($outputFile, $input);
@@ -1969,7 +1956,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $this->engine->setPins($this->decryptKeys);
         $this->engine->setInput($input);
         $this->engine->setOutput($output);
-        $this->engine->setOperation('--decrypt');
+        $this->engine->setOperation('--decrypt', $arguments);
         $this->engine->setProcessData('IgnoreVerifyErrors', $ignoreVerifyErrors);
         $this->engine->run();
 

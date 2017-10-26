@@ -559,11 +559,13 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
 
         $input = implode("\n", $keyParamsFormatted) . "\n%commit\n";
 
+        $this->addArguments('generateKey', array('--batch'));
+
         $this->engine->reset();
         $this->engine->setProcessData('Handle', $handle);
         $this->engine->setInput($input);
         $this->engine->setOutput($output);
-        $this->engine->setOperation('--gen-key', array('--batch'));
+        $this->engine->setOperation('--gen-key', $this->getArguments('generateKey'));
 
         try {
             $this->engine->run();
@@ -591,7 +593,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         }
 
         $fingerprint = $this->engine->getProcessData('KeyCreated');
-        $keys        = $this->_getKeys($fingerprint);
+        $keys        = $this->_getKeys($fingerprint, $this->getArguments('getKeys'));
 
         if (count($keys) === 0) {
             throw new Crypt_GPG_KeyNotCreatedException(

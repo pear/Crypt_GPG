@@ -290,7 +290,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function importKey($data)
     {
-        return $this->_importKey($data, false);
+        return $this->_importKey($data, false, $this->getArguments('importKey'));
     }
 
     // }}}
@@ -333,7 +333,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function importKeyFile($filename)
     {
-        return $this->_importKey($filename, true);
+        return $this->_importKey($filename, true, $this->getArguments('importKey'));
     }
 
     // }}}
@@ -373,7 +373,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function exportPrivateKey($keyId, $armor = true)
     {
-        return $this->_exportKey($keyId, $armor, true);
+        $this->_armor('exportKey', $armor);
+        return $this->_exportKey($keyId, true, $this->arguments['exportKey']);
     }
 
     // }}}
@@ -409,7 +410,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function exportPublicKey($keyId, $armor = true)
     {
-        return $this->_exportKey($keyId, $armor, false);
+        $this->_armor('exportKey', $armor);
+        return $this->_exportKey($keyId, false, $this->arguments['exportKey']);
     }
 
     // }}}
@@ -458,13 +460,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
         }
 
         $operation = '--delete-key ' . escapeshellarg($fingerprint);
-        $arguments = array(
+        $this->addArguments('deletePublicKey', array(
             '--batch',
             '--yes'
-        );
+        ));
 
         $this->engine->reset();
-        $this->engine->setOperation($operation, $arguments);
+        $this->engine->setOperation($operation, $this->getArguments('deletePublicKey'));
         $this->engine->run();
     }
 
@@ -508,13 +510,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
         }
 
         $operation = '--delete-secret-key ' . escapeshellarg($fingerprint);
-        $arguments = array(
+        $this->addArguments('deletePrivateKey', array(
             '--batch',
             '--yes'
-        );
+        ));
 
         $this->engine->reset();
-        $this->engine->setOperation($operation, $arguments);
+        $this->engine->setOperation($operation, $this->getArguments('deletePrivateKey'));
         $this->engine->run();
     }
 
@@ -546,7 +548,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function getKeys($keyId = '')
     {
-        return parent::_getKeys($keyId);
+        return parent::_getKeys($keyId, $this->getArguments('getKeys'));
     }
 
     // }}}
@@ -586,14 +588,14 @@ class Crypt_GPG extends Crypt_GPGAbstract
     {
         $output    = '';
         $operation = '--list-keys ' . escapeshellarg($keyId);
-        $arguments = array(
+        $this->addArguments('getFingerprint', array(
             '--with-colons',
             '--with-fingerprint'
-        );
+        ));
 
         $this->engine->reset();
         $this->engine->setOutput($output);
-        $this->engine->setOperation($operation, $arguments);
+        $this->engine->setOperation($operation, $this->getArguments('getFingerprint'));
         $this->engine->run();
 
         $fingerprint = null;
@@ -663,7 +665,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function encrypt($data, $armor = self::ARMOR_ASCII)
     {
-        return $this->_encrypt($data, false, null, $armor);
+        $this->_armor('encrypt', $armor);
+        return $this->_encrypt($data, false, null, $this->getArguments('encrypt'));
     }
 
     // }}}
@@ -702,7 +705,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $encryptedFile = null,
         $armor = self::ARMOR_ASCII
     ) {
-        return $this->_encrypt($filename, true, $encryptedFile, $armor);
+        $this->_armor('encrypt', $armor);
+        return $this->_encrypt(
+          $filename, true, $encryptedFile, $this->getArguments('encrypt')
+        );
     }
 
     // }}}
@@ -742,7 +748,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function encryptAndSign($data, $armor = self::ARMOR_ASCII)
     {
-        return $this->_encryptAndSign($data, false, null, $armor);
+        $this->_armor('encryptAndSign', $armor);
+        return $this->_encryptAndSign(
+            $data, false, null, $this->getArguments('encryptAndSign')
+        );
     }
 
     // }}}
@@ -796,7 +805,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $signedFile = null,
         $armor = self::ARMOR_ASCII
     ) {
-        return $this->_encryptAndSign($filename, true, $signedFile, $armor);
+        $this->_armor('encryptAndSign', $armor);
+        return $this->_encryptAndSign(
+            $filename, true, $signedFile, $this->getArguments('encryptAndSign')
+        );
     }
 
     // }}}
@@ -830,7 +842,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function decrypt($encryptedData)
     {
-        return $this->_decrypt($encryptedData, false, null);
+        return $this->_decrypt(
+            $encryptedData, false, null, $this->getArguments('decrypt')
+        );
     }
 
     // }}}
@@ -873,7 +887,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function decryptFile($encryptedFile, $decryptedFile = null)
     {
-        return $this->_decrypt($encryptedFile, true, $decryptedFile);
+        return $this->_decrypt(
+            $encryptedFile, true, $decryptedFile, $this->getArguments('decrypt')
+        );
     }
 
     // }}}
@@ -916,7 +932,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function decryptAndVerify($encryptedData, $ignoreVerifyErrors = false)
     {
-        return $this->_decryptAndVerify($encryptedData, false, null, $ignoreVerifyErrors);
+        return $this->_decryptAndVerify(
+            $encryptedData,
+            false,
+            null,
+            $ignoreVerifyErrors,
+            $this->getArguments('decryptAndVerify')
+        );
     }
 
     // }}}
@@ -968,7 +990,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function decryptAndVerifyFile($encryptedFile, $decryptedFile = null, $ignoreVerifyErrors = false)
     {
-        return $this->_decryptAndVerify($encryptedFile, true, $decryptedFile, $ignoreVerifyErrors);
+        return $this->_decryptAndVerify(
+            $encryptedFile,
+            true,
+            $decryptedFile,
+            $ignoreVerifyErrors,
+            $this->getArguments('decryptAndVerify')
+        );
     }
 
     // }}}
@@ -1021,7 +1049,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $armor = self::ARMOR_ASCII,
         $textmode = self::TEXT_RAW
     ) {
-        return $this->_sign($data, false, null, $mode, $armor, $textmode);
+        $this->_armor('sign', $armor);
+        return $this->_sign(
+            $data, false, null, $mode, $textmode, $this->getArguments('sign')
+        );
     }
 
     // }}}
@@ -1086,13 +1117,14 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $armor = self::ARMOR_ASCII,
         $textmode = self::TEXT_RAW
     ) {
+        $this->_armor('sign', $armor);
         return $this->_sign(
             $filename,
             true,
             $signedFile,
             $mode,
-            $armor,
-            $textmode
+            $textmode,
+            $this->getArguments('sign')
         );
     }
 
@@ -1130,7 +1162,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function verify($signedData, $signature = '')
     {
-        return $this->_verify($signedData, false, $signature);
+        return $this->_verify($signedData, false, $signature, $this->getArguments('verify'));
     }
 
     // }}}
@@ -1169,7 +1201,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function verifyFile($filename, $signature = '')
     {
-        return $this->_verify($filename, true, $signature);
+        return $this->_verify($filename, true, $signature, $this->getArguments('verify'));
     }
 
     // }}}

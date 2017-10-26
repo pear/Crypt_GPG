@@ -178,6 +178,15 @@ abstract class Crypt_GPGAbstract
      */
     protected $engine = null;
 
+    /**
+     * Arguments used to control the public methods.
+     *
+     * @var array
+     *
+     * @see Crypt_GPGAbstract::setArguments()
+     */
+    protected $arguments = array();
+
     // }}}
     // {{{ __construct()
 
@@ -304,6 +313,63 @@ abstract class Crypt_GPGAbstract
     public function setEngine(Crypt_GPG_Engine $engine)
     {
         $this->engine = $engine;
+        return $this;
+    }
+
+    // }}}
+    // {{{ setArguments()
+
+    /**
+     * Sets arguments to be used by the several GnuPG operations
+     *
+     * Normally this method does not need to be used. It provides a means for
+     * the experienced user to tweak GnuPG a bit where needed.
+     *
+     * @param string $method    the method you want to set arguments for.
+     * @param array  $arguments the arguments you want to set.
+     *
+     * @return Crypt_GPGAbstract the current object, for fluent interface.
+     */
+    public function setArguments($method, $arguments)
+    {
+        $this->arguments[$method] = $arguments;
+        return $this;
+    }
+
+    // }}}
+    // {{{ getArguments()
+
+    /**
+     * Get arguments to be used by the several GnuPG operations
+     *
+     * Create an empty array if no arguments for the method yet exist.
+     *
+     * @param string $method    the method you want to get arguments for.
+     *
+     * @return array the arguments for the given method.
+     */
+    public function getArguments($method)
+    {
+        if (!array_key_exists($method, $this->arguments)) {
+            $this->arguments[$method] = array();
+        }
+        return $this->arguments[$method];
+    }
+
+    // }}}
+    // {{{ addArguments()
+
+    /**
+     * Add arguments to be used by the several GnuPG operations
+     *
+     * @param string $method    the method you want to set arguments for.
+     * @param array  $arguments the arguments you want to set.
+     *
+     * @return Crypt_GPGAbstract the current object, for fluent interface.
+     */
+    public function addArguments($method, $arguments)
+    {
+        $this->arguments[$method] = array_merge($this->getArguments($method), $arguments);
         return $this;
     }
 

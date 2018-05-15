@@ -983,7 +983,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
      *
      * @param string  $data     the data to be signed.
-     * @param boolean $mode     optional. The data signing mode to use. Should
+     * @param int     $mode     optional. The data signing mode to use. Should
      *                          be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
      *                          {@link Crypt_GPG::SIGN_MODE_CLEAR} or
      *                          {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
@@ -1042,7 +1042,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                            signed data should be stored. If null or
      *                            unspecified, the signed data is returned as a
      *                            string.
-     * @param boolean $mode       optional. The data signing mode to use. Should
+     * @param int     $mode       optional. The data signing mode to use. Should
      *                            be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
      *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or
      *                            {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
@@ -1710,7 +1710,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @param string  $outputFile the name of the file in which the signed data
      *                            should be stored. If null, the signed data is
      *                            returned as a string.
-     * @param boolean $mode       the data signing mode to use. Should be one of
+     * @param int     $mode       the data signing mode to use. Should be one of
      *                            {@link Crypt_GPG::SIGN_MODE_NORMAL},
      *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or
      *                            {@link Crypt_GPG::SIGN_MODE_DETACHED}.

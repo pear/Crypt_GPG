@@ -815,6 +815,9 @@ TEXT;
 
         $signatures = $this->gpg->verifyFile($filename, $signatureData);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
+
+        $warnings = $this->gpg->getWarnings();
+        $this->assertTrue(is_array($warnings));
     }
 
     // }}}

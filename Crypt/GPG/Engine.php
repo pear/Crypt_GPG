@@ -1058,7 +1058,8 @@ class Crypt_GPG_Engine
                 break;
 
             case 'Signatures':
-                return (array) $this->_processHandler->getData('Signatures');
+            case 'Warnings':
+                return (array) $this->_processHandler->getData($name);
 
             default:
                 return $this->_processHandler->getData($name);

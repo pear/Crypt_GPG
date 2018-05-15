@@ -167,8 +167,9 @@ class Crypt_GPG_ProcessHandler
             }
         }
 
-        $this->operation    = $op;
-        $this->operationArg = $opArg;
+        $this->operation        = $op;
+        $this->operationArg     = $opArg;
+        $this->data['Warnings'] = array();
     }
 
     // }}}
@@ -465,59 +466,62 @@ class Crypt_GPG_ProcessHandler
      */
     public function handleError($line)
     {
-        if ($this->errorCode === Crypt_GPG::ERROR_NONE) {
-            $pattern = '/no valid OpenPGP data found/';
-            if (preg_match($pattern, $line) === 1) {
-                $this->errorCode = Crypt_GPG::ERROR_NO_DATA;
-            }
+        if (stripos($line, 'gpg: WARNING: ') !== false) {
+            $this->data['Warnings'][] = substr($line, 14);
         }
 
-        if ($this->errorCode === Crypt_GPG::ERROR_NONE) {
-            $pattern = '/No secret key|secret key not available/';
-            if (preg_match($pattern, $line) === 1) {
-                $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
-            }
+        if ($this->errorCode !== Crypt_GPG::ERROR_NONE) {
+            return;
         }
 
-        if ($this->errorCode === Crypt_GPG::ERROR_NONE) {
-            $pattern = '/No public key|public key not found/';
-            if (preg_match($pattern, $line) === 1) {
-                $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
-            }
+        $pattern = '/no valid OpenPGP data found/';
+        if (preg_match($pattern, $line) === 1) {
+            $this->errorCode = Crypt_GPG::ERROR_NO_DATA;
+            return;
         }
 
-        if ($this->errorCode === Crypt_GPG::ERROR_NONE) {
-            $matches = array();
-            $pattern = '/can\'t (?:access|open) `(.*?)\'/';
-            if (preg_match($pattern, $line, $matches) === 1) {
-                $this->data['ErrorFilename'] = $matches[1];
-                $this->errorCode = Crypt_GPG::ERROR_FILE_PERMISSIONS;
-            }
+        $pattern = '/No secret key|secret key not available/';
+        if (preg_match($pattern, $line) === 1) {
+            $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+            return;
+        }
+
+        $pattern = '/No public key|public key not found/';
+        if (preg_match($pattern, $line) === 1) {
+            $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+            return;
+        }
+
+        $pattern = '/can\'t (?:access|open) `(.*?)\'/';
+        if (preg_match($pattern, $line, $matches) === 1) {
+            $this->data['ErrorFilename'] = $matches[1];
+            $this->errorCode = Crypt_GPG::ERROR_FILE_PERMISSIONS;
+            return;
         }
 
         // GnuPG 2.1: It should return MISSING_PASSPHRASE, but it does not
         // we have to detect it this way. This happens e.g. on private key import
-        if ($this->errorCode === Crypt_GPG::ERROR_NONE) {
-            $matches = array();
-            $pattern = '/key ([0-9A-F]+).* (Bad|No) passphrase/';
-            if (preg_match($pattern, $line, $matches) === 1) {
-                $keyId = $matches[1];
-                // @TODO: Get user name/email
-                if (empty($this->data['BadPassphrases'][$keyId])) {
-                    $this->data['BadPassphrases'][$keyId] = $keyId;
-                }
-                if ($matches[2] == 'Bad') {
-                    $this->errorCode = Crypt_GPG::ERROR_BAD_PASSPHRASE;
-                } else {
-                    $this->errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
-                    if (empty($this->data['MissingPassphrases'][$keyId])) {
-                        $this->data['MissingPassphrases'][$keyId] = $keyId;
-                    }
+        $pattern = '/key ([0-9A-F]+).* (Bad|No) passphrase/';
+        if (preg_match($pattern, $line, $matches) === 1) {
+            $keyId = $matches[1];
+            // @TODO: Get user name/email
+            if (empty($this->data['BadPassphrases'][$keyId])) {
+                $this->data['BadPassphrases'][$keyId] = $keyId;
+            }
+
+            if ($matches[2] == 'Bad') {
+                $this->errorCode = Crypt_GPG::ERROR_BAD_PASSPHRASE;
+            } else {
+                $this->errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+                if (empty($this->data['MissingPassphrases'][$keyId])) {
+                    $this->data['MissingPassphrases'][$keyId] = $keyId;
                 }
             }
+
+            return;
         }
 
-        if ($this->errorCode === Crypt_GPG::ERROR_NONE && $this->operation == 'gen-key') {
+        if ($this->operation == 'gen-key') {
             $pattern = '/:([0-9]+): invalid algorithm$/';
             if (preg_match($pattern, $line, $matches) === 1) {
                 $this->errorCode          = Crypt_GPG::ERROR_BAD_KEY_PARAMS;
@@ -803,6 +807,7 @@ class Crypt_GPG_ProcessHandler
      *               - Signatures: Signatures data from verification process.
      *               - LineNumber: Number of the gen-key error line.
      *               - Import: Result of IMPORT_OK/IMPORT_RES
+     *               - Warnings: An array of all collected GnuPG warnings
      *
      * @return mixed
      */

@@ -1372,6 +1372,19 @@ class Crypt_GPG extends Crypt_GPGAbstract
     }
 
     // }}}
+    // {{{ getWarnins()
+
+    /**
+     * Get list of GnuPG warnings collected on last operation.
+     *
+     * @return array List of warning messages
+     */
+    public function getWarnings()
+    {
+        return $this->engine->getProcessData('Warnings');
+    }
+
+    // }}}
     // {{{ _addKey()
 
     /**

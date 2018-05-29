@@ -35,13 +35,16 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.6.2';
+$apiVersion     = '1.6.3';
 $apiState       = 'stable';
 
-$releaseVersion = '1.6.2';
+$releaseVersion = '1.6.3';
 $releaseState   = 'stable';
 $releaseNotes   =
-    "Added options to configure digest/cipher algorithms.";
+    "Exclude tools/ and package.php from a composer archive.\n" .
+    "Make possible to get a list of GnuPG warnings collected on last operation.\n" .
+    "Fix Bug #21242: PHPUnit tests fail sometimes while deleting S.gpg-agent.extra.\n" .
+    "Fix mode argument type in docblock.";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

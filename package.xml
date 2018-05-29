@@ -29,11 +29,11 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2017-09-03</date>
- <time>08:49:02</time>
+ <date>2018-05-29</date>
+ <time>09:05:06</time>
  <version>
-  <release>1.6.2</release>
-  <api>1.6.2</api>
+  <release>1.6.3</release>
+  <api>1.6.3</api>
  </version>
  <stability>
   <release>stable</release>
@@ -41,7 +41,10 @@ This package requires PHP version 5.4.8 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Added options to configure digest/cipher algorithms.
+Exclude tools/ and package.php from a composer archive.
+Make possible to get a list of GnuPG warnings collected on last operation.
+Fix Bug #21242: PHPUnit tests fail sometimes while deleting S.gpg-agent.extra.
+Fix mode argument type in docblock.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -165,17 +168,20 @@ Added options to configure digest/cipher algorithms.
  <changelog>
   <release>
    <version>
-    <release>1.6.2</release>
-    <api>1.6.2</api>
+    <release>1.6.3</release>
+    <api>1.6.3</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2017-09-03</date>
+   <date>2018-05-29</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-Added options to configure digest/cipher algorithms.
+Exclude tools/ and package.php from a composer archive.
+Make possible to get a list of GnuPG warnings collected on last operation.
+Fix Bug #21242: PHPUnit tests fail sometimes while deleting S.gpg-agent.extra.
+Fix mode argument type in docblock.
    </notes>
   </release>
  </changelog>

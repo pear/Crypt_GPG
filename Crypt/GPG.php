@@ -1639,6 +1639,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
             $arguments[] = '--recipient ' . escapeshellarg($key['fingerprint']);
         }
 
+        if ($isFile){
+            $pathParts = pathinfo($data);
+            if (!empty($pathParts['basename'])){
+                $arguments[] = '--set-filename "' . $pathParts['basename'] . '"';
+            }
+        }
+        
         $this->engine->reset();
         $this->engine->setInput($input);
         $this->engine->setOutput($output);

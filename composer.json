@@ -1,5 +1,5 @@
 {
-    "name": "pear/crypt_gpg",
+    "name": "farpointsystems/crypt_gpg",
     "description": "Provides an object oriented interface to the GNU Privacy Guard (GnuPG). It requires the GnuPG executable to be on the system.",
     "type": "library",
     "keywords": [

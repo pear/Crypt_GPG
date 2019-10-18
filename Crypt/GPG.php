@@ -1639,9 +1639,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
             $arguments[] = '--recipient ' . escapeshellarg($key['fingerprint']);
         }
 
-        if ($isFile){
+        if ($isFile) {
             $pathParts = pathinfo($data);
-            if (!empty($pathParts['basename'])){
+            if (!empty($pathParts['basename'])) {
                 $arguments[] = '--set-filename "' . $pathParts['basename'] . '"';
             }
         }

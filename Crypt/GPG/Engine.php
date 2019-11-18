@@ -342,6 +342,13 @@ class Crypt_GPG_Engine
     private $_cipher_algo = null;
 
     /**
+     * Compress algorithm.
+     *
+     * @var string
+     */
+    private $_compress_algo = null;
+
+    /**
      * Commands to be sent to GPG's command input stream
      *
      * @var string
@@ -707,6 +714,10 @@ class Crypt_GPG_Engine
 
         if (!empty($options['cipher-algo'])) {
             $this->_cipher_algo = $options['cipher-algo'];
+        }
+
+        if (!empty($options['compress-algo'])) {
+            $this->_compress_algo = $options['compress-algo'];
         }
     }
 
@@ -1698,6 +1709,10 @@ class Crypt_GPG_Engine
         if (!empty($this->_cipher_algo)) {
             $defaultArguments[] = '--cipher-algo ' . escapeshellarg($this->_cipher_algo);
             $defaultArguments[] = '--s2k-cipher-algo ' . escapeshellarg($this->_cipher_algo);
+        }
+
+        if (!empty($this->_compress_algo)) {
+            $defaultArguments[] = '--compress-algo ' . escapeshellarg($this->_compress_algo);
         }
 
         $arguments = array_merge($defaultArguments, $this->_arguments);

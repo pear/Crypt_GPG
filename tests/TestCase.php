@@ -75,7 +75,7 @@ require_once 'Crypt/GPG/Signature.php';
  *    A public-private key pair that has multiple encrypting subkeys. The
  *    first subkey is an ELG-E key. The second is an RSA key.
  */
-abstract class Crypt_GPG_TestCase extends PHPUnit_Framework_TestCase
+abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
 {
     // {{{ class constants
 

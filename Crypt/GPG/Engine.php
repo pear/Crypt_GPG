@@ -349,6 +349,13 @@ class Crypt_GPG_Engine
     private $_compress_algo = null;
 
     /**
+     * Additional per-command arguments
+     *
+     * @var array
+     */
+    private $_options = array();
+
+    /**
      * Commands to be sent to GPG's command input stream
      *
      * @var string
@@ -440,7 +447,7 @@ class Crypt_GPG_Engine
     /**
      * Creates a new GPG engine
      *
-     * @param array $options An array of options used to create the GPG object.
+     * @param array $options An array of options used to create the engine object.
      *                       All options are optional and are represented as key-value
      *                       pairs. See Crypt_GPGAbstract::__construct() for more info.
      *
@@ -642,6 +649,10 @@ class Crypt_GPG_Engine
 
         if (!empty($options['compress-algo'])) {
             $this->_compress_algo = $options['compress-algo'];
+        }
+
+        if (!empty($options['options'])) {
+            $this->_options = $options['options'];
         }
     }
 
@@ -876,6 +887,12 @@ class Crypt_GPG_Engine
         $this->_operation = $operation;
         $this->_arguments = $arguments;
 
+        foreach ($this->_options as $optname => $args) {
+            if (strpos($operation, '--' . $optname) !== false) {
+                $this->_arguments[] = $args;
+            }
+        }
+
         $this->_processHandler->setOperation($operation);
     }
 
@@ -905,6 +922,27 @@ class Crypt_GPG_Engine
         }
 
         $_ENV['PINENTRY_USER_DATA'] = json_encode($envKeys);
+    }
+
+    // }}}
+    // {{{ setOptions()
+
+    /**
+     * Sets per-command additional arguments
+     *
+     * @param array $options Additional per-command options for GPG command.
+     *                       Note: This will unset options set previously.
+     *                       Key of the array is a command (e.g.
+     *                       gen-key, import, sign, encrypt, list-keys).
+     *                       Value is a string containing command line arguments to be
+     *                       added to the related command. For example:
+     *                       array('sign' => '--emit-version').
+     *
+     * @return void
+     */
+    public function setOptions(array $options)
+    {
+        $this->_options = $options;
     }
 
     // }}}

@@ -236,6 +236,12 @@ abstract class Crypt_GPGAbstract
      *                      When debug mode is on, all communication to and from
      *                      the GPG subprocess is logged. This can be useful to
      *                      diagnose errors when using Crypt_GPG.
+     * - <kbd>array options</kbd> - additional per-command options to the GPG
+     *                      command. Key of the array is a command (e.g.
+     *                      gen-key, import, sign, encrypt, list-keys).
+     *                      Value is a string containing command line arguments to be
+     *                      added to the related command. For example:
+     *                      array('sign' => '--emit-version').
      *
      * @param array $options optional. An array of options used to create the
      *                       GPG object. All options are optional and are
@@ -281,6 +287,27 @@ abstract class Crypt_GPGAbstract
     public function setEngine(Crypt_GPG_Engine $engine)
     {
         $this->engine = $engine;
+        return $this;
+    }
+
+    // }}}
+    // {{{ setEngineOptions()
+
+    /**
+     * Sets per-command additional arguments
+     *
+     * @param array $options Additional per-command options for GPG command.
+     *                       Note: This will unset options set previously.
+     *                       Key of the array is a command (e.g.
+     *                       gen-key, import, sign, encrypt, list-keys).
+     *                       Value is a string containing command line arguments to be
+     *                       added to the related command. For example:
+     *                       array('sign' => '--emit-version').
+     *
+     */
+    public function setEngineOptions(array $options)
+    {
+        $this->engine->setOptions($options);
         return $this;
     }
 

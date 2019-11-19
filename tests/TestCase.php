@@ -104,7 +104,8 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
 //            'cipher-algo' => 'AES256',
 //            'digest-algo' => 'SHA512',
 //            'compress-algo' => 'zip',
-//            'debug'  => true
+//            'debug'  => true,
+//            'options' => array(),
         );
     }
 

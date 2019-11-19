@@ -1988,7 +1988,8 @@ class Crypt_GPG_Engine
         } else {
             $locations = array(
                 '/usr/bin/',
-                '/usr/local/bin/'
+                '/usr/local/bin/',
+                '/run/current-system/sw/bin/' // NixOS
             );
         }
 

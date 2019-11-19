@@ -249,7 +249,7 @@ abstract class Crypt_GPGAbstract
      *                                       will not be executed via destructor.
      * - <kbd>string digest-algo</kbd>     - Sets the message digest algorithm.
      * - <kbd>string cipher-algo</kbd>     - Sets the symmetric cipher.
-     * - <kbd>string compress-algo</kbd>   - Sets the compress algorithm.
+     * - <kbd>string compress-algo</kbd>   - Sets the compression algorithm.
      * - <kbd>boolean strict</kbd>         - In strict mode clock problems on
      *                                       subkeys and signatures are not ignored
      *                                       (--ignore-time-conflict

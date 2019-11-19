@@ -157,69 +157,9 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     /**
      * Creates a new GnuPG key generator
      *
-     * Available options are:
-     *
-     * - <kbd>string  homedir</kbd>        - the directory where the GPG
-     *                                       keyring files are stored. If not
-     *                                       specified, Crypt_GPG uses the
-     *                                       default of <kbd>~/.gnupg</kbd>.
-     * - <kbd>string  publicKeyring</kbd>  - the file path of the public
-     *                                       keyring. Use this if the public
-     *                                       keyring is not in the homedir, or
-     *                                       if the keyring is in a directory
-     *                                       not writable by the process
-     *                                       invoking GPG (like Apache). Then
-     *                                       you can specify the path to the
-     *                                       keyring with this option
-     *                                       (/foo/bar/pubring.gpg), and specify
-     *                                       a writable directory (like /tmp)
-     *                                       using the <i>homedir</i> option.
-     * - <kbd>string  privateKeyring</kbd> - the file path of the private
-     *                                       keyring. Use this if the private
-     *                                       keyring is not in the homedir, or
-     *                                       if the keyring is in a directory
-     *                                       not writable by the process
-     *                                       invoking GPG (like Apache). Then
-     *                                       you can specify the path to the
-     *                                       keyring with this option
-     *                                       (/foo/bar/secring.gpg), and specify
-     *                                       a writable directory (like /tmp)
-     *                                       using the <i>homedir</i> option.
-     * - <kbd>string  trustDb</kbd>        - the file path of the web-of-trust
-     *                                       database. Use this if the trust
-     *                                       database is not in the homedir, or
-     *                                       if the database is in a directory
-     *                                       not writable by the process
-     *                                       invoking GPG (like Apache). Then
-     *                                       you can specify the path to the
-     *                                       trust database with this option
-     *                                       (/foo/bar/trustdb.gpg), and specify
-     *                                       a writable directory (like /tmp)
-     *                                       using the <i>homedir</i> option.
-     * - <kbd>string  binary</kbd>         - the location of the GPG binary. If
-     *                                       not specified, the driver attempts
-     *                                       to auto-detect the GPG binary
-     *                                       location using a list of known
-     *                                       default locations for the current
-     *                                       operating system. The option
-     *                                       <kbd>gpgBinary</kbd> is a
-     *                                       deprecated alias for this option.
-     * - <kbd>string  agent</kbd>          - the location of the GnuPG agent
-     *                                       binary. The gpg-agent is only
-     *                                       used for GnuPG 2.x. If not
-     *                                       specified, the engine attempts
-     *                                       to auto-detect the gpg-agent
-     *                                       binary location using a list of
-     *                                       know default locations for the
-     *                                       current operating system.
-     * - <kbd>mixed debug</kbd>            - whether or not to use debug mode.
-     *                                       When debug mode is on, all
-     *                                       communication to and from the GPG
-     *                                       subprocess is logged. This can be
-     *
-     * @param array $options optional. An array of options used to create the
-     *                       GPG object. All options are optional and are
-     *                       represented as key-value pairs.
+     * @param array $options An array of options used to create the object.
+     *                       All options are optional and are represented as key-value
+     *                       pairs. See Crypt_GPGAbstract::__construct() for more info.
      *
      * @throws Crypt_GPG_FileException if the <kbd>homedir</kbd> does not exist
      *         and cannot be created. This can happen if <kbd>homedir</kbd> is
@@ -238,7 +178,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @throws PEAR_Exception if the provided <kbd>agent</kbd> is invalid, or
      *         if no <kbd>agent</kbd> is provided and no suitable gpg-agent
-     *         cound be found.
+     *         could be found.
      */
     public function __construct(array $options = array())
     {

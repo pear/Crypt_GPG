@@ -49,7 +49,7 @@
         "source": "https://github.com/pear/Crypt_GPG"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "^4.8.36 || ^5.7.21 || ^6 || ^7"
     },
     "archive": {
         "exclude": ["tools", "package.php"]

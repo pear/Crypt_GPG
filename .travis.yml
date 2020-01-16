@@ -12,6 +12,6 @@ php:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y gnupg-agent
+  - composer install --prefer-dist
 script:
-  - cd tests
-  - phpunit --coverage-text .
+  - vendor/bin/phpunit --coverage-text tests

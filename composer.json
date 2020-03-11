@@ -37,9 +37,7 @@
         "scripts/crypt-gpg-pinentry"
     ],
     "autoload": {
-        "psr-0": {
-            "Crypt": "./"
-        }
+        "classmap": ["Crypt/"]
     },
     "include-path": [
         "./"

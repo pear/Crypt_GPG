@@ -493,6 +493,10 @@ class Crypt_GPG_ProcessHandler
 
         $pattern = '/No public key|public key not found/';
         if (preg_match($pattern, $line) === 1) {
+            if ($this->operation == 'decrypt' && !empty($this->data['IgnoreVerifyErrors'])) {
+                return;
+            }
+
             $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             return;
         }

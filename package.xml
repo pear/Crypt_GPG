@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.10.5" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+<package packagerversion="1.10.8" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
     http://pear.php.net/dtd/tasks-1.0.xsd
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
@@ -29,11 +29,11 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2018-05-29</date>
- <time>09:05:06</time>
+ <date>2020-03-22</date>
+ <time>12:45:23</time>
  <version>
-  <release>1.6.3</release>
-  <api>1.6.3</api>
+  <release>1.6.4</release>
+  <api>1.6.4</api>
  </version>
  <stability>
   <release>stable</release>
@@ -41,10 +41,12 @@ This package requires PHP version 5.4.8 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Exclude tools/ and package.php from a composer archive.
-Make possible to get a list of GnuPG warnings collected on last operation.
-Fix Bug #21242: PHPUnit tests fail sometimes while deleting S.gpg-agent.extra.
-Fix mode argument type in docblock.
+Use classmap for autoloading in composer as this package does not follow PSR-0.
+Support default gpg binary location on NixOS.
+Fix IgnoreVerifyErrors issues with GnuPG 1.4 and PHP5.
+Add possibility to add custom arguments to gpg commands.
+Add option to choose compression algorithm.
+Compatibility with phpunit &gt;= 6.0.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -168,20 +170,22 @@ Fix mode argument type in docblock.
  <changelog>
   <release>
    <version>
-    <release>1.6.3</release>
-    <api>1.6.3</api>
+    <release>1.6.4</release>
+    <api>1.6.4</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2018-05-29</date>
+   <date>2020-03-22</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-Exclude tools/ and package.php from a composer archive.
-Make possible to get a list of GnuPG warnings collected on last operation.
-Fix Bug #21242: PHPUnit tests fail sometimes while deleting S.gpg-agent.extra.
-Fix mode argument type in docblock.
+Use classmap for autoloading in composer as this package does not follow PSR-0.
+Support default gpg binary location on NixOS.
+Fix IgnoreVerifyErrors issues with GnuPG 1.4 and PHP5.
+Add possibility to add custom arguments to gpg commands.
+Add option to choose compression algorithm.
+Compatibility with phpunit &gt;= 6.0.
    </notes>
   </release>
  </changelog>

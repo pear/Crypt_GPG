@@ -35,16 +35,18 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.6.3';
+$apiVersion     = '1.6.4';
 $apiState       = 'stable';
 
-$releaseVersion = '1.6.3';
+$releaseVersion = '1.6.4';
 $releaseState   = 'stable';
 $releaseNotes   =
-    "Exclude tools/ and package.php from a composer archive.\n" .
-    "Make possible to get a list of GnuPG warnings collected on last operation.\n" .
-    "Fix Bug #21242: PHPUnit tests fail sometimes while deleting S.gpg-agent.extra.\n" .
-    "Fix mode argument type in docblock.";
+    "Use classmap for autoloading in composer as this package does not follow PSR-0.\n" .
+    "Support default gpg binary location on NixOS.\n" .
+    "Fix IgnoreVerifyErrors issues with GnuPG 1.4 and PHP5.\n" .
+    "Add possibility to add custom arguments to gpg commands.\n" .
+    "Add option to choose compression algorithm.\n" .
+    "Compatibility with phpunit >= 6.0.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

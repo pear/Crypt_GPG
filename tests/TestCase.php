@@ -98,8 +98,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
         return array(
             'homedir' => __DIR__ . '/' . self::HOMEDIR,
 //            'binary' => '/usr/bin/gpg2',
-//            'binary' => '/usr/local/bin/gpg2',
-//            'agent'  => '/usr/local/bin/gpg-agent',
+//            'agent'  => '/usr/bin/gpg-agent',
 //            'gpgconf'  => '/usr/local/bin/gpgconf',
 //            'cipher-algo' => 'AES256',
 //            'digest-algo' => 'SHA512',

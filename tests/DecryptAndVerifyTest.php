@@ -361,7 +361,7 @@ x5MBl/I2kBCHeH4=
 TEXT;
         // }}}
 
-        $this->gpg = new Crypt_GPG(array('ignoreVerifyErrors' => true) + $this->getOptions());
+        $this->gpg = new Crypt_GPG($this->getOptions());
 
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
         $results = $this->gpg->decryptAndVerify($encryptedData, true);

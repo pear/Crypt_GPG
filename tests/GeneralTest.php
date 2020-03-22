@@ -145,8 +145,8 @@ class GeneralTestCase extends Crypt_GPG_TestCase
     // {{{ testHomedirFileException_NoWrite()
 
     /**
-     * @expectedException Crypt_GPG_FileException()
-     * @expectedExceptionMessage is not writeable
+     * @expectedException Crypt_GPG_FileException
+     * @expectedExceptionMessage is not writable
      */
     public function testHomedirFileException_NoWrite()
     {
@@ -156,7 +156,7 @@ class GeneralTestCase extends Crypt_GPG_TestCase
 
         $nonWriteableDirectory = $this->getTempFilename('home-no-write');
         mkdir($nonWriteableDirectory);
-        chmod($nonWriteableDirectory, 0300); // r-x --- ---
+        chmod($nonWriteableDirectory, 0500); // r-x --- ---
 
         new Crypt_GPG(array('homedir' => $nonWriteableDirectory));
     }

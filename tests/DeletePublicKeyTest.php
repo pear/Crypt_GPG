@@ -106,6 +106,8 @@ class DeletePublicKeyTestCase extends Crypt_GPG_TestCase
 
         $keyId = 'first-keypair@example.com';
         $this->gpg->deletePublicKey($keyId);
+
+        $this->assertTrue(true);
     }
 
     // }}}

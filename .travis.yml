@@ -14,4 +14,4 @@ before_install:
   - sudo apt-get install -y gnupg-agent
   - composer install --prefer-dist
 script:
-  - TESTS_GPG_BINARY=/usr/bin/gpg2 vendor/bin/phpunit --coverage-text tests
+  - vendor/bin/phpunit --coverage-text tests

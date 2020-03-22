@@ -95,7 +95,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
 
     protected function getOptions()
     {
-        return array(
+        $config = array(
             'homedir' => __DIR__ . '/' . self::HOMEDIR,
 //            'binary' => '/usr/bin/gpg2',
 //            'agent'  => '/usr/bin/gpg-agent',
@@ -106,6 +106,12 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
 //            'debug'  => true,
 //            'options' => array(),
         );
+
+        if ($binary = getenv('TESTS_GPG_BINARY')) {
+            $config['binary'] = $binary;
+        }
+
+        return $config;
     }
 
     // }}}

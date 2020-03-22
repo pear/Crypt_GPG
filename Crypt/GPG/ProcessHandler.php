@@ -235,6 +235,11 @@ class Crypt_GPG_ProcessHandler
 
             if ($this->errorCode != Crypt_GPG::ERROR_MISSING_PASSPHRASE
                 && $this->errorCode != Crypt_GPG::ERROR_BAD_PASSPHRASE
+                && !(
+                    $this->operation == 'decrypt'
+                    && $tokens[0] == 'NO_PUBKEY'
+                    && !empty($this->data['IgnoreVerifyErrors'])
+                )
             ) {
                 $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             }

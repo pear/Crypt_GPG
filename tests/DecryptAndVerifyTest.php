@@ -320,6 +320,7 @@ TEXT;
      */
     public function testDecryptVerifyKeyNotFoundIgnoreVerifyErrors()
     {
+echo "\n----------------------------------------------------------------\n";
         $signature = new Crypt_GPG_Signature();
         $signature->setKeyId('8E3D36B1EA5AC75E');
 
@@ -367,6 +368,8 @@ TEXT;
         $results = $this->gpg->decryptAndVerify($encryptedData, true);
 
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
+echo "\n----------------------------------------------------------------\n";
+die;
     }
 
     // }}}

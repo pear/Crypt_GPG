@@ -1,17 +1,25 @@
 language: php
-dist: trusty
-php:
-  - 7.4
-  - 7.3
-  - 7.2
-  - 7.1
-  - 7.0
-  - 5.6
-  - 5.5
-  - 5.4
+dist: xenial
+
+matrix:
+  fast_finish: true
+  include:
+    - 8.0
+    - 7.4
+    - 7.3
+    - 7.2
+    - 7.1
+    - 7.0
+    - 5.6
+    - 5.5
+      dist: trusty
+    - 5.4
+      dist: trusty
+
 before_install:
   - #sudo apt-get update -qq
   - #sudo apt-get install -y gnupg-agent
   - composer install --prefer-dist
+
 script:
   - vendor/bin/phpunit --coverage-text tests

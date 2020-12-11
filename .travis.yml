@@ -19,6 +19,7 @@ matrix:
 before_install:
   - #sudo apt-get update -qq
   - #sudo apt-get install -y gnupg-agent
+  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "8" ]]; then composer config platform.php 7.4; fi
   - composer install --prefer-dist
 
 script:

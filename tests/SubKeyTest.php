@@ -127,7 +127,7 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
-            'expiration'  => 1421785858,
+            'expiration'  => 3321785858,
             'canSign'     => false,
             'canEncrypt'  => true,
             'hasPrivate'  => true,
@@ -142,12 +142,18 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
             $subKey->getFingerprint());
 
         $this->assertEquals(2048, $subKey->getLength());
-        $this->assertEquals(1221785858, $subKey->getCreationDate());
-        $this->assertEquals(1421785858, $subKey->getExpirationDate());
         $this->assertFalse($subKey->canSign());
         $this->assertTrue($subKey->canEncrypt());
         $this->assertTrue($subKey->hasPrivate());
         $this->assertTrue($subKey->isRevoked());
+        $this->assertSame('2008-09-19T00:57:38+00:00', $subKey->getCreationDateTime()->format('c'));
+        $this->assertSame('2075-04-06T14:17:38+00:00', $subKey->getExpirationDateTime()->format('c'));
+        $this->assertSame(1221785858, $subKey->getCreationDate());
+
+        // will fail on 32-bit
+        if (PHP_INT_MAX > 2147483647) {
+            $this->assertSame(3321785858, $subKey->getExpirationDate());
+        }
     }
 
     // }}}
@@ -165,13 +171,13 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
             'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
             'length'      => 2048,
             'creation'    => 1221528655,
-            'expiration'  => 0,
+            'expiration'  => 3321785858,
             'canSign'     => false,
             'canEncrypt'  => true,
             'isRevoked'   => true
         ));
 
-        $string = 'sub:r:2048:16:8C37DBD2A01B7976:1221528655::::::e:';
+        $string = 'sub:r:2048:16:8C37DBD2A01B7976:1221528655:3321785858:::::e:';
         $subKey = Crypt_GPG_SubKey::parse($string);
 
         $this->assertEquals($expectedSubKey, $subKey);
@@ -329,6 +335,43 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
     }
 
     // }}}
+    // {{{ testGetCreationDateTime()
+
+    /**
+     * @group accessors
+     */
+    public function testGetCreationDateTime()
+    {
+        $subKey = new Crypt_GPG_SubKey(array(
+            'id'          => '8C37DBD2A01B7976',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 2048,
+            'creation'    => 1221785858,
+            'expiration'  => 1421785858,
+            'canSign'     => false,
+            'canEncrypt'  => true,
+            'hasPrivate'  => true
+        ));
+
+        $this->assertSame('2008-09-19T00:57:38+00:00', $subKey->getCreationDateTime()->format('c'));
+
+        $subKey = new Crypt_GPG_SubKey(array(
+            'id'          => '8C37DBD2A01B7976',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 2048,
+            'creation'    => 0,
+            'expiration'  => 1421785858,
+            'canSign'     => false,
+            'canEncrypt'  => true,
+            'hasPrivate'  => true
+        ));
+
+        $this->assertSame(null, $subKey->getCreationDateTime());
+    }
+
+    // }}}
     // {{{ testGetExpirationDate()
 
     /**
@@ -349,6 +392,43 @@ class SubKeyTestCase extends Crypt_GPG_TestCase
         ));
 
         $this->assertEquals(1421785858, $subKey->getExpirationDate());
+    }
+
+    // }}}
+    // {{{ testGetExpirationDateTime()
+
+    /**
+     * @group accessors
+     */
+    public function testGetExpirationDateTime()
+    {
+        $subKey = new Crypt_GPG_SubKey(array(
+            'id'          => '8C37DBD2A01B7976',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 2048,
+            'creation'    => 1221785858,
+            'expiration'  => 1421785858,
+            'canSign'     => false,
+            'canEncrypt'  => true,
+            'hasPrivate'  => true
+        ));
+
+        $this->assertSame('2015-01-20T20:30:58+00:00', $subKey->getExpirationDateTime()->format('c'));
+
+        $subKey = new Crypt_GPG_SubKey(array(
+            'id'          => '8C37DBD2A01B7976',
+            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            'length'      => 2048,
+            'creation'    => 0,
+            'expiration'  => 0,
+            'canSign'     => false,
+            'canEncrypt'  => true,
+            'hasPrivate'  => true
+        ));
+
+        $this->assertSame(null, $subKey->getExpirationDateTime());
     }
 
     // }}}

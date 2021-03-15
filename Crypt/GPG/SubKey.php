@@ -136,19 +136,19 @@ class Crypt_GPG_SubKey
      *
      * This is a Unix timestamp.
      *
-     * @var integer
+     * @var DateTime
      */
-    private $_creationDate = 0;
+    private $_creationDate;
 
     /**
      * Date this sub-key expires
      *
      * This is a Unix timestamp. If this sub-key does not expire, this will be
-     * zero.
+     * null.
      *
-     * @var integer
+     * @var DateTime
      */
-    private $_expirationDate = 0;
+    private $_expirationDate;
 
     /**
      * Contains usage flags of this sub-key
@@ -309,13 +309,27 @@ class Crypt_GPG_SubKey
     /**
      * Gets the creation date of this sub-key
      *
-     * This is a Unix timestamp.
+     * This is a Unix timestamp. Warning: On 32-bit systems it returns
+     * invalid value for dates after 2038-01-19. Use getCreationDateTime().
      *
      * @return integer the creation date of this sub-key.
      */
     public function getCreationDate()
     {
-        return $this->_creationDate;
+        return $this->_creationDate ? (int) $this->_creationDate->format('U') : 0;
+    }
+
+    // }}}
+    // {{{ getCreationDateTime()
+
+    /**
+     * Gets the creation date-time (UTC) of this sub-key
+     *
+     * @return DateTime|null The creation date of this sub-key.
+     */
+    public function getCreationDateTime()
+    {
+        return $this->_creationDate ? $this->_creationDate : null;
     }
 
     // }}}
@@ -325,13 +339,27 @@ class Crypt_GPG_SubKey
      * Gets the date this sub-key expires
      *
      * This is a Unix timestamp. If this sub-key does not expire, this will be
-     * zero.
+     * zero. Warning: On 32-bit systems it returns invalid value for dates
+     * after 2038-01-19. Use getExpirationDateTime().
      *
      * @return integer the date this sub-key expires.
      */
     public function getExpirationDate()
     {
-        return $this->_expirationDate;
+        return $this->_expirationDate ? (int) $this->_expirationDate->format('U') : 0;
+    }
+
+    // }}}
+    // {{{ getExpirationDateTime()
+
+    /**
+     * Gets the date-time (UTC) this sub-key expires
+     *
+     * @return integer the date this sub-key expires.
+     */
+    public function getExpirationDateTime()
+    {
+        return $this->_expirationDate ? $this->_expirationDate : null;
     }
 
     // }}}
@@ -435,15 +463,25 @@ class Crypt_GPG_SubKey
     /**
      * Sets the creation date of this sub-key
      *
-     * The creation date is a Unix timestamp.
+     * The creation date is a Unix timestamp or DateTime object.
      *
-     * @param integer $creationDate the creation date of this sub-key.
+     * @param integer|DateTime $creationDate the creation date of this sub-key.
      *
      * @return Crypt_GPG_SubKey the current object, for fluent interface.
      */
     public function setCreationDate($creationDate)
     {
-        $this->_creationDate = intval($creationDate);
+        if (empty($creationDate)) {
+            $this->_creationDate = null;
+            return $this;
+        }
+
+        if ($creationDate instanceof DateTime) {
+            $this->_creationDate = $creationDate;
+        } else {
+            $this->_creationDate = new DateTime("@$creationDate", new DateTimeZone('UTC'));
+        }
+
         return $this;
     }
 
@@ -456,13 +494,23 @@ class Crypt_GPG_SubKey
      * The expiration date is a Unix timestamp. Specify zero if this sub-key
      * does not expire.
      *
-     * @param integer $expirationDate the expiration date of this sub-key.
+     * @param integer|DateTime $expirationDate the expiration date of this sub-key.
      *
      * @return Crypt_GPG_SubKey the current object, for fluent interface.
      */
     public function setExpirationDate($expirationDate)
     {
-        $this->_expirationDate = intval($expirationDate);
+        if (empty($expirationDate)) {
+            $this->_expirationDate = null;
+            return $this;
+        }
+
+        if ($expirationDate instanceof DateTime) {
+            $this->_expirationDate = $expirationDate;
+        } else {
+            $this->_expirationDate = new DateTime("@$expirationDate", new DateTimeZone('UTC'));
+        }
+
         return $this;
     }
 
@@ -682,29 +730,24 @@ class Crypt_GPG_SubKey
      *
      * @param string $string the date string.
      *
-     * @return integer the UNIX timestamp corresponding to the provided date
+     * @return DateTime|null the date corresponding to the provided date
      *                 string.
      */
     private static function _parseDate($string)
     {
-        if ($string == '') {
-            $timestamp = 0;
-        } else {
-            // all times are in UTC according to GPG documentation
-            $timeZone = new DateTimeZone('UTC');
-
-            if (strpos($string, 'T') === false) {
-                // interpret as UNIX timestamp
-                $string = '@' . $string;
-            }
-
-            $date = new DateTime($string, $timeZone);
-
-            // convert to UNIX timestamp
-            $timestamp = intval($date->format('U'));
+        if (empty($string)) {
+            return null;
         }
 
-        return $timestamp;
+        // all times are in UTC according to GPG documentation
+        $timeZone = new DateTimeZone('UTC');
+
+        if (strpos($string, 'T') === false) {
+            // interpret as UNIX timestamp
+            $string = '@' . $string;
+        }
+
+        return new DateTime($string, $timeZone);
     }
 
     // }}}

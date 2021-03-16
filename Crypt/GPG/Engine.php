@@ -8,8 +8,6 @@
  * This file contains an engine that handles GPG subprocess control and I/O.
  * PHP's process manipulation functions are used to handle the GPG subprocess.
  *
- * PHP version 5
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify

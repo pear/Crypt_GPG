@@ -5,8 +5,6 @@
 /**
  * A class for monitoring and terminating processes
  *
- * PHP version 5
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify

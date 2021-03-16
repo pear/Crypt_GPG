@@ -5,8 +5,6 @@
 /**
  * Contains a class representing GPG sub-keys and constants for GPG algorithms
  *
- * PHP version 5
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify

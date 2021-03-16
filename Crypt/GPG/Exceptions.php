@@ -10,8 +10,6 @@
  *
  * This file contains various exception classes used by the Crypt_GPG package.
  *
- * PHP version 5
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify

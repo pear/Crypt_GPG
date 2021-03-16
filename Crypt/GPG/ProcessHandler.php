@@ -7,8 +7,6 @@
  *
  * This file contains handler for status and error pipes of GPG process.
  *
- * PHP version 5
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify

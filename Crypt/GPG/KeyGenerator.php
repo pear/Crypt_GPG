@@ -7,8 +7,6 @@
  *
  * This file contains an object that handles GnuPG key generation.
  *
- * PHP version 5
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify

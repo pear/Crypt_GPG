@@ -5,8 +5,6 @@
 /**
  * This is the package.xml generator for Crypt_GPG
  *
- * PHP version 5
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify
@@ -35,18 +33,13 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.6.4';
+$apiVersion     = '1.6.5';
 $apiState       = 'stable';
 
-$releaseVersion = '1.6.4';
+$releaseVersion = '1.6.5';
 $releaseState   = 'stable';
 $releaseNotes   =
-    "Use classmap for autoloading in composer as this package does not follow PSR-0.\n" .
-    "Support default gpg binary location on NixOS.\n" .
-    "Fix IgnoreVerifyErrors issues with GnuPG 1.4 and PHP5.\n" .
-    "Add possibility to add custom arguments to gpg commands.\n" .
-    "Add option to choose compression algorithm.\n" .
-    "Compatibility with phpunit >= 6.0.\n";
+    "Add getCreationDateTime() and getExpirationDateTime() methods to Crypt_GPG_SubKey class.\n";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .
@@ -79,7 +72,9 @@ $package->setOptions(
             'tools/',
             'package.php',
             'composer.json',
-            '*.tgz'
+            'composer.lock',
+            '*.tgz',
+            'vendor/'
         ),
         'installexceptions' => array(
             'scripts/crypt-gpg-pinentry' => '/'

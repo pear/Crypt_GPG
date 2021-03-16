@@ -14,8 +14,6 @@
  * This file contains an abstract implementation of a user of the
  * {@link Crypt_GPG_Engine} class.
  *
- * PHP version 5
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify

@@ -2,8 +2,6 @@
 /**
  * Part of Crypt_GPG
  *
- * PHP version 5
- *
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Christian Weiske <cweiske@php.net>

@@ -5,8 +5,6 @@
 /**
  * Contains a data class representing a GPG user id
  *
- * PHP version 5
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify

@@ -43,7 +43,7 @@
         "./"
     ],
     "support": {
-        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Crypt_GPG",
+        "issues": "https://pear.php.net/bugs/search.php?cmd=display&package_name[]=Crypt_GPG",
         "source": "https://github.com/pear/Crypt_GPG"
     },
     "require-dev": {

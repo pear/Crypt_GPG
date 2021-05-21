@@ -2042,12 +2042,12 @@ class Crypt_GPG_Engine
     private function _debug($text)
     {
         if ($this->_debug) {
-            if (php_sapi_name() === 'cli') {
+            if (is_callable($this->_debug)) {
+                call_user_func($this->_debug, $text);
+            } elseif (php_sapi_name() === 'cli') {
                 foreach (explode(PHP_EOL, $text) as $line) {
                     echo "Crypt_GPG DEBUG: ", $line, PHP_EOL;
                 }
-            } else if (is_callable($this->_debug)) {
-                call_user_func($this->_debug, $text);
             } else {
                 // running on a web server, format debug output nicely
                 foreach (explode(PHP_EOL, $text) as $line) {

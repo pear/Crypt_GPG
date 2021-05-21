@@ -463,7 +463,6 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             'Subkey-Type'   => $this->subKeyAlgorithm,
             'Subkey-Length' => $this->subKeySize,
             'Subkey-Usage'  => $this->getUsage($this->subKeyUsage),
-            'Name-Real'     => $userId->getName(),
             'Handle'        => $handle,
         );
 
@@ -477,12 +476,20 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $keyParams['Passphrase'] = $this->passphrase;
         }
 
-        if ($userId->getEmail() != '') {
-            $keyParams['Name-Email'] = $userId->getEmail();
+        $name    = $userId->getName();
+        $email   = $userId->getEmail();
+        $comment = $userId->getComment();
+
+        if (strlen($name) > 0) {
+            $keyParams['Name-Real'] = $name;
         }
 
-        if ($userId->getComment() != '') {
-            $keyParams['Name-Comment'] = $userId->getComment();
+        if (strlen($email) > 0) {
+            $keyParams['Name-Email'] = $email;
+        }
+
+        if (strlen($comment) > 0) {
+            $keyParams['Name-Comment'] = $comment;
         }
 
         $keyParamsFormatted = array();

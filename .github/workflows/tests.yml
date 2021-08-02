@@ -40,10 +40,10 @@ jobs:
       - name: GnuPG version
         run: gpg --version
 
-      - uses: Yuri6037/Action-FakeTTY@v1.1
-
       - name: Execute tests
-        run: vendor/bin/phpunit --stop-on-error tests
+        shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
+        run: |
+          vendor/bin/phpunit --stop-on-error tests
 
       - name: Upload artifacts
         uses: actions/upload-artifact@master

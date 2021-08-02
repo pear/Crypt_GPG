@@ -43,7 +43,7 @@ jobs:
         run: gpg --version
 
       - name: Execute tests
-        run: vendor/bin/phpunit --stop-on-error tests
+        run: TESTS_GPG_BINARY=/home/runner/work/Crypt_GPG/Crypt_GPG/gnupg-1.4.23/g10/gpg vendor/bin/phpunit --stop-on-error tests
 
       - name: Upload artifacts
         uses: actions/upload-artifact@master

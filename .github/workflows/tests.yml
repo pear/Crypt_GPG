@@ -40,9 +40,6 @@ jobs:
       - name: GnuPG version
         run: gpg --version
 
-      - name: Stop GPG Agent
-        run: sudo pkill -9 gpg-agent
-
       - name: Execute tests
         run: vendor/bin/phpunit --stop-on-error tests
 

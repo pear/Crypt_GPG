@@ -41,7 +41,7 @@ jobs:
         run: gpg --version
 
       - name: Execute tests
-        shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
+        uses: Yuri6037/Action-FakeTTY
         run: vendor/bin/phpunit --stop-on-error tests
 
       - name: Upload artifacts

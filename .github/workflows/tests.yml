@@ -41,6 +41,7 @@ jobs:
         run: gpg --version
 
       - name: Execute tests
+        shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
         run: vendor/bin/phpunit --stop-on-error tests
 
       - name: Upload artifacts

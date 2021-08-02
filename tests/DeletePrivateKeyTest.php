@@ -55,7 +55,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class DeletePrivateKeyTestCase extends Crypt_GPG_TestCase
+class DeletePrivateKeyTest extends Crypt_GPG_TestCase
 {
     // {{{ testDeletePrivateKey()
 

@@ -60,7 +60,7 @@ require_once 'Crypt/GPG/KeyGenerator.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class KeyGeneratorTestCase extends Crypt_GPG_TestCase
+class KeyGeneratorTest extends Crypt_GPG_TestCase
 {
     // helper methods
     // {{{ assertKeyEquals()

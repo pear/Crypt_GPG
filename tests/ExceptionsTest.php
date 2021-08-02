@@ -60,7 +60,7 @@ require_once 'Crypt/GPG/Exceptions.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class ExceptionsTestCase extends Crypt_GPG_TestCase
+class ExceptionsTest extends Crypt_GPG_TestCase
 {
     // exception
     // {{{ testException

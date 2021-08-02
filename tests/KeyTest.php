@@ -70,7 +70,7 @@ require_once 'Crypt/GPG/SubKey.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class KeyTestCase extends Crypt_GPG_TestCase
+class KeyTest extends Crypt_GPG_TestCase
 {
     // accessors
     // {{{ testGetSubKeys()

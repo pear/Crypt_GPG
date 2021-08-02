@@ -37,9 +37,8 @@ jobs:
           sed -i 's/: void//g' tests/*.php
 
       - name: Setup tests for PHP <= 5.5
-        if: matrix.php < 5.5
+        if: matrix.php <= 5.5
         run: |
-          sed -i 's/\\\$this->expectExceptionMessage[^;]+;//g' tests/*.php
           sed -i 's/expectException/setExpectedException/g' tests/*.php
 
       - name: Setup tests for PHP >= 8.0
@@ -49,10 +48,8 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Setup GnuPG v1
-        run: |
-          sudo apt-get remove -y gnupg2
-          sudo apt-get install -y gnupg1
+      - name: Install GnuPG v1 (GnuPG v2 does not work with Github Actions)
+        run: sudo apt-get install -y gnupg1
 
       - name: Execute tests
         run: TESTS_GPG_BINARY=/usr/bin/gpg1 vendor/bin/phpunit --stop-on-error tests

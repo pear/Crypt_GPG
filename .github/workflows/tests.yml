@@ -20,8 +20,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - uses: olafurpg/setup-gpg@v3
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -38,24 +36,26 @@ jobs:
           composer require --dev 'phpunit/phpunit:^4.8.36 || ^5.7.21 || ^6 || ^7' --no-update
           sed -i 's/: void//g' tests/*.php
 
-      - name: Setup tests for PHP < 5.6
-        if: matrix.php < 5.6
+      - name: Setup tests for PHP <= 5.5
+        if: matrix.php < 5.5
         run: |
-          sed -i 's/\\$this->expectExceptionMessage[^;]+;//g' tests/*.php
+          sed -i 's/\\\$this->expectExceptionMessage[^;]+;//g' tests/*.php
           sed -i 's/expectException/setExpectedException/g' tests/*.php
 
-      - name: Fix PHPUnit for PHP 8.0
+      - name: Setup tests for PHP >= 8.0
         if: matrix.php >= 8.0
         run: composer config platform.php 7.4
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: GnuPG version
-        run: gpg --version
+      - name: Setup GnuPG v1
+        run: |
+          sudo apt-get remove -y gnupg2
+          sudo apt-get install -y gnupg1
 
       - name: Execute tests
-        run: TESTS_GPG_BINARY=/home/runner/work/Crypt_GPG/Crypt_GPG/gnupg-1.4.23/g10/gpg vendor/bin/phpunit --stop-on-error tests
+        run: TESTS_GPG_BINARY=/usr/bin/gpg1 vendor/bin/phpunit --stop-on-error tests
 
       - name: Upload artifacts
         uses: actions/upload-artifact@master

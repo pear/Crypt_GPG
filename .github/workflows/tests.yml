@@ -38,7 +38,7 @@ jobs:
           composer require --dev 'phpunit/phpunit:^4.8.36 || ^5.7.21 || ^6 || ^7' --no-update
           sed -i 's/: void//g' tests/*.php
           sed -i 's/expectException/setExpectedException/g' tests/*.php
-          sed -i 's/\$this->expectExceptionMessage\([^;]+;//g' tests/*.php
+          sed -i 's/\$this->expectExceptionMessage[^;]+;//g' tests/*.php
 
       - name: Fix PHPUnit for PHP 8.0
         if: matrix.php >= 8.0

@@ -820,7 +820,7 @@ TEXT;
      */
     protected function setExpectedExceptionMessage($message)
     {
-        $this->setExpectedExceptionRegExp('|' . preg_quote($message, '|') . '|');
+        // do nothing
     }
 }
 

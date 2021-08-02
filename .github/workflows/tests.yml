@@ -20,6 +20,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - uses: olafurpg/setup-gpg@v3
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -41,9 +43,7 @@ jobs:
         run: gpg --version
 
       - name: Execute tests
-        shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
-        run: |
-          vendor/bin/phpunit --stop-on-error tests
+        run: vendor/bin/phpunit --stop-on-error tests
 
       - name: Upload artifacts
         uses: actions/upload-artifact@master

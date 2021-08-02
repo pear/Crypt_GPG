@@ -119,9 +119,9 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
     }
 
     // }}}
-    // {{{ setUp()
+    // {{{ setUp(): void
 
-    public function setUp()
+    public function setUp(): void
     {
         // load test configuration file if it exists
         $configFilename = __DIR__ . '/config.php';
@@ -567,9 +567,9 @@ TEXT;
     }
 
     // }}}
-    // {{{ tearDown()
+    // {{{ tearDown(): void
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->gpg);
 
@@ -803,6 +803,17 @@ TEXT;
     }
 
     // }}}
+
+    protected function getPropertyValue($class, $object, $property)
+    {
+        $reflectionClass = new ReflectionClass($class);
+
+        $prop = $reflectionClass->getProperty($property);
+
+        $prop->setAccessible(true);
+
+        return $prop->getValue($object);
+    }
 }
 
 ?>

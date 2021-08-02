@@ -115,12 +115,12 @@ class EncryptTest extends Crypt_GPG_TestCase
     // {{{ testEncryptKeyNotFoundException_invalid()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group string
      */
     public function testEncryptNotFoundException_invalid()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addEncryptKey('non-existent-key@example.com');
         $this->gpg->encrypt($data);
@@ -130,12 +130,12 @@ class EncryptTest extends Crypt_GPG_TestCase
     // {{{ testEncryptKeyNotFoundException_none()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group string
      */
     public function testEncryptNotFoundException_none()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->encrypt($data);
     }
@@ -241,11 +241,11 @@ class EncryptTest extends Crypt_GPG_TestCase
 
     /**
      * @group file
-     *
-     * @expectedException Crypt_GPG_FileException
      */
     public function testEncryptFileFileException_input()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         // input file does not exist
         $filename =
             $this->getDataFilename('testEncryptFileFileException_input.plain');
@@ -259,11 +259,11 @@ class EncryptTest extends Crypt_GPG_TestCase
 
     /**
      * @group file
-     *
-     * @expectedException Crypt_GPG_FileException
      */
     public function testEncryptFileFileException_output()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         // output file does not exist
         $inputFilename  = $this->getDataFilename('testFileMedium.plain');
         $outputFilename = './non-existent' .

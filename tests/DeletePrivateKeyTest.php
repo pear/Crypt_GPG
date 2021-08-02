@@ -111,12 +111,12 @@ class DeletePrivateKeyTest extends Crypt_GPG_TestCase
     // {{{ testDeletePrivateKeyNotFoundException()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group delete-private
      */
     public function testDeletePrivateKeyNotFoundException()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         $keyId = 'non-existent-key@example.com';
         $this->gpg->deletePrivateKey($keyId);
     }
@@ -125,12 +125,12 @@ class DeletePrivateKeyTest extends Crypt_GPG_TestCase
     // {{{ testDeletePrivateKeyNotFoundException_public_only()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group delete-private
      */
     public function testDeletePrivateKeyNotFoundException_public_only()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         $keyId = 'public-only@example.com';
         $this->gpg->deletePrivateKey($keyId);
     }

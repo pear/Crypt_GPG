@@ -172,9 +172,9 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
     }
 
     // }}}
-    // {{{ setUp()
+    // {{{ setUp(): void
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->generator = new Crypt_GPG_KeyGenerator($this->getOptions());
@@ -193,12 +193,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $expectedDate = 0;
         $this->generator->setExpirationDate(0);
 
-        $this->assertAttributeEquals(
-            $expectedDate,
-            'expirationDate',
-            $this->generator,
-            'Setting expiration date to zero failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'expirationDate');
+        $this->assertSame($expectedDate, $value, 'Setting expiration date to zero failed.');
     }
 
     // }}}
@@ -212,12 +208,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $expectedDate = 2000000000;
         $this->generator->setExpirationDate(2000000000);
 
-        $this->assertAttributeEquals(
-            $expectedDate,
-            'expirationDate',
-            $this->generator,
-            'Setting expiration date by integer failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'expirationDate');
+        $this->assertSame($expectedDate, $value, 'Setting expiration date by integer failed.');
     }
 
     // }}}
@@ -233,12 +225,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $expectedDate = 2000000000;
         $this->generator->setExpirationDate('2033-05-18T03:33:20');
 
-        $this->assertAttributeEquals(
-            $expectedDate,
-            'expirationDate',
-            $this->generator,
-            'Setting expiration date by string failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'expirationDate');
+        $this->assertSame($expectedDate, $value, 'Setting expiration date by string failed.');
     }
 
     // }}}
@@ -246,10 +234,11 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
     /**
      * @group mutators
-     * @expectedException InvalidArgumentException
      */
     public function testSetExpirationDate_invalid_format()
     {
+        $this->expectException('InvalidArgumentException');
+
         date_default_timezone_set('UTC');
 
         $this->generator->setExpirationDate('this is not a date');
@@ -260,10 +249,11 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
     /**
      * @group mutators
-     * @expectedException InvalidArgumentException
      */
     public function testSetExpirationDate_too_early_date()
     {
+        $this->expectException('InvalidArgumentException');
+
         $this->generator->setExpirationDate(1301088055);
     }
 
@@ -272,10 +262,11 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
     /**
      * @group mutators
-     * @expectedException InvalidArgumentException
      */
     public function testSetExpirationDate_today()
     {
+        $this->expectException('InvalidArgumentException');
+
         $this->generator->setExpirationDate(time());
     }
 
@@ -284,10 +275,11 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
     /**
      * @group mutators
-     * @expectedException InvalidArgumentException
      */
     public function testSetExpirationDate_too_late_date()
     {
+        $this->expectException('InvalidArgumentException');
+
         $this->generator->setExpirationDate(2147483648);
     }
 
@@ -302,12 +294,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $expectedPassphrase = 'test1';
         $this->generator->setPassphrase('test1');
 
-        $this->assertAttributeEquals(
-            $expectedPassphrase,
-            'passphrase',
-            $this->generator,
-            'Setting passphrase failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'passphrase');
+        $this->assertSame($expectedPassphrase, $value, 'Setting passphrase failed.');
     }
 
     // }}}
@@ -327,26 +315,14 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
             Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN
         );
 
-        $this->assertAttributeEquals(
-            $expectedAlgorithm,
-            'keyAlgorithm',
-            $this->generator,
-            'Setting key algorithm failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyAlgorithm');
+        $this->assertSame($expectedAlgorithm, $value, 'Setting key algorithm failed.');
 
-        $this->assertAttributeEquals(
-            $expectedSize,
-            'keySize',
-            $this->generator,
-            'Setting key algorithm changed key size.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keySize');
+        $this->assertSame($expectedSize, $value, 'Setting key algorithm changed key size.');
 
-        $this->assertAttributeEquals(
-            $expectedUsage,
-            'keyUsage',
-            $this->generator,
-            'Setting key algorithm changed key usage.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyUsage');
+        $this->assertSame($expectedUsage, $value, 'Setting key algorithm changed key usage.');
     }
 
     // }}}
@@ -367,26 +343,15 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
             512
         );
 
-        $this->assertAttributeEquals(
-            $expectedAlgorithm,
-            'keyAlgorithm',
-            $this->generator,
-            'Setting key algorithm failed.'
-        );
 
-        $this->assertAttributeEquals(
-            $expectedSize,
-            'keySize',
-            $this->generator,
-            'Setting key size failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyAlgorithm');
+        $this->assertSame($expectedAlgorithm, $value, 'Setting key algorithm failed.');
 
-        $this->assertAttributeEquals(
-            $expectedUsage,
-            'keyUsage',
-            $this->generator,
-            'Setting key algorithm and size changed key usage.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keySize');
+        $this->assertSame($expectedSize, $value, 'Setting key size failed.');
+
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyUsage');
+        $this->assertSame($expectedUsage, $value, 'Setting key algorithm and size changed key usage.');
     }
 
     // }}}
@@ -411,26 +376,15 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
             | Crypt_GPG_SubKey::USAGE_ENCRYPT
         );
 
-        $this->assertAttributeEquals(
-            $expectedAlgorithm,
-            'keyAlgorithm',
-            $this->generator,
-            'Setting key algorithm failed.'
-        );
 
-        $this->assertAttributeEquals(
-            $expectedSize,
-            'keySize',
-            $this->generator,
-            'Setting key size failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyAlgorithm');
+        $this->assertSame($expectedAlgorithm, $value, 'Setting key algorithm failed.');
 
-        $this->assertAttributeEquals(
-            $expectedUsage,
-            'keyUsage',
-            $this->generator,
-            'Setting key usage failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keySize');
+        $this->assertSame($expectedSize, $value, 'Setting key size failed.');
+
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyUsage');
+        $this->assertSame($expectedUsage, $value, 'Setting key algorithm and size changed key usage.');
     }
 
     // }}}
@@ -438,10 +392,11 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
     /**
      * @group mutators
-     * @expectedException Crypt_GPG_InvalidKeyParamsException
      */
     public function testSetKeyParams_invalid_algorithm()
     {
+        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+
         $this->generator->setKeyParams(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
     }
 
@@ -450,10 +405,11 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
     /**
      * @group mutators
-     * @expectedException Crypt_GPG_InvalidKeyParamsException
      */
     public function testSetKeyParams_invalid_dsa_usage()
     {
+        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+
         $this->generator->setKeyParams(
             Crypt_GPG_SubKey::ALGORITHM_DSA,
             2048,
@@ -477,26 +433,14 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
             Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN
         );
 
-        $this->assertAttributeEquals(
-            $expectedAlgorithm,
-            'subKeyAlgorithm',
-            $this->generator,
-            'Setting sub-key algorithm failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyAlgorithm');
+        $this->assertSame($expectedAlgorithm, $value, 'Setting sub-key algorithm failed.');
 
-        $this->assertAttributeEquals(
-            $expectedSize,
-            'subKeySize',
-            $this->generator,
-            'Setting sub-key algorithm changed key size.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeySize');
+        $this->assertSame($expectedSize, $value, 'Setting sub-key algorithm changed key size.');
 
-        $this->assertAttributeEquals(
-            $expectedUsage,
-            'subKeyUsage',
-            $this->generator,
-            'Setting sub-key algorithm changed key usage.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyUsage');
+        $this->assertSame($expectedUsage, $value, 'Setting sub-key algorithm changed key usage.');
     }
 
     // }}}
@@ -516,26 +460,14 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
             1024
         );
 
-        $this->assertAttributeEquals(
-            $expectedAlgorithm,
-            'subKeyAlgorithm',
-            $this->generator,
-            'Setting sub-key algorithm failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyAlgorithm');
+        $this->assertSame($expectedAlgorithm, $value, 'Setting sub-key algorithm failed.');
 
-        $this->assertAttributeEquals(
-            $expectedSize,
-            'subKeySize',
-            $this->generator,
-            'Setting sub-key size failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeySize');
+        $this->assertSame($expectedSize, $value, 'Setting sub-key algorithm changed key size.');
 
-        $this->assertAttributeEquals(
-            $expectedUsage,
-            'subKeyUsage',
-            $this->generator,
-            'Setting sub-key algorithm and size changed key usage.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyUsage');
+        $this->assertSame($expectedUsage, $value, 'Setting sub-key algorithm changed key usage.');
     }
 
     // }}}
@@ -558,26 +490,14 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
             | Crypt_GPG_SubKey::USAGE_ENCRYPT
         );
 
-        $this->assertAttributeEquals(
-            $expectedAlgorithm,
-            'subKeyAlgorithm',
-            $this->generator,
-            'Setting sub-key algorithm failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyAlgorithm');
+        $this->assertSame($expectedAlgorithm, $value, 'Setting sub-key algorithm failed.');
 
-        $this->assertAttributeEquals(
-            $expectedSize,
-            'subKeySize',
-            $this->generator,
-            'Setting sub-key size failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeySize');
+        $this->assertSame($expectedSize, $value, 'Setting sub-key algorithm changed key size.');
 
-        $this->assertAttributeEquals(
-            $expectedUsage,
-            'subKeyUsage',
-            $this->generator,
-            'Setting sub-key usage failed.'
-        );
+        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyUsage');
+        $this->assertSame($expectedUsage, $value, 'Setting sub-key algorithm changed key usage.');
     }
 
     // }}}
@@ -585,10 +505,11 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
     /**
      * @group mutators
-     * @expectedException Crypt_GPG_InvalidKeyParamsException
      */
     public function testSetSubKeyParams_invalid_elgamal_usage()
     {
+        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+
         $this->generator->setSubKeyParams(
             Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
             2048,
@@ -601,10 +522,11 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
     /**
      * @group mutators
-     * @expectedException Crypt_GPG_InvalidKeyParamsException
      */
     public function testSetSubKeyParams_invalid_dsa_usage()
     {
+        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+
         $this->generator->setSubKeyParams(
             Crypt_GPG_SubKey::ALGORITHM_DSA,
             2048,
@@ -928,10 +850,11 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
     /**
      * @group generate-key
-     * @expectedException Crypt_GPG_InvalidKeyParamsException
      */
     public function testGenerateKeyWithInvalidPrimaryKeyAlgorithm()
     {
+        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+
         if (!$this->config['enable-key-generation']) {
             $this->markTestSkipped(
                 'Key generation tests are disabled. To run key generation '
@@ -954,10 +877,11 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
     /**
      * @group generate-key
-     * @expectedException Crypt_GPG_InvalidKeyParamsException
      */
     public function testGenerateKeyWithInvalidSubKeyAlgorithm()
     {
+        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+
         if (!$this->config['enable-key-generation']) {
             $this->markTestSkipped(
                 'Key generation tests are disabled. To run key generation '

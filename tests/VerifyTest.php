@@ -61,12 +61,12 @@ class VerifyTest extends Crypt_GPG_TestCase
     // {{{ testVerifyNoDataException_invalid()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group string
      */
     public function testVerifyNoDataException_invalid()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $signedData = 'Invalid OpenPGP data.';
         $this->gpg->verify($signedData);
     }
@@ -75,12 +75,12 @@ class VerifyTest extends Crypt_GPG_TestCase
     // {{{ testVerifyNoDataException_empty()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group string
      */
     public function testVerifyNoDataException_empty()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $signedData = '';
         $this->gpg->verify($signedData);
     }
@@ -89,12 +89,12 @@ class VerifyTest extends Crypt_GPG_TestCase
     // {{{ testVerifyKeyNotFoundException()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group string
      */
     public function testVerifyKeyNotFoundException()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         $data = 'Hello, Alice! Goodbye, Bob!';
         // {{{ detached signature
         $detachedSignature = <<<TEXT
@@ -824,12 +824,12 @@ TEXT;
     // {{{ testVerifyFileFileException()
 
     /**
-     * @expectedException Crypt_GPG_FileException
-     *
      * @group file
      */
     public function testVerifyFileFileException()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         $filename = './non-existent/testVerifyFileFileException.asc';
         $this->gpg->verifyFile($filename);
     }
@@ -838,12 +838,12 @@ TEXT;
     // {{{ testVerifyFileNoDataException()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group file
      */
     public function testVerifyFileNoDataException()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->verifyFile($filename);
     }

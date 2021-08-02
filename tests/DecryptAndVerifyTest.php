@@ -188,12 +188,12 @@ TEXT;
     // {{{ testDecryptVerifyKeyNotFoundException_decrypt()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group string
      */
     public function testDecryptVerifyKeyNotFoundException_decrypt()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         // was encrypted with missing-key@example.com, signed with
         // first-keypair@example.com
         // {{{ encrypted data
@@ -229,12 +229,12 @@ TEXT;
     // {{{ testDecryptVerifyKeyNotFoundException_verify()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group string
      */
     public function testDecryptVerifyKeyNotFoundException_verify()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         // was encrypted with first-keypair@example.com, signed with
         // missing-key@example.com
         // {{{ encrypted data
@@ -276,12 +276,12 @@ TEXT;
     // {{{ testDecryptVerifyKeyNotFoundException_both()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group string
      */
     public function testDecryptVerifyKeyNotFoundException_both()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         // was encrypted and signed with missing-key@example.com
         // {{{ encrypted data
         $encryptedData = <<<TEXT
@@ -373,12 +373,12 @@ TEXT;
     // {{{ testDecryptVerifyNoDataException_invalid()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group string
      */
     public function testDecryptVerifyNoDataException_invalid()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $encryptedData = 'Invalid OpenPGP data.';
         $this->gpg->decryptAndVerify($encryptedData);
     }
@@ -387,12 +387,12 @@ TEXT;
     // {{{ testDecryptVerifyNoDataException_empty()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group string
      */
     public function testDecryptVerifyNoDataException_empty()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $encryptedData = '';
         $this->gpg->decryptAndVerify($encryptedData);
     }
@@ -401,12 +401,12 @@ TEXT;
     // {{{ testDecryptVerifyBadPassphraseException_missing()
 
     /**
-     * @expectedException Crypt_GPG_BadPassphraseException
-     *
      * @group string
      */
     public function testDecryptVerifyBadPassphraseException_missing()
     {
+        $this->expectException('Crypt_GPG_BadPassphraseException');
+
         // encrypted with first-keypair@example.com, signed with
         // first-keypair@example.com
         // {{{ encrypted data no passphrase
@@ -442,12 +442,12 @@ TEXT;
     // {{{ testDecryptVerifyBadPassphraseException_bad()
 
     /**
-     * @expectedException Crypt_GPG_BadPassphraseException
-     *
      * @group string
      */
     public function testDecryptVerifyBadPassphraseException_bad()
     {
+        $this->expectException('Crypt_GPG_BadPassphraseException');
+
         // encrypted with first-keypair@example.com, signed with
         // first-keypair@example.com
         // {{{ encrypted data no passphrase
@@ -648,12 +648,12 @@ TEXT;
     // {{{ testDecryptAndVerifyDualNoPassphraseKeyMissing()
 
     /**
-     * @expectedException Crypt_GPG_BadPassphraseException
-     *
      * @group string
      */
     public function testDecryptAndVerifyDualNoPassphraseKeyMissing()
     {
+        $this->expectException('Crypt_GPG_BadPassphraseException');
+
         // encrypted with both first-keypair@example.com and
         // second-keypair@example.com
         // {{{ dual encrypted data
@@ -1142,12 +1142,12 @@ TEXT;
     // {{{ testDecryptVerifyFileFileException_input()
 
     /**
-     * @expectedException Crypt_GPG_FileException
-     *
      * @group file
      */
     public function testDecryptVerifyFileFileException_input()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         // input file does not exist
         $inputFilename = $this->getDataFilename(
             'testDecryptVerifyFileFileException_input.asc'
@@ -1160,12 +1160,12 @@ TEXT;
     // {{{ testDecryptVerifyFileFileException_output()
 
     /**
-     * @expectedException Crypt_GPG_FileException
-     *
      * @group file
      */
     public function testDecryptVerifyFileFileException_output()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         // input file is encrypted with first-keypair@example.com
         // output file does not exist
         $inputFilename  = $this->getDataFilename('testDecryptVerifyFile.asc');
@@ -1180,12 +1180,12 @@ TEXT;
     // {{{ testDecryptVerifyFileKeyNotFoundException_decrypt()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group file
      */
     public function testDecryptVerifyFileKeyNotFoundException_decrypt()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         // file is encrypted with missing-key@example.com, not signed
         $inputFilename = $this->getDataFilename(
             'testDecryptFileKeyNotFoundException.asc'
@@ -1391,12 +1391,12 @@ TEXT;
     // {{{ testDecryptVerifyFileNoDataException()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group file
      */
     public function testDecryptVerifyFileNoDataException()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->decryptAndVerifyFile($filename);
     }

@@ -59,11 +59,10 @@ class GeneralTest extends Crypt_GPG_TestCase
 {
     // {{{ testPublicKeyringFileException()
 
-    /**
-     * @expectedException Crypt_GPG_FileException
-     */
     public function testPublicKeyringFileException()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         $publicKeyringFile = $this->getTempFilename('pubring.gpg');
         new Crypt_GPG(
             array(
@@ -75,11 +74,10 @@ class GeneralTest extends Crypt_GPG_TestCase
     // }}}
     // {{{ testPrivateKeyringFileException()
 
-    /**
-     * @expectedException Crypt_GPG_FileException
-     */
     public function testPrivateKeyringFileException()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         $privateKeyringFile = $this->getTempFilename('secring.gpg');
         new Crypt_GPG(
             array(
@@ -91,11 +89,10 @@ class GeneralTest extends Crypt_GPG_TestCase
     // }}}
     // {{{ testTrustDatabaseFileException()
 
-    /**
-     * @expectedException Crypt_GPG_FileException
-     */
     public function testTrustDatabaseFileException()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         $trustDbFile = $this->getTempFilename('secring.gpg');
         new Crypt_GPG(
             array(
@@ -107,12 +104,11 @@ class GeneralTest extends Crypt_GPG_TestCase
     // }}}
     // {{{ testHomedirFileException_NoCreate()
 
-    /**
-     * @expectedException Crypt_GPG_FileException
-     * @expectedExceptionMessage cannot be created
-     */
     public function testHomedirFileException_NoCreate()
     {
+        $this->expectException('Crypt_GPG_FileException');
+        $this->expectExceptionMessage('cannot be created');
+
         if (posix_getuid() === 0) {
             $this->markTestSkipped('Root can write to any homedir.');
         }
@@ -124,12 +120,11 @@ class GeneralTest extends Crypt_GPG_TestCase
     // }}}
     // {{{ testHomedirFileException_NoExecute()
 
-    /**
-     * @expectedException Crypt_GPG_FileException
-     * @expectedExceptionMessage is not enterable
-     */
     public function testHomedirFileException_NoExecute()
     {
+        $this->expectException('Crypt_GPG_FileException');
+        $this->expectExceptionMessage('is not enterable');
+
         if (posix_getuid() === 0) {
             $this->markTestSkipped('Root can do what it wants to any homedir.');
         }
@@ -144,12 +139,11 @@ class GeneralTest extends Crypt_GPG_TestCase
     // }}}
     // {{{ testHomedirFileException_NoWrite()
 
-    /**
-     * @expectedException Crypt_GPG_FileException
-     * @expectedExceptionMessage is not writable
-     */
     public function testHomedirFileException_NoWrite()
     {
+        $this->expectException('Crypt_GPG_FileException');
+        $this->expectExceptionMessage('is not writable');
+
         if (posix_getuid() === 0) {
             $this->markTestSkipped('Root can write to any homedir.');
         }
@@ -164,22 +158,20 @@ class GeneralTest extends Crypt_GPG_TestCase
     // }}}
     // {{{ testBinaryPEARException()
 
-    /**
-     * @expectedException PEAR_Exception
-     */
     public function testBinaryPEARException()
     {
+        $this->expectException('PEAR_Exception');
+
         new Crypt_GPG(array('binary' => './non-existent-binary'));
     }
 
     // }}}
     // {{{ testGPGBinaryPEARException()
 
-    /**
-     * @expectedException PEAR_Exception
-     */
     public function testGPGBinaryPEARException()
     {
+        $this->expectException('PEAR_Exception');
+
         new Crypt_GPG(array('gpgBinary' => './non-existent-binary'));
     }
 
@@ -192,19 +184,7 @@ class GeneralTest extends Crypt_GPG_TestCase
         $gpg = new Crypt_GPG();
         $gpg->setEngine($engine);
 
-        $homedirConstraint = $this->attribute(
-            $this->attributeEqualTo(
-                '_homedir',
-                __DIR__ . '/' . self::HOMEDIR
-            ),
-            'engine'
-        );
-
-        $this->assertThat(
-            $gpg,
-            $homedirConstraint,
-            'Engine was not set properly.'
-        );
+        $this->assertSame($this->getPropertyValue('Crypt_GPG', $gpg, 'engine'), $engine);
     }
 
     // }}}

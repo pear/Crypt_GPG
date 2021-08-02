@@ -67,12 +67,12 @@ class SignTest extends Crypt_GPG_TestCase
     // {{{ testSignKeyNotFoundException_invalid()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group string
      */
     public function testSignKeyNotFoundException_invalid()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('non-existent-key@example.com');
         $this->gpg->sign($data);
@@ -82,12 +82,12 @@ class SignTest extends Crypt_GPG_TestCase
     // {{{ testSignKeyNotFoundException_none()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group string
      */
     public function testSignKeyNotFoundException_none()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->sign($data);
     }
@@ -96,12 +96,12 @@ class SignTest extends Crypt_GPG_TestCase
     // {{{ testSignBadPassphraseException_missing()
 
     /**
-     * @expectedException Crypt_GPG_BadPassphraseException
-     *
      * @group string
      */
     public function testSignBadPassphraseException_missing()
     {
+        $this->expectException('Crypt_GPG_BadPassphraseException');
+
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com');
         $this->gpg->sign($data);
@@ -111,12 +111,12 @@ class SignTest extends Crypt_GPG_TestCase
     // {{{ testSignBadPassphraseException_bad()
 
     /**
-     * @expectedException Crypt_GPG_BadPassphraseException
-     *
      * @group string
      */
     public function testSignBadPassphraseException_bad()
     {
+        $this->expectException('Crypt_GPG_BadPassphraseException');
+
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com', 'incorrect');
         $this->gpg->sign($data);
@@ -557,12 +557,12 @@ class SignTest extends Crypt_GPG_TestCase
     // {{{ testSignFileFileException_input()
 
     /**
-     * @expectedException Crypt_GPG_FileException
-     *
      * @group file
      */
     public function testSignFileFileException_input()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         // input file does not exist
         $inputFilename =
             $this->getDataFilename('testSignFileFileFileException_input.plain');
@@ -575,12 +575,12 @@ class SignTest extends Crypt_GPG_TestCase
     // {{{ testSignFileFileException_output()
 
     /**
-     * @expectedException Crypt_GPG_FileException
-     *
      * @group file
      */
     public function testSignFileFileException_output()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         // input file is encrypted with first-keypair@example.com
         // output file does not exist
         $inputFilename  = $this->getDataFilename('testFileMedium.plain');

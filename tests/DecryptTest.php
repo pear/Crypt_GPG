@@ -141,12 +141,12 @@ TEXT;
     // {{{ testDecryptKeyNotFoundException()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group string
      */
     public function testDecryptKeyNotFoundException()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         // was encrypted with missing-key@example.com
         // {{{ encrypted data
         $encryptedData = <<<TEXT
@@ -179,12 +179,12 @@ TEXT;
     // {{{ testDecryptNoDataException_invalid()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group string
      */
     public function testDecryptNoDataException_invalid()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $encryptedData = 'Invalid OpenPGP data.';
         $this->gpg->decrypt($encryptedData);
     }
@@ -193,12 +193,12 @@ TEXT;
     // {{{ testDecryptNoDataException_empty()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group string
      */
     public function testDecryptNoDataException_empty()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $encryptedData = '';
         $this->gpg->decrypt($encryptedData);
     }
@@ -207,12 +207,12 @@ TEXT;
     // {{{ testDecryptBadPassphraseException_missing()
 
     /**
-     * @expectedException Crypt_GPG_BadPassphraseException
-     *
      * @group string
      */
     public function testDecryptBadPassphraseException_missing()
     {
+        $this->expectException('Crypt_GPG_BadPassphraseException');
+
         // encrypted with first-keypair@example.com
         // {{{ encrypted data
         $encryptedData = <<<TEXT
@@ -245,12 +245,12 @@ TEXT;
     // {{{ testDecryptBadPassphraseException_bad()
 
     /**
-     * @expectedException Crypt_GPG_BadPassphraseException
-     *
      * @group string
      */
     public function testDecryptBadPassphraseException_bad()
     {
+        $this->expectException('Crypt_GPG_BadPassphraseException');
+
         // encrypted with first-keypair@example.com
         // {{{ encrypted data
         $encryptedData = <<<TEXT
@@ -402,12 +402,12 @@ TEXT;
     // {{{ testDecryptDualNoPassphraseKeyMissing()
 
     /**
-     * @expectedException Crypt_GPG_BadPassphraseException
-     *
      * @group string
      */
     public function testDecryptDualNoPassphraseKeyMissing()
     {
+        $this->expectException('Crypt_GPG_BadPassphraseException');
+
         // encrypted with both first-keypair@example.com and
         // second-keypair@example.com
         // {{{ dual encrypted data
@@ -626,12 +626,12 @@ TEXT;
     // {{{ testDecryptFileFileException_input()
 
     /**
-     * @expectedException Crypt_GPG_FileException
-     *
      * @group file
      */
     public function testDecryptFileFileException_input()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         // input file does not exist
         $inputFilename =
             $this->getDataFilename('testDecryptFileFileException_input.asc');
@@ -643,12 +643,12 @@ TEXT;
     // {{{ testDecryptFileFileException_output()
 
     /**
-     * @expectedException Crypt_GPG_FileException
-     *
      * @group file
      */
     public function testDecryptFileFileException_output()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         // input file is encrypted with first-keypair@example.com
         // output file does not exist
         $inputFilename  = $this->getDataFilename('testDecryptFile.asc');
@@ -663,12 +663,12 @@ TEXT;
     // {{{ testDecryptFileKeyNotFoundException()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group file
      */
     public function testDecryptFileKeyNotFoundException()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         // file is encrypted with missing-key@example.com
         $inputFilename =
             $this->getDataFilename('testDecryptFileKeyNotFoundException.asc');
@@ -739,12 +739,12 @@ TEXT;
     // {{{ testDecryptFileNoDataException()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group file
      */
     public function testDecryptFileNoDataException()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->decryptFile($filename);
     }

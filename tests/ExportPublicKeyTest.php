@@ -68,23 +68,23 @@ class ExportPublicKeyTest extends Crypt_GPG_TestCase
 
         // We can't expect the key data to be identical as the one
         // at the creation time, so we only check if it's valid format
-        $expectedKeyData = "-----END PGP PUBLIC KEY BLOCK-----";
+        $expectedKeyData = "-----END PGP PUBLIC KEY BLOCK-----\n";
 
         $keyData = $this->gpg->exportPublicKey($keyId);
 
-        $this->assertContains($expectedKeyData, $keyData);
+        $this->assertStringEndsWith($expectedKeyData, $keyData);
     }
 
     // }}}
     // {{{ testExportPublicKeyNotFoundException()
 
     /**
-     * @expectedException Crypt_GPG_KeyNotFoundException
-     *
      * @group export
      */
     public function testExportPublicKeyNotFoundException()
     {
+        $this->expectException('Crypt_GPG_KeyNotFoundException');
+
         $keyId = 'non-existent-key@example.com';
         $this->gpg->exportPublicKey($keyId);
     }

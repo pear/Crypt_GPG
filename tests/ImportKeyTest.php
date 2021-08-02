@@ -58,9 +58,9 @@ require_once 'TestCase.php';
 class ImportKeyTest extends Crypt_GPG_TestCase
 {
     // set up
-    // {{{ setUp()
+    // {{{ setUp(): void
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -343,12 +343,12 @@ TEXT;
     // {{{ testImportKeyNoDataException_invalid()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group string
      */
     public function testImportKeyNoDataException_invalid()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $keyData = 'Invalid OpenPGP data.';
         $this->gpg->importKey($keyData);
     }
@@ -357,12 +357,12 @@ TEXT;
     // {{{ testImportKeyNoDataException_empty()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group string
      */
     public function testImportKeyNoDataException_empty()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $keyData = '';
         $this->gpg->importKey($keyData);
     }
@@ -489,12 +489,12 @@ TEXT;
     // {{{ testImportKeyFileFileException()
 
     /**
-     * @expectedException Crypt_GPG_FileException
-     *
      * @group file
      */
     public function testImportKeyFileFileException()
     {
+        $this->expectException('Crypt_GPG_FileException');
+
         // input file does not exist
         $filename =
             $this->getDataFilename('testImportKeyFileFileException.asc');
@@ -506,12 +506,12 @@ TEXT;
     // {{{ testImportKeyFileNoDataException()
 
     /**
-     * @expectedException Crypt_GPG_NoDataException
-     *
      * @group file
      */
     public function testImportKeyFileNoDataException()
     {
+        $this->expectException('Crypt_GPG_NoDataException');
+
         $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->importKeyFile($filename);
     }

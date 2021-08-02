@@ -32,9 +32,15 @@ jobs:
       - name: Setup problem matchers
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
+      - name:
+        if: matrix.php < 7.4
+        run: |
+          composer require --dev 'phpunit/phpunit:^4.8.36 || ^5.7.21 || ^6 || ^7' --no-update
+          sed -i 's/: void//g' tests/*.php
+
       - name: Fix PHPUnit for PHP 8.0
-        run: composer config platform.php 7.4
         if: matrix.php >= 8.0
+        run: composer config platform.php 7.4
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress

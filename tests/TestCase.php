@@ -151,7 +151,6 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
 
         $this->_setUpKeyring();
         $this->_setUpTempdir();
-        $this->_debugLog(">>>>>>>" . $this->getName());
 
         $this->gpg = new Crypt_GPG($this->getOptions());
     }

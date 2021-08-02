@@ -95,6 +95,10 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
 
     protected function getOptions()
     {
+        $debugFunction = function ($text) {
+            file_put_contents(__DIR__ . '/debug.log', $text . "\n", FILE_APPEND);
+        };
+
         $config = array(
             'homedir' => __DIR__ . '/' . self::HOMEDIR,
 //            'binary' => '/usr/bin/gpg2',
@@ -103,7 +107,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
 //            'cipher-algo' => 'AES256',
 //            'digest-algo' => 'SHA512',
 //            'compress-algo' => 'zip',
-            'debug'  => array($this, '_debugLog'),
+            'debug'  => $debugFunction,
 //            'options' => array(),
         );
 
@@ -797,14 +801,6 @@ TEXT;
             $actual->isValid(),
             'Signature validity does match.'
         );
-    }
-
-    // }}}
-    // {{{ _debugLog()
-
-    private function _debugLog($text)
-    {
-        file_put_contents(__DIR__ . '/debug.log', $text . "\n", FILE_APPEND);
     }
 
     // }}}

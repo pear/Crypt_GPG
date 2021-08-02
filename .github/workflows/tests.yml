@@ -40,8 +40,9 @@ jobs:
       - name: GnuPG version
         run: gpg --version
 
+      - uses: Yuri6037/Action-FakeTTY
+
       - name: Execute tests
-        uses: Yuri6037/Action-FakeTTY
         run: vendor/bin/phpunit --stop-on-error tests
 
       - name: Upload artifacts

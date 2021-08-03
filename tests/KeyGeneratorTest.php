@@ -62,9 +62,6 @@ require_once 'Crypt/GPG/KeyGenerator.php';
  */
 class KeyGeneratorTest extends Crypt_GPG_TestCase
 {
-    // helper methods
-    // {{{ assertKeyEquals()
-
     protected function assertKeyEquals(
         Crypt_GPG_Key $key1,
         Crypt_GPG_Key $key2
@@ -171,19 +168,11 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         );
     }
 
-    // }}}
-    // {{{ setUp(): void
-
     public function setUp(): void
     {
         parent::setUp();
         $this->generator = new Crypt_GPG_KeyGenerator($this->getOptions());
     }
-
-    // }}}
-
-    // mutators
-    // {{{ testSetExpirationDate_zero()
 
     /**
      * @group mutators
@@ -197,9 +186,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $this->assertSame($expectedDate, $value, 'Setting expiration date to zero failed.');
     }
 
-    // }}}
-    // {{{ testSetExpirationDate_integer()
-
     /**
      * @group mutators
      */
@@ -211,9 +197,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'expirationDate');
         $this->assertSame($expectedDate, $value, 'Setting expiration date by integer failed.');
     }
-
-    // }}}
-    // {{{ testSetExpirationDate_string()
 
     /**
      * @group mutators
@@ -229,9 +212,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $this->assertSame($expectedDate, $value, 'Setting expiration date by string failed.');
     }
 
-    // }}}
-    // {{{ testSetExpirationDate_invalid_format()
-
     /**
      * @group mutators
      */
@@ -244,9 +224,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $this->generator->setExpirationDate('this is not a date');
     }
 
-    // }}}
-    // {{{ testSetExpirationDate_too_early_date()
-
     /**
      * @group mutators
      */
@@ -256,9 +233,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
         $this->generator->setExpirationDate(1301088055);
     }
-
-    // }}}
-    // {{{ testSetExpirationDate_today()
 
     /**
      * @group mutators
@@ -270,9 +244,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $this->generator->setExpirationDate(time());
     }
 
-    // }}}
-    // {{{ testSetExpirationDate_too_late_date()
-
     /**
      * @group mutators
      */
@@ -282,9 +253,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
         $this->generator->setExpirationDate(2147483648);
     }
-
-    // }}}
-    // {{{ testSetPassphrase()
 
     /**
      * @group mutators
@@ -297,9 +265,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'passphrase');
         $this->assertSame($expectedPassphrase, $value, 'Setting passphrase failed.');
     }
-
-    // }}}
-    // {{{ testSetKeyParams_algorithm()
 
     /**
      * @group mutators
@@ -324,9 +289,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyUsage');
         $this->assertSame($expectedUsage, $value, 'Setting key algorithm changed key usage.');
     }
-
-    // }}}
-    // {{{ testSetKeyParams_algorithm_and_size()
 
     /**
      * @group mutators
@@ -353,9 +315,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyUsage');
         $this->assertSame($expectedUsage, $value, 'Setting key algorithm and size changed key usage.');
     }
-
-    // }}}
-    // {{{ testSetKeyParams_algorithm_size_and_usage()
 
     /**
      * @group mutators
@@ -387,9 +346,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $this->assertSame($expectedUsage, $value, 'Setting key algorithm and size changed key usage.');
     }
 
-    // }}}
-    // {{{ testSetKeyParams_invalid_algorithm()
-
     /**
      * @group mutators
      */
@@ -399,9 +355,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
         $this->generator->setKeyParams(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
     }
-
-    // }}}
-    // {{{ testSetKeyParams_invalid_dsa_usage()
 
     /**
      * @group mutators
@@ -416,9 +369,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
             Crypt_GPG_SubKey::USAGE_ENCRYPT | Crypt_GPG_SubKey::USAGE_CERTIFY
         );
     }
-
-    // }}}
-    // {{{ testSetSubKeyParams_algorithm()
 
     /**
      * @group mutators
@@ -443,9 +393,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $this->assertSame($expectedUsage, $value, 'Setting sub-key algorithm changed key usage.');
     }
 
-    // }}}
-    // {{{ testSetSubKeyParams_algorithm_and_size()
-
     /**
      * @group mutators
      */
@@ -469,9 +416,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyUsage');
         $this->assertSame($expectedUsage, $value, 'Setting sub-key algorithm changed key usage.');
     }
-
-    // }}}
-    // {{{ testSetSubKeyParams_algorithm_size_and_usage()
 
     /**
      * @group mutators
@@ -500,9 +444,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $this->assertSame($expectedUsage, $value, 'Setting sub-key algorithm changed key usage.');
     }
 
-    // }}}
-    // {{{ testSetSubKeyParams_invalid_elgamal_usage()
-
     /**
      * @group mutators
      */
@@ -517,9 +458,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         );
     }
 
-    // }}}
-    // {{{ testSetSubKeyParams_invalid_dsa_usage()
-
     /**
      * @group mutators
      */
@@ -533,11 +471,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
             Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_ENCRYPT
         );
     }
-
-    // }}}
-
-    // generate key tests
-    // {{{ testGenerateKeyWithName()
 
     /**
      * @group generate-key
@@ -582,9 +515,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
         $this->assertKeyEquals($expectedKey, $key);
     }
-
-    // }}}
-    // {{{ testGenerateKeyWithNameAndEmail()
 
     /**
      * @group generate-key
@@ -633,9 +563,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
         $this->assertKeyEquals($expectedKey, $key);
     }
-
-    // }}}
-    // {{{ testGenerateKeyWithNameEmailAndComment()
 
     /**
      * @group generate-key
@@ -687,9 +614,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $this->assertKeyEquals($expectedKey, $key);
     }
 
-    // }}}
-    // {{{ testGenerateKeyWithUserId()
-
     /**
      * @group generate-key
      */
@@ -739,9 +663,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $this->assertKeyEquals($expectedKey, $key);
     }
 
-    // }}}
-    // {{{ testGenerateKeyWithPassphrase()
-
     /**
      * @group generate-key
      */
@@ -790,9 +711,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
         $this->assertKeyEquals($expectedKey, $key);
     }
-
-    // }}}
-    // {{{ testGenerateKeyWithExpirationDate()
 
     /**
      * @group generate-key
@@ -845,9 +763,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $this->assertKeyEquals($expectedKey, $key);
     }
 
-    // }}}
-    // {{{ testGenerateKeyWithInvalidPrimaryKeyAlgorithm()
-
     /**
      * @group generate-key
      */
@@ -872,9 +787,6 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
             );
     }
 
-    // }}}
-    // {{{ testGenerateKeyWithInvalidSubKeyAlgorithm()
-
     /**
      * @group generate-key
      */
@@ -898,8 +810,4 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
                 )
             );
     }
-
-    // }}}
 }
-
-?>

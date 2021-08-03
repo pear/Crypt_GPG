@@ -57,8 +57,6 @@ require_once 'TestCase.php';
  */
 class DeletePrivateKeyTest extends Crypt_GPG_TestCase
 {
-    // {{{ testDeletePrivateKey()
-
     /**
      * @group delete-private
      */
@@ -107,9 +105,6 @@ class DeletePrivateKeyTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedKeys, $keys);
     }
 
-    // }}}
-    // {{{ testDeletePrivateKeyNotFoundException()
-
     /**
      * @group delete-private
      */
@@ -121,9 +116,6 @@ class DeletePrivateKeyTest extends Crypt_GPG_TestCase
         $this->gpg->deletePrivateKey($keyId);
     }
 
-    // }}}
-    // {{{ testDeletePrivateKeyNotFoundException_public_only()
-
     /**
      * @group delete-private
      */
@@ -134,8 +126,4 @@ class DeletePrivateKeyTest extends Crypt_GPG_TestCase
         $keyId = 'public-only@example.com';
         $this->gpg->deletePrivateKey($keyId);
     }
-
-    // }}}
 }
-
-?>

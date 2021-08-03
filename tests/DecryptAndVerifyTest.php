@@ -57,9 +57,6 @@ require_once 'TestCase.php';
  */
 class DecryptAndVerifyTest extends Crypt_GPG_TestCase
 {
-    // string
-    // {{{ testDecryptVerify()
-
     /**
      * @group string
      */
@@ -121,9 +118,6 @@ TEXT;
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
-    // }}}
-    // {{{ testDecryptVerifyNoPassphrase()
-
     /**
      * @group string
      */
@@ -184,9 +178,6 @@ TEXT;
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
-    // }}}
-    // {{{ testDecryptVerifyKeyNotFoundException_decrypt()
-
     /**
      * @group string
      */
@@ -224,9 +215,6 @@ TEXT;
 
         $this->gpg->decryptAndVerify($encryptedData);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyKeyNotFoundException_verify()
 
     /**
      * @group string
@@ -272,9 +260,6 @@ TEXT;
         $this->gpg->decryptAndVerify($encryptedData);
     }
 
-    // }}}
-    // {{{ testDecryptVerifyKeyNotFoundException_both()
-
     /**
      * @group string
      */
@@ -311,9 +296,6 @@ TEXT;
 
         $this->gpg->decryptAndVerify($encryptedData);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyKeyNotFoundVerifyIgnoreErrors()
 
     /**
      * @group string
@@ -369,9 +351,6 @@ TEXT;
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
-    // }}}
-    // {{{ testDecryptVerifyNoDataException_invalid()
-
     /**
      * @group string
      */
@@ -383,9 +362,6 @@ TEXT;
         $this->gpg->decryptAndVerify($encryptedData);
     }
 
-    // }}}
-    // {{{ testDecryptVerifyNoDataException_empty()
-
     /**
      * @group string
      */
@@ -396,9 +372,6 @@ TEXT;
         $encryptedData = '';
         $this->gpg->decryptAndVerify($encryptedData);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyBadPassphraseException_missing()
 
     /**
      * @group string
@@ -438,9 +411,6 @@ TEXT;
         $this->gpg->decryptAndVerify($encryptedData);
     }
 
-    // }}}
-    // {{{ testDecryptVerifyBadPassphraseException_bad()
-
     /**
      * @group string
      */
@@ -479,9 +449,6 @@ TEXT;
         $this->gpg->addDecryptKey('first-keypair@example.com', 'incorrect');
         $this->gpg->decryptAndVerify($encryptedData);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyDual()
 
     /**
      * @group string
@@ -563,9 +530,6 @@ TEXT;
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
-    // }}}
-    // {{{ testDecryptVerifyDualOnePassphrase()
-
     /**
      * @group string
      */
@@ -644,9 +608,6 @@ TEXT;
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
-    // }}}
-    // {{{ testDecryptAndVerifyDualNoPassphraseKeyMissing()
-
     /**
      * @group string
      */
@@ -700,9 +661,6 @@ TEXT;
 
         $this->gpg->decryptAndVerify($encryptedData);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyDualSignatories()
 
     /**
      * @group string
@@ -783,9 +741,6 @@ TEXT;
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
-    // }}}
-    // {{{ testDecryptVerifySignedOnly()
-
     /**
      * @group string
      */
@@ -832,9 +787,6 @@ TEXT;
         $results = $this->gpg->decryptAndVerify($signedData);
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyFirstSubKey()
 
     /**
      * @group string
@@ -892,9 +844,6 @@ TEXT;
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
-    // }}}
-    // {{{ testDecryptVerifySecondSubKey()
-
     /**
      * @group string
      */
@@ -951,9 +900,6 @@ TEXT;
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
 
-    // }}}
-    // {{{ testDecryptVerifySignedOnlyBadSignature()
-
     /**
      * @group string
      */
@@ -995,9 +941,6 @@ TEXT;
         $results = $this->gpg->decryptAndVerify($clearsignedData);
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyFile()
 
     /**
      * @group file
@@ -1044,9 +987,6 @@ TEXT;
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
 
-    // }}}
-    // {{{ testDecryptVerifyFileToString()
-
     /**
      * @group file
      */
@@ -1086,9 +1026,6 @@ TEXT;
 
         $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyFileNoPassphrase()
 
     /**
      * @group file
@@ -1138,9 +1075,6 @@ TEXT;
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
 
-    // }}}
-    // {{{ testDecryptVerifyFileFileException_input()
-
     /**
      * @group file
      */
@@ -1155,9 +1089,6 @@ TEXT;
 
         $this->gpg->decryptAndVerifyFile($inputFilename);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyFileFileException_output()
 
     /**
      * @group file
@@ -1175,9 +1106,6 @@ TEXT;
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
         $this->gpg->decryptAndVerifyFile($inputFilename, $outputFilename);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyFileKeyNotFoundException_decrypt()
 
     /**
      * @group file
@@ -1197,9 +1125,6 @@ TEXT;
 
         $this->gpg->decryptAndVerifyFile($inputFilename, $outputFilename);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyFileDual()
 
     /**
      * @group file
@@ -1259,9 +1184,6 @@ TEXT;
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyFileDualSignatories()
 
     /**
      * @group file
@@ -1326,9 +1248,6 @@ TEXT;
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
 
-    // }}}
-    // {{{ testDecryptVerifyFileDualOnePassphrase()
-
     /**
      * @group file
      */
@@ -1387,9 +1306,6 @@ TEXT;
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
 
-    // }}}
-    // {{{ testDecryptVerifyFileNoDataException()
-
     /**
      * @group file
      */
@@ -1400,9 +1316,6 @@ TEXT;
         $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->decryptAndVerifyFile($filename);
     }
-
-    // }}}
-    // {{{ testDecryptVerifyFileSignedOnly()
 
     /**
      * @group file
@@ -1451,8 +1364,4 @@ TEXT;
         $md5Sum = $this->getMd5Sum($outputFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
-
-    // }}}
 }
-
-?>

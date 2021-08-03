@@ -77,21 +77,11 @@ require_once 'Crypt/GPG/Signature.php';
  */
 abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
 {
-    // {{{ class constants
-
     const HOMEDIR = 'test-keychain';
-
     const TEMPDIR = 'temp-files';
-
     const DATADIR = 'data-files';
 
-    // }}}
-    // {{{ protected properties
-
     protected $gpg;
-
-    // }}}
-    // {{{ getOptions()
 
     protected function getOptions()
     {
@@ -101,14 +91,14 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
 
         $config = array(
             'homedir' => __DIR__ . '/' . self::HOMEDIR,
-//            'binary' => '/usr/bin/gpg2',
-//            'agent'  => '/usr/bin/gpg-agent',
-//            'gpgconf'  => '/usr/local/bin/gpgconf',
-//            'cipher-algo' => 'AES256',
-//            'digest-algo' => 'SHA512',
-//            'compress-algo' => 'zip',
+            // 'binary' => '/usr/bin/gpg2',
+            // 'agent'  => '/usr/bin/gpg-agent',
+            // 'gpgconf'  => '/usr/local/bin/gpgconf',
+            // 'cipher-algo' => 'AES256',
+            // 'digest-algo' => 'SHA512',
+            // 'compress-algo' => 'zip',
             'debug'  => $debugFunction,
-//            'options' => array(),
+            // 'options' => array(),
         );
 
         if ($binary = getenv('TESTS_GPG_BINARY')) {
@@ -118,9 +108,6 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
         return $config;
     }
 
-    // }}}
-    // {{{ setUp(): void
-
     public function setUp(): void
     {
         // load test configuration file if it exists
@@ -128,7 +115,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
         if (file_exists($configFilename)) {
             include $configFilename;
 
-            if (   !isset($GLOBALS['Crypt_GPG_Unittest_Config'])
+            if (!isset($GLOBALS['Crypt_GPG_Unittest_Config'])
                 || !is_array($GLOBALS['Crypt_GPG_Unittest_Config'])
             ) {
                 $this->markTestSkipped(
@@ -154,9 +141,6 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
 
         $this->gpg = new Crypt_GPG($this->getOptions());
     }
-
-    // }}}
-    // {{{ _setUpKeyring()
 
     private function _setUpKeyring()
     {
@@ -549,14 +533,10 @@ TEXT;
         fclose($trustdb);
 
         $randomSeed = fopen($this->getKeyringFilename('random_seed'), 'wb');
-        fwrite($randomSeed, base64_decode(
-            str_replace("\n", '', $randomSeedData)));
+        fwrite($randomSeed, base64_decode(str_replace("\n", '', $randomSeedData)));
 
         fclose($randomSeed);
     }
-
-    // }}}
-    // {{{ _setUpTempdir()
 
     private function _setUpTempdir()
     {
@@ -566,9 +546,6 @@ TEXT;
         }
     }
 
-    // }}}
-    // {{{ tearDown(): void
-
     public function tearDown(): void
     {
         unset($this->gpg);
@@ -576,9 +553,6 @@ TEXT;
         $this->_tearDownKeyring();
         $this->_tearDownTempdir();
     }
-
-    // }}}
-    // {{{ _tearDownKeyring()
 
     private function _tearDownKeyring()
     {
@@ -617,9 +591,6 @@ TEXT;
         rmdir($homedir);
     }
 
-    // }}}
-    // {{{ _tearDownTempdir()
-
     private function _tearDownTempdir()
     {
         $directoryName = __DIR__ . '/' . self::TEMPDIR;
@@ -642,52 +613,28 @@ TEXT;
         rmdir($directoryName);
     }
 
-    // }}}
-    // {{{ getMd5Sum()
-
     protected function getMd5Sum($filename)
     {
-        if (`which md5sum` == '') {
-            $this->markTestSkipped('md5sum not available. Cannot verify ' .
-                'files for file tests.');
-        }
-
-        $sum = explode(' ', `md5sum $filename`);
-        $sum = $sum[0];
-        return $sum;
+        return md5_file($filename);
     }
-
-    // }}}
-    // {{{ getKeyringFilename()
 
     protected function getKeyringFilename($filename)
     {
         return __DIR__ . '/'. self::HOMEDIR . '/' . $filename;
     }
 
-    // }}}
-    // {{{ getDataFilename()
-
     protected function getDataFilename($filename)
     {
         return __DIR__ . '/'. self::DATADIR . '/' . $filename;
     }
-
-    // }}}
-    // {{{ getTempFilename()
 
     protected function getTempFilename($filename)
     {
         return __DIR__ . '/' . self::TEMPDIR . '/' . $filename;
     }
 
-    // }}}
-    // {{{ assertDecryptAndVerifyResultsEquals()
-
-    protected function assertDecryptAndVerifyResultsEquals(
-        array $expected,
-        array $actual
-    ) {
+    protected function assertDecryptAndVerifyResultsEquals(array $expected, array $actual)
+    {
         $this->assertEquals(
             count($expected),
             count($actual),
@@ -730,13 +677,8 @@ TEXT;
         );
     }
 
-    // }}}
-    // {{{ assertSignaturesEquals()
-
-    protected function assertSignaturesEquals(
-        array $expected,
-        array $actual
-    ) {
+    protected function assertSignaturesEquals(array $expected, array $actual)
+    {
         $this->assertEquals(
             count($expected),
             count($actual),
@@ -747,9 +689,6 @@ TEXT;
             $this->assertSignatureEquals($expected[$i], $actual[$i]);
         }
     }
-
-    // }}}
-    // {{{ assertSignatureEquals()
 
     protected function assertSignatureEquals(
         Crypt_GPG_Signature $expected,
@@ -802,8 +741,6 @@ TEXT;
         );
     }
 
-    // }}}
-
     protected function getPropertyValue($class, $object, $property)
     {
         $reflectionClass = new ReflectionClass($class);
@@ -823,5 +760,3 @@ TEXT;
         // do nothing
     }
 }
-
-?>

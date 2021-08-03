@@ -106,171 +106,171 @@ test
 # encrypted-data.asc
 echo "generating encrypted-data.asc"
 echo -n $DATA | $GPG \
-	--recipient first-keypair@example.com \
-	--armor \
-	--encrypt > $HOMEDIR/encrypted-data.asc
+ --recipient first-keypair@example.com \
+ --armor \
+ --encrypt > $HOMEDIR/encrypted-data.asc
 
 # normal-signed-data.asc
 echo "generating normal-signed-data.asc"
 echo "test1" | $GPG \
-	--command-fd 0 \
-	--armor \
-	--local-user first-keypair@example.com \
-	--sign $HOMEDIR/normal-signed-data
+ --command-fd 0 \
+ --armor \
+ --local-user first-keypair@example.com \
+ --sign $HOMEDIR/normal-signed-data
 
 # clearsigned-data.asc
 echo "generating clearsigned-data.asc"
 echo "test1" | $GPG \
-	--command-fd 0 \
-	--armor \
-	--local-user first-keypair@example.com \
-	--clearsign $HOMEDIR/clearsigned-data
+ --command-fd 0 \
+ --armor \
+ --local-user first-keypair@example.com \
+ --clearsign $HOMEDIR/clearsigned-data
 
 # detached-signature.asc
 echo "generating detached-signature.asc"
 echo "test1" | $GPG \
-	--command-fd 0 \
-	--armor \
-	--local-user first-keypair@example.com \
-	--detach-sign $HOMEDIR/detached-signature
+ --command-fd 0 \
+ --armor \
+ --local-user first-keypair@example.com \
+ --detach-sign $HOMEDIR/detached-signature
 
 # dual-encrypted-data@example.com
 echo "generating dual-encrypted-data.asc"
 echo -n $DATA | $GPG \
-	--recipient first-keypair@example.com \
-	--recipient second-keypair@example.com \
-	--armor \
-	--encrypt > $HOMEDIR/dual-encrypted-data.asc
+ --recipient first-keypair@example.com \
+ --recipient second-keypair@example.com \
+ --armor \
+ --encrypt > $HOMEDIR/dual-encrypted-data.asc
 
 # dual-normal-signed-data.asc
 echo "generating dual-normal-signed-data.asc"
 echo "test1
 test2" | $GPG \
-	--command-fd 0 \
-	--armor \
-	--local-user second-keypair@example.com \
-	--local-user first-keypair@example.com \
-	--sign $HOMEDIR/dual-normal-signed-data
+ --command-fd 0 \
+ --armor \
+ --local-user second-keypair@example.com \
+ --local-user first-keypair@example.com \
+ --sign $HOMEDIR/dual-normal-signed-data
 
 # dual-clearsigned-data.asc
 echo "generating dual-clearsigned-data.asc"
 echo "test1
 test2" | $GPG \
-	--command-fd 0 \
-	--armor \
-	--local-user second-keypair@example.com \
-	--local-user first-keypair@example.com \
-	--clearsign $HOMEDIR/dual-clearsigned-data
+ --command-fd 0 \
+ --armor \
+ --local-user second-keypair@example.com \
+ --local-user first-keypair@example.com \
+ --clearsign $HOMEDIR/dual-clearsigned-data
 
 # dual-detached-signature.asc
 echo "generating dual-detached-signature.asc"
 echo "test1
 test2" | $GPG \
-	--command-fd 0 \
-	--armor \
-	--local-user second-keypair@example.com \
-	--local-user first-keypair@example.com \
-	--detach-sign $HOMEDIR/dual-detached-signature
+ --command-fd 0 \
+ --armor \
+ --local-user second-keypair@example.com \
+ --local-user first-keypair@example.com \
+ --detach-sign $HOMEDIR/dual-detached-signature
 
 # public-only-sec.asc
 echo "generating public-only-sec.asc"
 $GPG \
-	--armor \
-	--export-secret-keys public-only@example.com > $HOMEDIR/public-only-sec.asc
+ --armor \
+ --export-secret-keys public-only@example.com > $HOMEDIR/public-only-sec.asc
 
 # public-only-pub.asc
 echo "generating public-only-pub.asc"
 $GPG \
-	--armor \
-	--export public-only@example.com > $HOMEDIR/public-only-pub.asc
+ --armor \
+ --export public-only@example.com > $HOMEDIR/public-only-pub.asc
 
 # delete public-only@example.com secret key
 echo "deleting secret key for public-only@example.com"
 echo "y" | $GPG \
-	--command-fd 0 \
-	--delete-secret-key public-only@example.com
+ --command-fd 0 \
+ --delete-secret-key public-only@example.com
 
 # encrypted-data.asc
 echo "generating encrypted-data.asc"
 echo -n $DATA | $GPG \
-	--recipient first-keypair@example.com \
-	--armor \
-	--encrypt > $HOMEDIR/encrypted-data.asc
+ --recipient first-keypair@example.com \
+ --armor \
+ --encrypt > $HOMEDIR/encrypted-data.asc
 
 # encrypted-data-file.asc
 echo "generating encrypted-data-file.asc"
 $GPG \
-	--recipient first-keypair@example.com \
-	--armor \
-	--encrypt $HOMEDIR/encrypted-data-file
+ --recipient first-keypair@example.com \
+ --armor \
+ --encrypt $HOMEDIR/encrypted-data-file
 
 # encrypted-data-no-passphrase.asc
 echo "generating encrypted-data-no-passphrase.asc"
 echo -n $DATA | $GPG \
-	--recipient no-passphrase@example.com \
-	--armor \
-	--encrypt > $HOMEDIR/encrypted-data-no-passphrase.asc
+ --recipient no-passphrase@example.com \
+ --armor \
+ --encrypt > $HOMEDIR/encrypted-data-no-passphrase.asc
 
 # encrypted-data-no-passphrase-file.asc
 echo "generating encrypted-data-no-passphrase-file.asc"
 $GPG \
-	--recipient no-passphrase@example.com \
-	--armor \
-	--encrypt $HOMEDIR/encrypted-data-no-passphrase-file
+ --recipient no-passphrase@example.com \
+ --armor \
+ --encrypt $HOMEDIR/encrypted-data-no-passphrase-file
 
 # dual-encrypted-data-one-passphrase.asc
 echo "generating dual-encrypted-data-one-passphrase.asc"
 echo -n $DATA | $GPG \
-	--recipient first-keypair@example.com \
-	--recipient no-passphrase@example.com \
-	--armor \
-	--encrypt > $HOMEDIR/dual-encrypted-data-one-passphrase.asc
+ --recipient first-keypair@example.com \
+ --recipient no-passphrase@example.com \
+ --armor \
+ --encrypt > $HOMEDIR/dual-encrypted-data-one-passphrase.asc
 
 # dual-encrypted-data-one-passphrase-file.asc
 echo "generating dual-encrypted-data-one-passphrase-file.asc"
 $GPG \
-	--recipient first-keypair@example.com \
-	--recipient no-passphrase@example.com \
-	--armor \
-	--encrypt $HOMEDIR/dual-encrypted-data-one-passphrase-file
+ --recipient first-keypair@example.com \
+ --recipient no-passphrase@example.com \
+ --armor \
+ --encrypt $HOMEDIR/dual-encrypted-data-one-passphrase-file
 
 # delete external-public@example.com secret key
 echo "deleting secret key for external-public@example.com"
 echo "y" | $GPG \
-	--command-fd 0 \
-	--delete-secret-key external-public@example.com
+ --command-fd 0 \
+ --delete-secret-key external-public@example.com
 
 # external-public-pub.asc
 echo "generating external-public-pub.asc"
 $GPG \
-	--armor \
-	--export external-public@example.com > $HOMEDIR/external-public-pub.asc
+ --armor \
+ --export external-public@example.com > $HOMEDIR/external-public-pub.asc
 
 # delete external-public@example.com key
 echo "deleting key external-public@example.com"
 echo "y" | $GPG \
-	--command-fd 0 \
-	--delete-secret-and-public-key external-public@example.com
+ --command-fd 0 \
+ --delete-secret-and-public-key external-public@example.com
 
 # encrypted-data-missing-key.asc
 echo "generating encrypted-data-missing-key.asc"
 echo -n $DATA | $GPG \
-	--recipient missing-key@example.com \
-	--armor \
-	--encrypt > $HOMEDIR/encrypted-data-missing-key.asc
+ --recipient missing-key@example.com \
+ --armor \
+ --encrypt > $HOMEDIR/encrypted-data-missing-key.asc
 
 # encrypted-data-missing-key-file.asc
 echo "generating encrypted-data-missing-key-file.asc"
 $GPG \
-	--recipient missing-key@example.com \
-	--armor \
-	--encrypt $HOMEDIR/encrypted-data-missing-key-file
+ --recipient missing-key@example.com \
+ --armor \
+ --encrypt $HOMEDIR/encrypted-data-missing-key-file
 
 # delete missing-key@example.com key
 echo "deleting key missing-key@example.com"
 echo "y" | $GPG \
-	--command-fd 0 \
-	--delete-secret-and-public-key missing-key@example.com
+ --command-fd 0 \
+ --delete-secret-and-public-key missing-key@example.com
 
 # DONE BUILDING FILES
 

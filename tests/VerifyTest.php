@@ -57,13 +57,10 @@ require_once 'TestCase.php';
  */
 class VerifyTest extends Crypt_GPG_TestCase
 {
-    // string
-    // {{{ testVerifyNoDataException_invalid()
-
     /**
      * @group string
      */
-    public function testVerifyNoDataException_invalid()
+    public function testVerifyNoDataExceptionInvalid()
     {
         $this->expectException('Crypt_GPG_NoDataException');
 
@@ -71,22 +68,16 @@ class VerifyTest extends Crypt_GPG_TestCase
         $this->gpg->verify($signedData);
     }
 
-    // }}}
-    // {{{ testVerifyNoDataException_empty()
-
     /**
      * @group string
      */
-    public function testVerifyNoDataException_empty()
+    public function testVerifyNoDataExceptionEmpty()
     {
         $this->expectException('Crypt_GPG_NoDataException');
 
         $signedData = '';
         $this->gpg->verify($signedData);
     }
-
-    // }}}
-    // {{{ testVerifyKeyNotFoundException()
 
     /**
      * @group string
@@ -111,9 +102,6 @@ TEXT;
         $this->gpg->verify($data, $detachedSignature);
     }
 
-    // }}}
-    // {{{ testVerifyNormalSignedData()
-
     /**
      * @group string
      */
@@ -122,8 +110,7 @@ TEXT;
         // {{{ signature
         $signature = new Crypt_GPG_Signature();
         $signature->setId('KuhELanvhPRXozEjFWb2mam1q20');
-        $signature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $signature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221785858);
@@ -156,9 +143,6 @@ TEXT;
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
-    // }}}
-    // {{{ testVerifyClearsignedData()
-
     /**
      * @group string
      */
@@ -167,8 +151,7 @@ TEXT;
         // {{{ signature
         $signature = new Crypt_GPG_Signature();
         $signature->setId('wwm5gqNiFS+E/tmqbt1uXvVy3Ck');
-        $signature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $signature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221785858);
@@ -204,9 +187,6 @@ TEXT;
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
-    // }}}
-    // {{{ testVerifyDetachedSignature()
-
     /**
      * @group string
      */
@@ -217,8 +197,7 @@ TEXT;
         // {{{ signature
         $signature = new Crypt_GPG_Signature();
         $signature->setId('E4HEDmMtecF457JFb88UAtPBVWY');
-        $signature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $signature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221785858);
@@ -250,9 +229,6 @@ TEXT;
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
-    // }}}
-    // {{{ testVerifyDualNormalSignedData()
-
     /**
      * @group string
      */
@@ -261,8 +237,7 @@ TEXT;
         // {{{ first signature
         $firstSignature = new Crypt_GPG_Signature();
         $firstSignature->setId('4BunvSK18HPx6Xt4tEzyAqcNVzY');
-        $firstSignature->setKeyFingerprint(
-            '880922DBEA733E906693E4A903CC890AFA1DAD4B');
+        $firstSignature->setKeyFingerprint('880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
         $firstSignature->setKeyId('03CC890AFA1DAD4B');
         $firstSignature->setCreationDate(1221785858);
@@ -278,8 +253,7 @@ TEXT;
         // {{{ second signature
         $secondSignature = new Crypt_GPG_Signature();
         $secondSignature->setId('oAZ64v4sFarc7dssFOAJPB0D7zs');
-        $secondSignature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $secondSignature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $secondSignature->setKeyId('C097D9EC94C06363');
         $secondSignature->setCreationDate(1221785858);
@@ -314,9 +288,6 @@ TEXT;
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
-    // }}}
-    // {{{ testVerifyDualClearsignedData()
-
     /**
      * @group string
      */
@@ -325,8 +296,7 @@ TEXT;
         // {{{ first signature
         $firstSignature = new Crypt_GPG_Signature();
         $firstSignature->setId('MCn4/0Giq0njPh2smOs3Lrdc7yY');
-        $firstSignature->setKeyFingerprint(
-            '880922DBEA733E906693E4A903CC890AFA1DAD4B');
+        $firstSignature->setKeyFingerprint('880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
         $firstSignature->setKeyId('03CC890AFA1DAD4B');
         $firstSignature->setCreationDate(1221785858);
@@ -342,8 +312,7 @@ TEXT;
         // {{{ second signature
         $secondSignature = new Crypt_GPG_Signature();
         $secondSignature->setId('O5tcpOAXJhd0v5TBxqhIixgphn8');
-        $secondSignature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $secondSignature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $secondSignature->setKeyId('C097D9EC94C06363');
         $secondSignature->setCreationDate(1221785858);
@@ -380,9 +349,6 @@ TEXT;
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
-    // }}}
-    // {{{ testVerifyDualDetachedSignature()
-
     /**
      * @group string
      */
@@ -393,8 +359,7 @@ TEXT;
         // {{{ first signature
         $firstSignature = new Crypt_GPG_Signature();
         $firstSignature->setId('tejKd9+9OBUM+EsrbV3fVuOiBeE');
-        $firstSignature->setKeyFingerprint(
-            '880922DBEA733E906693E4A903CC890AFA1DAD4B');
+        $firstSignature->setKeyFingerprint('880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
         $firstSignature->setKeyId('03CC890AFA1DAD4B');
         $firstSignature->setCreationDate(1221785858);
@@ -410,8 +375,7 @@ TEXT;
         // {{{ second signature
         $secondSignature = new Crypt_GPG_Signature();
         $secondSignature->setId('7oizks/aha+bSONesnWDu1x2jn8');
-        $secondSignature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $secondSignature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $secondSignature->setKeyId('C097D9EC94C06363');
         $secondSignature->setCreationDate(1221785858);
@@ -443,9 +407,6 @@ TEXT;
         $signatures = $this->gpg->verify($data, $dualDetachedSignature);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
-
-    // }}}
-    // {{{ testVerifyBadSignature()
 
     /**
      * @group string
@@ -482,9 +443,6 @@ TEXT;
         $signatures = $this->gpg->verify($modifiedData, $detachedSignature);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
-
-    // }}}
-    // {{{ testVerifyDualBadSignatures()
 
     /**
      * @group string
@@ -534,9 +492,6 @@ TEXT;
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
-    // }}}
-    // {{{ testVerifyFileNormalSignedData()
-
     /**
      * @group file
      */
@@ -545,8 +500,7 @@ TEXT;
         // {{{ signature
         $signature = new Crypt_GPG_Signature();
         $signature->setId('vctnI/HnsRYmqcVwCJcJhS60lKU');
-        $signature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $signature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221960707);
@@ -562,15 +516,11 @@ TEXT;
 
         $expectedSignatures = array($signature);
 
-        $filename =
-            $this->getDataFilename('testVerifyFileNormalSignedData.asc');
+        $filename = $this->getDataFilename('testVerifyFileNormalSignedData.asc');
 
         $signatures = $this->gpg->verifyFile($filename);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
-
-    // }}}
-    // {{{ testVerifyFileClearsignedData()
 
     /**
      * @group file
@@ -580,8 +530,7 @@ TEXT;
         // {{{ signature
         $signature = new Crypt_GPG_Signature();
         $signature->setId('6sXJXKZB5lvRSCXBAYl6R2EiDmw');
-        $signature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $signature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221960707);
@@ -603,9 +552,6 @@ TEXT;
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
-    // }}}
-    // {{{ testVerifyFileDetachedSignature()
-
     /**
      * @group file
      */
@@ -614,8 +560,7 @@ TEXT;
         // {{{ signature
         $signature = new Crypt_GPG_Signature();
         $signature->setId('tdsH/ulxOnoWEMPDamZTq7wzF/0');
-        $signature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $signature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $signature->setKeyId('C097D9EC94C06363');
         $signature->setCreationDate(1221960707);
@@ -649,9 +594,6 @@ TEXT;
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
 
-    // }}}
-    // {{{ testVerifyFileDualNormalSignedData()
-
     /**
      * @group file
      */
@@ -660,8 +602,7 @@ TEXT;
         // {{{ first signature
         $firstSignature = new Crypt_GPG_Signature();
         $firstSignature->setId('Kl3Mds4ABT9JyE3iqfPGpUHzKQs');
-        $firstSignature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $firstSignature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $firstSignature->setKeyId('C097D9EC94C06363');
         $firstSignature->setCreationDate(1221960707);
@@ -677,8 +618,7 @@ TEXT;
         // {{{ second signature
         $secondSignature = new Crypt_GPG_Signature();
         $secondSignature->setId('KGrEm3hGqiKaLbjvOUO9kvUjRXc');
-        $secondSignature->setKeyFingerprint(
-            '880922DBEA733E906693E4A903CC890AFA1DAD4B');
+        $secondSignature->setKeyFingerprint('880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
         $secondSignature->setKeyId('03CC890AFA1DAD4B');
         $secondSignature->setCreationDate(1221960707);
@@ -694,15 +634,11 @@ TEXT;
 
         $expectedSignatures = array($firstSignature, $secondSignature);
 
-        $filename =
-            $this->getDataFilename('testVerifyFileDualNormalSignedData.asc');
+        $filename = $this->getDataFilename('testVerifyFileDualNormalSignedData.asc');
 
         $signatures = $this->gpg->verifyFile($filename);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
-
-    // }}}
-    // {{{ testVerifyFileDualClearsignedData()
 
     /**
      * @group file
@@ -712,8 +648,7 @@ TEXT;
         // {{{ first signature
         $firstSignature = new Crypt_GPG_Signature();
         $firstSignature->setId('eRRcEecpFk0YK/iswddS/KBxEXI');
-        $firstSignature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $firstSignature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $firstSignature->setKeyId('C097D9EC94C06363');
         $firstSignature->setCreationDate(1221960707);
@@ -729,8 +664,7 @@ TEXT;
         // {{{ second signature
         $secondSignature = new Crypt_GPG_Signature();
         $secondSignature->setId('jsWYGJe/0hmte7tYt8zuJd7rFMM');
-        $secondSignature->setKeyFingerprint(
-            '880922DBEA733E906693E4A903CC890AFA1DAD4B');
+        $secondSignature->setKeyFingerprint('880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
         $secondSignature->setKeyId('03CC890AFA1DAD4B');
         $secondSignature->setCreationDate(1221960707);
@@ -746,15 +680,11 @@ TEXT;
 
         $expectedSignatures = array($firstSignature, $secondSignature);
 
-        $filename =
-            $this->getDataFilename('testVerifyFileDualClearsignedData.asc');
+        $filename = $this->getDataFilename('testVerifyFileDualClearsignedData.asc');
 
         $signatures = $this->gpg->verifyFile($filename);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
     }
-
-    // }}}
-    // {{{ testVerifyFileDualDetachedSignature()
 
     /**
      * @group file
@@ -764,8 +694,7 @@ TEXT;
         // {{{ first signature
         $firstSignature = new Crypt_GPG_Signature();
         $firstSignature->setId('T7+toJbsFr8KMTWN+M7lF3xSmmA');
-        $firstSignature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+        $firstSignature->setKeyFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
 
         $firstSignature->setKeyId('C097D9EC94C06363');
         $firstSignature->setCreationDate(1221960707);
@@ -781,8 +710,7 @@ TEXT;
         // {{{ second signature
         $secondSignature = new Crypt_GPG_Signature();
         $secondSignature->setId('HJd1yvMbEbW5facuxkDtvwymKrw');
-        $secondSignature->setKeyFingerprint(
-            '880922DBEA733E906693E4A903CC890AFA1DAD4B');
+        $secondSignature->setKeyFingerprint('880922DBEA733E906693E4A903CC890AFA1DAD4B');
 
         $secondSignature->setKeyId('03CC890AFA1DAD4B');
         $secondSignature->setCreationDate(1221960707);
@@ -820,9 +748,6 @@ TEXT;
         $this->assertTrue(is_array($warnings));
     }
 
-    // }}}
-    // {{{ testVerifyFileFileException()
-
     /**
      * @group file
      */
@@ -834,9 +759,6 @@ TEXT;
         $this->gpg->verifyFile($filename);
     }
 
-    // }}}
-    // {{{ testVerifyFileNoDataException()
-
     /**
      * @group file
      */
@@ -847,8 +769,4 @@ TEXT;
         $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->verifyFile($filename);
     }
-
-    // }}}
 }
-
-?>

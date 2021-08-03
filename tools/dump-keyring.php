@@ -13,27 +13,27 @@ echo "<?php\n\n";
 $HOMEDIR = $_SERVER['argv'][1];
 
 $dataFiles = array(
-	'pubring'     => 'pubring.gpg',
-	'secring'     => 'secring.gpg',
-	'trustdb'     => 'trustdb.gpg',
-	'random_seed' => 'random_seed'
+    'pubring'     => 'pubring.gpg',
+    'secring'     => 'secring.gpg',
+    'trustdb'     => 'trustdb.gpg',
+    'random_seed' => 'random_seed'
 );
 
 
 echo "\n// For TestCase\n";
 
 foreach ($dataFiles as $key => $file) {
-	echo "        // {{{ " . $key . " data\n";
-	echo "        $" . $key . "Data = <<<TEXT\n";
+    echo "        // {{{ " . $key . " data\n";
+    echo "        $" . $key . "Data = <<<TEXT\n";
 
-	$content = file_get_contents($HOMEDIR . '/' . $file);
-	$content = base64_encode($content);
-	$content = wordwrap($content, 60, "\n", true);
+    $content = file_get_contents($HOMEDIR . '/' . $file);
+    $content = base64_encode($content);
+    $content = wordwrap($content, 60, "\n", true);
 
-	echo $content;
+    echo $content;
 
-	echo "\n\nTEXT;\n";
-	echo "        // }}}\n";
+    echo "\n\nTEXT;\n";
+    echo "        // }}}\n";
 }
 
 echo "\n?>\n";

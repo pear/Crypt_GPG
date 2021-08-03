@@ -64,8 +64,6 @@ class SignTest extends Crypt_GPG_TestCase
         $this->assertTrue($this->gpg->hasSignKeys());
     }
 
-    // {{{ testSignKeyNotFoundException_invalid()
-
     /**
      * @group string
      */
@@ -78,9 +76,6 @@ class SignTest extends Crypt_GPG_TestCase
         $this->gpg->sign($data);
     }
 
-    // }}}
-    // {{{ testSignKeyNotFoundException_none()
-
     /**
      * @group string
      */
@@ -91,9 +86,6 @@ class SignTest extends Crypt_GPG_TestCase
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->sign($data);
     }
-
-    // }}}
-    // {{{ testSignBadPassphraseException_missing()
 
     /**
      * @group string
@@ -107,9 +99,6 @@ class SignTest extends Crypt_GPG_TestCase
         $this->gpg->sign($data);
     }
 
-    // }}}
-    // {{{ testSignBadPassphraseException_bad()
-
     /**
      * @group string
      */
@@ -121,9 +110,6 @@ class SignTest extends Crypt_GPG_TestCase
         $this->gpg->addSignKey('first-keypair@example.com', 'incorrect');
         $this->gpg->sign($data);
     }
-
-    // }}}
-    // {{{ testSignNoPassphrase()
 
     /**
      * @group string
@@ -147,9 +133,6 @@ class SignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testSignNormal()
-
     /**
      * @group string
      */
@@ -166,9 +149,6 @@ class SignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testSignClear()
-
     /**
      * @group string
      */
@@ -184,9 +164,6 @@ class SignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testSignDetached()
 
     /**
      * @group string
@@ -205,9 +182,6 @@ class SignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testSignDualOnePassphrase()
-
     /**
      * @group string
      */
@@ -224,9 +198,6 @@ class SignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testSignDualNormal()
 
     /**
      * @group string
@@ -245,9 +216,6 @@ class SignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testSignDualClear()
-
     /**
      * @group string
      */
@@ -264,9 +232,6 @@ class SignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testSignDualDetached()
 
     /**
      * @group string
@@ -286,9 +251,6 @@ class SignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testSignEmpty()
-
     /**
      * @group string
      */
@@ -306,9 +268,6 @@ class SignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testSignDetachedTextmode()
 
     /**
      * @group string
@@ -349,9 +308,6 @@ class SignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testSignFileNoPassphrase()
-
     /**
      * @group file
      */
@@ -371,9 +327,6 @@ class SignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testSignFileNormal()
-
     /**
      * @group file
      */
@@ -391,9 +344,6 @@ class SignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testSignFileClear()
 
     /**
      * @group file
@@ -413,9 +363,6 @@ class SignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testSignFileDetached()
 
     /**
      * @group file
@@ -438,9 +385,6 @@ class SignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testSignFileDetachedToString()
-
     /**
      * @group file
      */
@@ -458,9 +402,6 @@ class SignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testSignFileDualOnePassphrase()
 
     /**
      * @group file
@@ -482,9 +423,6 @@ class SignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testSignFileDualNormal()
-
     /**
      * @group file
      */
@@ -503,9 +441,6 @@ class SignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testSignFileDualClear()
 
     /**
      * @group file
@@ -526,9 +461,6 @@ class SignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testSignFileDualDetached()
 
     /**
      * @group file
@@ -553,9 +485,6 @@ class SignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testSignFileFileException_input()
-
     /**
      * @group file
      */
@@ -570,9 +499,6 @@ class SignTest extends Crypt_GPG_TestCase
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->signFile($inputFilename);
     }
-
-    // }}}
-    // {{{ testSignFileFileException_output()
 
     /**
      * @group file
@@ -590,9 +516,6 @@ class SignTest extends Crypt_GPG_TestCase
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->signFile($inputFilename, $outputFilename);
     }
-
-    // }}}
-    // {{{ testSignFileEmpty()
 
     /**
      * @group file
@@ -612,9 +535,6 @@ class SignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testGetLastSignatureInfo()
-
     public function testGetLastSignatureInfo()
     {
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
@@ -631,8 +551,4 @@ class SignTest extends Crypt_GPG_TestCase
         );
         $this->assertNotNull($sigInfo->getHashAlgorithmName());
     }
-
-    // }}}
 }
-
-?>

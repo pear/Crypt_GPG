@@ -73,4 +73,3 @@ class SignatureCreationInfoTest extends Crypt_GPG_TestCase
         $this->assertFalse($sci->isValid());
     }
 }
-?>

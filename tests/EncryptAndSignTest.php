@@ -57,9 +57,6 @@ require_once 'TestCase.php';
  */
 class EncryptAndSignTest extends Crypt_GPG_TestCase
 {
-    // string
-    // {{{ testEncryptAndSignKeyNotFoundException_invalid_sign_key()
-
     /**
      * @group string
      */
@@ -73,9 +70,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         $this->gpg->encryptAndSign($data);
     }
 
-    // }}}
-    // {{{ testEncryptAndSignKeyNotFoundException_no_sign_key()
-
     /**
      * @group string
      */
@@ -87,9 +81,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptAndSign($data);
     }
-
-    // }}}
-    // {{{ testEncryptAndSignKeyNotFoundException_invalid_encrypt_key()
 
     /**
      * @group string
@@ -104,9 +95,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         $this->gpg->encryptAndSign($data);
     }
 
-    // }}}
-    // {{{ testEncryptAndSignKeyNotFoundException_no_encrypt_key()
-
     /**
      * @group string
      */
@@ -118,9 +106,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->encryptAndSign($data);
     }
-
-    // }}}
-    // {{{ testEncryptAndSignBadPassphraseException_missing_sign_key()
 
     /**
      * @group string
@@ -135,9 +120,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         $this->gpg->encryptAndSign($data);
     }
 
-    // }}}
-    // {{{ testEncryptAndSignBadPassphraseException_bad_sign_key()
-
     /**
      * @group string
      */
@@ -150,9 +132,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptAndSign($data);
     }
-
-    // }}}
-    // {{{ testEncryptAndSignNoPassphrase()
 
     /**
      * @group string
@@ -179,9 +158,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testEncryptAndSign()
-
     /**
      * @group string
      */
@@ -207,9 +183,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testEncryptAndSignDualOnePassphrase()
 
     /**
      * @group string
@@ -238,9 +211,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testEncryptAndSignDual()
 
     /**
      * @group string
@@ -271,9 +241,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testEncryptAndSignEmpty()
-
     /**
      * @group string
      */
@@ -294,9 +261,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testEncryptAndSignFileNoPassphrase()
 
     /**
      * @group file
@@ -328,9 +292,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testEncryptAndSignFile()
-
     /**
      * @group file
      */
@@ -360,9 +321,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
-    // {{{ testEncryptAndSignFileDualOnePassphrase()
 
     /**
      * @group file
@@ -395,9 +353,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testEncryptAndSignFileDual()
-
     /**
      * @group file
      */
@@ -429,9 +384,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-    // {{{ testEncryptAndSignFileFileException_input()
-
     /**
      * @group file
      */
@@ -447,9 +399,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptAndSignFile($inputFilename);
     }
-
-    // }}}
-    // {{{ testEncryptAndSignFileFileException_output()
 
     /**
      * @group file
@@ -468,9 +417,6 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptAndSignFile($inputFilename, $outputFilename);
     }
-
-    // }}}
-    // {{{ testEncryptAndSignFileEmpty()
 
     /**
      * @group file
@@ -495,8 +441,4 @@ class EncryptAndSignTest extends Crypt_GPG_TestCase
             $this->assertTrue($signature->isValid());
         }
     }
-
-    // }}}
 }
-
-?>

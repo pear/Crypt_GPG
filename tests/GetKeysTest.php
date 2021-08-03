@@ -57,8 +57,6 @@ require_once 'TestCase.php';
  */
 class GetKeysTest extends Crypt_GPG_TestCase
 {
-    // {{{ testGetKeys()
-
     /**
      * @group get-keys
      */
@@ -248,9 +246,6 @@ class GetKeysTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedKeys, $keys);
     }
 
-    // }}}
-    // {{{ testGetKeysWithKeyId()
-
     /**
      * @group get-keys
      */
@@ -297,9 +292,6 @@ class GetKeysTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedKeys, $keys);
     }
 
-    // }}}
-    // {{{ testGetKeysNone()
-
     /**
      * @group get-keys
      */
@@ -310,8 +302,4 @@ class GetKeysTest extends Crypt_GPG_TestCase
         $keys = $this->gpg->getKeys($keyId);
         $this->assertEquals($expectedKeys, $keys);
     }
-
-    // }}}
 }
-
-?>

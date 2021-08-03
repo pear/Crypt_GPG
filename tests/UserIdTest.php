@@ -62,19 +62,18 @@ require_once 'Crypt/GPG/UserId.php';
  */
 class UserIdTest extends Crypt_GPG_TestCase
 {
-    // construct
-    // {{{ testConstructFromString()
-
     /**
      * @group construct
      */
     public function testConstructFromString()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'comment' => 'This is a test comment',
-            'email'   => 'test@example.com'
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'comment' => 'This is a test comment',
+                'email'   => 'test@example.com'
+            )
+        );
 
         $string = 'Example User (This is a test comment) <test@example.com>';
         $userId = new Crypt_GPG_UserId($string);
@@ -82,67 +81,61 @@ class UserIdTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedUserId, $userId);
     }
 
-    // }}}
-    // {{{ testConstructFromUserId()
-
     /**
      * @group construct
      */
     public function testConstructFromUserId()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'comment' => 'This is a test comment',
-            'email'   => 'test@example.com',
-            'revoked' => true,
-            'valid'   => false
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'comment' => 'This is a test comment',
+                'email'   => 'test@example.com',
+                'revoked' => true,
+                'valid'   => false
+            )
+        );
 
         $userId = new Crypt_GPG_UserId($expectedUserId);
 
         $this->assertEquals($expectedUserId, $userId);
     }
 
-    // }}}
-    // {{{ testConstructFromArray()
-
     /**
      * @group construct
      */
     public function testConstructFromArray()
     {
-        $userId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'comment' => 'This is a test comment',
-            'email'   => 'test@example.com',
-            'revoked' => true,
-            'valid'   => false
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'comment' => 'This is a test comment',
+                'email'   => 'test@example.com',
+                'revoked' => true,
+                'valid'   => false
+            )
+        );
 
-        $this->assertEquals('Example User',           $userId->getName());
+        $this->assertEquals('Example User', $userId->getName());
         $this->assertEquals('This is a test comment', $userId->getComment());
-        $this->assertEquals('test@example.com',       $userId->getEmail());
+        $this->assertEquals('test@example.com', $userId->getEmail());
 
         $this->assertTrue($userId->isRevoked());
-
         $this->assertFalse($userId->isValid());
     }
-
-    // }}}
-
-    // parse
-    // {{{ testParseFull()
 
     /**
      * @group parse
      */
     public function testParseFull()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'comment' => 'This is a test comment',
-            'email'   => 'test@example.com'
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'comment' => 'This is a test comment',
+                'email'   => 'test@example.com'
+            )
+        );
 
         $string = 'Example User (This is a test comment) <test@example.com>';
         $userId = Crypt_GPG_UserId::parse($string);
@@ -150,17 +143,12 @@ class UserIdTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedUserId, $userId);
     }
 
-    // }}}
-    // {{{ testParseNameOnly()
-
     /**
      * @group parse
      */
     public function testParseNameOnly()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name' => 'Example User'
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(array('name' => 'Example User'));
 
         $string = 'Example User';
         $userId = Crypt_GPG_UserId::parse($string);
@@ -168,18 +156,17 @@ class UserIdTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedUserId, $userId);
     }
 
-    // }}}
-    // {{{ testParseNameComment()
-
     /**
      * @group parse
      */
     public function testParseNameComment()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'comment' => 'This is a test comment'
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'comment' => 'This is a test comment'
+            )
+        );
 
         $string = 'Example User (This is a test comment)';
         $userId = Crypt_GPG_UserId::parse($string);
@@ -187,18 +174,17 @@ class UserIdTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedUserId, $userId);
     }
 
-    // }}}
-    // {{{ testParseNameEmail()
-
     /**
      * @group parse
      */
     public function testParseNameEmail()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name'  => 'Example User',
-            'email' => 'test@example.com'
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(
+            array(
+                'name'  => 'Example User',
+                'email' => 'test@example.com'
+            )
+        );
 
         $string = 'Example User <test@example.com>';
         $userId = Crypt_GPG_UserId::parse($string);
@@ -206,18 +192,17 @@ class UserIdTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedUserId, $userId);
     }
 
-    // }}}
-    // {{{ testParseEmailOnly()
-
     /**
      * @group parse
      */
     public function testParseEmailOnly()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name'  => '',
-            'email' => 'test@example.com'
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(
+            array(
+                'name'  => '',
+                'email' => 'test@example.com'
+            )
+        );
 
         $string = '<test@example.com>';
         $userId = Crypt_GPG_UserId::parse($string);
@@ -230,11 +215,6 @@ class UserIdTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedUserId, $userId);
     }
 
-    // }}}
-
-    // to-string
-    // {{{ testToStringFull()
-
     /**
      * @group to-string
      */
@@ -242,18 +222,16 @@ class UserIdTest extends Crypt_GPG_TestCase
     {
         $expected = 'Example User (This is a test comment) <test@example.com>';
 
-        $userId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'comment' => 'This is a test comment',
-            'email'   => 'test@example.com'
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'comment' => 'This is a test comment',
+                'email'   => 'test@example.com'
+            )
+        );
 
-        $string = strval($userId);
-        $this->assertEquals($expected, $string);
+        $this->assertEquals($expected, strval($userId));
     }
-
-    // }}}
-    // {{{ testToStringNameOnly()
 
     /**
      * @group to-string
@@ -262,16 +240,10 @@ class UserIdTest extends Crypt_GPG_TestCase
     {
         $expected = 'Example User';
 
-        $userId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-        ));
+        $userId = new Crypt_GPG_UserId(array('name' => 'Example User'));
 
-        $string = strval($userId);
-        $this->assertEquals($expected, $string);
+        $this->assertEquals($expected, strval($userId));
     }
-
-    // }}}
-    // {{{ testToStringNameComment()
 
     /**
      * @group to-string
@@ -280,17 +252,15 @@ class UserIdTest extends Crypt_GPG_TestCase
     {
         $expected = 'Example User (This is a test comment)';
 
-        $userId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'comment' => 'This is a test comment',
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'comment' => 'This is a test comment',
+            )
+        );
 
-        $string = strval($userId);
-        $this->assertEquals($expected, $string);
+        $this->assertEquals($expected, strval($userId));
     }
-
-    // }}}
-    // {{{ testToStringNameEmail()
 
     /**
      * @group to-string
@@ -299,229 +269,216 @@ class UserIdTest extends Crypt_GPG_TestCase
     {
         $expected = 'Example User <test@example.com>';
 
-        $userId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'email'   => 'test@example.com'
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'  => 'Example User',
+                'email' => 'test@example.com'
+            )
+        );
 
-        $string = strval($userId);
-        $this->assertEquals($expected, $string);
+        $this->assertEquals($expected, strval($userId));
     }
-
-    // }}}
-
-    // accessors
-    // {{{ testGetName()
 
     /**
      * @group accessors
      */
     public function testGetName()
     {
-        $userId = new Crypt_GPG_UserId(array(
-            'name' => 'Example User'
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name' => 'Example User'
+            )
+        );
 
         $this->assertEquals('Example User', $userId->getName());
     }
-
-    // }}}
-    // {{{ testGetComment()
 
     /**
      * @group accessors
      */
     public function testGetComment()
     {
-        $userId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'comment' => 'This is a test comment'
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'comment' => 'This is a test comment'
+            )
+        );
 
         $this->assertEquals('This is a test comment', $userId->getComment());
     }
-
-    // }}}
-    // {{{ testGetEmail()
 
     /**
      * @group accessors
      */
     public function testGetEmail()
     {
-        $userId = new Crypt_GPG_UserId(array(
-            'name'  => 'Example User',
-            'email' => 'test@example.com'
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'  => 'Example User',
+                'email' => 'test@example.com'
+            )
+        );
 
         $this->assertEquals('test@example.com', $userId->getEmail());
     }
-
-    // }}}
-    // {{{ testIsRevoked()
 
     /**
      * @group accessors
      */
     public function testIsRevoked()
     {
-        $userId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'revoked' => true,
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'revoked' => true,
+            )
+        );
 
         $this->assertTrue($userId->isRevoked());
 
-        $userId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'revoked' => false,
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'revoked' => false,
+            )
+        );
 
         $this->assertFalse($userId->isRevoked());
     }
-
-    // }}}
-    // {{{ testIsValid()
 
     /**
      * @group accessors
      */
     public function testIsValid()
     {
-        $userId = new Crypt_GPG_UserId(array(
-            'name'  => 'Example User',
-            'valid' => true,
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'  => 'Example User',
+                'valid' => true,
+            )
+        );
 
         $this->assertTrue($userId->isValid());
 
-        $userId = new Crypt_GPG_UserId(array(
-            'name'  => 'Example User',
-            'valid' => false,
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'  => 'Example User',
+                'valid' => false,
+            )
+        );
 
         $this->assertFalse($userId->isValid());
     }
-
-    // }}}
-
-    // mutators
-    // {{{ testSetName()
 
     /**
      * @group mutators
      */
     public function testSetName()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name' => 'Second Name'
-        ));
-
-        $userId = new Crypt_GPG_UserId(array(
-            'name' => 'First Name'
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(array('name' => 'Second Name'));
+        $userId         = new Crypt_GPG_UserId(array('name' => 'First Name'));
 
         $userId->setName('Second Name');
 
         $this->assertEquals($expectedUserId, $userId);
     }
 
-    // }}}
-    // {{{ testSetComment()
-
     /**
      * @group mutators
      */
     public function testSetComment()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'comment' => 'Second comment text'
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'comment' => 'Second comment text'
+            )
+        );
 
-        $userId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'comment' => 'First comment text'
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'comment' => 'First comment text'
+            )
+        );
 
         $userId->setComment('Second comment text');
 
         $this->assertEquals($expectedUserId, $userId);
     }
 
-    // }}}
-    // {{{ testSetEmail()
-
     /**
      * @group mutators
      */
     public function testSetEmail()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name'  => 'Example User',
-            'email' => 'second@example.com'
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(
+            array(
+                'name'  => 'Example User',
+                'email' => 'second@example.com'
+            )
+        );
 
-        $userId = new Crypt_GPG_UserId(array(
-            'name'  => 'Example User',
-            'email' => 'first@example.com'
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'  => 'Example User',
+                'email' => 'first@example.com'
+            )
+        );
 
         $userId->setEmail('second@example.com');
 
         $this->assertEquals($expectedUserId, $userId);
     }
 
-    // }}}
-    // {{{ testSetRevoked()
-
     /**
      * @group mutators
      */
     public function testSetRevoked()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'revoked' => true,
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'revoked' => true,
+            )
+        );
 
-        $userId = new Crypt_GPG_UserId(array(
-            'name'    => 'Example User',
-            'revoked' => false,
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'    => 'Example User',
+                'revoked' => false,
+            )
+        );
 
         $userId->setRevoked(true);
 
         $this->assertEquals($expectedUserId, $userId);
     }
 
-    // }}}
-    // {{{ testSetValid()
-
     /**
      * @group mutators
      */
     public function testSetValid()
     {
-        $expectedUserId = new Crypt_GPG_UserId(array(
-            'name'  => 'Example User',
-            'valid' => true,
-        ));
+        $expectedUserId = new Crypt_GPG_UserId(
+            array(
+                'name'  => 'Example User',
+                'valid' => true,
+            )
+        );
 
-        $userId = new Crypt_GPG_UserId(array(
-            'name'  => 'Example User',
-            'valid' => false,
-        ));
+        $userId = new Crypt_GPG_UserId(
+            array(
+                'name'  => 'Example User',
+                'valid' => false,
+            )
+        );
 
         $userId->setValid(true);
 
         $this->assertEquals($expectedUserId, $userId);
     }
-
-    // }}}
-
-    // fluent interface
-    // {{{ testFluentInterface
 
     /**
      * @group fluent
@@ -530,6 +487,7 @@ class UserIdTest extends Crypt_GPG_TestCase
     {
         $userId         = new Crypt_GPG_UserId();
         $returnedUserId = $userId->setName('Alice');
+
         $this->assertEquals(
             $userId,
             $returnedUserId,
@@ -538,6 +496,7 @@ class UserIdTest extends Crypt_GPG_TestCase
 
         $userId         = new Crypt_GPG_UserId();
         $returnedUserId = $userId->setComment('encryption is fun');
+
         $this->assertEquals(
             $userId,
             $returnedUserId,
@@ -546,6 +505,7 @@ class UserIdTest extends Crypt_GPG_TestCase
 
         $userId         = new Crypt_GPG_UserId();
         $returnedUserId = $userId->setEmail('test@example.com');
+
         $this->assertEquals(
             $userId,
             $returnedUserId,
@@ -554,6 +514,7 @@ class UserIdTest extends Crypt_GPG_TestCase
 
         $userId         = new Crypt_GPG_UserId();
         $returnedUserId = $userId->setRevoked(true);
+
         $this->assertEquals(
             $userId,
             $returnedUserId,
@@ -562,14 +523,11 @@ class UserIdTest extends Crypt_GPG_TestCase
 
         $userId         = new Crypt_GPG_UserId();
         $returnedUserId = $userId->setValid(true);
+
         $this->assertEquals(
             $userId,
             $returnedUserId,
             'Failed asserting fluent interface works for setValid() method.'
         );
     }
-
-    // }}}
 }
-
-?>

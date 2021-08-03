@@ -57,8 +57,6 @@ require_once 'TestCase.php';
  */
 class GetFingerprintTest extends Crypt_GPG_TestCase
 {
-    // {{{ testGetFingerprint()
-
     /**
      * @group get-fingerprint
      */
@@ -70,9 +68,6 @@ class GetFingerprintTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedFingerprint, $fingerprint);
     }
 
-    // }}}
-    // {{{ testGetFingerprintNull()
-
     /**
      * @group get-fingerprint
      */
@@ -82,9 +77,6 @@ class GetFingerprintTest extends Crypt_GPG_TestCase
         $fingerprint = $this->gpg->getFingerprint($keyId);
         $this->assertNull($fingerprint);
     }
-
-    // }}}
-    // {{{ testGetFingerprintX509()
 
     /**
      * @group get-fingerprint
@@ -101,9 +93,6 @@ class GetFingerprintTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedFingerprint, $fingerprint);
     }
 
-    // }}}
-    // {{{ testGetFingerprintCanonical()
-
     /**
      * @group get-fingerprint
      */
@@ -118,8 +107,4 @@ class GetFingerprintTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedFingerprint, $fingerprint);
     }
-
-    // }}}
 }
-
-?>

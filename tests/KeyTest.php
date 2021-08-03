@@ -72,9 +72,6 @@ require_once 'Crypt/GPG/SubKey.php';
  */
 class KeyTest extends Crypt_GPG_TestCase
 {
-    // accessors
-    // {{{ testGetSubKeys()
-
     /**
      * @group accessors
      */
@@ -133,9 +130,6 @@ class KeyTest extends Crypt_GPG_TestCase
             'added sub-key.');
     }
 
-    // }}}
-    // {{{ testGetUserIds()
-
     /**
      * @group accessors
      */
@@ -182,9 +176,6 @@ class KeyTest extends Crypt_GPG_TestCase
             'added user id.');
     }
 
-    // }}}
-    // {{{ testGetPrimaryKey()
-
     /**
      * @group accessors
      */
@@ -227,9 +218,6 @@ class KeyTest extends Crypt_GPG_TestCase
             'sub-key.');
     }
 
-    // }}}
-    // {{{ testCanSign_none()
-
     /**
      * @group accessors
      */
@@ -248,9 +236,6 @@ class KeyTest extends Crypt_GPG_TestCase
 
         $this->assertFalse($key->canSign());
     }
-
-    // }}}
-    // {{{ testCanSign_one()
 
     /**
      * @group accessors
@@ -271,9 +256,6 @@ class KeyTest extends Crypt_GPG_TestCase
         $this->assertTrue($key->canSign());
     }
 
-    // }}}
-    // {{{ testCanSign_all()
-
     /**
      * @group accessors
      */
@@ -292,9 +274,6 @@ class KeyTest extends Crypt_GPG_TestCase
 
         $this->assertTrue($key->canSign());
     }
-
-    // }}}
-    // {{{ testCanEncrypt_none()
 
     /**
      * @group accessors
@@ -315,9 +294,6 @@ class KeyTest extends Crypt_GPG_TestCase
         $this->assertFalse($key->canEncrypt());
     }
 
-    // }}}
-    // {{{ testCanEncrypt_one()
-
     /**
      * @group accessors
      */
@@ -337,9 +313,6 @@ class KeyTest extends Crypt_GPG_TestCase
         $this->assertTrue($key->canEncrypt());
     }
 
-    // }}}
-    // {{{ testCanEncrypt_all()
-
     /**
      * @group accessors
      */
@@ -358,9 +331,6 @@ class KeyTest extends Crypt_GPG_TestCase
 
         $this->assertTrue($key->canEncrypt());
     }
-
-    // }}}
-    // {{{ test__toString()
 
     /**
      * @group accessors
@@ -387,11 +357,6 @@ class KeyTest extends Crypt_GPG_TestCase
 
         $this->assertSame((string) $key, $firstSubKey->getId());
     }
-
-    // }}}
-
-    // mutators
-    // {{{ testAddSubKey()
 
     /**
      * @group mutators
@@ -477,9 +442,6 @@ class KeyTest extends Crypt_GPG_TestCase
             'added sub-key.');
     }
 
-    // }}}
-    // {{{ testAddUserId()
-
     /**
      * @group mutators
      */
@@ -552,11 +514,6 @@ class KeyTest extends Crypt_GPG_TestCase
             'added user id.');
     }
 
-    // }}}
-
-    // fluent interface
-    // {{{ testFluentInterface
-
     /**
      * @group fluent
      */
@@ -599,8 +556,4 @@ class KeyTest extends Crypt_GPG_TestCase
             'Failed asserting fluent interface works for addUserId() method.'
         );
     }
-
-    // }}}
 }
-
-?>

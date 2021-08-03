@@ -57,8 +57,6 @@ require_once 'TestCase.php';
  */
 class ExportPublicKeyTest extends Crypt_GPG_TestCase
 {
-    // {{{ testExportPublicKey()
-
     /**
      * @group export
      */
@@ -75,9 +73,6 @@ class ExportPublicKeyTest extends Crypt_GPG_TestCase
         $this->assertStringEndsWith($expectedKeyData, $keyData);
     }
 
-    // }}}
-    // {{{ testExportPublicKeyNotFoundException()
-
     /**
      * @group export
      */
@@ -88,8 +83,4 @@ class ExportPublicKeyTest extends Crypt_GPG_TestCase
         $keyId = 'non-existent-key@example.com';
         $this->gpg->exportPublicKey($keyId);
     }
-
-    // }}}
 }
-
-?>

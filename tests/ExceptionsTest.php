@@ -62,9 +62,6 @@ require_once 'Crypt/GPG/Exceptions.php';
  */
 class ExceptionsTest extends Crypt_GPG_TestCase
 {
-    // exception
-    // {{{ testException
-
     /**
      * @group exception
      */
@@ -75,11 +72,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
 
         throw new Crypt_GPG_Exception('test exception');
     }
-
-    // }}}
-
-    // file exception
-    // {{{ testFileException
 
     /**
      * @group file-exception
@@ -92,9 +84,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
         throw new Crypt_GPG_FileException('test exception');
     }
 
-    // }}}
-    // {{{ testFileException_getFilename()
-
     /**
      * @group file-exception
      */
@@ -105,11 +94,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
 
         $this->assertEquals('test-filename.php', $e->getFilename());
     }
-
-    // }}}
-
-    // open subprocess exception
-    // {{{ testOpenSubprocessException
 
     /**
      * @group open-subprocess-exception
@@ -122,9 +106,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
         throw new Crypt_GPG_OpenSubprocessException('test exception');
     }
 
-    // }}}
-    // {{{ testOpenSubprocessException_getCommand()
-
     /**
      * @group open-subprocess-exception
      */
@@ -135,11 +116,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
 
         $this->assertEquals('gpg --verify', $e->getCommand());
     }
-
-    // }}}
-
-    // invalid operation exception
-    // {{{ testInvalidOperationException
 
     /**
      * @group invalid-operation-exception
@@ -152,9 +128,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
         throw new Crypt_GPG_InvalidOperationException('test exception');
     }
 
-    // }}}
-    // {{{ testInvalidOperationException_getOperation()
-
     /**
      * @group invalid-operation-exception
      */
@@ -165,11 +138,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
 
         $this->assertEquals('--verify', $e->getOperation());
     }
-
-    // }}}
-
-    // key not found exception
-    // {{{ testKeyNotFoundException
 
     /**
      * @group key-not-found-exception
@@ -182,9 +150,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
         throw new Crypt_GPG_KeyNotFoundException('test exception');
     }
 
-    // }}}
-    // {{{ testKeyNotFoundException_getKeyId()
-
     /**
      * @group key-not-found-exception
      */
@@ -195,11 +160,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
 
         $this->assertEquals('9F93F9116728EF12', $e->getKeyId());
     }
-
-    // }}}
-
-    // no data exception
-    // {{{ testNoDataException
 
     /**
      * @group no-data-exception
@@ -212,11 +172,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
         throw new Crypt_GPG_NoDataException('test exception');
     }
 
-    // }}}
-
-    // bad passphrase exception
-    // {{{ testBadPassphraseException
-
     /**
      * @group bad-passphrase-exception
      */
@@ -227,9 +182,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
 
         throw new Crypt_GPG_BadPassphraseException('test exception');
     }
-
-    // }}}
-    // {{{ testBadPassphraseException_getBadPassphrases()
 
     /**
      * @group bad-passphrase-exception
@@ -247,9 +199,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
         $this->assertContains('9F93F9116728EF12', $keyIds);
     }
 
-    // }}}
-    // {{{ testBadPassphraseException_getMissingPassphrase()
-
     /**
      * @group bad-passphrase-exception
      */
@@ -266,11 +215,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
         $this->assertContains('9F93F9116728EF12', $keyIds);
     }
 
-    // }}}
-
-    // delete private key exception
-    // {{{ testDeletePrivateKeyException
-
     /**
      * @group delete-private-key-exception
      */
@@ -282,9 +226,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
         throw new Crypt_GPG_DeletePrivateKeyException('test exception');
     }
 
-    // }}}
-    // {{{ testDeletePrivateKeyException_getKeyId()
-
     /**
      * @group delete-private-key-exception
      */
@@ -295,8 +236,4 @@ class ExceptionsTest extends Crypt_GPG_TestCase
 
         $this->assertEquals('9F93F9116728EF12', $e->getKeyId());
     }
-
-    // }}}
 }
-
-?>

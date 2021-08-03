@@ -57,8 +57,6 @@ require_once 'TestCase.php';
  */
 class ExportPrivateKeyTest extends Crypt_GPG_TestCase
 {
-    // {{{ testExportPrivateKey()
-
     /**
      * @group export
      */
@@ -77,9 +75,6 @@ class ExportPrivateKeyTest extends Crypt_GPG_TestCase
 
         $this->assertStringEndsWith($expectedKeyData, $keyData);
     }
-
-    // }}}
-    // {{{ testExportPrivateKey_with_good_pass()
 
     /**
      * @group export
@@ -101,9 +96,6 @@ class ExportPrivateKeyTest extends Crypt_GPG_TestCase
         $this->assertStringStartsWith('-----BEGIN PGP PRIVATE KEY BLOCK-----', $keyData);
     }
 
-    // }}}
-    // {{{ testExportPrivateKey_with_bad_pass()
-
     /**
      * @group export
      */
@@ -123,9 +115,6 @@ class ExportPrivateKeyTest extends Crypt_GPG_TestCase
         $keyData = $this->gpg->exportPrivateKey($keyId);
     }
 
-    // }}}
-    // {{{ testExportPrivateKeyNotFoundException()
-
     /**
      * @group export
      */
@@ -136,8 +125,4 @@ class ExportPrivateKeyTest extends Crypt_GPG_TestCase
         $keyId = 'non-existent-key@example.com';
         $this->gpg->exportPrivateKey($keyId);
     }
-
-    // }}}
 }
-
-?>

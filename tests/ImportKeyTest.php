@@ -57,9 +57,6 @@ require_once 'TestCase.php';
  */
 class ImportKeyTest extends Crypt_GPG_TestCase
 {
-    // set up
-    // {{{ setUp(): void
-
     public function setUp(): void
     {
         parent::setUp();
@@ -69,9 +66,6 @@ class ImportKeyTest extends Crypt_GPG_TestCase
         // This way we clean the state first
         $this->gpg->getKeys();
     }
-
-    // }}}
-    // {{{ testImportKey_private()
 
     /**
      * @group string
@@ -134,9 +128,6 @@ TEXT;
         $this->assertEquals($expectedResult, $result);
     }
 
-    // }}}
-    // {{{ testImportKey_public()
-
     /**
      * @group string
      */
@@ -191,9 +182,6 @@ TEXT;
         $result = $this->gpg->importKey($publicKeyData);
         $this->assertEquals($expectedResult, $result);
     }
-
-    // }}}
-    // {{{ testImportKeyAlreadyImported_private()
 
     /**
      * @group string
@@ -267,9 +255,6 @@ TEXT;
         $this->assertEquals($expectedResult, $result);
     }
 
-    // }}}
-    // {{{ testImportKeyAlreadyImported_public()
-
     /**
      * @group string
      */
@@ -339,9 +324,6 @@ TEXT;
         $this->assertEquals($expectedResult, $result);
     }
 
-    // }}}
-    // {{{ testImportKeyNoDataException_invalid()
-
     /**
      * @group string
      */
@@ -353,9 +335,6 @@ TEXT;
         $this->gpg->importKey($keyData);
     }
 
-    // }}}
-    // {{{ testImportKeyNoDataException_empty()
-
     /**
      * @group string
      */
@@ -366,9 +345,6 @@ TEXT;
         $keyData = '';
         $this->gpg->importKey($keyData);
     }
-
-    // }}}
-    // {{{ testImportKeyFile_private()
 
     /**
      * @group file
@@ -390,9 +366,6 @@ TEXT;
         $this->assertEquals($expectedResult, $result);
     }
 
-    // }}}
-    // {{{ testImportKeyFile_public()
-
     /**
      * @group file
      */
@@ -412,9 +385,6 @@ TEXT;
 
         $this->assertEquals($expectedResult, $result);
     }
-
-    // }}}
-    // {{{ testImportKeyFileAlreadyImported_private()
 
     /**
      * @group file
@@ -449,9 +419,6 @@ TEXT;
         $this->assertEquals($expectedResult, $result);
     }
 
-    // }}}
-    // {{{ testImportKeyFileAlreadyImported_public()
-
     /**
      * @group file
      */
@@ -485,9 +452,6 @@ TEXT;
         $this->assertEquals($expectedResult, $result);
     }
 
-    // }}}
-    // {{{ testImportKeyFileFileException()
-
     /**
      * @group file
      */
@@ -502,9 +466,6 @@ TEXT;
         $this->gpg->importKeyFile($filename);
     }
 
-    // }}}
-    // {{{ testImportKeyFileNoDataException()
-
     /**
      * @group file
      */
@@ -515,8 +476,4 @@ TEXT;
         $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->importKeyFile($filename);
     }
-
-    // }}}
 }
-
-?>

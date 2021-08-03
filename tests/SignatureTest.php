@@ -62,9 +62,6 @@ require_once 'Crypt/GPG/Signature.php';
  */
 class SignatureTest extends Crypt_GPG_TestCase
 {
-    // construct
-    // {{{ testConstructFromSignature()
-
     /**
      * @group construct
      */
@@ -84,9 +81,6 @@ class SignatureTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSignature, $signature);
     }
-
-    // }}}
-    // {{{ testConstructFromArray()
 
     /**
      * @group construct
@@ -120,11 +114,6 @@ class SignatureTest extends Crypt_GPG_TestCase
             strval($signature->getUserId()));
     }
 
-    // }}}
-
-    // accessors
-    // {{{ testGetId()
-
     /**
      * @group accessors
      */
@@ -141,9 +130,6 @@ class SignatureTest extends Crypt_GPG_TestCase
 
         $this->assertEquals('KuhELanvhPRXozEjFWb2mam1q20', $signature->getId());
     }
-
-    // }}}
-    // {{{ testGetKeyFingerprint()
 
     /**
      * @group accessors
@@ -163,9 +149,6 @@ class SignatureTest extends Crypt_GPG_TestCase
             $signature->getKeyFingerprint());
     }
 
-    // }}}
-    // {{{ testGetKeyId()
-
     /**
      * @group accessors
      */
@@ -184,9 +167,6 @@ class SignatureTest extends Crypt_GPG_TestCase
         $this->assertEquals('0C097D9EC94C06363', $signature->getKeyId());
     }
 
-    // }}}
-    // {{{ testGetCreationDate()
-
     /**
      * @group accessors
      */
@@ -204,9 +184,6 @@ class SignatureTest extends Crypt_GPG_TestCase
         $this->assertEquals(1221785858, $signature->getCreationDate());
     }
 
-    // }}}
-    // {{{ testGetExpirationDate()
-
     /**
      * @group accessors
      */
@@ -223,9 +200,6 @@ class SignatureTest extends Crypt_GPG_TestCase
 
         $this->assertEquals(1421785858, $signature->getExpirationDate());
     }
-
-    // }}}
-    // {{{ testIsValid()
 
     /**
      * @group accessors
@@ -256,9 +230,6 @@ class SignatureTest extends Crypt_GPG_TestCase
         $this->assertFalse($signature->isValid());
     }
 
-    // }}}
-    // {{{ testGetUserId()
-
     /**
      * @group accessors
      */
@@ -280,11 +251,6 @@ class SignatureTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedUserId, $signature->getUserId());
     }
-
-    // }}}
-
-    // mutators
-    // {{{ testSetId()
 
     /**
      * @group mutators
@@ -314,9 +280,6 @@ class SignatureTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedSignature, $signature);
     }
 
-    // }}}
-    // {{{ testSetKeyFingerprint()
-
     /**
      * @group mutators
      */
@@ -345,9 +308,6 @@ class SignatureTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSignature, $signature);
     }
-
-    // }}}
-    // {{{ testSetKeyId()
 
     /**
      * @group mutators
@@ -379,9 +339,6 @@ class SignatureTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedSignature, $signature);
     }
 
-    // }}}
-    // {{{ testSetCreationDate()
-
     /**
      * @group mutators
      */
@@ -409,9 +366,6 @@ class SignatureTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSignature, $signature);
     }
-
-    // }}}
-    // {{{ testSetExpirationDate()
 
     /**
      * @group mutators
@@ -441,9 +395,6 @@ class SignatureTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedSignature, $signature);
     }
 
-    // }}}
-    // {{{ testSetValid()
-
     /**
      * @group mutators
      */
@@ -471,9 +422,6 @@ class SignatureTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSignature, $signature);
     }
-
-    // }}}
-    // {{{ testSetUserId()
 
     /**
      * @group accessors
@@ -507,11 +455,6 @@ class SignatureTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSignature, $signature);
     }
-
-    // }}}
-
-    // fluent interface
-    // {{{ testFluentInterface
 
     /**
      * @group fluent
@@ -579,8 +522,4 @@ class SignatureTest extends Crypt_GPG_TestCase
             'Failed asserting fluent interface works for setUserId() method.'
         );
     }
-
-    // }}}
 }
-
-?>

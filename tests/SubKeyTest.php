@@ -62,9 +62,6 @@ require_once 'Crypt/GPG/SubKey.php';
  */
 class SubKeyTest extends Crypt_GPG_TestCase
 {
-    // construct
-    // {{{ testConstructFromString()
-
     /**
      * @group construct
      */
@@ -86,9 +83,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
-
-    // }}}
-    // {{{ testConstructFromSubKey()
 
     /**
      * @group construct
@@ -112,9 +106,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
-
-    // }}}
-    // {{{ testConstructFromArray()
 
     /**
      * @group construct
@@ -156,11 +147,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         }
     }
 
-    // }}}
-
-    // parse
-    // {{{ testParse()
-
     /**
      * @group parse
      */
@@ -191,9 +177,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertEquals($usage, $subKey->usage());
     }
 
-    // }}}
-    // {{{ testParseCreationDateIso()
-
     /**
      * @group parse
      */
@@ -215,11 +198,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedSubKey, $subKey);
     }
 
-    // }}}
-
-    // accessors
-    // {{{ testGetId()
-
     /**
      * @group accessors
      */
@@ -239,9 +217,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertEquals('8C37DBD2A01B7976', $subKey->getId());
     }
-
-    // }}}
-    // {{{ testGetAlgorithm()
 
     /**
      * @group accessors
@@ -264,9 +239,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
             $subKey->getAlgorithm());
     }
 
-    // }}}
-    // {{{ testGetFingerprint()
-
     /**
      * @group accessors
      */
@@ -288,9 +260,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
             $subKey->getFingerprint());
     }
 
-    // }}}
-    // {{{ testGetLength()
-
     /**
      * @group accessors
      */
@@ -311,9 +280,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertEquals(2048, $subKey->getLength());
     }
 
-    // }}}
-    // {{{ testGetCreationDate()
-
     /**
      * @group accessors
      */
@@ -333,9 +299,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertEquals(1221785858, $subKey->getCreationDate());
     }
-
-    // }}}
-    // {{{ testGetCreationDateTime()
 
     /**
      * @group accessors
@@ -371,9 +334,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertSame(null, $subKey->getCreationDateTime());
     }
 
-    // }}}
-    // {{{ testGetExpirationDate()
-
     /**
      * @group accessors
      */
@@ -393,9 +353,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertEquals(1421785858, $subKey->getExpirationDate());
     }
-
-    // }}}
-    // {{{ testGetExpirationDateTime()
 
     /**
      * @group accessors
@@ -431,9 +388,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertSame(null, $subKey->getExpirationDateTime());
     }
 
-    // }}}
-    // {{{ testCanSign()
-
     /**
      * @group accessors
      */
@@ -468,9 +422,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertFalse($subKey->canSign());
     }
 
-    // }}}
-    // {{{ testCanEncrypt()
-
     /**
      * @group accessors
      */
@@ -504,9 +455,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertFalse($subKey->canEncrypt());
     }
-
-    // }}}
-    // {{{ testUsage()
 
     /**
      * @group accessors
@@ -543,9 +491,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertSame(Crypt_GPG_SubKey::USAGE_SIGN, $subKey->usage());
     }
 
-    // }}}
-    // {{{ testHasPrivate()
-
     /**
      * @group accessors
      */
@@ -579,9 +524,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertFalse($subKey->hasPrivate());
     }
-
-    // }}}
-    // {{{ testIsRevoked()
 
     /**
      * @group accessors
@@ -619,11 +561,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertFalse($subKey->isRevoked());
     }
 
-    // }}}
-
-    // mutators
-    // {{{ testSetId()
-
     /**
      * @group mutators
      */
@@ -657,9 +594,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
-
-    // }}}
-    // {{{ testSetAlgorithm()
 
     /**
      * @group mutators
@@ -695,9 +629,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedSubKey, $subKey);
     }
 
-    // }}}
-    // {{{ testSetFingerprint()
-
     /**
      * @group mutators
      */
@@ -731,9 +662,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
-
-    // }}}
-    // {{{ testSetLength()
 
     /**
      * @group mutators
@@ -769,9 +697,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedSubKey, $subKey);
     }
 
-    // }}}
-    // {{{ testSetCreationDate()
-
     /**
      * @group mutators
      */
@@ -805,9 +730,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
-
-    // }}}
-    // {{{ testSetExpirationDate()
 
     /**
      * @group mutators
@@ -843,9 +765,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedSubKey, $subKey);
     }
 
-    // }}}
-    // {{{ testSetCanSign()
-
     /**
      * @group mutators
      */
@@ -879,9 +798,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
-
-    // }}}
-    // {{{ testSetCanEncrypt()
 
     /**
      * @group mutators
@@ -917,9 +833,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedSubKey, $subKey);
     }
 
-    // }}}
-    // {{{ testSetHasPrivate()
-
     /**
      * @group mutators
      */
@@ -953,9 +866,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
-
-    // }}}
-    // {{{ testSetRevoked()
 
     /**
      * @group mutators
@@ -992,11 +902,6 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
-
-    // }}}
-
-    // fluent interface
-    // {{{ testFluentInterface
 
     /**
      * @group fluent
@@ -1092,8 +997,4 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'Failed asserting fluent interface works for setRevoked() method.'
         );
     }
-
-    // }}}
 }
-
-?>

@@ -57,8 +57,6 @@ require_once 'TestCase.php';
  */
 class GeneralTest extends Crypt_GPG_TestCase
 {
-    // {{{ testPublicKeyringFileException()
-
     public function testPublicKeyringFileException()
     {
         $this->expectException('Crypt_GPG_FileException');
@@ -70,9 +68,6 @@ class GeneralTest extends Crypt_GPG_TestCase
             )
         );
     }
-
-    // }}}
-    // {{{ testPrivateKeyringFileException()
 
     public function testPrivateKeyringFileException()
     {
@@ -86,9 +81,6 @@ class GeneralTest extends Crypt_GPG_TestCase
         );
     }
 
-    // }}}
-    // {{{ testTrustDatabaseFileException()
-
     public function testTrustDatabaseFileException()
     {
         $this->expectException('Crypt_GPG_FileException');
@@ -100,9 +92,6 @@ class GeneralTest extends Crypt_GPG_TestCase
             )
         );
     }
-
-    // }}}
-    // {{{ testHomedirFileException_NoCreate()
 
     public function testHomedirFileException_NoCreate()
     {
@@ -116,9 +105,6 @@ class GeneralTest extends Crypt_GPG_TestCase
         $nonCreatableDirectory = '//.gnupg';
         new Crypt_GPG(array('homedir' => $nonCreatableDirectory));
     }
-
-    // }}}
-    // {{{ testHomedirFileException_NoExecute()
 
     public function testHomedirFileException_NoExecute()
     {
@@ -136,9 +122,6 @@ class GeneralTest extends Crypt_GPG_TestCase
         new Crypt_GPG(array('homedir' => $nonExecutableDirectory));
     }
 
-    // }}}
-    // {{{ testHomedirFileException_NoWrite()
-
     public function testHomedirFileException_NoWrite()
     {
         $this->expectException('Crypt_GPG_FileException');
@@ -155,9 +138,6 @@ class GeneralTest extends Crypt_GPG_TestCase
         new Crypt_GPG(array('homedir' => $nonWriteableDirectory));
     }
 
-    // }}}
-    // {{{ testBinaryPEARException()
-
     public function testBinaryPEARException()
     {
         $this->expectException('PEAR_Exception');
@@ -165,18 +145,12 @@ class GeneralTest extends Crypt_GPG_TestCase
         new Crypt_GPG(array('binary' => './non-existent-binary'));
     }
 
-    // }}}
-    // {{{ testGPGBinaryPEARException()
-
     public function testGPGBinaryPEARException()
     {
         $this->expectException('PEAR_Exception');
 
         new Crypt_GPG(array('gpgBinary' => './non-existent-binary'));
     }
-
-    // }}}
-    // {{{ testSetEngine()
 
     public function testSetEngine()
     {
@@ -186,11 +160,6 @@ class GeneralTest extends Crypt_GPG_TestCase
 
         $this->assertSame($this->getPropertyValue('Crypt_GPG', $gpg, 'engine'), $engine);
     }
-
-    // }}}
-
-    // fluent interface
-    // {{{ testFluentInterface
 
     /**
      * @group fluent
@@ -262,8 +231,4 @@ class GeneralTest extends Crypt_GPG_TestCase
             'method.'
         );
     }
-
-    // }}}
 }
-
-?>

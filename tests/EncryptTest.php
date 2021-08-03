@@ -64,8 +64,6 @@ class EncryptTest extends Crypt_GPG_TestCase
         $this->assertTrue($this->gpg->hasEncryptKeys());
     }
 
-    // {{{ testEncrypt()
-
     /**
      * @group string
      */
@@ -83,9 +81,6 @@ class EncryptTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($data, $decryptedData);
     }
-
-    // }}}
-    // {{{ testEncryptDual()
 
     /**
      * @group string
@@ -111,9 +106,6 @@ class EncryptTest extends Crypt_GPG_TestCase
         $this->assertEquals($data, $decryptedData);
     }
 
-    // }}}
-    // {{{ testEncryptKeyNotFoundException_invalid()
-
     /**
      * @group string
      */
@@ -126,9 +118,6 @@ class EncryptTest extends Crypt_GPG_TestCase
         $this->gpg->encrypt($data);
     }
 
-    // }}}
-    // {{{ testEncryptKeyNotFoundException_none()
-
     /**
      * @group string
      */
@@ -139,9 +128,6 @@ class EncryptTest extends Crypt_GPG_TestCase
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->encrypt($data);
     }
-
-    // }}}
-    // {{{ testEncryptEmpty()
 
     /**
      * @group string
@@ -158,11 +144,6 @@ class EncryptTest extends Crypt_GPG_TestCase
 
         $this->assertEquals($data, $decryptedData);
     }
-
-    // }}}
-
-    // file
-    // {{{ testEncryptFile()
 
     /**
      * @group file
@@ -183,9 +164,6 @@ class EncryptTest extends Crypt_GPG_TestCase
         $md5Sum = $this->getMd5Sum($decryptedFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
-
-    // }}}
-    // {{{ testEncryptFileDual()
 
     /**
      * @group file
@@ -216,9 +194,6 @@ class EncryptTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedMd5Sum, $md5Sum);
     }
 
-    // }}}
-    // {{{ testEncryptFileToString()
-
     /**
      * @group file
      */
@@ -236,9 +211,6 @@ class EncryptTest extends Crypt_GPG_TestCase
         $this->assertEquals($expectedData, $decryptedData);
     }
 
-    // }}}
-    // {{{ testEncryptFileFileException_input()
-
     /**
      * @group file
      */
@@ -253,9 +225,6 @@ class EncryptTest extends Crypt_GPG_TestCase
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptFile($filename);
     }
-
-    // }}}
-    // {{{ testEncryptFileFileException_output()
 
     /**
      * @group file
@@ -273,9 +242,6 @@ class EncryptTest extends Crypt_GPG_TestCase
         $this->gpg->encryptFile($inputFilename, $outputFilename);
     }
 
-    // }}}
-    // {{{ testEncryptFileEmpty()
-
     /**
      * @group file
      */
@@ -291,8 +257,4 @@ class EncryptTest extends Crypt_GPG_TestCase
 
         $this->assertEquals('', $decryptedData);
     }
-
-    // }}}
 }
-
-?>

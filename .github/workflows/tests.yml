@@ -48,11 +48,14 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Install GnuPG v1 (GnuPG v2 does not work with Github Actions)
-        run: sudo apt-get install -y gnupg1
+      #- name: Install GnuPG v1 (GnuPG v2 does not work with Github Actions)
+      #  run: sudo apt-get install -y gnupg1
+
+      - name: Setup fakeTTY
+        uses: Yuri6037/Action-FakeTTY@v1.1
 
       - name: Execute tests
-        run: TESTS_GPG_BINARY=/usr/bin/gpg1 vendor/bin/phpunit --stop-on-error tests
+        run: faketty TESTS_GPG_BINARY=/usr/bin/gpg2 vendor/bin/phpunit --stop-on-error tests
 
       - name: Upload artifacts
         uses: actions/upload-artifact@master

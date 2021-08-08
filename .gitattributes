@@ -3,5 +3,6 @@ tools/ export-ignore
 .github/ export-ignore
 .gitignore export-ignore
 .travis.yml export-ignore
+.travis.install export-ignore
 package.php export-ignore
 package.xml export-ignore

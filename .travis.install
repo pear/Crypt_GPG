@@ -6,6 +6,3 @@ if [ `echo "$TRAVIS_PHP_VERSION <= 5.5" | bc` -eq 1 ]; then sed -i "s/expectExce
 if [ `echo "$TRAVIS_PHP_VERSION >= 8.0" | bc` -eq 1 ]; then composer config platform.php 7.4; fi
 
 composer install --prefer-dist
-
-gpg --version
-gpg2 --version

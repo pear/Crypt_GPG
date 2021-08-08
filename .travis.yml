@@ -19,4 +19,4 @@ before_install:
   - sh .travis.install
 
 script:
-  - vendor/bin/phpunit --coverage-text tests
+  - TESTS_GPG_BINARY=/usr/bin/gpg2 vendor/bin/phpunit --coverage-text tests

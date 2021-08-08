@@ -8,3 +8,4 @@ if [ `echo "$TRAVIS_PHP_VERSION >= 8.0" | bc` -eq 1 ]; then composer config plat
 composer install --prefer-dist
 
 gpg --version
+gpg2 --version

@@ -16,10 +16,10 @@ matrix:
       dist: trusty
 
 before_install:
-  - [[ "$TRAVIS_PHP_VERSION" < "7.4" ]] || composer require --dev 'phpunit/phpunit:^4.8.36 || ^5.7.21 || ^6 || ^7' --no-update
-  - [[ "$TRAVIS_PHP_VERSION" < "7.4" ]] || sed -i 's/: void//g' tests/*.php
-  - [[ "$TRAVIS_PHP_VERSION" <= "5.5" ]] || sed -i 's/expectException/setExpectedException/g' tests/*.php
-  - [[ "$TRAVIS_PHP_VERSION" >= "8.0" ]] || composer config platform.php 7.4
+  - '[[ "$TRAVIS_PHP_VERSION" < "7.4" ]] && composer require --dev "phpunit/phpunit:^4.8.36 || ^5.7.21 || ^6 || ^7" --no-update'
+  - '[[ "$TRAVIS_PHP_VERSION" < "7.4" ]] && sed -i "s/: void//g" tests/*.php'
+  - '[[ "$TRAVIS_PHP_VERSION" <= "5.5" ]] && sed -i "s/expectException/setExpectedException/g" tests/*.php'
+  - '[[ "$TRAVIS_PHP_VERSION" >= "8.0" ]] && composer config platform.php 7.4'
   - composer install --prefer-dist
 
 script:

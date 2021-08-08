@@ -11,15 +11,15 @@ matrix:
     - php: 7.1
     - php: 7.0
     - php: 5.6
-    - php: 5.5
       dist: trusty
     - php: 5.4
       dist: trusty
 
 before_install:
-  - #sudo apt-get update -qq
-  - #sudo apt-get install -y gnupg-agent
-  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "8" ]]; then composer config platform.php 7.4; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} < 7.4 ]]; then composer require --dev 'phpunit/phpunit:^4.8.36 || ^5.7.21 || ^6 || ^7' --no-update; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} < 7.4 ]]; then sed -i 's/: void//g' tests/*.php; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} <= 5.5 ]]; then sed -i 's/expectException/setExpectedException/g' tests/*.php; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} >= 8.0 ]]; then composer config platform.php 7.4; fi
   - composer install --prefer-dist
 
 script:

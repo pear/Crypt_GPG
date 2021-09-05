@@ -33,13 +33,14 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.6.5';
+$apiVersion     = '1.6.6';
 $apiState       = 'stable';
 
-$releaseVersion = '1.6.5';
+$releaseVersion = '1.6.6';
 $releaseState   = 'stable';
-$releaseNotes   =
-    "Add getCreationDateTime() and getExpirationDateTime() methods to Crypt_GPG_SubKey class.\n";
+$releaseNotes   = "Fix possible infinite loop.\n"
+    . "Use configured debug handler also in CLI.\n"
+    . "Support generating keys without a user name.";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .
@@ -171,12 +172,10 @@ $package->addInstallAs(
     'crypt-gpg-pinentry'
 );
 
-if (   isset($_GET['make'])
+if (isset($_GET['make'])
     || (isset($_SERVER['argv']) && @$_SERVER['argv'][1] == 'make')
 ) {
     $package->writePackageFile();
 } else {
     $package->debugPackageFile();
 }
-
-?>

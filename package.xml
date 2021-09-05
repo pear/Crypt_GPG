@@ -29,11 +29,11 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2021-03-16</date>
- <time>18:23:23</time>
+ <date>2021-09-05</date>
+ <time>10:27:54</time>
  <version>
-  <release>1.6.5</release>
-  <api>1.6.5</api>
+  <release>1.6.6</release>
+  <api>1.6.6</api>
  </version>
  <stability>
   <release>stable</release>
@@ -41,7 +41,9 @@ This package requires PHP version 5.4.8 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Add getCreationDateTime() and getExpirationDateTime() methods to Crypt_GPG_SubKey class.
+Fix possible infinite loop.
+Use configured debug handler also in CLI.
+Support generating keys without a user name.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -165,17 +167,19 @@ Add getCreationDateTime() and getExpirationDateTime() methods to Crypt_GPG_SubKe
  <changelog>
   <release>
    <version>
-    <release>1.6.5</release>
-    <api>1.6.5</api>
+    <release>1.6.6</release>
+    <api>1.6.6</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2021-03-16</date>
+   <date>2021-09-05</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-Add getCreationDateTime() and getExpirationDateTime() methods to Crypt_GPG_SubKey class.
+Fix possible infinite loop.
+Use configured debug handler also in CLI.
+Support generating keys without a user name.
    </notes>
   </release>
  </changelog>

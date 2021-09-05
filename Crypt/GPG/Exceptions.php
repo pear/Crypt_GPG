@@ -40,8 +40,6 @@
  */
 require_once 'PEAR/Exception.php';
 
-// {{{ class Crypt_GPG_Exception
-
 /**
  * An exception thrown by the Crypt_GPG package
  *
@@ -55,9 +53,6 @@ require_once 'PEAR/Exception.php';
 class Crypt_GPG_Exception extends PEAR_Exception
 {
 }
-
-// }}}
-// {{{ class Crypt_GPG_FileException
 
 /**
  * An exception thrown when a file is used in ways it cannot be used
@@ -75,17 +70,12 @@ class Crypt_GPG_Exception extends PEAR_Exception
  */
 class Crypt_GPG_FileException extends Crypt_GPG_Exception
 {
-    // {{{ private class properties
-
     /**
      * The name of the file that caused this exception
      *
      * @var string
      */
     private $_filename = '';
-
-    // }}}
-    // {{{ __construct()
 
     /**
      * Creates a new Crypt_GPG_FileException
@@ -100,9 +90,6 @@ class Crypt_GPG_FileException extends Crypt_GPG_Exception
         parent::__construct($message, $code);
     }
 
-    // }}}
-    // {{{ getFilename()
-
     /**
      * Returns the filename of the file that caused this exception
      *
@@ -114,12 +101,7 @@ class Crypt_GPG_FileException extends Crypt_GPG_Exception
     {
         return $this->_filename;
     }
-
-    // }}}
 }
-
-// }}}
-// {{{ class Crypt_GPG_OpenSubprocessException
 
 /**
  * An exception thrown when the GPG subprocess cannot be opened
@@ -136,17 +118,12 @@ class Crypt_GPG_FileException extends Crypt_GPG_Exception
  */
 class Crypt_GPG_OpenSubprocessException extends Crypt_GPG_Exception
 {
-    // {{{ private class properties
-
     /**
      * The command used to try to open the subprocess
      *
      * @var string
      */
     private $_command = '';
-
-    // }}}
-    // {{{ __construct()
 
     /**
      * Creates a new Crypt_GPG_OpenSubprocessException
@@ -164,9 +141,6 @@ class Crypt_GPG_OpenSubprocessException extends Crypt_GPG_Exception
         parent::__construct($message, $code);
     }
 
-    // }}}
-    // {{{ getCommand()
-
     /**
      * Returns the contents of the internal _command property
      *
@@ -178,12 +152,7 @@ class Crypt_GPG_OpenSubprocessException extends Crypt_GPG_Exception
     {
         return $this->_command;
     }
-
-    // }}}
 }
-
-// }}}
-// {{{ class Crypt_GPG_InvalidOperationException
 
 /**
  * An exception thrown when an invalid GPG operation is attempted
@@ -197,17 +166,12 @@ class Crypt_GPG_OpenSubprocessException extends Crypt_GPG_Exception
  */
 class Crypt_GPG_InvalidOperationException extends Crypt_GPG_Exception
 {
-    // {{{ private class properties
-
     /**
      * The attempted operation
      *
      * @var string
      */
     private $_operation = '';
-
-    // }}}
-    // {{{ __construct()
 
     /**
      * Creates a new Crypt_GPG_OpenSubprocessException
@@ -222,9 +186,6 @@ class Crypt_GPG_InvalidOperationException extends Crypt_GPG_Exception
         parent::__construct($message, $code);
     }
 
-    // }}}
-    // {{{ getOperation()
-
     /**
      * Returns the contents of the internal _operation property
      *
@@ -236,12 +197,7 @@ class Crypt_GPG_InvalidOperationException extends Crypt_GPG_Exception
     {
         return $this->_operation;
     }
-
-    // }}}
 }
-
-// }}}
-// {{{ class Crypt_GPG_KeyNotFoundException
 
 /**
  * An exception thrown when Crypt_GPG fails to find the key for various
@@ -256,17 +212,12 @@ class Crypt_GPG_InvalidOperationException extends Crypt_GPG_Exception
  */
 class Crypt_GPG_KeyNotFoundException extends Crypt_GPG_Exception
 {
-    // {{{ private class properties
-
     /**
      * The key identifier that was searched for
      *
      * @var string
      */
     private $_keyId = '';
-
-    // }}}
-    // {{{ __construct()
 
     /**
      * Creates a new Crypt_GPG_KeyNotFoundException
@@ -281,9 +232,6 @@ class Crypt_GPG_KeyNotFoundException extends Crypt_GPG_Exception
         parent::__construct($message, $code);
     }
 
-    // }}}
-    // {{{ getKeyId()
-
     /**
      * Gets the key identifier of the key that was not found
      *
@@ -293,12 +241,7 @@ class Crypt_GPG_KeyNotFoundException extends Crypt_GPG_Exception
     {
         return $this->_keyId;
     }
-
-    // }}}
 }
-
-// }}}
-// {{{ class Crypt_GPG_NoDataException
 
 /**
  * An exception thrown when Crypt_GPG cannot find valid data for various
@@ -315,9 +258,6 @@ class Crypt_GPG_NoDataException extends Crypt_GPG_Exception
 {
 }
 
-// }}}
-// {{{ class Crypt_GPG_BadPassphraseException
-
 /**
  * An exception thrown when a required passphrase is incorrect or missing
  *
@@ -330,8 +270,6 @@ class Crypt_GPG_NoDataException extends Crypt_GPG_Exception
  */
 class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
 {
-    // {{{ private class properties
-
     /**
      * Keys for which the passhprase is missing
      *
@@ -349,9 +287,6 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
      * @var array
      */
     private $_badPassphrases = array();
-
-    // }}}
-    // {{{ __construct()
 
     /**
      * Creates a new Crypt_GPG_BadPassphraseException
@@ -372,9 +307,6 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
         parent::__construct($message, $code);
     }
 
-    // }}}
-    // {{{ getBadPassphrases()
-
     /**
      * Gets keys for which the passhprase is incorrect
      *
@@ -387,9 +319,6 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
         return $this->_badPassphrases;
     }
 
-    // }}}
-    // {{{ getMissingPassphrases()
-
     /**
      * Gets keys for which the passhprase is missing 
      *
@@ -401,12 +330,7 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
     {
         return $this->_missingPassphrases;
     }
-
-    // }}}
 }
-
-// }}}
-// {{{ class Crypt_GPG_DeletePrivateKeyException
 
 /**
  * An exception thrown when an attempt is made to delete public key that has an
@@ -421,17 +345,12 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
  */
 class Crypt_GPG_DeletePrivateKeyException extends Crypt_GPG_Exception
 {
-    // {{{ private class properties
-
     /**
      * The key identifier the deletion attempt was made upon
      *
      * @var string
      */
     private $_keyId = '';
-
-    // }}}
-    // {{{ __construct()
 
     /**
      * Creates a new Crypt_GPG_DeletePrivateKeyException
@@ -449,9 +368,6 @@ class Crypt_GPG_DeletePrivateKeyException extends Crypt_GPG_Exception
         parent::__construct($message, $code);
     }
 
-    // }}}
-    // {{{ getKeyId()
-
     /**
      * Gets the key identifier of the key that was not found
      *
@@ -461,12 +377,7 @@ class Crypt_GPG_DeletePrivateKeyException extends Crypt_GPG_Exception
     {
         return $this->_keyId;
     }
-
-    // }}}
 }
-
-// }}}
-// {{{ class Crypt_GPG_KeyNotCreatedException
 
 /**
  * An exception thrown when an attempt is made to generate a key and the
@@ -483,9 +394,6 @@ class Crypt_GPG_KeyNotCreatedException extends Crypt_GPG_Exception
 {
 }
 
-// }}}
-// {{{ class Crypt_GPG_InvalidKeyParamsException
-
 /**
  * An exception thrown when an attempt is made to generate a key and the
  * key parameters set on the key generator are invalid
@@ -499,8 +407,6 @@ class Crypt_GPG_KeyNotCreatedException extends Crypt_GPG_Exception
  */
 class Crypt_GPG_InvalidKeyParamsException extends Crypt_GPG_Exception
 {
-    // {{{ private class properties
-
     /**
      * The key algorithm
      *
@@ -521,9 +427,6 @@ class Crypt_GPG_InvalidKeyParamsException extends Crypt_GPG_Exception
      * @var integer
      */
     private $_usage = 0;
-
-    // }}}
-    // {{{ __construct()
 
     /**
      * Creates a new Crypt_GPG_InvalidKeyParamsException
@@ -548,9 +451,6 @@ class Crypt_GPG_InvalidKeyParamsException extends Crypt_GPG_Exception
         $this->_usage     = $usage;
     }
 
-    // }}}
-    // {{{ getAlgorithm()
-
     /**
      * Gets the key algorithm
      *
@@ -560,9 +460,6 @@ class Crypt_GPG_InvalidKeyParamsException extends Crypt_GPG_Exception
     {
         return $this->_algorithm;
     }
-
-    // }}}
-    // {{{ getSize()
 
     /**
      * Gets the key size
@@ -574,9 +471,6 @@ class Crypt_GPG_InvalidKeyParamsException extends Crypt_GPG_Exception
         return $this->_size;
     }
 
-    // }}}
-    // {{{ getUsage()
-
     /**
      * Gets the key usage
      *
@@ -586,10 +480,4 @@ class Crypt_GPG_InvalidKeyParamsException extends Crypt_GPG_Exception
     {
         return $this->_usage;
     }
-
-    // }}}
 }
-
-// }}}
-
-?>

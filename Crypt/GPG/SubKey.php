@@ -30,8 +30,6 @@
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-// {{{ class Crypt_GPG_SubKey
-
 /**
  * A class for GPG sub-key information
  *
@@ -50,8 +48,6 @@
  */
 class Crypt_GPG_SubKey
 {
-    // {{{ algorithm class constants
-
     /**
      * RSA encryption algorithm.
      */
@@ -73,9 +69,6 @@ class Crypt_GPG_SubKey
      */
     const ALGORITHM_ELGAMAL_ENC_SGN = 20;
 
-    // }}}
-    // {{{ usage class constants
-
     /**
      * Key can be used to encrypt
      */
@@ -95,9 +88,6 @@ class Crypt_GPG_SubKey
      * Key can be used for authentication
      */
     const USAGE_AUTHENTICATION = 8;
-
-    // }}}
-    // {{{ class properties
 
     /**
      * The id of this sub-key
@@ -169,9 +159,6 @@ class Crypt_GPG_SubKey
      */
     private $_isRevoked = false;
 
-    // }}}
-    // {{{ __construct()
-
     /**
      * Creates a new sub-key object
      *
@@ -200,9 +187,10 @@ class Crypt_GPG_SubKey
      * - <kbd>boolean isRevoked</kbd>   - whether or not this sub-key is
      *                                    revoked.
      *
-     * @param Crypt_GPG_SubKey|string|array $key optional. Either an existing
-     *        sub-key object, which is copied; a sub-key string, which is
-     *        parsed; or an array of initial values.
+     * @param Crypt_GPG_SubKey|string|array|null $key Either an existing sub-key object,
+     *                                                which is copied; a sub-key string,
+     *                                                which is parsed; or an array
+     *                                                of initial values.
      */
     public function __construct($key = null)
     {
@@ -272,9 +260,6 @@ class Crypt_GPG_SubKey
         }
     }
 
-    // }}}
-    // {{{ getId()
-
     /**
      * Gets the id of this sub-key
      *
@@ -284,9 +269,6 @@ class Crypt_GPG_SubKey
     {
         return $this->_id;
     }
-
-    // }}}
-    // {{{ getAlgorithm()
 
     /**
      * Gets the algorithm used by this sub-key
@@ -301,9 +283,6 @@ class Crypt_GPG_SubKey
         return $this->_algorithm;
     }
 
-    // }}}
-    // {{{ getCreationDate()
-
     /**
      * Gets the creation date of this sub-key
      *
@@ -317,9 +296,6 @@ class Crypt_GPG_SubKey
         return $this->_creationDate ? (int) $this->_creationDate->format('U') : 0;
     }
 
-    // }}}
-    // {{{ getCreationDateTime()
-
     /**
      * Gets the creation date-time (UTC) of this sub-key
      *
@@ -329,9 +305,6 @@ class Crypt_GPG_SubKey
     {
         return $this->_creationDate ? $this->_creationDate : null;
     }
-
-    // }}}
-    // {{{ getExpirationDate()
 
     /**
      * Gets the date this sub-key expires
@@ -347,9 +320,6 @@ class Crypt_GPG_SubKey
         return $this->_expirationDate ? (int) $this->_expirationDate->format('U') : 0;
     }
 
-    // }}}
-    // {{{ getExpirationDateTime()
-
     /**
      * Gets the date-time (UTC) this sub-key expires
      *
@@ -359,9 +329,6 @@ class Crypt_GPG_SubKey
     {
         return $this->_expirationDate ? $this->_expirationDate : null;
     }
-
-    // }}}
-    // {{{ getFingerprint()
 
     /**
      * Gets the fingerprint of this sub-key
@@ -373,9 +340,6 @@ class Crypt_GPG_SubKey
         return $this->_fingerprint;
     }
 
-    // }}}
-    // {{{ getLength()
-
     /**
      * Gets the length of this sub-key in bits
      *
@@ -385,9 +349,6 @@ class Crypt_GPG_SubKey
     {
         return $this->_length;
     }
-
-    // }}}
-    // {{{ canSign()
 
     /**
      * Gets whether or not this sub-key can sign data
@@ -400,9 +361,6 @@ class Crypt_GPG_SubKey
         return ($this->_usage & self::USAGE_SIGN) != 0;
     }
 
-    // }}}
-    // {{{ canEncrypt()
-
     /**
      * Gets whether or not this sub-key can encrypt data
      *
@@ -414,9 +372,6 @@ class Crypt_GPG_SubKey
         return ($this->_usage & self::USAGE_ENCRYPT) != 0;
     }
 
-    // }}}
-    // {{{ usage()
-
     /**
      * Gets usage flags of this sub-key
      *
@@ -426,9 +381,6 @@ class Crypt_GPG_SubKey
     {
         return $this->_usage;
     }
-
-    // }}}
-    // {{{ hasPrivate()
 
     /**
      * Gets whether or not the private key for this sub-key exists in the
@@ -442,9 +394,6 @@ class Crypt_GPG_SubKey
         return $this->_hasPrivate;
     }
 
-    // }}}
-    // {{{ isRevoked()
-
     /**
      * Gets whether or not this sub-key is revoked
      *
@@ -454,9 +403,6 @@ class Crypt_GPG_SubKey
     {
         return $this->_isRevoked;
     }
-
-    // }}}
-    // {{{ setCreationDate()
 
     /**
      * Sets the creation date of this sub-key
@@ -477,14 +423,12 @@ class Crypt_GPG_SubKey
         if ($creationDate instanceof DateTime) {
             $this->_creationDate = $creationDate;
         } else {
-            $this->_creationDate = new DateTime("@$creationDate", new DateTimeZone('UTC'));
+            $tz = new DateTimeZone('UTC');
+            $this->_creationDate = new DateTime("@$creationDate", $tz);
         }
 
         return $this;
     }
-
-    // }}}
-    // {{{ setExpirationDate()
 
     /**
      * Sets the expiration date of this sub-key
@@ -506,14 +450,12 @@ class Crypt_GPG_SubKey
         if ($expirationDate instanceof DateTime) {
             $this->_expirationDate = $expirationDate;
         } else {
-            $this->_expirationDate = new DateTime("@$expirationDate", new DateTimeZone('UTC'));
+            $tz = new DateTimeZone('UTC');
+            $this->_expirationDate = new DateTime("@$expirationDate", $tz);
         }
 
         return $this;
     }
-
-    // }}}
-    // {{{ setId()
 
     /**
      * Sets the id of this sub-key
@@ -528,9 +470,6 @@ class Crypt_GPG_SubKey
         return $this;
     }
 
-    // }}}
-    // {{{ setAlgorithm()
-
     /**
      * Sets the algorithm used by this sub-key
      *
@@ -543,9 +482,6 @@ class Crypt_GPG_SubKey
         $this->_algorithm = intval($algorithm);
         return $this;
     }
-
-    // }}}
-    // {{{ setFingerprint()
 
     /**
      * Sets the fingerprint of this sub-key
@@ -560,9 +496,6 @@ class Crypt_GPG_SubKey
         return $this;
     }
 
-    // }}}
-    // {{{ setLength()
-
     /**
      * Sets the length of this sub-key in bits
      *
@@ -575,9 +508,6 @@ class Crypt_GPG_SubKey
         $this->_length = intval($length);
         return $this;
     }
-
-    // }}}
-    // {{{ setCanSign()
 
     /**
      * Sets whether or not this sub-key can sign data
@@ -598,9 +528,6 @@ class Crypt_GPG_SubKey
         return $this;
     }
 
-    // }}}
-    // {{{ setCanEncrypt()
-
     /**
      * Sets whether or not this sub-key can encrypt data
      *
@@ -620,9 +547,6 @@ class Crypt_GPG_SubKey
         return $this;
     }
 
-    // }}}
-    // {{{ setUsage()
-
     /**
      * Sets usage flags of the sub-key
      *
@@ -635,9 +559,6 @@ class Crypt_GPG_SubKey
         $this->_usage = (int) $usage;
         return $this;
     }
-
-    // }}}
-    // {{{ setHasPrivate()
 
     /**
      * Sets whether of not the private key for this sub-key exists in the
@@ -655,9 +576,6 @@ class Crypt_GPG_SubKey
         return $this;
     }
 
-    // }}}
-    // {{{ setRevoked()
-
     /**
      * Sets whether or not this sub-key is revoked
      *
@@ -670,9 +588,6 @@ class Crypt_GPG_SubKey
         $this->_isRevoked = ($isRevoked) ? true : false;
         return $this;
     }
-
-    // }}}
-    // {{{ parse()
 
     /**
      * Parses a sub-key object from a sub-key string
@@ -720,16 +635,12 @@ class Crypt_GPG_SubKey
         return $subKey;
     }
 
-    // }}}
-    // {{{ _parseDate()
-
     /**
      * Parses a date string as provided by GPG into a UNIX timestamp
      *
      * @param string $string the date string.
      *
-     * @return DateTime|null the date corresponding to the provided date
-     *                 string.
+     * @return DateTime|null the date corresponding to the provided date string.
      */
     private static function _parseDate($string)
     {
@@ -747,10 +658,4 @@ class Crypt_GPG_SubKey
 
         return new DateTime($string, $timeZone);
     }
-
-    // }}}
 }
-
-// }}}
-
-?>

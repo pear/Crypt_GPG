@@ -44,8 +44,6 @@ require_once 'Crypt/GPG/Exceptions.php';
  */
 require_once 'Crypt/GPG/Signature.php';
 
-// {{{ class Crypt_GPG_ProcessHandler
-
 /**
  * Status/Error handler for GPG process pipes.
  *
@@ -64,8 +62,6 @@ require_once 'Crypt/GPG/Signature.php';
  */
 class Crypt_GPG_ProcessHandler
 {
-    // {{{ protected class properties
-
     /**
      * Engine used to control the GPG subprocess
      *
@@ -116,9 +112,6 @@ class Crypt_GPG_ProcessHandler
      */
     protected $operationArg = null;
 
-    // }}}
-    // {{{ __construct()
-
     /**
      * Creates a new instance
      *
@@ -128,9 +121,6 @@ class Crypt_GPG_ProcessHandler
     {
         $this->engine = $engine;
     }
-
-    // }}}
-    // {{{ setOperation()
 
     /**
      * Sets the operation that is being performed by the engine.
@@ -169,9 +159,6 @@ class Crypt_GPG_ProcessHandler
         $this->operationArg     = $opArg;
         $this->data['Warnings'] = array();
     }
-
-    // }}}
-    // {{{ handleStatus()
 
     /**
      * Handles error values in the status output from GPG
@@ -233,11 +220,9 @@ class Crypt_GPG_ProcessHandler
 
             if ($this->errorCode != Crypt_GPG::ERROR_MISSING_PASSPHRASE
                 && $this->errorCode != Crypt_GPG::ERROR_BAD_PASSPHRASE
-                && !(
-                    $this->operation == 'decrypt'
-                    && $tokens[0] == 'NO_PUBKEY'
-                    && !empty($this->data['IgnoreVerifyErrors'])
-                )
+                && $this->operation != 'decrypt'
+                && $tokens[0] != 'NO_PUBKEY'
+                && empty($this->data['IgnoreVerifyErrors'])
             ) {
                 $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
             }
@@ -454,9 +439,6 @@ class Crypt_GPG_ProcessHandler
         }
     }
 
-    // }}}
-    // {{{ handleError()
-
     /**
      * Handles error values in the error output from GPG
      *
@@ -536,9 +518,6 @@ class Crypt_GPG_ProcessHandler
             }
         }
     }
-
-    // }}}
-    // {{{ throwException()
 
     /**
      * On error throws exception
@@ -769,9 +748,6 @@ class Crypt_GPG_ProcessHandler
         }
     }
 
-    // }}}
-    // {{{ throwException()
-
     /**
      * Check exit code of the GPG operation.
      *
@@ -801,20 +777,17 @@ class Crypt_GPG_ProcessHandler
         return Crypt_GPG::ERROR_UNKNOWN;
     }
 
-    // }}}
-    // {{{ getData()
-
     /**
      * Get data from the last process execution.
      *
      * @param string $name Data element name:
-     *               - SigCreated: The last SIG_CREATED status.
-     *               - KeyConsidered: The last KEY_CONSIDERED status identifier.
-     *               - KeyCreated: The KEY_CREATED status (for specified Handle).
-     *               - Signatures: Signatures data from verification process.
-     *               - LineNumber: Number of the gen-key error line.
-     *               - Import: Result of IMPORT_OK/IMPORT_RES
-     *               - Warnings: An array of all collected GnuPG warnings
+     *                     - SigCreated: The last SIG_CREATED status.
+     *                     - KeyConsidered: The last KEY_CONSIDERED status identifier.
+     *                     - KeyCreated: The KEY_CREATED status (for specified Handle).
+     *                     - Signatures: Signatures data from verification process.
+     *                     - LineNumber: Number of the gen-key error line.
+     *                     - Import: Result of IMPORT_OK/IMPORT_RES
+     *                     - Warnings: An array of all collected GnuPG warnings
      *
      * @return mixed
      */
@@ -823,20 +796,17 @@ class Crypt_GPG_ProcessHandler
         return isset($this->data[$name]) ? $this->data[$name] : null;
     }
 
-    // }}}
-    // {{{ setData()
-
     /**
      * Set data for the process execution.
      *
      * @param string $name  Data element name:
-     *               - Handle: The unique key handle used by this handler
-     *                         The key handle is used to track GPG status output
-     *                         for a particular key on --gen-key command before
-     *                         the key has its own identifier.
-     *               - IgnoreVerifyErrors: Do not throw exceptions
-     *                         when signature verification failes because
-     *                         of a missing public key.
+     *                      - Handle: The unique key handle used by this handler
+     *                      The key handle is used to track GPG status output
+     *                      for a particular key on --gen-key command before
+     *                      the key has its own identifier.
+     *                      - IgnoreVerifyErrors: Do not throw exceptions
+     *                      when signature verification failes because
+     *                      of a missing public key.
      * @param mixed  $value Data element value
      *
      * @return void
@@ -853,9 +823,6 @@ class Crypt_GPG_ProcessHandler
             break;
         }
     }
-
-    // }}}
-    // {{{ setData()
 
     /**
      * Create Crypt_GPG_BadPassphraseException from operation data.
@@ -894,9 +861,6 @@ class Crypt_GPG_ProcessHandler
         );
     }
 
-    // }}}
-    // {{{ getPin()
-
     /**
      * Get registered passphrase for specified key.
      *
@@ -931,10 +895,4 @@ class Crypt_GPG_ProcessHandler
 
         return $passphrase;
     }
-
-    // }}}
 }
-
-// }}}
-
-?>

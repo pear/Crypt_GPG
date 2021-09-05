@@ -61,8 +61,6 @@ require_once 'Crypt/GPG/UserId.php';
  */
 require_once 'Crypt/GPG/Engine.php';
 
-// {{{ class Crypt_GPGAbstract
-
 /**
  * Base class for implementing a user of {@link Crypt_GPG_Engine}
  *
@@ -77,8 +75,6 @@ require_once 'Crypt/GPG/Engine.php';
  */
 abstract class Crypt_GPGAbstract
 {
-    // {{{ class error constants
-
     /**
      * Error code returned when there is no error.
      */
@@ -156,16 +152,10 @@ abstract class Crypt_GPGAbstract
      */
     const ERROR_BAD_KEY_PARAMS = 13;
 
-    // }}}
-    // {{{ other class constants
-
     /**
      * URI at which package bugs may be reported.
      */
     const BUG_URI = 'http://pear.php.net/bugs/report.php?package=Crypt_GPG';
-
-    // }}}
-    // {{{ protected class properties
 
     /**
      * Engine used to control the GPG subprocess
@@ -175,9 +165,6 @@ abstract class Crypt_GPGAbstract
      * @see Crypt_GPGAbstract::setEngine()
      */
     protected $engine = null;
-
-    // }}}
-    // {{{ __construct()
 
     /**
      * Creates a new GPG object
@@ -269,9 +256,6 @@ abstract class Crypt_GPGAbstract
         $this->setEngine(new Crypt_GPG_Engine($options));
     }
 
-    // }}}
-    // {{{ setEngine()
-
     /**
      * Sets the I/O engine to use for GnuPG operations
      *
@@ -288,9 +272,6 @@ abstract class Crypt_GPGAbstract
         return $this;
     }
 
-    // }}}
-    // {{{ setEngineOptions()
-
     /**
      * Sets per-command additional arguments
      *
@@ -302,15 +283,13 @@ abstract class Crypt_GPGAbstract
      *                       added to the related command. For example:
      *                       array('sign' => '--emit-version').
      *
+     * @return Crypt_GPGAbstract the current object, for fluent interface.
      */
     public function setEngineOptions(array $options)
     {
         $this->engine->setOptions($options);
         return $this;
     }
-
-    // }}}
-    // {{{ getVersion()
 
     /**
      * Returns version of the engine (GnuPG) used for operation.
@@ -325,9 +304,6 @@ abstract class Crypt_GPGAbstract
     {
         return $this->engine->getVersion();
     }
-
-    // }}}
-    // {{{ _getKeys()
 
     /**
      * Gets the available keys in the keyring
@@ -457,10 +433,4 @@ abstract class Crypt_GPGAbstract
 
         return $keys;
     }
-
-    // }}}
 }
-
-// }}}
-
-?>

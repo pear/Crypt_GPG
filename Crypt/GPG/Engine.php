@@ -64,8 +64,6 @@ require_once 'Crypt/GPG/SignatureCreationInfo.php';
  */
 require_once 'PEAR/Exception.php';
 
-// {{{ class Crypt_GPG_Engine
-
 /**
  * Native PHP Crypt_GPG I/O engine
  *
@@ -89,8 +87,6 @@ require_once 'PEAR/Exception.php';
  */
 class Crypt_GPG_Engine
 {
-    // {{{ constants
-
     /**
      * Size of data chunks that are sent to and retrieved from the IPC pipes.
      *
@@ -144,9 +140,6 @@ class Crypt_GPG_Engine
      * Minimum version of GnuPG that is supported.
      */
     const MIN_VERSION = '1.0.2';
-
-    // }}}
-    // {{{ private class properties
 
     /**
      * Whether or not to use strict mode
@@ -439,9 +432,6 @@ class Crypt_GPG_Engine
      */
     private $_version = '';
 
-    // }}}
-    // {{{ __construct()
-
     /**
      * Creates a new GPG engine
      *
@@ -654,9 +644,6 @@ class Crypt_GPG_Engine
         }
     }
 
-    // }}}
-    // {{{ __destruct()
-
     /**
      * Closes open GPG subprocesses when this object is destroyed
      *
@@ -668,9 +655,6 @@ class Crypt_GPG_Engine
         $this->_closeSubprocess();
         $this->_closeIdleAgents();
     }
-
-    // }}}
-    // {{{ addErrorHandler()
 
     /**
      * Adds an error handler method
@@ -693,9 +677,6 @@ class Crypt_GPG_Engine
         );
     }
 
-    // }}}
-    // {{{ addStatusHandler()
-
     /**
      * Adds a status handler method
      *
@@ -717,9 +698,6 @@ class Crypt_GPG_Engine
         );
     }
 
-    // }}}
-    // {{{ sendCommand()
-
     /**
      * Sends a command to the GPG subprocess over the command file-descriptor
      * pipe
@@ -736,9 +714,6 @@ class Crypt_GPG_Engine
             $this->_commandBuffer .= $command . PHP_EOL;
         }
     }
-
-    // }}}
-    // {{{ reset()
 
     /**
      * Resets the GPG engine, preparing it for a new operation
@@ -771,9 +746,6 @@ class Crypt_GPG_Engine
         $this->addErrorHandler(array($this->_processHandler, 'handleError'));
     }
 
-    // }}}
-    // {{{ run()
-
     /**
      * Runs the current GPG operation.
      *
@@ -805,13 +777,10 @@ class Crypt_GPG_Engine
         $this->_closeSubprocess();
     }
 
-    // }}}
-    // {{{ setInput()
-
     /**
      * Sets the input source for the current GPG operation
      *
-     * @param string|resource &$input either a reference to the string
+     * @param &string|resource $input either a reference to the string
      *                                containing the input data or an open
      *                                stream resource containing the input
      *                                data.
@@ -823,15 +792,12 @@ class Crypt_GPG_Engine
         $this->_input =& $input;
     }
 
-    // }}}
-    // {{{ setMessage()
-
     /**
      * Sets the message source for the current GPG operation
      *
      * Detached signature data should be specified here.
      *
-     * @param string|resource &$message either a reference to the string
+     * @param &string|resource $message either a reference to the string
      *                                  containing the message data or an open
      *                                  stream resource containing the message
      *                                  data.
@@ -843,13 +809,10 @@ class Crypt_GPG_Engine
         $this->_message =& $message;
     }
 
-    // }}}
-    // {{{ setOutput()
-
     /**
      * Sets the output destination for the current GPG operation
      *
-     * @param string|resource &$output either a reference to the string in
+     * @param &string|resource $output either a reference to the string in
      *                                 which to store GPG output or an open
      *                                 stream resource to which the output data
      *                                 should be written.
@@ -860,9 +823,6 @@ class Crypt_GPG_Engine
     {
         $this->_output =& $output;
     }
-
-    // }}}
-    // {{{ setOperation()
 
     /**
      * Sets the operation to perform
@@ -894,9 +854,6 @@ class Crypt_GPG_Engine
         $this->_processHandler->setOperation($operation);
     }
 
-    // }}}
-    // {{{ setPins()
-
     /**
      * Sets the PINENTRY_USER_DATA environment variable with the currently
      * added keys and passphrases
@@ -922,9 +879,6 @@ class Crypt_GPG_Engine
         $_ENV['PINENTRY_USER_DATA'] = json_encode($envKeys);
     }
 
-    // }}}
-    // {{{ setOptions()
-
     /**
      * Sets per-command additional arguments
      *
@@ -942,9 +896,6 @@ class Crypt_GPG_Engine
     {
         $this->_options = $options;
     }
-
-    // }}}
-    // {{{ getVersion()
 
     /**
      * Gets the version of the GnuPG binary
@@ -1007,9 +958,6 @@ class Crypt_GPG_Engine
         return $this->_version;
     }
 
-    // }}}
-    // {{{ getProcessData()
-
     /**
      * Get data from the last process execution.
      *
@@ -1038,9 +986,6 @@ class Crypt_GPG_Engine
         }
     }
 
-    // }}}
-    // {{{ setProcessData()
-
     /**
      * Set some data for the process execution.
      *
@@ -1056,9 +1001,6 @@ class Crypt_GPG_Engine
         }
     }
 
-    // }}}
-    // {{{ _handleDebugStatus()
-
     /**
      * Displays debug output for status lines
      *
@@ -1071,9 +1013,6 @@ class Crypt_GPG_Engine
         $this->_debug('STATUS: ' . $line);
     }
 
-    // }}}
-    // {{{ _handleDebugError()
-
     /**
      * Displays debug output for error lines
      *
@@ -1085,9 +1024,6 @@ class Crypt_GPG_Engine
     {
         $this->_debug('ERROR: ' . $line);
     }
-
-    // }}}
-    // {{{ _process()
 
     /**
      * Performs internal streaming operations for the subprocess using either
@@ -1488,9 +1424,6 @@ class Crypt_GPG_Engine
         $this->_debug('END PROCESSING');
     }
 
-    // }}}
-    // {{{ _openSubprocess()
-
     /**
      * Opens an internal GPG subprocess for the current operation
      *
@@ -1753,9 +1686,6 @@ class Crypt_GPG_Engine
         $this->_openPipes = $this->_pipes;
     }
 
-    // }}}
-    // {{{ _closeSubprocess()
-
     /**
      * Closes the internal GPG subprocess
      *
@@ -1836,9 +1766,6 @@ class Crypt_GPG_Engine
         }
     }
 
-    // }}}
-    // {{{ _closeAgentLaunchProcess()
-
     /**
      * Closes a the internal GPG-AGENT subprocess
      *
@@ -1871,9 +1798,6 @@ class Crypt_GPG_Engine
         }
     }
 
-    // }}}
-    // {{{ _closePipe()
-
     /**
      * Closes an opened pipe used to communicate with the GPG subprocess
      *
@@ -1894,9 +1818,6 @@ class Crypt_GPG_Engine
             unset($this->_openPipes[$pipeNumber]);
         }
     }
-
-    // }}}
-    // {{{ _closeIdleAgents()
 
     /**
      * Forces automatically started gpg-agent process to cleanup and exit
@@ -1920,9 +1841,6 @@ class Crypt_GPG_Engine
         }
     }
 
-    // }}}
-    // {{{ _getBinary()
-
     /**
      * Gets the name of the GPG binary for the current operating system
      *
@@ -1942,9 +1860,6 @@ class Crypt_GPG_Engine
         return $this->_findBinary('gpg2');
     }
 
-    // }}}
-    // {{{ _getAgent()
-
     /**
      * Gets the name of the GPG-AGENT binary for the current operating system
      *
@@ -1957,9 +1872,6 @@ class Crypt_GPG_Engine
         return $this->_findBinary('gpg-agent');
     }
 
-    // }}}
-    // {{{ _getGPGConf()
-
     /**
      * Gets the name of the GPGCONF binary for the current operating system
      *
@@ -1971,9 +1883,6 @@ class Crypt_GPG_Engine
     {
         return $this->_findBinary('gpgconf');
     }
-
-    // }}}
-    // {{{ _findBinary()
 
     /**
      * Gets the location of a binary for the current operating system
@@ -2013,9 +1922,6 @@ class Crypt_GPG_Engine
         return $binary;
     }
 
-    // }}}
-    // {{{ _getPinEntry()
-
     /**
      * Gets the location of the PinEntry script
      *
@@ -2038,9 +1944,6 @@ class Crypt_GPG_Engine
             }
         }
     }
-
-    // }}}
-    // {{{ _debug()
 
     /**
      * Displays debug text if debugging is turned on
@@ -2069,10 +1972,4 @@ class Crypt_GPG_Engine
             }
         }
     }
-
-    // }}}
 }
-
-// }}}
-
-?>

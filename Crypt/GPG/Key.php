@@ -39,8 +39,6 @@ require_once 'Crypt/GPG/SubKey.php';
  */
 require_once 'Crypt/GPG/UserId.php';
 
-// {{{ class Crypt_GPG_Key
-
 /**
  * A data class for GPG key information
  *
@@ -57,8 +55,6 @@ require_once 'Crypt/GPG/UserId.php';
  */
 class Crypt_GPG_Key
 {
-    // {{{ class properties
-
     /**
      * The user ids associated with this key
      *
@@ -83,9 +79,6 @@ class Crypt_GPG_Key
      */
     private $_subKeys = array();
 
-    // }}}
-    // {{{ getSubKeys()
-
     /**
      * Gets the sub-keys of this key
      *
@@ -98,9 +91,6 @@ class Crypt_GPG_Key
         return $this->_subKeys;
     }
 
-    // }}}
-    // {{{ getUserIds()
-
     /**
      * Gets the user ids of this key
      *
@@ -112,9 +102,6 @@ class Crypt_GPG_Key
     {
         return $this->_userIds;
     }
-
-    // }}}
-    // {{{ getPrimaryKey()
 
     /**
      * Gets the primary sub-key of this key
@@ -131,9 +118,6 @@ class Crypt_GPG_Key
         }
         return $primary_key;
     }
-
-    // }}}
-    // {{{ canSign()
 
     /**
      * Gets whether or not this key can sign data
@@ -155,9 +139,6 @@ class Crypt_GPG_Key
         return $canSign;
     }
 
-    // }}}
-    // {{{ canEncrypt()
-
     /**
      * Gets whether or not this key can encrypt data
      *
@@ -178,9 +159,6 @@ class Crypt_GPG_Key
         return $canEncrypt;
     }
 
-    // }}}
-    // {{{ addSubKey()
-
     /**
      * Adds a sub-key to this key
      *
@@ -196,9 +174,6 @@ class Crypt_GPG_Key
         return $this;
     }
 
-    // }}}
-    // {{{ addUserId()
-
     /**
      * Adds a user id to this key
      *
@@ -211,9 +186,6 @@ class Crypt_GPG_Key
         $this->_userIds[] = $userId;
         return $this;
     }
-
-    // }}}
-    // {{{ __toString()
 
     /**
      * String representation of the key
@@ -230,10 +202,4 @@ class Crypt_GPG_Key
 
         return '';
     }
-
-    // }}}
 }
-
-// }}}
-
-?>

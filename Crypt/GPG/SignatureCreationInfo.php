@@ -223,4 +223,3 @@ class Crypt_GPG_SignatureCreationInfo
         return $this->valid;
     }
 }
-?>

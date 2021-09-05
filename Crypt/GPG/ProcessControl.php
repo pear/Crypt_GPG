@@ -29,8 +29,6 @@
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-// {{{ class Crypt_GPG_ProcessControl
-
 /**
  * A class for monitoring and terminating processes by PID
  *
@@ -47,17 +45,12 @@
  */
 class Crypt_GPG_ProcessControl
 {
-    // {{{ protected properties
-
     /**
      * The PID (process identifier) being monitored
      *
      * @var integer
      */
     protected $pid;
-
-    // }}}
-    // {{{ __construct()
 
     /**
      * Creates a new process controller from the given PID (process identifier)
@@ -69,9 +62,6 @@ class Crypt_GPG_ProcessControl
         $this->pid = $pid;
     }
 
-    // }}}
-    // {{{ public function getPid()
-
     /**
      * Gets the PID (process identifier) being controlled
      *
@@ -81,9 +71,6 @@ class Crypt_GPG_ProcessControl
     {
         return $this->pid;
     }
-
-    // }}}
-    // {{{ isRunning()
 
     /**
      * Checks if the process is running
@@ -115,9 +102,6 @@ class Crypt_GPG_ProcessControl
         return $running;
     }
 
-    // }}}
-    // {{{ terminate()
-
     /**
      * Ends the process gracefully
      *
@@ -141,10 +125,4 @@ class Crypt_GPG_ProcessControl
             exec('kill -15 ' . escapeshellarg($this->pid));
         }
     }
-
-    // }}}
 }
-
-// }}}
-
-?>

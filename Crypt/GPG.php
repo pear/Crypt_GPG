@@ -427,7 +427,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
             );
         }
 
-        $operation = '--delete-key ' . escapeshellarg($fingerprint);
+        $operation = '--delete-key -- ' . escapeshellarg($fingerprint);
         $arguments = array(
             '--batch',
             '--yes'
@@ -474,7 +474,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
             );
         }
 
-        $operation = '--delete-secret-key ' . escapeshellarg($fingerprint);
+        $operation = '--delete-secret-key -- ' . escapeshellarg($fingerprint);
         $arguments = array(
             '--batch',
             '--yes'
@@ -546,7 +546,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     public function getFingerprint($keyId, $format = self::FORMAT_NONE)
     {
         $output    = '';
-        $operation = '--list-keys ' . escapeshellarg($keyId);
+        $operation = '--list-keys -- ' . escapeshellarg($keyId);
         $arguments = array(
             '--with-colons',
             '--with-fingerprint'
@@ -1464,7 +1464,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
 
         $keyData   = '';
         $operation = $private ? '--export-secret-keys' : '--export';
-        $operation .= ' ' . escapeshellarg($fingerprint);
+        $operation .= ' -- ' . escapeshellarg($fingerprint);
         $arguments = $armor ? array('--armor') : array();
 
         $this->engine->reset();

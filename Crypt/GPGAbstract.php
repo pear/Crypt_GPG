@@ -334,7 +334,7 @@ abstract class Crypt_GPGAbstract
         if ($keyId == '') {
             $operation = '--list-secret-keys';
         } else {
-            $operation = '--utf8-strings --list-secret-keys ' . escapeshellarg($keyId);
+            $operation = '--utf8-strings --list-secret-keys -- ' . escapeshellarg($keyId);
         }
 
         // According to The file 'doc/DETAILS' in the GnuPG distribution, using
@@ -366,7 +366,7 @@ abstract class Crypt_GPGAbstract
         if ($keyId == '') {
             $operation = '--list-public-keys';
         } else {
-            $operation = '--utf8-strings --list-public-keys ' . escapeshellarg($keyId);
+            $operation = '--utf8-strings --list-public-keys -- ' . escapeshellarg($keyId);
         }
 
         $output = '';

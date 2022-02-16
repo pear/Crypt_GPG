@@ -33,14 +33,13 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.6.6';
+$apiVersion     = '1.6.7';
 $apiState       = 'stable';
 
-$releaseVersion = '1.6.6';
+$releaseVersion = '1.6.7';
 $releaseState   = 'stable';
-$releaseNotes   = "Fix possible infinite loop.\n"
-    . "Use configured debug handler also in CLI.\n"
-    . "Support generating keys without a user name.";
+$releaseNotes   = "[CVE-2022-24953] Insert the end-of-options marker before operation arguments [thomas-chauchefoin-sonarsource].\n"
+    . "Ignore tests/debug.log and .gitattributes itself.";
 
 $description =
     "This package provides an object oriented interface to GNU Privacy " .

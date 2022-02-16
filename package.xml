@@ -29,11 +29,11 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2021-09-05</date>
- <time>10:27:54</time>
+ <date>2022-02-16</date>
+ <time>18:38:44</time>
  <version>
-  <release>1.6.6</release>
-  <api>1.6.6</api>
+  <release>1.6.7</release>
+  <api>1.6.7</api>
  </version>
  <stability>
   <release>stable</release>
@@ -41,9 +41,8 @@ This package requires PHP version 5.4.8 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Fix possible infinite loop.
-Use configured debug handler also in CLI.
-Support generating keys without a user name.
+[CVE-2022-24953] Insert the end-of-options marker before operation arguments [thomas-chauchefoin-sonarsource].
+Ignore tests/debug.log and .gitattributes itself.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -167,19 +166,18 @@ Support generating keys without a user name.
  <changelog>
   <release>
    <version>
-    <release>1.6.6</release>
-    <api>1.6.6</api>
+    <release>1.6.7</release>
+    <api>1.6.7</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2021-09-05</date>
+   <date>2022-02-16</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-Fix possible infinite loop.
-Use configured debug handler also in CLI.
-Support generating keys without a user name.
+[CVE-2022-24953] Insert the end-of-options marker before operation arguments [thomas-chauchefoin-sonarsource].
+Ignore tests/debug.log and .gitattributes itself.
    </notes>
   </release>
  </changelog>

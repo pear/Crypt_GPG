@@ -1,5 +1,7 @@
 <?php
 
+namespace Crypt\GPG;
+
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
@@ -43,7 +45,7 @@
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class Crypt_GPG_ProcessControl
+class ProcessControl
 {
     /**
      * The PID (process identifier) being monitored

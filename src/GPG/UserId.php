@@ -1,5 +1,7 @@
 <?php
 
+namespace Crypt\GPG;
+
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
@@ -33,7 +35,7 @@
  * A class for GPG user id information
  *
  * This class is used to store the results of the {@link Crypt_GPG::getKeys()}
- * method. User id objects are members of a {@link Crypt_GPG_Key} object.
+ * method. User id objects are members of a {@link Key} object.
  *
  * @category  Encryption
  * @package   Crypt_GPG
@@ -41,10 +43,10 @@
  * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
- * @see       Crypt_GPG::getKeys()
- * @see       Crypt_GPG_Key::getUserIds()
+ * @see       GPG::getKeys()
+ * @see       Key::getUserIds()
  */
-class Crypt_GPG_UserId
+class UserId
 {
     /**
      * The name field of this user id
@@ -93,7 +95,7 @@ class Crypt_GPG_UserId
      * - <kbd>boolean valid</kbd>   - whether or not the user id is valid.
      * - <kbd>boolean revoked</kbd> - whether or not the user id is revoked.
      *
-     * @param Crypt_GPG_UserId|string|array|null $userId Either an existing user id object,
+     * @param UserId|string|array|null $userId Either an existing user id object,
      *                                                   which is copied; a user id string,
      *                                                   which is parsed; or an array of
      *                                                   initial values.
@@ -106,7 +108,7 @@ class Crypt_GPG_UserId
         }
 
         // copy from object
-        if ($userId instanceof Crypt_GPG_UserId) {
+        if ($userId instanceof UserId) {
             $this->_name      = $userId->_name;
             $this->_comment   = $userId->_comment;
             $this->_email     = $userId->_email;
@@ -220,7 +222,7 @@ class Crypt_GPG_UserId
      *
      * @param string $name the name field of this user id.
      *
-     * @return Crypt_GPG_UserId the current object, for fluent interface.
+     * @return UserId the current object, for fluent interface.
      */
     public function setName($name)
     {
@@ -233,7 +235,7 @@ class Crypt_GPG_UserId
      *
      * @param string $comment the comment field of this user id.
      *
-     * @return Crypt_GPG_UserId the current object, for fluent interface.
+     * @return UserId the current object, for fluent interface.
      */
     public function setComment($comment)
     {
@@ -246,7 +248,7 @@ class Crypt_GPG_UserId
      *
      * @param string $email the email field of this user id.
      *
-     * @return Crypt_GPG_UserId the current object, for fluent interface.
+     * @return UserId the current object, for fluent interface.
      */
     public function setEmail($email)
     {
@@ -259,7 +261,7 @@ class Crypt_GPG_UserId
      *
      * @param boolean $isRevoked whether or not this user id is revoked.
      *
-     * @return Crypt_GPG_UserId the current object, for fluent interface.
+     * @return UserId the current object, for fluent interface.
      */
     public function setRevoked($isRevoked)
     {
@@ -272,7 +274,7 @@ class Crypt_GPG_UserId
      *
      * @param boolean $isValid whether or not this user id is valid.
      *
-     * @return Crypt_GPG_UserId the current object, for fluent interface.
+     * @return UserId the current object, for fluent interface.
      */
     public function setValid($isValid)
     {
@@ -289,11 +291,11 @@ class Crypt_GPG_UserId
      *
      * @param string $string the user id string to parse.
      *
-     * @return Crypt_GPG_UserId the user id object parsed from the string.
+     * @return UserId the user id object parsed from the string.
      */
     public static function parse($string)
     {
-        $userId  = new Crypt_GPG_UserId();
+        $userId  = new UserId();
         $name    = '';
         $email   = '';
         $comment = '';

@@ -1,5 +1,12 @@
 <?php
 
+namespace Crypt;
+
+use Crypt\GPG\Engine;
+use Crypt\GPG\Key;
+use Crypt\GPG\SubKey;
+use Crypt\GPG\UserId;
+
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
@@ -12,7 +19,7 @@
  * only to facilitate public-key cryptography.
  *
  * This file contains an abstract implementation of a user of the
- * {@link Crypt_GPG_Engine} class.
+ * {@link Engine} class.
  *
  * LICENSE:
  *
@@ -42,27 +49,7 @@
  */
 
 /**
- * GPG key class
- */
-require_once 'Crypt/GPG/Key.php';
-
-/**
- * GPG sub-key class
- */
-require_once 'Crypt/GPG/SubKey.php';
-
-/**
- * GPG user id class
- */
-require_once 'Crypt/GPG/UserId.php';
-
-/**
- * GPG process and I/O engine class
- */
-require_once 'Crypt/GPG/Engine.php';
-
-/**
- * Base class for implementing a user of {@link Crypt_GPG_Engine}
+ * Base class for implementing a user of {@link Engine}
  *
  * @category  Encryption
  * @package   Crypt_GPG
@@ -73,7 +60,7 @@ require_once 'Crypt/GPG/Engine.php';
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
  */
-abstract class Crypt_GPGAbstract
+abstract class GPGAbstract
 {
     /**
      * Error code returned when there is no error.
@@ -160,7 +147,7 @@ abstract class Crypt_GPGAbstract
     /**
      * Engine used to control the GPG subprocess
      *
-     * @var Crypt_GPG_Engine
+     * @var Engine
      *
      * @see Crypt_GPGAbstract::setEngine()
      */
@@ -232,7 +219,7 @@ abstract class Crypt_GPGAbstract
      *                       GPG object. All options are optional and are
      *                       represented as key-value pairs.
      *
-     * @throws Crypt_GPG_FileException if the <kbd>homedir</kbd> does not exist
+     * @throws FileException if the <kbd>homedir</kbd> does not exist
      *         and cannot be created. This can happen if <kbd>homedir</kbd> is
      *         not specified, Crypt_GPG is run as the web user, and the web
      *         user has no home directory. This exception is also thrown if any
@@ -243,17 +230,17 @@ abstract class Crypt_GPGAbstract
      *         example, the Apache user) does not have permission to read the
      *         files.
      *
-     * @throws PEAR_Exception if the provided <kbd>binary</kbd> is invalid, or
+     * @throws Exception if the provided <kbd>binary</kbd> is invalid, or
      *         if no <kbd>binary</kbd> is provided and no suitable binary could
      *         be found.
      *
-     * @throws PEAR_Exception if the provided <kbd>agent</kbd> is invalid, or
+     * @throws Exception if the provided <kbd>agent</kbd> is invalid, or
      *         if no <kbd>agent</kbd> is provided and no suitable gpg-agent
      *         could be found.
      */
     public function __construct(array $options = array())
     {
-        $this->setEngine(new Crypt_GPG_Engine($options));
+        $this->setEngine(new Engine($options));
     }
 
     /**
@@ -262,11 +249,11 @@ abstract class Crypt_GPGAbstract
      * Normally this method does not need to be used. It provides a means for
      * dependency injection.
      *
-     * @param Crypt_GPG_Engine $engine the engine to use.
+     * @param Engine $engine the engine to use.
      *
-     * @return Crypt_GPGAbstract the current object, for fluent interface.
+     * @return GPGAbstract the current object, for fluent interface.
      */
-    public function setEngine(Crypt_GPG_Engine $engine)
+    public function setEngine(Engine $engine)
     {
         $this->engine = $engine;
         return $this;
@@ -283,7 +270,7 @@ abstract class Crypt_GPGAbstract
      *                       added to the related command. For example:
      *                       array('sign' => '--emit-version').
      *
-     * @return Crypt_GPGAbstract the current object, for fluent interface.
+     * @return GPGAbstract the current object, for fluent interface.
      */
     public function setEngineOptions(array $options)
     {
@@ -296,7 +283,7 @@ abstract class Crypt_GPGAbstract
      *
      * @return string GnuPG version.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -318,15 +305,15 @@ abstract class Crypt_GPGAbstract
      *                      a user id, a key id or a key fingerprint. If not
      *                      specified, all keys are returned.
      *
-     * @return array an array of {@link Crypt_GPG_Key} objects. If no keys
+     * @return array an array of {@link Key} objects. If no keys
      *               match the specified <kbd>$keyId</kbd> an empty array is
      *               returned.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see Crypt_GPG_Key
+     * @see Key
      */
     protected function _getKeys($keyId = '')
     {
@@ -390,14 +377,15 @@ abstract class Crypt_GPGAbstract
                     $keys[] = $key;
                 }
 
-                $key = new Crypt_GPG_Key();
+                $key = new Key();
 
-                $subKey = Crypt_GPG_SubKey::parse($line);
+                $subKey = SubKey::parse($line);
                 $key->addSubKey($subKey);
 
             } elseif ($lineExp[0] == 'sub') {
 
-                $subKey = Crypt_GPG_SubKey::parse($line);
+                $subKey = SubKey::parse($line);
+                /** @var Key $key */
                 $key->addSubKey($subKey);
 
             } elseif ($lineExp[0] == 'fpr') {
@@ -405,6 +393,7 @@ abstract class Crypt_GPGAbstract
                 $fingerprint = $lineExp[9];
 
                 // set current sub-key fingerprint
+                /** @var SubKey $subKey */
                 $subKey->setFingerprint($fingerprint);
 
                 // if private key exists, set has private to true
@@ -415,14 +404,14 @@ abstract class Crypt_GPGAbstract
             } elseif ($lineExp[0] == 'uid') {
 
                 $string = stripcslashes($lineExp[9]); // as per documentation
-                $userId = new Crypt_GPG_UserId($string);
+                $userId = new UserId($string);
 
                 if ($lineExp[1] == 'r') {
                     $userId->setRevoked(true);
                 }
 
+                /** @var Key $key */
                 $key->addUserId($userId);
-
             }
         }
 

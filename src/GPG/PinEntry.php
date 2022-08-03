@@ -1,5 +1,7 @@
 <?php
 
+namespace Crypt\GPG;
+
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
@@ -28,11 +30,6 @@
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-
-/**
- * CLI user-interface and parser.
- */
-require_once 'Console/CommandLine.php';
 
 /**
  * A command-line dummy pinentry program for use with gpg-agent and Crypt_GPG
@@ -64,7 +61,7 @@ require_once 'Console/CommandLine.php';
  * @link      http://pear.php.net/package/Crypt_GPG
  * @see       Crypt_GPG::getKeys()
  */
-class Crypt_GPG_PinEntry
+class PinEntry
 {
     /**
      * Verbosity level for showing no output.
@@ -126,9 +123,9 @@ class Crypt_GPG_PinEntry
      * Verbosity level
      *
      * One of:
-     * - {@link Crypt_GPG_PinEntry::VERBOSITY_NONE},
-     * - {@link Crypt_GPG_PinEntry::VERBOSITY_ERRORS}, or
-     * - {@link Crypt_GPG_PinEntry::VERBOSITY_ALL}
+     * - {@link PinEntry::VERBOSITY_NONE},
+     * - {@link PinEntry::VERBOSITY_ERRORS}, or
+     * - {@link PinEntry::VERBOSITY_ALL}
      *
      * @var integer
      */
@@ -139,7 +136,7 @@ class Crypt_GPG_PinEntry
      *
      * @var Console_CommandLine
      *
-     * @see Crypt_GPG_PinEntry::getParser()
+     * @see PinEntry::getParser()
      */
     protected $parser = null;
 
@@ -164,7 +161,7 @@ class Crypt_GPG_PinEntry
      *
      * @var array
      *
-     * @see Crypt_GPG_PinEntry::initPinsFromENV()
+     * @see PinEntry::initPinsFromENV()
      */
     protected $pins = array();
 
@@ -212,10 +209,10 @@ class Crypt_GPG_PinEntry
 
             $this->disconnect();
 
-        } catch (Console_CommandLineException $e) {
-            $this->log($e->getMessage() . PHP_EOL, slf::VERBOSITY_ERRORS);
+        } catch (\Console_CommandLine_Exception $e) {
+            $this->log($e->getMessage() . PHP_EOL, self::VERBOSITY_ERRORS);
             exit(1);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->log($e->getMessage() . PHP_EOL, self::VERBOSITY_ERRORS);
             $this->log($e->getTraceAsString() . PHP_EOL, self::VERBOSITY_ERRORS);
             exit(1);
@@ -227,14 +224,14 @@ class Crypt_GPG_PinEntry
      *
      * Verbosity levels are:
      *
-     * - {@link Crypt_GPG_PinEntry::VERBOSITY_NONE}   - no logging.
-     * - {@link Crypt_GPG_PinEntry::VERBOSITY_ERRORS} - log errors only.
-     * - {@link Crypt_GPG_PinEntry::VERBOSITY_ALL}    - log everything, including
+     * - {@link PinEntry::VERBOSITY_NONE}   - no logging.
+     * - {@link PinEntry::VERBOSITY_ERRORS} - log errors only.
+     * - {@link PinEntry::VERBOSITY_ALL}    - log everything, including
      *                                                  the assuan protocol.
      *
      * @param integer $verbosity the level of verbosity of this pinentry.
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     public function setVerbosity($verbosity)
     {
@@ -248,7 +245,7 @@ class Crypt_GPG_PinEntry
      * @param string $filename the new log filename to use. If an empty string
      *                         is used, file-based logging is disabled.
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     public function setLogFilename($filename)
     {
@@ -307,7 +304,7 @@ class Crypt_GPG_PinEntry
      */
     protected function getCommandLineParser()
     {
-        return Console_CommandLine::fromXmlFile($this->getUIXML());
+        return \Console_CommandLine::fromXmlFile($this->getUIXML());
     }
 
     /**
@@ -320,7 +317,7 @@ class Crypt_GPG_PinEntry
      * @param integer $level the verbosity level above which the message should
      *                       be logged.
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function log($data, $level)
     {
@@ -341,7 +338,7 @@ class Crypt_GPG_PinEntry
      *
      * Opens I/O streams and sends initial handshake.
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function connect()
     {
@@ -375,7 +372,7 @@ class Crypt_GPG_PinEntry
      *
      * @param string $line the assuan command line to parse
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function parseCommand($line)
     {
@@ -424,7 +421,7 @@ class Crypt_GPG_PinEntry
      *
      * The PINs are parsed from a JSON-encoded string.
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function initPinsFromENV()
     {
@@ -450,7 +447,7 @@ class Crypt_GPG_PinEntry
     /**
      * Disconnects this pinentry from the Assuan server
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function disconnect()
     {
@@ -477,7 +474,7 @@ class Crypt_GPG_PinEntry
     /**
      * Sends an OK response for a not implemented feature
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function sendNotImplementedOK()
     {
@@ -490,7 +487,7 @@ class Crypt_GPG_PinEntry
      *
      * @param string $text the raw description sent from gpg-agent.
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function sendSetDescription($text)
     {
@@ -520,7 +517,7 @@ class Crypt_GPG_PinEntry
     /**
      * Tells the assuan server to confirm the operation
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function sendConfirm()
     {
@@ -531,7 +528,7 @@ class Crypt_GPG_PinEntry
      * Tells the assuan server that any requested pop-up messages were confirmed
      * by pressing the fake 'close' button
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function sendMessage()
     {
@@ -545,7 +542,7 @@ class Crypt_GPG_PinEntry
      *
      * @param string $text the button status to send.
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function sendButtonInfo($text)
     {
@@ -555,7 +552,7 @@ class Crypt_GPG_PinEntry
     /**
      * Sends the PIN value for the currently requested key
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function sendGetPin()
     {
@@ -598,7 +595,7 @@ class Crypt_GPG_PinEntry
      *                     Currently only 'pid' is supported. Other requests
      *                     return no information.
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function sendGetInfo($data)
     {
@@ -618,7 +615,7 @@ class Crypt_GPG_PinEntry
     /**
      * Sends the PID of this pinentry to the assuan server
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function sendGetInfoPID()
     {
@@ -630,7 +627,7 @@ class Crypt_GPG_PinEntry
     /**
      * Flags this pinentry for disconnection and sends an OK response
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function sendBye()
     {
@@ -642,7 +639,7 @@ class Crypt_GPG_PinEntry
     /**
      * Resets this pinentry and sends an OK response
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function sendReset()
     {
@@ -752,7 +749,7 @@ class Crypt_GPG_PinEntry
      *
      * @param string $data the data to send.
      *
-     * @return Crypt_GPG_PinEntry the current object, for fluent interface.
+     * @return PinEntry the current object, for fluent interface.
      */
     protected function send($data)
     {

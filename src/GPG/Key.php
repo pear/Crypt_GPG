@@ -1,5 +1,7 @@
 <?php
 
+namespace Crypt\GPG;
+
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
@@ -30,19 +32,9 @@
  */
 
 /**
- * Sub-key class definition
- */
-require_once 'Crypt/GPG/SubKey.php';
-
-/**
- * User id class definition
- */
-require_once 'Crypt/GPG/UserId.php';
-
-/**
  * A data class for GPG key information
  *
- * This class is used to store the results of the {@link Crypt_GPG::getKeys()}
+ * This class is used to store the results of the {@link GPG::getKeys()}
  * method.
  *
  * @category  Encryption
@@ -53,7 +45,7 @@ require_once 'Crypt/GPG/UserId.php';
  * @link      http://pear.php.net/package/Crypt_GPG
  * @see       Crypt_GPG::getKeys()
  */
-class Crypt_GPG_Key
+class Key
 {
     /**
      * The user ids associated with this key
@@ -164,11 +156,11 @@ class Crypt_GPG_Key
      *
      * The first added sub-key will be the primary key of this key.
      *
-     * @param Crypt_GPG_SubKey $subKey the sub-key to add.
+     * @param SubKey $subKey the sub-key to add.
      *
-     * @return Crypt_GPG_Key the current object, for fluent interface.
+     * @return Key the current object, for fluent interface.
      */
-    public function addSubKey(Crypt_GPG_SubKey $subKey)
+    public function addSubKey(SubKey $subKey)
     {
         $this->_subKeys[] = $subKey;
         return $this;
@@ -177,11 +169,11 @@ class Crypt_GPG_Key
     /**
      * Adds a user id to this key
      *
-     * @param Crypt_GPG_UserId $userId the user id to add.
+     * @param UserId $userId the user id to add.
      *
-     * @return Crypt_GPG_Key the current object, for fluent interface.
+     * @return Key the current object, for fluent interface.
      */
-    public function addUserId(Crypt_GPG_UserId $userId)
+    public function addUserId(UserId $userId)
     {
         $this->_userIds[] = $userId;
         return $this;

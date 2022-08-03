@@ -1,5 +1,5 @@
 {
-    "name": "pear/crypt_gpg",
+    "name": "xrobau/libgpg",
     "description": "Provides an object oriented interface to the GNU Privacy Guard (GnuPG). It requires the GnuPG executable to be on the system.",
     "type": "library",
     "keywords": [
@@ -37,11 +37,10 @@
         "scripts/crypt-gpg-pinentry"
     ],
     "autoload": {
-        "classmap": ["Crypt/"]
+        "psr-4": {
+            "Crypt\\": "src/"
+        }
     },
-    "include-path": [
-        "./"
-    ],
     "support": {
         "issues": "https://pear.php.net/bugs/search.php?cmd=display&package_name[]=Crypt_GPG",
         "source": "https://github.com/pear/Crypt_GPG"

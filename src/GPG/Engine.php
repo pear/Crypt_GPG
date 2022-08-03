@@ -1,5 +1,12 @@
 <?php
 
+namespace Crypt\GPG;
+
+use Crypt\GPG\Exceptions\FileException;
+use Crypt\GPG\Exceptions\Exception;
+use Crypt\GPG\Exceptions\InvalidOperationException;
+use Crypt\GPG\Exceptions\OpenSubprocessException;
+
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
@@ -35,36 +42,6 @@
  */
 
 /**
- * Crypt_GPG base class.
- */
-require_once 'Crypt/GPG.php';
-
-/**
- * GPG exception classes.
- */
-require_once 'Crypt/GPG/Exceptions.php';
-
-/**
- * Status/Error handler class.
- */
-require_once 'Crypt/GPG/ProcessHandler.php';
-
-/**
- * Process control methods.
- */
-require_once 'Crypt/GPG/ProcessControl.php';
-
-/**
- * Information about a created signature
- */
-require_once 'Crypt/GPG/SignatureCreationInfo.php';
-
-/**
- * Standard PEAR exception is used if GPG binary is not found.
- */
-require_once 'PEAR/Exception.php';
-
-/**
  * Native PHP Crypt_GPG I/O engine
  *
  * This class is used internally by Crypt_GPG and does not need be used
@@ -85,7 +62,7 @@ require_once 'PEAR/Exception.php';
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
  */
-class Crypt_GPG_Engine
+class Engine
 {
     /**
      * Size of data chunks that are sent to and retrieved from the IPC pipes.
@@ -150,7 +127,7 @@ class Crypt_GPG_Engine
      * Strict mode is disabled by default.
      *
      * @var boolean
-     * @see Crypt_GPG_Engine::__construct()
+     * @see Engine::__construct()
      */
     private $_strict = false;
 
@@ -168,7 +145,7 @@ class Crypt_GPG_Engine
      * Debugging is off by default.
      *
      * @var mixed
-     * @see Crypt_GPG_Engine::__construct()
+     * @see Engine::__construct()
      */
     private $_debug = false;
 
@@ -176,8 +153,8 @@ class Crypt_GPG_Engine
      * Location of GPG binary
      *
      * @var string
-     * @see Crypt_GPG_Engine::__construct()
-     * @see Crypt_GPG_Engine::_getBinary()
+     * @see Engine::__construct()
+     * @see Engine::_getBinary()
      */
     private $_binary = '';
 
@@ -187,8 +164,8 @@ class Crypt_GPG_Engine
      * Only used for GnuPG 2.x
      *
      * @var string
-     * @see Crypt_GPG_Engine::__construct()
-     * @see Crypt_GPG_Engine::_getAgent()
+     * @see Engine::__construct()
+     * @see Engine::_getAgent()
      */
     private $_agent = '';
 
@@ -198,8 +175,8 @@ class Crypt_GPG_Engine
      * Only used for GnuPG 2.1.x
      *
      * @var string
-     * @see Crypt_GPG_Engine::__construct()
-     * @see Crypt_GPG_Engine::_getGPGConf()
+     * @see Engine::__construct()
+     * @see Engine::_getGPGConf()
      */
     private $_gpgconf = null;
 
@@ -210,7 +187,7 @@ class Crypt_GPG_Engine
      * is specified in the constructor.
      *
      * @var string
-     * @see Crypt_GPG_Engine::__construct()
+     * @see Engine::__construct()
      */
     private $_homedir = '';
 
@@ -225,7 +202,7 @@ class Crypt_GPG_Engine
      * <kbd>~/.gnupg</kbd>.
      *
      * @var string
-     * @see Crypt_GPG_Engine::__construct()
+     * @see Engine::__construct()
      */
     private $_publicKeyring = '';
 
@@ -240,7 +217,7 @@ class Crypt_GPG_Engine
      * <kbd>~/.gnupg</kbd>.
      *
      * @var string
-     * @see Crypt_GPG_Engine::__construct()
+     * @see Engine::__construct()
      */
     private $_privateKeyring = '';
 
@@ -255,7 +232,7 @@ class Crypt_GPG_Engine
      * <kbd>~/.gnupg</kbd>.
      *
      * @var string
-     * @see Crypt_GPG_Engine::__construct()
+     * @see Engine::__construct()
      */
     private $_trustDb = '';
 
@@ -282,11 +259,11 @@ class Crypt_GPG_Engine
      *
      * This array is used to keep track of remaining opened pipes so they can
      * be closed when the GPG subprocess is finished. This array is a subset of
-     * the {@link Crypt_GPG_Engine::$_pipes} array and contains opened file
+     * the {@link Engine::$_pipes} array and contains opened file
      * descriptor resources.
      *
      * @var array
-     * @see Crypt_GPG_Engine::_closePipe()
+     * @see Engine::_closePipe()
      */
     private $_openPipes = array();
 
@@ -350,7 +327,7 @@ class Crypt_GPG_Engine
      * Commands to be sent to GPG's command input stream
      *
      * @var string
-     * @see Crypt_GPG_Engine::sendCommand()
+     * @see Engine::sendCommand()
      */
     private $_commandBuffer = '';
 
@@ -365,7 +342,7 @@ class Crypt_GPG_Engine
      * Array of status line handlers
      *
      * @var array
-     * @see Crypt_GPG_Engine::addStatusHandler()
+     * @see Engine::addStatusHandler()
      */
     private $_statusHandlers = array();
 
@@ -373,7 +350,7 @@ class Crypt_GPG_Engine
      * Array of error line handlers
      *
      * @var array
-     * @see Crypt_GPG_Engine::addErrorHandler()
+     * @see Engine::addErrorHandler()
      */
     private $_errorHandlers = array();
 
@@ -383,7 +360,7 @@ class Crypt_GPG_Engine
      * This is data to send to GPG. Either a string or a stream resource.
      *
      * @var string|resource
-     * @see Crypt_GPG_Engine::setInput()
+     * @see Engine::setInput()
      */
     private $_input = null;
 
@@ -393,7 +370,7 @@ class Crypt_GPG_Engine
      * Either a string or a stream resource.
      *
      * @var string|resource
-     * @see Crypt_GPG_Engine::setMessage()
+     * @see Engine::setMessage()
      */
     private $_message = null;
 
@@ -404,7 +381,7 @@ class Crypt_GPG_Engine
      * resource.
      *
      * @var string|resource
-     * @see Crypt_GPG_Engine::setOutput()
+     * @see Engine::setOutput()
      */
     private $_output = '';
 
@@ -412,7 +389,7 @@ class Crypt_GPG_Engine
      * The GPG operation to execute
      *
      * @var string
-     * @see Crypt_GPG_Engine::setOperation()
+     * @see Engine::setOperation()
      */
     private $_operation;
 
@@ -420,7 +397,7 @@ class Crypt_GPG_Engine
      * Arguments for the current operation
      *
      * @var array
-     * @see Crypt_GPG_Engine::setOperation()
+     * @see Engine::setOperation()
      */
     private $_arguments = array();
 
@@ -428,7 +405,7 @@ class Crypt_GPG_Engine
      * The version number of the GPG binary
      *
      * @var string
-     * @see Crypt_GPG_Engine::getVersion()
+     * @see Engine::getVersion()
      */
     private $_version = '';
 
@@ -439,7 +416,7 @@ class Crypt_GPG_Engine
      *                       All options are optional and are represented as key-value
      *                       pairs. See Crypt_GPGAbstract::__construct() for more info.
      *
-     * @throws Crypt_GPG_FileException if the <kbd>homedir</kbd> does not exist
+     * @throws FileException if the <kbd>homedir</kbd> does not exist
      *         and cannot be created. This can happen if <kbd>homedir</kbd> is
      *         not specified, Crypt_GPG is run as the web user, and the web
      *         user has no home directory. This exception is also thrown if any
@@ -450,11 +427,11 @@ class Crypt_GPG_Engine
      *         example, the Apache user) does not have permission to read the
      *         files.
      *
-     * @throws PEAR_Exception if the provided <kbd>binary</kbd> is invalid, or
+     * @throws Exception if the provided <kbd>binary</kbd> is invalid, or
      *         if no <kbd>binary</kbd> is provided and no suitable binary could
      *         be found.
      *
-     * @throws PEAR_Exception if the provided <kbd>agent</kbd> is invalid, or
+     * @throws Exception if the provided <kbd>agent</kbd> is invalid, or
      *         if no <kbd>agent</kbd> is provided and no suitable gpg-agent
      *         could be found.
      */
@@ -479,7 +456,7 @@ class Crypt_GPG_Engine
             }
 
             if ($this->_homedir === false) {
-                throw new Crypt_GPG_FileException(
+                throw new FileException(
                     'Could not locate homedir. Please specify the homedir ' .
                     'to use with the \'homedir\' option when instantiating ' .
                     'the Crypt_GPG object.'
@@ -494,7 +471,7 @@ class Crypt_GPG_Engine
                 // with 0777, homedir is set to 0700.
                 chmod($this->_homedir, 0700);
             } else {
-                throw new Crypt_GPG_FileException(
+                throw new FileException(
                     'The \'homedir\' "' . $this->_homedir . '" is not ' .
                     'readable or does not exist and cannot be created. This ' .
                     'can happen if \'homedir\' is not specified in the ' .
@@ -508,7 +485,7 @@ class Crypt_GPG_Engine
 
         // check homedir permissions (See Bug #19833)
         if (!is_executable($this->_homedir)) {
-            throw new Crypt_GPG_FileException(
+            throw new FileException(
                 'The \'homedir\' "' . $this->_homedir . '" is not enterable ' .
                 'by the current user. Please check the permissions on your ' .
                 'homedir and make sure the current user can both enter and ' .
@@ -518,7 +495,7 @@ class Crypt_GPG_Engine
             );
         }
         if (!is_writeable($this->_homedir)) {
-            throw new Crypt_GPG_FileException(
+            throw new FileException(
                 'The \'homedir\' "' . $this->_homedir . '" is not writable ' .
                 'by the current user. Please check the permissions on your ' .
                 'homedir and make sure the current user can both enter and ' .
@@ -539,7 +516,7 @@ class Crypt_GPG_Engine
         }
 
         if ($this->_binary == '' || !is_executable($this->_binary)) {
-            throw new PEAR_Exception(
+            throw new Exception(
                 'GPG binary not found. If you are sure the GPG binary is ' .
                 'installed, please specify the location of the GPG binary ' .
                 'using the \'binary\' driver option.'
@@ -551,7 +528,7 @@ class Crypt_GPG_Engine
             $this->_agent = (string)$options['agent'];
 
             if ($this->_agent && !is_executable($this->_agent)) {
-                throw new PEAR_Exception(
+                throw new Exception(
                     'Specified gpg-agent binary is not executable.'
                 );
             }
@@ -563,7 +540,7 @@ class Crypt_GPG_Engine
             $this->_gpgconf = $options['gpgconf'];
 
             if ($this->_gpgconf && !is_executable($this->_gpgconf)) {
-                throw new PEAR_Exception(
+                throw new Exception(
                     'Specified gpgconf binary is not executable.'
                 );
             }
@@ -586,7 +563,7 @@ class Crypt_GPG_Engine
         if (array_key_exists('publicKeyring', $options)) {
             $this->_publicKeyring = (string)$options['publicKeyring'];
             if (!is_readable($this->_publicKeyring)) {
-                throw new Crypt_GPG_FileException(
+                throw new FileException(
                     'The \'publicKeyring\' "' . $this->_publicKeyring .
                     '" does not exist or is not readable. Check the location ' .
                     'and ensure the file permissions are correct.',
@@ -599,7 +576,7 @@ class Crypt_GPG_Engine
         if (array_key_exists('privateKeyring', $options)) {
             $this->_privateKeyring = (string)$options['privateKeyring'];
             if (!is_readable($this->_privateKeyring)) {
-                throw new Crypt_GPG_FileException(
+                throw new FileException(
                     'The \'privateKeyring\' "' . $this->_privateKeyring .
                     '" does not exist or is not readable. Check the location ' .
                     'and ensure the file permissions are correct.',
@@ -612,7 +589,7 @@ class Crypt_GPG_Engine
         if (array_key_exists('trustDb', $options)) {
             $this->_trustDb = (string)$options['trustDb'];
             if (!is_readable($this->_trustDb)) {
-                throw new Crypt_GPG_FileException(
+                throw new FileException(
                     'The \'trustDb\' "' . $this->_trustDb .
                     '" does not exist or is not readable. Check the location ' .
                     'and ensure the file permissions are correct.',
@@ -720,8 +697,8 @@ class Crypt_GPG_Engine
      *
      * @return void
      *
-     * @see Crypt_GPG_Engine::run()
-     * @see Crypt_GPG_Engine::setOperation()
+     * @see Engine::run()
+     * @see Engine::setOperation()
      */
     public function reset()
     {
@@ -740,7 +717,7 @@ class Crypt_GPG_Engine
             $this->addErrorHandler(array($this, '_handleDebugError'));
         }
 
-        $this->_processHandler = new Crypt_GPG_ProcessHandler($this);
+        $this->_processHandler = new ProcessHandler($this);
 
         $this->addStatusHandler(array($this->_processHandler, 'handleStatus'));
         $this->addErrorHandler(array($this->_processHandler, 'handleError'));
@@ -752,23 +729,23 @@ class Crypt_GPG_Engine
      * This creates and manages the GPG subprocess.
      * This will close input/output file handles.
      *
-     * The operation must be set with {@link Crypt_GPG_Engine::setOperation()}
+     * The operation must be set with {@link Engine::setOperation()}
      * before this method is called.
      *
      * @return void
      *
-     * @throws Crypt_GPG_InvalidOperationException if no operation is specified.
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws InvalidOperationException if no operation is specified.
+     * @throws Exception if an unknown or unexpected error occurs.
      *
-     * @see Crypt_GPG_Engine::reset()
-     * @see Crypt_GPG_Engine::setOperation()
+     * @see Engine::reset()
+     * @see Engine::setOperation()
      */
     public function run()
     {
         if ($this->_operation === '') {
-            throw new Crypt_GPG_InvalidOperationException(
-                'No GPG operation specified. Use Crypt_GPG_Engine::setOperation() ' .
-                'before calling Crypt_GPG_Engine::run().'
+            throw new InvalidOperationException(
+                'No GPG operation specified. Use Engine::setOperation() ' .
+                'before calling Engine::run().'
             );
         }
 
@@ -837,8 +814,8 @@ class Crypt_GPG_Engine
      *
      * @return void
      *
-     * @see Crypt_GPG_Engine::reset()
-     * @see Crypt_GPG_Engine::run()
+     * @see Engine::reset()
+     * @see Engine::run()
      */
     public function setOperation($operation, array $arguments = array())
     {
@@ -904,11 +881,11 @@ class Crypt_GPG_Engine
      *                being used. This value is suitable to use with PHP's
      *                version_compare() function.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @throws Crypt_GPG_UnsupportedException if the provided binary is not
+     * @throws UnsupportedException if the provided binary is not
      *         GnuPG or if the GnuPG version is less than 1.0.2.
      */
     public function getVersion()
@@ -939,14 +916,14 @@ class Crypt_GPG_Engine
             if (preg_match($expression, $info, $matches) === 1) {
                 $this->_version = $matches[1];
             } else {
-                throw new Crypt_GPG_Exception(
+                throw new Exception(
                     'No GnuPG version information provided by the binary "' .
                     $this->_binary . '". Are you sure it is GnuPG?'
                 );
             }
 
             if (version_compare($this->_version, self::MIN_VERSION, 'lt')) {
-                throw new Crypt_GPG_Exception(
+                throw new Exception(
                     'The version of GnuPG being used (' . $this->_version .
                     ') is not supported by Crypt_GPG. The minimum version ' .
                     'required by Crypt_GPG is ' . self::MIN_VERSION
@@ -1161,7 +1138,7 @@ class Crypt_GPG_Engine
             $this->_debug('=> got ' . $ready);
 
             if ($ready === false) {
-                throw new Crypt_GPG_Exception(
+                throw new Exception(
                     'Error selecting stream for communication with GPG ' .
                     'subprocess. Please file a bug report at: ' .
                     'http://pear.php.net/bugs/report.php?package=Crypt_GPG'
@@ -1169,7 +1146,7 @@ class Crypt_GPG_Engine
             }
 
             if ($ready === 0) {
-                throw new Crypt_GPG_Exception(
+                throw new Exception(
                     'stream_select() returned 0. This can not happen! Please ' .
                     'file a bug report at: ' .
                     'http://pear.php.net/bugs/report.php?package=Crypt_GPG'
@@ -1428,17 +1405,17 @@ class Crypt_GPG_Engine
      * Opens an internal GPG subprocess for the current operation
      *
      * Opens a GPG subprocess, then connects the subprocess to some pipes. Sets
-     * the private class property {@link Crypt_GPG_Engine::$_process} to
+     * the private class property {@link Engine::$_process} to
      * the new subprocess.
      *
      * @return void
      *
-     * @throws Crypt_GPG_OpenSubprocessException if the subprocess could not be
+     * @throws OpenSubprocessException if the subprocess could not be
      *         opened.
      *
-     * @see Crypt_GPG_Engine::setOperation()
-     * @see Crypt_GPG_Engine::_closeSubprocess()
-     * @see Crypt_GPG_Engine::$_process
+     * @see Engine::setOperation()
+     * @see Engine::_closeSubprocess()
+     * @see Engine::$_process
      */
     private function _openSubprocess()
     {
@@ -1465,7 +1442,7 @@ class Crypt_GPG_Engine
             && version_compare($version, '2.1.13', 'lt')
         ) {
             if (!$this->_agent) {
-                throw new Crypt_GPG_OpenSubprocessException(
+                throw new OpenSubprocessException(
                     'Unable to open gpg-agent subprocess (gpg-agent not found). ' .
                     'Please specify location of the gpg-agent binary ' .
                     'using the \'agent\' driver option.'
@@ -1517,7 +1494,7 @@ class Crypt_GPG_Engine
             );
 
             if (!is_resource($this->_agentProcess)) {
-                throw new Crypt_GPG_OpenSubprocessException(
+                throw new OpenSubprocessException(
                     'Unable to open gpg-agent subprocess.',
                     0,
                     $agentCommandLine
@@ -1670,7 +1647,7 @@ class Crypt_GPG_Engine
         );
 
         if (!is_resource($this->_process)) {
-            throw new Crypt_GPG_OpenSubprocessException(
+            throw new OpenSubprocessException(
                 'Unable to open GPG subprocess.', 0, $commandLine
             );
         }
@@ -1690,12 +1667,12 @@ class Crypt_GPG_Engine
      * Closes the internal GPG subprocess
      *
      * Closes the internal GPG subprocess. Sets the private class property
-     * {@link Crypt_GPG_Engine::$_process} to null.
+     * {@link Engine::$_process} to null.
      *
      * @return void
      *
-     * @see Crypt_GPG_Engine::_openSubprocess()
-     * @see Crypt_GPG_Engine::$_process
+     * @see Engine::_openSubprocess()
+     * @see Engine::$_process
      */
     private function _closeSubprocess()
     {
@@ -1749,7 +1726,7 @@ class Crypt_GPG_Engine
             if (!empty($parts[1])) {
                 $this->_debug('STOPPING GPG-AGENT DAEMON');
 
-                $process = new Crypt_GPG_ProcessControl($parts[1]);
+                $process = new ProcessControl($parts[1]);
 
                 // terminate agent daemon
                 $process->terminate();
@@ -1770,12 +1747,12 @@ class Crypt_GPG_Engine
      * Closes a the internal GPG-AGENT subprocess
      *
      * Closes the internal GPG-AGENT subprocess. Sets the private class property
-     * {@link Crypt_GPG_Engine::$_agentProcess} to null.
+     * {@link Engine::$_agentProcess} to null.
      *
      * @return void
      *
-     * @see Crypt_GPG_Engine::_openSubprocess()
-     * @see Crypt_GPG_Engine::$_agentProcess
+     * @see Engine::_openSubprocess()
+     * @see Engine::$_agentProcess
      */
     private function _closeAgentLaunchProcess()
     {

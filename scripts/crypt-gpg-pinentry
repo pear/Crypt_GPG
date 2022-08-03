@@ -5,6 +5,9 @@
 
 // Check if we're running directly from git repo or if we're running
 // from a PEAR or Composer packaged version.
+
+use Crypt\GPG\PinEntry;
+
 $ds    = DIRECTORY_SEPARATOR;
 $root  = __DIR__ . $ds . '..' ;
 $paths = array(
@@ -25,9 +28,6 @@ foreach ($paths as $idx => $path) {
 // We depend on Console_CommandLine, so we append also the default include path
 set_include_path(implode(PATH_SEPARATOR, $paths) . PATH_SEPARATOR . get_include_path());
 
-require_once 'Crypt/GPG/PinEntry.php';
-
-$pinentry = new Crypt_GPG_PinEntry();
+$pinentry = new PinEntry();
 $pinentry->__invoke();
 
-?>

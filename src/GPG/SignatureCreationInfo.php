@@ -1,4 +1,9 @@
 <?php
+
+namespace Crypt\GPG;
+
+use Crypt\GPG;
+
 /**
  * Part of Crypt_GPG
  *
@@ -24,13 +29,13 @@
  * @link      http://pear.php.net/manual/en/package.encryption.crypt-gpg.php
  * @link      http://www.gnupg.org/
  */
-class Crypt_GPG_SignatureCreationInfo
+class SignatureCreationInfo
 {
     /**
      * One of the three signature types:
-     * - {@link Crypt_GPG::SIGN_MODE_NORMAL}
-     * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
-     * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
+     * - {@link GPG::SIGN_MODE_NORMAL}
+     * - {@link GPG::SIGN_MODE_CLEAR}
+     * - {@link GPG::SIGN_MODE_DETACHED}
      *
      * @var integer
      */
@@ -125,13 +130,13 @@ class Crypt_GPG_SignatureCreationInfo
 
         switch (strtoupper($mode[0])) {
         case 'D':
-            $this->mode = Crypt_GPG::SIGN_MODE_DETACHED;
+            $this->mode = GPG::SIGN_MODE_DETACHED;
             break;
         case 'C':
-            $this->mode = Crypt_GPG::SIGN_MODE_CLEAR;
+            $this->mode = GPG::SIGN_MODE_CLEAR;
             break;
         case 'S':
-            $this->mode = Crypt_GPG::SIGN_MODE_NORMAL;
+            $this->mode = GPG::SIGN_MODE_NORMAL;
             break;
         }
 
@@ -149,9 +154,9 @@ class Crypt_GPG_SignatureCreationInfo
 
     /**
      * Get the signature type
-     * - {@link Crypt_GPG::SIGN_MODE_NORMAL}
-     * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
-     * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
+     * - {@link GPG::SIGN_MODE_NORMAL}
+     * - {@link GPG::SIGN_MODE_CLEAR}
+     * - {@link GPG::SIGN_MODE_DETACHED}
      *
      * @return integer
      */

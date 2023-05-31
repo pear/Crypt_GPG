@@ -12,13 +12,13 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: ["5.4", "5.5", "5.6", "7.0", "7.1", "7.2", "7.3", "7.4", "8.0", "8.1", "8.2"]
+        php: ["5.6", "7.0", "7.1", "7.2", "7.3", "7.4", "8.0", "8.1", "8.2"]
 
     name: PHP ${{ matrix.php }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -35,15 +35,6 @@ jobs:
         run: |
           composer require --dev 'phpunit/phpunit:^4.8.36 || ^5.7.21 || ^6 || ^7' --no-update
           sed -i 's/: void//g' tests/*.php
-
-      - name: Setup tests for PHP <= 5.5
-        if: matrix.php <= 5.5
-        run: |
-          sed -i 's/expectException/setExpectedException/g' tests/*.php
-
-      - name: Setup tests for PHP >= 8.0
-        if: matrix.php >= 8.0
-        run: composer config platform.php 7.4
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress

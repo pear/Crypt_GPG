@@ -251,7 +251,7 @@ class Crypt_GPG_ProcessHandler
             // remember the user id for pretty exception messages
             // GnuPG 2.1.15 gives me: "USERID_HINT 0000000000000000 [?]"
             $keyId = $tokens[1];
-            if (strcspn($keyId, '0')) {
+            if (preg_match('/[1-9A-F]/', $keyId)) {
                 $username = implode(' ', array_splice($tokens, 2));
                 $this->data['BadPassphrases'][$keyId] = $username;
             }

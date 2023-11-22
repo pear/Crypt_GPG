@@ -228,8 +228,6 @@ TEXT;
      */
     public function testDecryptBadPassphraseException_bad()
     {
-        $this->expectException('Crypt_GPG_BadPassphraseException');
-
         // encrypted with first-keypair@example.com
         // {{{ encrypted data
         $encryptedData = <<<TEXT
@@ -255,8 +253,21 @@ JspFzixPnaDl16sE082GSg0VctFMkCZhb/jghMIQYJ2131DoGXJ4QDU=
 TEXT;
         // }}}
 
-        $this->gpg->addDecryptKey('first-keypair@example.com', 'incorrect');
-        $this->gpg->decrypt($encryptedData);
+        try {
+            $this->gpg->addDecryptKey('first-keypair@example.com', 'incorrect');
+            $this->gpg->decrypt($encryptedData);
+        }
+        catch (\Crypt_GPG_BadPassphraseException $e) {
+            $badKeys = $e->getBadPassphrases();
+            $missingKeys = $e->getMissingPassphrases();
+
+            $this->assertCount(1, $badKeys);
+            $this->assertCount(0, $missingKeys);
+            $this->assertSame(
+                $badKeys[key($badKeys)],
+                "First Keypair Test Key (do not encrypt important data with this key) <first-keypair@example.com>"
+            );
+        }
     }
 
     /**

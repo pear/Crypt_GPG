@@ -33,16 +33,14 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$apiVersion     = '1.6.7';
+$apiVersion     = '1.6.8';
 $apiState       = 'stable';
 
-$releaseVersion = '1.6.7';
+$releaseVersion = '1.6.8';
 $releaseState   = 'stable';
-$releaseNotes   = "[CVE-2022-24953] Insert the end-of-options marker before operation arguments [thomas-chauchefoin-sonarsource].\n"
-    . "Ignore tests/debug.log and .gitattributes itself.";
+$releaseNotes   = "Fix bug in parsing USERID_HINT status causing missing real user name in BadPassphrases array [alec].";
 
-$description =
-    "This package provides an object oriented interface to GNU Privacy " .
+$description = "This package provides an object oriented interface to GNU Privacy " .
     "Guard (GnuPG). It requires the GnuPG executable to be on the system.\n\n" .
     "Though GnuPG can support symmetric-key cryptography, this package is " .
     "intended only to facilitate public-key cryptography.\n\n" .
@@ -69,6 +67,7 @@ $package->setOptions(
         ),
         'ignore'            => array(
             'tests/config.php',
+            'tests/debug.log',
             'tools/',
             'package.php',
             'composer.json',

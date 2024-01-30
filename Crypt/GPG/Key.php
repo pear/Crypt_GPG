@@ -60,7 +60,7 @@ class Crypt_GPG_Key
      *
      * This is an array of {@link Crypt_GPG_UserId} objects.
      *
-     * @var array
+     * @var array<Crypt_GPG_UserId>
      *
      * @see Crypt_GPG_Key::addUserId()
      * @see Crypt_GPG_Key::getUserIds()
@@ -72,7 +72,7 @@ class Crypt_GPG_Key
      *
      * This is an array of {@link Crypt_GPG_SubKey} objects.
      *
-     * @var array
+     * @var array<Crypt_GPG_SubKey>
      *
      * @see Crypt_GPG_Key::addSubKey()
      * @see Crypt_GPG_Key::getSubKeys()
@@ -82,7 +82,7 @@ class Crypt_GPG_Key
     /**
      * Gets the sub-keys of this key
      *
-     * @return array the sub-keys of this key.
+     * @return array<Crypt_GPG_SubKey> the sub-keys of this key.
      *
      * @see Crypt_GPG_Key::addSubKey()
      */
@@ -94,7 +94,7 @@ class Crypt_GPG_Key
     /**
      * Gets the user ids of this key
      *
-     * @return array the user ids of this key.
+     * @return array<Crypt_GPG_UserId> the user ids of this key.
      *
      * @see Crypt_GPG_Key::addUserId()
      */
@@ -124,8 +124,8 @@ class Crypt_GPG_Key
      *
      * This key can sign data if any sub-key of this key can sign data.
      *
-     * @return boolean true if this key can sign data and false if this key
-     *                 cannot sign data.
+     * @return bool True if this key can sign data and false if this key
+     *              cannot sign data.
      */
     public function canSign()
     {
@@ -144,8 +144,8 @@ class Crypt_GPG_Key
      *
      * This key can encrypt data if any sub-key of this key can encrypt data.
      *
-     * @return boolean true if this key can encrypt data and false if this
-     *                 key cannot encrypt data.
+     * @return bool True if this key can encrypt data and false if this
+     *              key cannot encrypt data.
      */
     public function canEncrypt()
     {

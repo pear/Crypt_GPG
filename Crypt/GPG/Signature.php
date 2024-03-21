@@ -190,7 +190,7 @@ class Crypt_GPG_Signature
     /**
      * Gets the id of this signature
      *
-     * @return string a base64-encoded string containing a unique id for this
+     * @return string A base64-encoded string containing a unique id for this
      *                signature. This id is used to prevent replay attacks and
      *                is not present for all types of signatures.
      */
@@ -202,7 +202,7 @@ class Crypt_GPG_Signature
     /**
      * Gets the fingerprint of the key used to create this signature
      *
-     * @return string the fingerprint of the key used to create this signature.
+     * @return string The fingerprint of the key used to create this signature.
      */
     public function getKeyFingerprint()
     {
@@ -216,7 +216,7 @@ class Crypt_GPG_Signature
      * (for example if the signature is bad), the id should always be
      * available.
      *
-     * @return string the id of the key used to create this signature.
+     * @return string The id of the key used to create this signature.
      */
     public function getKeyId()
     {
@@ -226,8 +226,8 @@ class Crypt_GPG_Signature
     /**
      * Gets the creation date of this signature
      *
-     * @return integer the creation date of this signature. This is a Unix
-     *                 timestamp.
+     * @return int The creation date of this signature. This is a Unix
+     *             timestamp.
      */
     public function getCreationDate()
     {
@@ -237,9 +237,9 @@ class Crypt_GPG_Signature
     /**
      * Gets the expiration date of the signature
      *
-     * @return integer the expiration date of this signature. This is a Unix
-     *                 timestamp. If this signature does not expire, this will
-     *                 be zero.
+     * @return int The expiration date of this signature. This is a Unix
+     *             timestamp. If this signature does not expire, this will
+     *             be zero.
      */
     public function getExpirationDate()
     {
@@ -249,7 +249,7 @@ class Crypt_GPG_Signature
     /**
      * Gets the user id associated with this signature
      *
-     * @return Crypt_GPG_UserId the user id associated with this signature.
+     * @return Crypt_GPG_UserId|null The user id associated with this signature.
      */
     public function getUserId()
     {
@@ -259,7 +259,7 @@ class Crypt_GPG_Signature
     /**
      * Gets whether or no this signature is valid
      *
-     * @return boolean true if this signature is valid and false if it is not.
+     * @return bool True if this signature is valid and false if it is not.
      */
     public function isValid()
     {

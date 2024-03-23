@@ -214,7 +214,7 @@ abstract class Crypt_GPGAbstract
      * - <kbd>string digest-algo</kbd> - Sets the message digest algorithm.
      * - <kbd>string cipher-algo</kbd> - Sets the symmetric cipher.
      * - <kbd>string compress-algo</kbd> - Sets the compression algorithm.
-     * - <kbd>boolean strict</kbd> - In strict mode clock problems on subkeys
+     * - <kbd>bool   strict</kbd> - In strict mode clock problems on subkeys
      *                      and signatures are not ignored (--ignore-time-conflict
      *                      and --ignore-valid-from options).
      * - <kbd>mixed debug</kbd> - whether or not to use debug mode.

@@ -32,14 +32,14 @@ class Crypt_GPG_SignatureCreationInfo
      * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
      * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
      *
-     * @var integer
+     * @var int
      */
     protected $mode;
 
     /**
      * Public Key algorithm
      *
-     * @var integer
+     * @var int
      */
     protected $pkAlgorithm;
 
@@ -47,7 +47,7 @@ class Crypt_GPG_SignatureCreationInfo
      * Algorithm to hash the data
      *
      * @see RFC 2440 / 9.4. Hash Algorithm
-     * @var integer
+     * @var int
      */
     protected $hashAlgorithm;
 
@@ -61,7 +61,7 @@ class Crypt_GPG_SignatureCreationInfo
     /**
      * Unix timestamp when the signature was created
      *
-     * @var integer
+     * @var int
      */
     protected $timestamp;
 
@@ -75,7 +75,7 @@ class Crypt_GPG_SignatureCreationInfo
     /**
      * If the line given to the constructor was valid
      *
-     * @var boolean
+     * @var bool
      */
     protected $valid;
 
@@ -153,7 +153,7 @@ class Crypt_GPG_SignatureCreationInfo
      * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
      * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
      *
-     * @return integer
+     * @return int
      */
     public function getMode()
     {
@@ -163,7 +163,7 @@ class Crypt_GPG_SignatureCreationInfo
     /**
      * Return the public key algorithm used.
      *
-     * @return integer
+     * @return int
      */
     public function getPkAlgorithm()
     {
@@ -173,7 +173,7 @@ class Crypt_GPG_SignatureCreationInfo
     /**
      * Return the hash algorithm used to hash the data to sign.
      *
-     * @return integer
+     * @return int
      */
     public function getHashAlgorithm()
     {
@@ -196,7 +196,7 @@ class Crypt_GPG_SignatureCreationInfo
     /**
      * Return the timestamp at which the signature was created
      *
-     * @return integer
+     * @return int
      */
     public function getTimestamp()
     {
@@ -216,7 +216,7 @@ class Crypt_GPG_SignatureCreationInfo
     /**
      * Tell if the fingerprint line given to the constructor was valid
      *
-     * @return boolean
+     * @return bool
      */
     public function isValid()
     {

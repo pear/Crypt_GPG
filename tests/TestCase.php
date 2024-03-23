@@ -81,6 +81,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
     const TEMPDIR = 'temp-files';
     const DATADIR = 'data-files';
 
+    protected $config;
     protected $gpg;
 
     protected function getOptions()

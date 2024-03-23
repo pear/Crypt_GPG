@@ -80,9 +80,9 @@ class Crypt_GPG_FileException extends Crypt_GPG_Exception
     /**
      * Creates a new Crypt_GPG_FileException
      *
-     * @param string  $message  an error message.
-     * @param integer $code     a user defined error code.
-     * @param string  $filename the name of the file that caused this exception.
+     * @param string $message  An error message.
+     * @param int    $code     A user defined error code.
+     * @param string $filename The name of the file that caused this exception.
      */
     public function __construct($message, $code = 0, $filename = '')
     {
@@ -128,10 +128,10 @@ class Crypt_GPG_OpenSubprocessException extends Crypt_GPG_Exception
     /**
      * Creates a new Crypt_GPG_OpenSubprocessException
      *
-     * @param string  $message an error message.
-     * @param integer $code    a user defined error code.
-     * @param string  $command the command that was called to open the
-     *                         new subprocess.
+     * @param string $message An error message.
+     * @param int    $code    A user defined error code.
+     * @param string $command The command that was called to open the
+     *                        new subprocess.
      *
      * @see Crypt_GPG::_openSubprocess()
      */
@@ -176,9 +176,9 @@ class Crypt_GPG_InvalidOperationException extends Crypt_GPG_Exception
     /**
      * Creates a new Crypt_GPG_OpenSubprocessException
      *
-     * @param string  $message   an error message.
-     * @param integer $code      a user defined error code.
-     * @param string  $operation the operation.
+     * @param string $message   An error message.
+     * @param int    $code      A user defined error code.
+     * @param string $operation The operation.
      */
     public function __construct($message, $code = 0, $operation = '')
     {
@@ -222,9 +222,9 @@ class Crypt_GPG_KeyNotFoundException extends Crypt_GPG_Exception
     /**
      * Creates a new Crypt_GPG_KeyNotFoundException
      *
-     * @param string  $message an error message.
-     * @param integer $code    a user defined error code.
-     * @param string  $keyId   the key identifier of the key.
+     * @param string $message An error message.
+     * @param int    $code    A user defined error code.
+     * @param string $keyId   The key identifier of the key.
      */
     public function __construct($message, $code = 0, $keyId= '')
     {
@@ -291,12 +291,12 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
     /**
      * Creates a new Crypt_GPG_BadPassphraseException
      *
-     * @param string  $message            an error message.
-     * @param integer $code               a user defined error code.
-     * @param array   $badPassphrases     an array containing user ids of keys
-     *                                    for which the passphrase is incorrect.
-     * @param array   $missingPassphrases an array containing user ids of keys
-     *                                    for which the passphrase is missing.
+     * @param string $message            An error message.
+     * @param int    $code               A user defined error code.
+     * @param array  $badPassphrases     An array containing user ids of keys
+     *                                   for which the passphrase is incorrect.
+     * @param array  $missingPassphrases An array containing user ids of keys
+     *                                   for which the passphrase is missing.
      */
     public function __construct($message, $code = 0,
         array $badPassphrases = array(), array $missingPassphrases = array()
@@ -355,10 +355,10 @@ class Crypt_GPG_DeletePrivateKeyException extends Crypt_GPG_Exception
     /**
      * Creates a new Crypt_GPG_DeletePrivateKeyException
      *
-     * @param string  $message an error message.
-     * @param integer $code    a user defined error code.
-     * @param string  $keyId   the key identifier of the public key that was
-     *                         attempted to delete.
+     * @param string $message An error message.
+     * @param int    $code    A user defined error code.
+     * @param string $keyId   The key identifier of the public key that was
+     *                        attempted to delete.
      *
      * @see Crypt_GPG::deletePublicKey()
      */
@@ -410,32 +410,32 @@ class Crypt_GPG_InvalidKeyParamsException extends Crypt_GPG_Exception
     /**
      * The key algorithm
      *
-     * @var integer
+     * @var int
      */
     private $_algorithm = 0;
 
     /**
      * The key size
      *
-     * @var integer
+     * @var int
      */
     private $_size = 0;
 
     /**
      * The key usage
      *
-     * @var integer
+     * @var int
      */
     private $_usage = 0;
 
     /**
      * Creates a new Crypt_GPG_InvalidKeyParamsException
      *
-     * @param string  $message   an error message.
-     * @param integer $code      a user defined error code.
-     * @param string  $algorithm the key algorithm.
-     * @param string  $size      the key size.
-     * @param string  $usage     the key usage.
+     * @param string $message   An error message.
+     * @param int    $code      A user defined error code.
+     * @param int    $algorithm The key algorithm.
+     * @param int    $size      The key size.
+     * @param int    $usage     The key usage.
      */
     public function __construct(
         $message,
@@ -454,7 +454,7 @@ class Crypt_GPG_InvalidKeyParamsException extends Crypt_GPG_Exception
     /**
      * Gets the key algorithm
      *
-     * @return integer the key algorithm.
+     * @return int The key algorithm.
      */
     public function getAlgorithm()
     {
@@ -464,7 +464,7 @@ class Crypt_GPG_InvalidKeyParamsException extends Crypt_GPG_Exception
     /**
      * Gets the key size
      *
-     * @return integer the key size.
+     * @return int The key size.
      */
     public function getSize()
     {
@@ -474,7 +474,7 @@ class Crypt_GPG_InvalidKeyParamsException extends Crypt_GPG_Exception
     /**
      * Gets the key usage
      *
-     * @return integer the key usage.
+     * @return int The key usage.
      */
     public function getUsage()
     {

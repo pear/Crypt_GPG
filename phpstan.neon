@@ -1,0 +1,11 @@
+parameters:
+    fileExtensions:
+        - php
+
+    paths:
+        - Crypt
+        - tests
+        - tools
+        - scripts/crypt-gpg-pinentry
+
+    level: 4

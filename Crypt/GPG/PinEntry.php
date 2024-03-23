@@ -97,28 +97,28 @@ class Crypt_GPG_PinEntry
     /**
      * File handle for the input stream
      *
-     * @var resource
+     * @var resource|null
      */
     protected $stdin = null;
 
     /**
      * File handle for the output stream
      *
-     * @var resource
+     * @var resource|null
      */
     protected $stdout = null;
 
     /**
      * File handle for the log file if a log file is used
      *
-     * @var resource
+     * @var resource|null
      */
     protected $logFile = null;
 
     /**
      * Whether or not this pinentry is finished and is exiting
      *
-     * @var boolean
+     * @var bool
      */
     protected $moribund = false;
 
@@ -130,7 +130,7 @@ class Crypt_GPG_PinEntry
      * - {@link Crypt_GPG_PinEntry::VERBOSITY_ERRORS}, or
      * - {@link Crypt_GPG_PinEntry::VERBOSITY_ALL}
      *
-     * @var integer
+     * @var int
      */
     protected $verbosity = self::VERBOSITY_NONE;
 
@@ -212,8 +212,8 @@ class Crypt_GPG_PinEntry
 
             $this->disconnect();
 
-        } catch (Console_CommandLineException $e) {
-            $this->log($e->getMessage() . PHP_EOL, slf::VERBOSITY_ERRORS);
+        } catch (Console_CommandLine_Exception $e) {
+            $this->log($e->getMessage() . PHP_EOL, self::VERBOSITY_ERRORS);
             exit(1);
         } catch (Exception $e) {
             $this->log($e->getMessage() . PHP_EOL, self::VERBOSITY_ERRORS);
@@ -232,13 +232,13 @@ class Crypt_GPG_PinEntry
      * - {@link Crypt_GPG_PinEntry::VERBOSITY_ALL}    - log everything, including
      *                                                  the assuan protocol.
      *
-     * @param integer $verbosity the level of verbosity of this pinentry.
+     * @param int $verbosity The level of verbosity of this pinentry.
      *
      * @return Crypt_GPG_PinEntry the current object, for fluent interface.
      */
     public function setVerbosity($verbosity)
     {
-        $this->verbosity = (integer)$verbosity;
+        $this->verbosity = (int) $verbosity;
         return $this;
     }
 
@@ -280,7 +280,7 @@ class Crypt_GPG_PinEntry
      * Detects whether or not this package is PEAR-installed and appropriately
      * locates the XML UI definition.
      *
-     * @return string the location of the CLI user-interface definition XML.
+     * @return string|null The location of the CLI user-interface definition XML.
      */
     protected function getUIXML()
     {
@@ -298,6 +298,8 @@ class Crypt_GPG_PinEntry
                 return $path . $ds . 'pinentry-cli.xml';
             }
         }
+
+        return null;
     }
 
     /**
@@ -316,9 +318,9 @@ class Crypt_GPG_PinEntry
      * If a log file is used, the message is written to the log. Otherwise,
      * the message is sent to STDERR.
      *
-     * @param string  $data  the message to log.
-     * @param integer $level the verbosity level above which the message should
-     *                       be logged.
+     * @param string $data  The message to log.
+     * @param int    $level The verbosity level above which the message should
+     *                      be logged.
      *
      * @return Crypt_GPG_PinEntry the current object, for fluent interface.
      */
@@ -405,7 +407,7 @@ class Crypt_GPG_PinEntry
             return $this->sendGetInfo($data);
 
         case 'GETPIN':
-            return $this->sendGetPin($data);
+            return $this->sendGetPin();
 
         case 'RESET':
             return $this->sendReset();
@@ -611,8 +613,6 @@ class Crypt_GPG_PinEntry
         default:
             return $this->send($this->getOK());
         }
-
-        return $this;
     }
 
     /**
@@ -731,7 +731,7 @@ class Crypt_GPG_PinEntry
                 $line = $prefix . ' ' . mb_strcut($data, 0, 996, 'utf-8') . "\\\n";
                 $lines[] = $line;
                 $lineLength = mb_strlen($line, '8bit') - 1;
-                $dataLength = mb_substr($data, '8bit');
+                $dataLength = mb_strlen($data, '8bit');
                 $data = mb_substr(
                     $data,
                     $lineLength,

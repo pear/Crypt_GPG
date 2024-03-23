@@ -48,14 +48,14 @@ class Crypt_GPG_ProcessControl
     /**
      * The PID (process identifier) being monitored
      *
-     * @var integer
+     * @var int
      */
     protected $pid;
 
     /**
      * Creates a new process controller from the given PID (process identifier)
      *
-     * @param integer $pid the PID (process identifier).
+     * @param int $pid The PID (process identifier).
      */
     public function __construct($pid)
     {
@@ -65,7 +65,7 @@ class Crypt_GPG_ProcessControl
     /**
      * Gets the PID (process identifier) being controlled
      *
-     * @return integer the PID being controlled.
+     * @return int The PID being controlled.
      */
     public function getPid()
     {
@@ -79,7 +79,7 @@ class Crypt_GPG_ProcessControl
      * is used. Otherwise <kbd>ps</kbd> is used on UNIX-like systems and
      * <kbd>tasklist</kbd> on Windows.
      *
-     * @return boolean true if the process is running, false if not.
+     * @return bool True if the process is running, false if not.
      */
     public function isRunning()
     {

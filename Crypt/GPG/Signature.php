@@ -83,7 +83,7 @@ class Crypt_GPG_Signature
      *
      * This is a Unix timestamp.
      *
-     * @var integer
+     * @var int
      */
     private $_creationDate = 0;
 
@@ -93,7 +93,7 @@ class Crypt_GPG_Signature
      * This is a Unix timestamp. If this signature does not expire, this will
      * be zero.
      *
-     * @var integer
+     * @var int
      */
     private $_expirationDate = 0;
 
@@ -107,7 +107,7 @@ class Crypt_GPG_Signature
     /**
      * Whether or not this signature is valid
      *
-     * @var boolean
+     * @var bool
      */
     private $_isValid = false;
 
@@ -124,12 +124,12 @@ class Crypt_GPG_Signature
      *                                    characters.
      * - <kbd>string  keyId</kbd>       - the id of the key used to create the
      *                                    the signature.
-     * - <kbd>integer creation</kbd>    - the date the signature was created.
+     * - <kbd>int     creation</kbd>    - the date the signature was created.
      *                                    This is a UNIX timestamp.
-     * - <kbd>integer expiration</kbd>  - the date the signature expired. This
+     * - <kbd>int     expiration</kbd>  - the date the signature expired. This
      *                                    is a UNIX timestamp. If the signature
      *                                    does not expire, use 0.
-     * - <kbd>boolean valid</kbd>       - whether or not the signature is valid.
+     * - <kbd>bool    valid</kbd>       - whether or not the signature is valid.
      * - <kbd>string  userId</kbd>      - the user id associated with the
      *                                    signature. This may also be a
      *                                    {@link Crypt_GPG_UserId} object.
@@ -314,8 +314,8 @@ class Crypt_GPG_Signature
     /**
      * Sets the creation date of this signature
      *
-     * @param integer $creationDate the creation date of this signature. This
-     *                              is a Unix timestamp.
+     * @param int $creationDate The creation date of this signature. This
+     *                          is a Unix timestamp.
      *
      * @return Crypt_GPG_Signature the current object, for fluent interface.
      */
@@ -328,9 +328,9 @@ class Crypt_GPG_Signature
     /**
      * Sets the expiration date of this signature
      *
-     * @param integer $expirationDate the expiration date of this signature.
-     *                                This is a Unix timestamp. Specify zero if
-     *                                this signature does not expire.
+     * @param int $expirationDate the expiration date of this signature.
+     *                            This is a Unix timestamp. Specify zero if
+     *                            this signature does not expire.
      *
      * @return Crypt_GPG_Signature the current object, for fluent interface.
      */
@@ -357,8 +357,8 @@ class Crypt_GPG_Signature
     /**
      * Sets whether or not this signature is valid
      *
-     * @param boolean $isValid true if this signature is valid and false if it
-     *                         is not.
+     * @param bool $isValid True if this signature is valid and false if it
+     *                      is not.
      *
      * @return Crypt_GPG_Signature the current object, for fluent interface.
      */

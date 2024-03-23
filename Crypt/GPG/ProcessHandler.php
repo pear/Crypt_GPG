@@ -72,7 +72,7 @@ class Crypt_GPG_ProcessHandler
     /**
      * The error code of the current operation
      *
-     * @var integer
+     * @var int
      */
     protected $errorCode = Crypt_GPG::ERROR_NONE;
 
@@ -82,7 +82,7 @@ class Crypt_GPG_ProcessHandler
      * If this is not zero when the GPG command is completed, the error code is
      * set to {@link Crypt_GPG::ERROR_MISSING_PASSPHRASE}.
      *
-     * @var integer
+     * @var int
      */
     protected $needPassphrase = 0;
 
@@ -606,7 +606,7 @@ class Crypt_GPG_ProcessHandler
                     'Unknown error deleting key. ' . $note, $code
                 );
             }
-            break;
+            break; // @phpstan-ignore-line
 
         case 'import':
             switch ($code) {
@@ -624,7 +624,7 @@ class Crypt_GPG_ProcessHandler
                     'Unknown error importing GPG key. ' . $note, $code
                 );
             }
-            break;
+            break; // @phpstan-ignore-line
 
         case 'export':
         case 'export-secret-keys':
@@ -638,7 +638,7 @@ class Crypt_GPG_ProcessHandler
                     'Unknown error exporting a key. ' . $note, $code
                 );
             }
-            break;
+            break; // @phpstan-ignore-line
 
         case 'encrypt':
         case 'sign':
@@ -668,7 +668,7 @@ class Crypt_GPG_ProcessHandler
                     "Unknown error {$this->operation}ing data. $note", $code
                 );
             }
-            break;
+            break; // @phpstan-ignore-line
 
         case 'verify':
             switch ($code) {

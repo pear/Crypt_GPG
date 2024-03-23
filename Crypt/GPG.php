@@ -330,7 +330,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                       the private key. For example,
      *                       "Test User (example) <test@example.com>",
      *                       "test@example.com" or a hexadecimal string.
-     * @param boolean $armor optional. If true, ASCII armored data is returned;
+     * @param bool    $armor optional. If true, ASCII armored data is returned;
      *                       otherwise, binary data is returned. Defaults to
      *                       true.
      *
@@ -367,7 +367,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                       the public key. For example,
      *                       "Test User (example) <test@example.com>",
      *                       "test@example.com" or a hexadecimal string.
-     * @param boolean $armor optional. If true, ASCII armored data is returned;
+     * @param bool    $armor optional. If true, ASCII armored data is returned;
      *                       otherwise, binary data is returned. Defaults to
      *                       true.
      *
@@ -528,7 +528,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                        the key. For example,
      *                        "Test User (example) <test@example.com>",
      *                        "test@example.com" or a hexadecimal string.
-     * @param integer $format optional. How the fingerprint should be formatted.
+     * @param int     $format optional. How the fingerprint should be formatted.
      *                        Use {@link Crypt_GPG::FORMAT_X509} for X.509
      *                        certificate format,
      *                        {@link Crypt_GPG::FORMAT_CANONICAL} for the format
@@ -536,8 +536,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                        {@link Crypt_GPG::FORMAT_NONE} for no formatting.
      *                        Defaults to <code>Crypt_GPG::FORMAT_NONE</code>.
      *
-     * @return string the fingerprint of the key, or null if no fingerprint
-     *                is found for the given <kbd>$keyId</kbd>.
+     * @return string|null The fingerprint of the key, or null if no fingerprint
+     *                     is found for the given <kbd>$keyId</kbd>.
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
@@ -601,7 +601,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * binary.
      *
      * @param string  $data  the data to be encrypted.
-     * @param boolean $armor optional. If true, ASCII armored data is returned;
+     * @param bool    $armor optional. If true, ASCII armored data is returned;
      *                       otherwise, binary data is returned. Defaults to
      *                       true.
      *
@@ -632,7 +632,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                               which to store the encrypted data. If null
      *                               or unspecified, the encrypted data is
      *                               returned as a string.
-     * @param boolean $armor         optional. If true, ASCII armored data is
+     * @param bool    $armor         optional. If true, ASCII armored data is
      *                               returned; otherwise, binary data is
      *                               returned. Defaults to true.
      *
@@ -668,12 +668,12 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * earlier GnuPG versions, you will get an error. Please use
      * {@link Crypt_GPG::decryptAndVerify()} to verify encrypted-signed data.
      *
-     * @param string  $data  the data to be encrypted and signed.
-     * @param boolean $armor optional. If true, ASCII armored data is returned;
-     *                       otherwise, binary data is returned. Defaults to
-     *                       true.
+     * @param string $data  The data to be encrypted and signed.
+     * @param bool   $armor Optional. If true, ASCII armored data is returned;
+     *                      otherwise, binary data is returned. Defaults to
+     *                      true.
      *
-     * @return string the encrypted signed data.
+     * @return string The encrypted signed data.
      *
      * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified
      *         or if no signing key is specified. See
@@ -712,7 +712,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                            encrypted, signed data should be stored. If
      *                            null or unspecified, the encrypted, signed
      *                            data is returned as a string.
-     * @param boolean $armor      optional. If true, ASCII armored data is
+     * @param bool    $armor      optional. If true, ASCII armored data is
      *                            returned; otherwise, binary data is returned.
      *                            Defaults to true.
      *
@@ -826,7 +826,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @param string  $encryptedData      the encrypted, signed data to be decrypted
      *                                    and verified.
-     * @param boolean $ignoreVerifyErrors enables ignoring of signature
+     * @param bool    $ignoreVerifyErrors enables ignoring of signature
      *                                    verification errors caused by missing public key
      *                                    When enabled Crypt_GPG_KeyNotFoundException
      *                                    will not be thrown.
@@ -870,7 +870,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                                    decrypted data should be written. If null
      *                                    or unspecified, the decrypted data is
      *                                    returned in the results array.
-     * @param boolean $ignoreVerifyErrors enables ignoring of signature
+     * @param bool    $ignoreVerifyErrors enables ignoring of signature
      *                                    verification errors caused by missing public key
      *                                    When enabled Crypt_GPG_KeyNotFoundException
      *                                    will not be thrown.
@@ -920,12 +920,12 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                          {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
      *                          specified, defaults to
      *                          <kbd>Crypt_GPG::SIGN_MODE_NORMAL</kbd>.
-     * @param boolean $armor    optional. If true, ASCII armored data is
+     * @param bool    $armor    optional. If true, ASCII armored data is
      *                          returned; otherwise, binary data is returned.
      *                          Defaults to true. This has no effect if the
      *                          mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
      *                          used.
-     * @param boolean $textmode optional. If true, line-breaks in signed data
+     * @param bool    $textmode optional. If true, line-breaks in signed data
      *                          are normalized. Use this option when signing
      *                          e-mail, or for greater compatibility between
      *                          systems with different line-break formats.
@@ -976,12 +976,12 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                            {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
      *                            specified, defaults to
      *                            <kbd>Crypt_GPG::SIGN_MODE_NORMAL</kbd>.
-     * @param boolean $armor      optional. If true, ASCII armored data is
+     * @param bool    $armor      optional. If true, ASCII armored data is
      *                            returned; otherwise, binary data is returned.
      *                            Defaults to true. This has no effect if the
      *                            mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
      *                            used.
-     * @param boolean $textmode   optional. If true, line-breaks in signed data
+     * @param bool    $textmode   optional. If true, line-breaks in signed data
      *                            are normalized. Use this option when signing
      *                            e-mail, or for greater compatibility between
      *                            systems with different line-break formats.
@@ -1246,7 +1246,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Tell if there are encryption keys registered
      *
-     * @return boolean True if the data shall be encrypted
+     * @return bool True if the data shall be encrypted
      */
     public function hasEncryptKeys()
     {
@@ -1256,7 +1256,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Tell if there are signing keys registered
      *
-     * @return boolean True if the data shall be signed
+     * @return bool True if the data shall be signed
      */
     public function hasSignKeys()
     {
@@ -1279,15 +1279,14 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * This handles resolving full key objects from the provided
      * <kbd>$key</kbd> value.
      *
-     * @param &array  $array      the array to which the key should be added.
-     * @param boolean $encrypt    whether or not the key must be able to
-     *                            encrypt.
-     * @param boolean $sign       whether or not the key must be able to sign.
-     * @param mixed   $key        the key to add. This may be a key identifier,
+     * @param array   &$array     The array to which the key should be added
+     * @param bool    $encrypt    Whether or not the key must be able to
+     *                            encrypt
+     * @param bool    $sign       Whether or not the key must be able to sign
+     * @param mixed   $key        The key to add. This may be a key identifier,
      *                            user id, fingerprint, {@link Crypt_GPG_Key} or
-     *                            {@link Crypt_GPG_SubKey}.
-     * @param string  $passphrase optional. The passphrase associated with the
-     *                            key.
+     *                            {@link Crypt_GPG_SubKey}
+     * @param string  $passphrase Optional passphrase associated with the key
      *
      * @return void
      *
@@ -1369,8 +1368,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Imports a public or private key into the keyring
      *
-     * @param string  $key    the key to be imported.
-     * @param boolean $isFile whether or not the input is a filename.
+     * @param string $key    The key to be imported.
+     * @param bool   $isFile Whether or not the input is a filename.
      *
      * @return array an associative array containing the following elements:
      *               - <kbd>fingerprint</kbd>       - the fingerprint of the
@@ -1432,10 +1431,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @param string  $keyId   either the full uid of the key, the email
      *                         part of the uid of the key or the key id.
-     * @param boolean $armor   optional. If true, ASCII armored data is returned;
+     * @param bool    $armor   optional. If true, ASCII armored data is returned;
      *                         otherwise, binary data is returned. Defaults to
      *                         true.
-     * @param boolean $private return private instead of public key
+     * @param bool    $private return private instead of public key
      *
      * @return string the key data.
      *
@@ -1479,13 +1478,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Encrypts data
      *
-     * @param string  $data       the data to encrypt.
-     * @param boolean $isFile     whether or not the data is a filename.
-     * @param string  $outputFile the filename of the file in which to store
-     *                            the encrypted data. If null, the encrypted
-     *                            data is returned as a string.
-     * @param boolean $armor      if true, ASCII armored data is returned;
-     *                            otherwise, binary data is returned.
+     * @param string      $data       The data to encrypt.
+     * @param bool        $isFile     Whether or not the data is a filename.
+     * @param string|null $outputFile The filename of the file in which to store
+     *                                the encrypted data. If null, the encrypted
+     *                                data is returned as a string.
+     * @param bool        $armor      If true, ASCII armored data is returned;
+     *                                otherwise, binary data is returned.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the encrypted data is returned.
@@ -1530,11 +1529,11 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Decrypts data
      *
-     * @param string  $data       the data to be decrypted.
-     * @param boolean $isFile     whether or not the data is a filename.
-     * @param string  $outputFile the name of the file to which the decrypted
-     *                            data should be written. If null, the decrypted
-     *                            data is returned as a string.
+     * @param string      $data       The data to be decrypted.
+     * @param bool        $isFile     Whether or not the data is a filename.
+     * @param string|null $outputFile The name of the file to which the decrypted
+     *                                data should be written. If null, the decrypted
+     *                                data is returned as a string.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the decrypted data is returned.
@@ -1576,27 +1575,27 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Signs data
      *
-     * @param string  $data       the data to be signed.
-     * @param boolean $isFile     whether or not the data is a filename.
-     * @param string  $outputFile the name of the file in which the signed data
-     *                            should be stored. If null, the signed data is
-     *                            returned as a string.
-     * @param int     $mode       the data signing mode to use. Should be one of
-     *                            {@link Crypt_GPG::SIGN_MODE_NORMAL},
-     *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or
-     *                            {@link Crypt_GPG::SIGN_MODE_DETACHED}.
-     * @param boolean $armor      if true, ASCII armored data is returned;
-     *                            otherwise, binary data is returned. This has
-     *                            no effect if the mode
-     *                            <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
-     *                            used.
-     * @param boolean $textmode   if true, line-breaks in signed data be
-     *                            normalized. Use this option when signing
-     *                            e-mail, or for greater compatibility between
-     *                            systems with different line-break formats.
-     *                            Defaults to false. This has no effect if the
-     *                            mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
-     *                            used as clear-signing always uses textmode.
+     * @param string      $data       The data to be signed.
+     * @param bool        $isFile     Whether or not the data is a filename.
+     * @param string|null $outputFile The name of the file in which the signed data
+     *                                should be stored. If null, the signed data is
+     *                                returned as a string.
+     * @param int         $mode       The data signing mode to use. Should be one of
+     *                                {@link Crypt_GPG::SIGN_MODE_NORMAL},
+     *                                {@link Crypt_GPG::SIGN_MODE_CLEAR} or
+     *                                {@link Crypt_GPG::SIGN_MODE_DETACHED}.
+     * @param bool        $armor      If true, ASCII armored data is returned;
+     *                                otherwise, binary data is returned. This has
+     *                                no effect if the mode
+     *                                <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                                used.
+     * @param bool        $textmode   If true, line-breaks in signed data be
+     *                                normalized. Use this option when signing
+     *                                e-mail, or for greater compatibility between
+     *                                systems with different line-break formats.
+     *                                Defaults to false. This has no effect if the
+     *                                mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                                used as clear-signing always uses textmode.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the signed data (or the signature
@@ -1670,14 +1669,14 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Encrypts and signs data
      *
-     * @param string  $data       the data to be encrypted and signed.
-     * @param boolean $isFile     whether or not the data is a filename.
-     * @param string  $outputFile the name of the file in which the encrypted,
-     *                            signed data should be stored. If null, the
-     *                            encrypted, signed data is returned as a
-     *                            string.
-     * @param boolean $armor      if true, ASCII armored data is returned;
-     *                            otherwise, binary data is returned.
+     * @param string      $data       The data to be encrypted and signed.
+     * @param bool        $isFile     Whether or not the data is a filename.
+     * @param string|null $outputFile The name of the file in which the encrypted,
+     *                                signed data should be stored. If null, the
+     *                                encrypted, signed data is returned as a
+     *                                string.
+     * @param bool        $armor      If true, ASCII armored data is returned;
+     *                                otherwise, binary data is returned.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the encrypted, signed data is
@@ -1741,7 +1740,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * Verifies data
      *
      * @param string  $data      the signed data to be verified.
-     * @param boolean $isFile    whether or not the data is a filename.
+     * @param bool    $isFile    whether or not the data is a filename.
      * @param string  $signature if verifying a file signed using a detached
      *                           signature, this must be the detached signature
      *                           data. Otherwise, specify ''.
@@ -1797,16 +1796,16 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Decrypts and verifies encrypted, signed data
      *
-     * @param string  $data               the encrypted signed data to be decrypted and
-     *                                    verified.
-     * @param boolean $isFile             whether or not the data is a filename.
-     * @param string  $outputFile         the name of the file to which the decrypted
-     *                                    data should be written. If null, the decrypted
-     *                                    data is returned in the results array.
-     * @param boolean $ignoreVerifyErrors enables ignoring of signature verification
-     *                                    errors caused by missing public key.
-     *                                    When enabled Crypt_GPG_KeyNotFoundException
-     *                                    will not be thrown.
+     * @param string      $data               The encrypted signed data to be decrypted and
+     *                                        verified.
+     * @param bool        $isFile             Whether or not the data is a filename.
+     * @param string|null $outputFile         The name of the file to which the decrypted
+     *                                        data should be written. If null, the decrypted
+     *                                        data is returned in the results array.
+     * @param bool        $ignoreVerifyErrors Enables ignoring of signature verification
+     *                                        errors caused by missing public key.
+     *                                        When enabled Crypt_GPG_KeyNotFoundException
+     *                                        will not be thrown.
      *
      * @return array two element array. The array has an element 'data'
      *               containing the decrypted data and an element
@@ -1863,9 +1862,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Prepares command input
      *
-     * @param string  $data       the input data.
-     * @param boolean $isFile     whether or not the input is a filename.
-     * @param boolean $allowEmpty whether to check if the input is not empty.
+     * @param string $data       The input data
+     * @param bool   $isFile     Whether or not the input is a filename
+     * @param bool   $allowEmpty Whether to check if the input is not empty
      *
      * @throws Crypt_GPG_NoDataException if the key data is missing.
      * @throws Crypt_GPG_FileException if the file is not readable.
@@ -1899,15 +1898,15 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Prepares command output
      *
-     * @param string  $outputFile the name of the file in which the output
-     *                            data should be stored. If null, the output
-     *                            data is returned as a string.
-     * @param boolean $input      the input resource, in case it would need
-     *                            to be released (closed) on exception.
+     * @param string|null $outputFile The name of the file in which the output
+     *                                data should be stored. If null, the output
+     *                                data is returned as a string.
+     * @param resource    $input      The input resource, in case it would need
+     *                                to be released (closed) on exception.
      *
      * @throws Crypt_GPG_FileException if the file is not writeable.
      *
-     * @return string The command output
+     * @return string|resource The command output
      */
     protected function _prepareOutput($outputFile, $input = null)
     {

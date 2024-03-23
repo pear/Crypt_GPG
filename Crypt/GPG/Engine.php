@@ -149,7 +149,7 @@ class Crypt_GPG_Engine
      *
      * Strict mode is disabled by default.
      *
-     * @var boolean
+     * @var bool
      * @see Crypt_GPG_Engine::__construct()
      */
     private $_strict = false;
@@ -197,7 +197,7 @@ class Crypt_GPG_Engine
      *
      * Only used for GnuPG 2.1.x
      *
-     * @var string
+     * @var string|false|null
      * @see Crypt_GPG_Engine::__construct()
      * @see Crypt_GPG_Engine::_getGPGConf()
      */
@@ -293,28 +293,28 @@ class Crypt_GPG_Engine
     /**
      * A handle for the GPG process
      *
-     * @var resource
+     * @var resource|null
      */
     private $_process = null;
 
     /**
      * A handle for the gpg-agent process
      *
-     * @var resource
+     * @var resource|null
      */
     private $_agentProcess = null;
 
     /**
      * GPG agent daemon socket and PID for running gpg-agent
      *
-     * @var string
+     * @var string|null
      */
     private $_agentInfo = null;
 
     /**
      * Whether or not the operating system is Darwin (OS X)
      *
-     * @var boolean
+     * @var bool
      */
     private $_isDarwin = false;
 
@@ -357,7 +357,7 @@ class Crypt_GPG_Engine
     /**
      * A status/error handler
      *
-     * @var Crypt_GPG_ProcessHanler
+     * @var Crypt_GPG_ProcessHandler|null
      */
     private $_processHandler = null;
 
@@ -382,7 +382,7 @@ class Crypt_GPG_Engine
      *
      * This is data to send to GPG. Either a string or a stream resource.
      *
-     * @var string|resource
+     * @var string|resource|null
      * @see Crypt_GPG_Engine::setInput()
      */
     private $_input = null;
@@ -392,7 +392,7 @@ class Crypt_GPG_Engine
      *
      * Either a string or a stream resource.
      *
-     * @var string|resource
+     * @var string|resource|null
      * @see Crypt_GPG_Engine::setMessage()
      */
     private $_message = null;
@@ -663,7 +663,7 @@ class Crypt_GPG_Engine
      * subprocess. The handler method must accept the error line to be handled
      * as its first parameter.
      *
-     * @param callback $callback the callback method to use.
+     * @param callable $callback the callback method to use.
      * @param array    $args     optional. Additional arguments to pass as
      *                           parameters to the callback method.
      *
@@ -684,7 +684,7 @@ class Crypt_GPG_Engine
      * GPG subprocess. The handler method must accept the status line to be
      * handled as its first parameter.
      *
-     * @param callback $callback the callback method to use.
+     * @param callable $callback the callback method to use.
      * @param array    $args     optional. Additional arguments to pass as
      *                           parameters to the callback method.
      *
@@ -780,10 +780,9 @@ class Crypt_GPG_Engine
     /**
      * Sets the input source for the current GPG operation
      *
-     * @param &string|resource $input either a reference to the string
+     * @param string|resource &$input Either a reference to the string
      *                                containing the input data or an open
-     *                                stream resource containing the input
-     *                                data.
+     *                                stream resource containing the input data
      *
      * @return void
      */
@@ -797,10 +796,9 @@ class Crypt_GPG_Engine
      *
      * Detached signature data should be specified here.
      *
-     * @param &string|resource $message either a reference to the string
+     * @param string|resource &$message Either a reference to the string
      *                                  containing the message data or an open
-     *                                  stream resource containing the message
-     *                                  data.
+     *                                  stream resource containing the message data
      *
      * @return void
      */
@@ -812,10 +810,10 @@ class Crypt_GPG_Engine
     /**
      * Sets the output destination for the current GPG operation
      *
-     * @param &string|resource $output either a reference to the string in
+     * @param string|resource &$output Either a reference to the string in
      *                                 which to store GPG output or an open
      *                                 stream resource to which the output data
-     *                                 should be written.
+     *                                 should be written
      *
      * @return void
      */
@@ -908,7 +906,7 @@ class Crypt_GPG_Engine
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @throws Crypt_GPG_UnsupportedException if the provided binary is not
+     * @throws Crypt_GPG_Exception if the provided binary is not
      *         GnuPG or if the GnuPG version is less than 1.0.2.
      */
     public function getVersion()
@@ -1715,7 +1713,7 @@ class Crypt_GPG_Engine
 
             // proc_close() can return -1 in some cases,
             // get the real exit code from the process status
-            if ($exitCode < 0 && $status && !$status['running']) {
+            if ($exitCode < 0 && !$status['running']) {
                 $exitCode = $status['exitcode'];
             }
 
@@ -1804,8 +1802,7 @@ class Crypt_GPG_Engine
      * If the pipe is already closed, it is ignored. If the pipe is open, it
      * is flushed and then closed.
      *
-     * @param integer $pipeNumber the file descriptor number of the pipe to
-     *                            close.
+     * @param int $pipeNumber The file descriptor number of the pipe to close
      *
      * @return void
      */
@@ -1925,7 +1922,7 @@ class Crypt_GPG_Engine
     /**
      * Gets the location of the PinEntry script
      *
-     * @return string the location of the PinEntry script.
+     * @return string|null the location of the PinEntry script.
      */
     private function _getPinEntry()
     {
@@ -1943,6 +1940,8 @@ class Crypt_GPG_Engine
                 return $path . $ds . 'crypt-gpg-pinentry';
             }
         }
+
+        return null;
     }
 
     /**

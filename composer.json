@@ -47,6 +47,7 @@
         "source": "https://github.com/pear/Crypt_GPG"
     },
     "require-dev": {
+        "phpstan/phpstan": "^1.2",
         "phpunit/phpunit": "^9"
     },
     "archive": {

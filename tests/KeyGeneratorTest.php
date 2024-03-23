@@ -62,6 +62,8 @@ require_once 'Crypt/GPG/KeyGenerator.php';
  */
 class KeyGeneratorTest extends Crypt_GPG_TestCase
 {
+    protected $generator;
+
     protected function assertKeyEquals(
         Crypt_GPG_Key $key1,
         Crypt_GPG_Key $key2

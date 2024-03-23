@@ -29,10 +29,10 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2023-11-23</date>
- <time>10:12:15</time>
+ <date>2024-03-23</date>
+ <time>11:43:03</time>
  <version>
-  <release>1.6.8</release>
+  <release>1.6.9</release>
   <api>1.6.8</api>
  </version>
  <stability>
@@ -41,7 +41,7 @@ This package requires PHP version 5.4.8 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Fix bug in parsing USERID_HINT status causing missing real user name in BadPassphrases array [alec].
+Fix numerous PHPDoc and code issues found by static code analyzer [alec].
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -165,17 +165,17 @@ Fix bug in parsing USERID_HINT status causing missing real user name in BadPassp
  <changelog>
   <release>
    <version>
-    <release>1.6.8</release>
+    <release>1.6.9</release>
     <api>1.6.8</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2023-11-23</date>
+   <date>2024-03-23</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-Fix bug in parsing USERID_HINT status causing missing real user name in BadPassphrases array [alec].
+Fix numerous PHPDoc and code issues found by static code analyzer [alec].
    </notes>
   </release>
  </changelog>

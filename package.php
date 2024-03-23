@@ -36,9 +36,9 @@ PEAR::setErrorHandling(PEAR_ERROR_DIE);
 $apiVersion     = '1.6.8';
 $apiState       = 'stable';
 
-$releaseVersion = '1.6.8';
+$releaseVersion = '1.6.9';
 $releaseState   = 'stable';
-$releaseNotes   = "Fix bug in parsing USERID_HINT status causing missing real user name in BadPassphrases array [alec].";
+$releaseNotes   = "Fix numerous PHPDoc and code issues found by static code analyzer [alec].";
 
 $description = "This package provides an object oriented interface to GNU Privacy " .
     "Guard (GnuPG). It requires the GnuPG executable to be on the system.\n\n" .
@@ -68,8 +68,11 @@ $package->setOptions(
         'ignore'            => array(
             'tests/config.php',
             'tests/debug.log',
+            'tests/.phpunit.result.cache',
             'tools/',
             'package.php',
+            'phpstan',
+            'phpstan.neon',
             'composer.json',
             'composer.lock',
             '*.tgz',

@@ -1510,7 +1510,7 @@ class Crypt_GPG_Engine
                 $agentDescriptorSpec,
                 $this->_agentPipes,
                 null,
-                $env,
+                array_filter($env, 'is_scalar'),
                 array('binary_pipes' => true)
             );
 
@@ -1663,7 +1663,7 @@ class Crypt_GPG_Engine
             $descriptorSpec,
             $this->_pipes,
             null,
-            $env,
+            array_filter($env, 'is_scalar'),
             array('binary_pipes' => true)
         );
 

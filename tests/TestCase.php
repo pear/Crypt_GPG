@@ -634,7 +634,7 @@ TEXT;
         return __DIR__ . '/' . self::TEMPDIR . '/' . $filename;
     }
 
-    protected function assertDecryptAndVerifyResultsEquals(array $expected, array $actual)
+    protected function assertDecryptAndVerifyResultsEquals(array $expected, array $actual, $csf = false)
     {
         $this->assertEquals(
             count($expected),
@@ -666,6 +666,11 @@ TEXT;
             'Actual result does not include signatures.'
         );
 
+        if ($csf && (substr($actual['data'], -1) != "\n")) {
+            // see discussion around GnuPG's handling of trailing
+            // newlines in CSF messages at https://dev.gnupg.org/T7106
+            $actual['data'] = $actual['data']."\n";
+        }
         $this->assertEquals(
             $expected['data'],
             $actual['data'],

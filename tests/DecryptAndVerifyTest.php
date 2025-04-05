@@ -939,7 +939,7 @@ TEXT;
         // }}}
 
         $results = $this->gpg->decryptAndVerify($clearsignedData);
-        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results);
+        $this->assertDecryptAndVerifyResultsEquals($expectedResults, $results, true);
     }
 
     /**

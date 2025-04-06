@@ -1452,7 +1452,9 @@ class Crypt_GPG_Engine
         $rb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'r' : 'rb';
         $wb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'w' : 'wb';
 
-        $env = $_ENV;
+        // Get environment variables. Exclude non-scalar values to prevent from a warning in proc_open().
+        // Possibly related to https://bugs.php.net/bug.php?id=75712, which was fixed in PHP 8.2.17.
+        $env = array_filter($_ENV, 'is_scalar');
 
         // Newer versions of GnuPG return localized results. Crypt_GPG only
         // works with English, so set the locale to 'C' for the subprocess.
@@ -1546,9 +1548,11 @@ class Crypt_GPG_Engine
                 }
             }
 
-            $this->_debug('GPG-AGENT-INFO: ' . $this->_agentInfo);
+            if (is_string($this->_agentInfo)) {
+                $this->_debug('GPG-AGENT-INFO: ' . $this->_agentInfo);
 
-            $env['GPG_AGENT_INFO'] = $this->_agentInfo;
+                $env['GPG_AGENT_INFO'] = $this->_agentInfo;
+            }
 
             // gpg-agent daemon is started, we can close the launching process
             $this->_closeAgentLaunchProcess();

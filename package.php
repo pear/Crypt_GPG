@@ -36,9 +36,12 @@ PEAR::setErrorHandling(PEAR_ERROR_DIE);
 $apiVersion     = '1.6.8';
 $apiState       = 'stable';
 
-$releaseVersion = '1.6.9';
+$releaseVersion = '1.6.10';
 $releaseState   = 'stable';
-$releaseNotes   = "Fix numerous PHPDoc and code issues found by static code analyzer [alec].";
+$releaseNotes   = "Use short array syntax [alec].\n" .
+    "Filter non-scalar ENV values to prevent PHP 8.2 proc_open() warnings [alec].\n" .
+    "Tests: Handle OpenPGP-compliant CSF message verfication [dkg].\n" .
+    "CI: Add PHP 8.4 [alec]";
 
 $description = "This package provides an object oriented interface to GNU Privacy " .
     "Guard (GnuPG). It requires the GnuPG executable to be on the system.\n\n" .
@@ -49,23 +52,23 @@ $description = "This package provides an object oriented interface to GNU Privac
 $package = new PEAR_PackageFileManager2();
 
 $package->setOptions(
-    array(
+    [
         'filelistgenerator' => 'file',
         'simpleoutput'      => true,
         'baseinstalldir'    => '/',
         'packagedirectory'  => './',
-        'dir_roles'         => array(
-            'Crypt'         => 'php',
-            'Crypt/GPG'     => 'php',
-            'tests'         => 'test',
-            'data'          => 'data'
-        ),
-        'exceptions'        => array(
-            'LICENSE'       => 'doc',
-            'README.md'     => 'doc',
+        'dir_roles' => [
+            'Crypt'      => 'php',
+            'Crypt/GPG'  => 'php',
+            'tests'      => 'test',
+            'data'       => 'data'
+        ],
+        'exceptions' => [
+            'LICENSE'                    => 'doc',
+            'README.md'                  => 'doc',
             'scripts/crypt-gpg-pinentry' => 'script'
-        ),
-        'ignore'            => array(
+        ],
+        'ignore' => [
             'tests/config.php',
             'tests/debug.log',
             'tests/.phpunit.result.cache',
@@ -77,11 +80,11 @@ $package->setOptions(
             'composer.lock',
             '*.tgz',
             'vendor/'
-        ),
-        'installexceptions' => array(
+        ],
+        'installexceptions' => [
             'scripts/crypt-gpg-pinentry' => '/'
-        )
-    )
+        ]
+    ]
 );
 
 $package->setPackage('Crypt_GPG');

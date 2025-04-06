@@ -65,7 +65,7 @@ class DeletePrivateKeyTest extends Crypt_GPG_TestCase
         $keyId = 'first-keypair@example.com';
         $this->gpg->deletePrivateKey($keyId);
 
-        $expectedKeys = array();
+        $expectedKeys = [];
 
         // {{{ first-keypair@example.com
         $key = new Crypt_GPG_Key();

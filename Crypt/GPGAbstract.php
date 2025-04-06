@@ -226,7 +226,7 @@ abstract class Crypt_GPGAbstract
      *                      gen-key, import, sign, encrypt, list-keys).
      *                      Value is a string containing command line arguments to be
      *                      added to the related command. For example:
-     *                      array('sign' => '--emit-version').
+     *                      ['sign' => '--emit-version'].
      *
      * @param array $options optional. An array of options used to create the
      *                       GPG object. All options are optional and are
@@ -251,7 +251,7 @@ abstract class Crypt_GPGAbstract
      *         if no <kbd>agent</kbd> is provided and no suitable gpg-agent
      *         could be found.
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->setEngine(new Crypt_GPG_Engine($options));
     }
@@ -281,7 +281,7 @@ abstract class Crypt_GPGAbstract
      *                       gen-key, import, sign, encrypt, list-keys).
      *                       Value is a string containing command line arguments to be
      *                       added to the related command. For example:
-     *                       array('sign' => '--emit-version').
+     *                       ['sign' => '--emit-version'].
      *
      * @return Crypt_GPGAbstract the current object, for fluent interface.
      */
@@ -339,12 +339,12 @@ abstract class Crypt_GPGAbstract
 
         // According to The file 'doc/DETAILS' in the GnuPG distribution, using
         // double '--with-fingerprint' also prints the fingerprint for subkeys.
-        $arguments = array(
+        $arguments = [
             '--with-colons',
             '--with-fingerprint',
             '--with-fingerprint',
             '--fixed-list-mode'
-        );
+        ];
 
         $output = '';
 
@@ -353,7 +353,7 @@ abstract class Crypt_GPGAbstract
         $this->engine->setOperation($operation, $arguments);
         $this->engine->run();
 
-        $privateKeyFingerprints = array();
+        $privateKeyFingerprints = [];
 
         foreach (explode(PHP_EOL, $output) as $line) {
             $lineExp = explode(':', $line);
@@ -376,7 +376,7 @@ abstract class Crypt_GPGAbstract
         $this->engine->setOperation($operation, $arguments);
         $this->engine->run();
 
-        $keys   = array();
+        $keys   = [];
         $key    = null; // current key
         $subKey = null; // current sub-key
 

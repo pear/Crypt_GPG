@@ -62,11 +62,7 @@ class GeneralTest extends Crypt_GPG_TestCase
         $this->expectException('Crypt_GPG_FileException');
 
         $publicKeyringFile = $this->getTempFilename('pubring.gpg');
-        new Crypt_GPG(
-            array(
-                'publicKeyring' => $publicKeyringFile
-            )
-        );
+        new Crypt_GPG(['publicKeyring' => $publicKeyringFile]);
     }
 
     public function testPrivateKeyringFileException()
@@ -74,11 +70,7 @@ class GeneralTest extends Crypt_GPG_TestCase
         $this->expectException('Crypt_GPG_FileException');
 
         $privateKeyringFile = $this->getTempFilename('secring.gpg');
-        new Crypt_GPG(
-            array(
-                'privateKeyring' => $privateKeyringFile
-            )
-        );
+        new Crypt_GPG(['privateKeyring' => $privateKeyringFile]);
     }
 
     public function testTrustDatabaseFileException()
@@ -86,11 +78,7 @@ class GeneralTest extends Crypt_GPG_TestCase
         $this->expectException('Crypt_GPG_FileException');
 
         $trustDbFile = $this->getTempFilename('secring.gpg');
-        new Crypt_GPG(
-            array(
-                'trustDb' => $trustDbFile
-            )
-        );
+        new Crypt_GPG(['trustDb' => $trustDbFile]);
     }
 
     public function testHomedirFileException_NoCreate()
@@ -103,7 +91,7 @@ class GeneralTest extends Crypt_GPG_TestCase
         }
 
         $nonCreatableDirectory = '//.gnupg';
-        new Crypt_GPG(array('homedir' => $nonCreatableDirectory));
+        new Crypt_GPG(['homedir' => $nonCreatableDirectory]);
     }
 
     public function testHomedirFileException_NoExecute()
@@ -119,7 +107,7 @@ class GeneralTest extends Crypt_GPG_TestCase
         mkdir($nonExecutableDirectory);
         chmod($nonExecutableDirectory, 0600); // rw- --- ---
 
-        new Crypt_GPG(array('homedir' => $nonExecutableDirectory));
+        new Crypt_GPG(['homedir' => $nonExecutableDirectory]);
     }
 
     public function testHomedirFileException_NoWrite()
@@ -135,21 +123,21 @@ class GeneralTest extends Crypt_GPG_TestCase
         mkdir($nonWriteableDirectory);
         chmod($nonWriteableDirectory, 0500); // r-x --- ---
 
-        new Crypt_GPG(array('homedir' => $nonWriteableDirectory));
+        new Crypt_GPG(['homedir' => $nonWriteableDirectory]);
     }
 
     public function testBinaryPEARException()
     {
         $this->expectException('PEAR_Exception');
 
-        new Crypt_GPG(array('binary' => './non-existent-binary'));
+        new Crypt_GPG(['binary' => './non-existent-binary']);
     }
 
     public function testGPGBinaryPEARException()
     {
         $this->expectException('PEAR_Exception');
 
-        new Crypt_GPG(array('gpgBinary' => './non-existent-binary'));
+        new Crypt_GPG(['gpgBinary' => './non-existent-binary']);
     }
 
     public function testSetEngine()

@@ -149,13 +149,13 @@ class Crypt_GPG_PinEntry
      * An indexed array of associative arrays in the form:
      * <code>
      * <?php
-     *   array(
-     *     array(
+     *   [
+     *     [
      *       'keyId'      => $keyId,
      *       'passphrase' => $passphrase
-     *     ),
+     *     ],
      *     ...
-     *   );
+     *   ];
      * ?>
      * </code>
      *
@@ -166,7 +166,7 @@ class Crypt_GPG_PinEntry
      *
      * @see Crypt_GPG_PinEntry::initPinsFromENV()
      */
-    protected $pins = array();
+    protected $pins = [];
 
     /**
      * The PIN currently being requested by the Assuan server
@@ -174,10 +174,10 @@ class Crypt_GPG_PinEntry
      * If set, this is an associative array in the form:
      * <code>
      * <?php
-     *   array(
+     *   [
      *     'keyId'  => $shortKeyId,
      *     'userId' => $userIdString
-     *   );
+     *   ];
      * ?>
      * </code>
      *
@@ -287,11 +287,11 @@ class Crypt_GPG_PinEntry
         // Find PinEntry config depending on the way how the package is installed
         $ds    = DIRECTORY_SEPARATOR;
         $root  = __DIR__ . $ds . '..' . $ds . '..' . $ds;
-        $paths = array(
+        $paths = [
             '@data-dir@' . $ds . '@package-name@' . $ds . 'data', // PEAR
             $root . 'data', // Git
             $root . 'data' . $ds . 'Crypt_GPG' . $ds . 'data', // Composer
-        );
+        ];
 
         foreach ($paths as $path) {
             if (file_exists($path . $ds . 'pinentry-cli.xml')) {
@@ -497,7 +497,7 @@ class Crypt_GPG_PinEntry
     protected function sendSetDescription($text)
     {
         $text = rawurldecode($text);
-        $matches = array();
+        $matches = [];
         // TODO: handle user id with quotation marks
         $exp = '/\n"(.+)"\n.*\sID ([A-Z0-9]+),\n/mu';
         if (preg_match($exp, $text, $matches) === 1) {
@@ -505,10 +505,10 @@ class Crypt_GPG_PinEntry
             $keyId  = $matches[2];
 
             if ($this->currentPin === null || $this->currentPin['keyId'] !== $keyId) {
-                $this->currentPin = array(
+                $this->currentPin = [
                     'userId' => $userId,
                     'keyId'  => $keyId
-                );
+                ];
                 $this->log(
                     '-- looking for PIN for ' . $keyId . PHP_EOL,
                     self::VERBOSITY_ALL
@@ -724,7 +724,7 @@ class Crypt_GPG_PinEntry
      */
     protected function getWordWrappedData($data, $prefix)
     {
-        $lines = array();
+        $lines = [];
 
         do {
             if (mb_strlen($data, '8bit') > 997) {

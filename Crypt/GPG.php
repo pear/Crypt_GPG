@@ -169,71 +169,71 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * The array is of the form:
      * <code>
-     * array(
+     * [
      *   $key_id => array(
      *     'fingerprint' => $fingerprint,
      *     'passphrase'  => null
      *   )
-     * );
+     * ];
      * </code>
      *
      * @var array
      * @see Crypt_GPG::addEncryptKey()
      * @see Crypt_GPG::clearEncryptKeys()
      */
-    protected $encryptKeys = array();
+    protected $encryptKeys = [];
 
     /**
      * Keys used to decrypt
      *
      * The array is of the form:
      * <code>
-     * array(
+     * [
      *   $key_id => array(
      *     'fingerprint' => $fingerprint,
      *     'passphrase'  => $passphrase
      *   )
-     * );
+     * ];
      * </code>
      *
      * @var array
      * @see Crypt_GPG::addSignKey()
      * @see Crypt_GPG::clearSignKeys()
      */
-    protected $signKeys = array();
+    protected $signKeys = [];
 
     /**
      * Keys used to sign
      *
      * The array is of the form:
      * <code>
-     * array(
+     * [
      *   $key_id => array(
      *     'fingerprint' => $fingerprint,
      *     'passphrase'  => $passphrase
      *   )
-     * );
+     * ];
      * </code>
      *
      * @var array
      * @see Crypt_GPG::addDecryptKey()
      * @see Crypt_GPG::clearDecryptKeys()
      */
-    protected $decryptKeys = array();
+    protected $decryptKeys = [];
 
     /**
      * Passphrases used on import/export of private keys in GnuPG 2.1
      *
      * The array is of the form:
      * <code>
-     * array($key_id => $passphrase);
+     * [$key_id => $passphrase];
      * </code>
      *
      * @var array
      * @see Crypt_GPG::addPassphrase()
      * @see Crypt_GPG::clearPassphrases()
      */
-    protected $passphrases = array();
+    protected $passphrases = [];
 
     /**
      * Imports a public or private key into the keyring
@@ -428,10 +428,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
         }
 
         $operation = '--delete-key -- ' . escapeshellarg($fingerprint);
-        $arguments = array(
+        $arguments = [
             '--batch',
             '--yes'
-        );
+        ];
 
         $this->engine->reset();
         $this->engine->setOperation($operation, $arguments);
@@ -475,10 +475,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
         }
 
         $operation = '--delete-secret-key -- ' . escapeshellarg($fingerprint);
-        $arguments = array(
+        $arguments = [
             '--batch',
             '--yes'
-        );
+        ];
 
         $this->engine->reset();
         $this->engine->setOperation($operation, $arguments);
@@ -547,10 +547,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
     {
         $output    = '';
         $operation = '--list-keys -- ' . escapeshellarg($keyId);
-        $arguments = array(
+        $arguments = [
             '--with-colons',
             '--with-fingerprint'
-        );
+        ];
 
         $this->engine->reset();
         $this->engine->setOutput($output);
@@ -1196,7 +1196,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function clearDecryptKeys()
     {
-        $this->decryptKeys = array();
+        $this->decryptKeys = [];
         return $this;
     }
 
@@ -1210,7 +1210,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function clearEncryptKeys()
     {
-        $this->encryptKeys = array();
+        $this->encryptKeys = [];
         return $this;
     }
 
@@ -1224,7 +1224,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function clearSignKeys()
     {
-        $this->signKeys = array();
+        $this->signKeys = [];
         return $this;
     }
 
@@ -1239,7 +1239,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     public function clearPassphrases()
     {
-        $this->passphrases = array();
+        $this->passphrases = [];
         return $this;
     }
 
@@ -1295,7 +1295,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     protected function _addKey(array &$array, $encrypt, $sign, $key,
         $passphrase = null
     ) {
-        $subKeys = array();
+        $subKeys = [];
 
         if (is_scalar($key)) {
             $keys = $this->getKeys($key);
@@ -1358,10 +1358,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
                 );
             }
 
-            $array[$subKey->getId()] = array(
+            $array[$subKey->getId()] = [
                 'fingerprint' => $subKey->getFingerprint(),
                 'passphrase'  => $passphrase
-            );
+            ];
         }
     }
 
@@ -1398,8 +1398,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      */
     protected function _importKey($key, $isFile)
     {
-        $result    = array();
-        $arguments = array();
+        $result    = [];
+        $arguments = [];
         $input     = $this->_prepareInput($key, $isFile, false);
         $version   = $this->engine->getVersion();
 
@@ -1464,7 +1464,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $keyData   = '';
         $operation = $private ? '--export-secret-keys' : '--export';
         $operation .= ' -- ' . escapeshellarg($fingerprint);
-        $arguments = $armor ? array('--armor') : array();
+        $arguments = $armor ? ['--armor'] : [];
 
         $this->engine->reset();
         $this->engine->setPins($this->passphrases);
@@ -1509,7 +1509,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
 
         $input     = $this->_prepareInput($data, $isFile);
         $output    = $this->_prepareOutput($outputFile, $input);
-        $arguments = $armor ? array('--armor') : array();
+        $arguments = $armor ? ['--armor'] : [];
 
         foreach ($this->encryptKeys as $key) {
             $arguments[] = '--recipient ' . escapeshellarg($key['fingerprint']);
@@ -1640,7 +1640,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
             break;
         }
 
-        $arguments = array();
+        $arguments = [];
 
         if ($armor) {
             $arguments[] = '--armor';
@@ -1713,7 +1713,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
 
         $input     = $this->_prepareInput($data, $isFile);
         $output    = $this->_prepareOutput($outputFile, $input);
-        $arguments = $armor ? array('--armor') : array();
+        $arguments = $armor ? ['--armor'] : [];
 
         foreach ($this->signKeys as $key) {
             $arguments[] = '--local-user ' .
@@ -1766,12 +1766,12 @@ class Crypt_GPG extends Crypt_GPGAbstract
     {
         if ($signature == '') {
             $operation = '--verify';
-            $arguments = array();
+            $arguments = [];
         } else {
             // Signed data goes in FD_MESSAGE, detached signature data goes in
             // FD_INPUT.
             $operation = '--verify - "-&' . Crypt_GPG_Engine::FD_MESSAGE. '"';
-            $arguments = array('--enable-special-filenames');
+            $arguments = ['--enable-special-filenames'];
         }
 
         $input = $this->_prepareInput($data, $isFile, false);
@@ -1847,10 +1847,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $this->engine->setProcessData('IgnoreVerifyErrors', $ignoreVerifyErrors);
         $this->engine->run();
 
-        $return = array(
+        $return = [
             'data'       => null,
             'signatures' => $this->engine->getProcessData('Signatures')
-        );
+        ];
 
         if ($outputFile === null) {
             $return['data'] = $output;

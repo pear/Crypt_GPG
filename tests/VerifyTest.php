@@ -137,7 +137,7 @@ yiFKb0X03YSJqscaGRb0BKjZ3P+6SvjG160/WOa9vpey4QUDAA==
 TEXT;
         // }}}
 
-        $expectedSignatures = array($signature);
+        $expectedSignatures = [$signature];
 
         $signatures = $this->gpg->verify($normalSignedData);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
@@ -181,7 +181,7 @@ qO+KlKcldtYdMZH9AA+KOLQ=
 TEXT;
         // }}}
 
-        $expectedSignatures = array($signature);
+        $expectedSignatures = [$signature];
 
         $signatures = $this->gpg->verify($clearsignedData);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
@@ -223,7 +223,7 @@ BdQ5rTOK2pp2X2vy/k2aCPo=
 TEXT;
         // }}}
 
-        $expectedSignatures = array($signature);
+        $expectedSignatures = [$signature];
 
         $signatures = $this->gpg->verify($data, $detachedSignature);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
@@ -282,7 +282,7 @@ y/y/MVtYcwE=
 TEXT;
         // }}}
 
-        $expectedSignatures = array($firstSignature, $secondSignature);
+        $expectedSignatures = [$firstSignature, $secondSignature];
 
         $signatures = $this->gpg->verify($dualNormalSignedData);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
@@ -343,7 +343,7 @@ kZ/cCDE/fgToHk+7AJ9sU0NweUfUP3KNe2UK808Epd0Avg==
 TEXT;
         // }}}
 
-        $expectedSignatures = array($firstSignature, $secondSignature);
+        $expectedSignatures = [$firstSignature, $secondSignature];
 
         $signatures = $this->gpg->verify($dualClearsignedData);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
@@ -402,7 +402,7 @@ Dypdcanj3VE3inTxleaQtdqIPwMFAEjS+QLAl9nslMBjYxECPyYAoN+Y3tibHIg+
 TEXT;
         // }}}
 
-        $expectedSignatures = array($firstSignature, $secondSignature);
+        $expectedSignatures = [$firstSignature, $secondSignature];
 
         $signatures = $this->gpg->verify($data, $dualDetachedSignature);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
@@ -438,7 +438,7 @@ BdQ5rTOK2pp2X2vy/k2aCPo=
 TEXT;
         // }}}
 
-        $expectedSignatures = array($signature);
+        $expectedSignatures = [$signature];
 
         $signatures = $this->gpg->verify($modifiedData, $detachedSignature);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
@@ -486,7 +486,7 @@ Dypdcanj3VE3inTxleaQtdqIPwMFAEjS+QLAl9nslMBjYxECPyYAoN+Y3tibHIg+
 TEXT;
         // }}}
 
-        $expectedSignatures = array($firstSignature, $secondSignature);
+        $expectedSignatures = [$firstSignature, $secondSignature];
 
         $signatures = $this->gpg->verify($modifiedData, $dualDetachedSignature);
         $this->assertSignaturesEquals($expectedSignatures, $signatures);
@@ -514,7 +514,7 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedSignatures = array($signature);
+        $expectedSignatures = [$signature];
 
         $filename = $this->getDataFilename('testVerifyFileNormalSignedData.asc');
 
@@ -544,7 +544,7 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedSignatures = array($signature);
+        $expectedSignatures = [$signature];
 
         $filename = $this->getDataFilename('testVerifyFileClearsignedData.asc');
 
@@ -586,7 +586,7 @@ Of32/RcteCLdt73awNJ0CwI=
 TEXT;
         // }}}
 
-        $expectedSignatures = array($signature);
+        $expectedSignatures = [$signature];
 
         $filename = $this->getDataFilename('testFileMedium.plain');
 
@@ -632,7 +632,7 @@ TEXT;
         $secondSignature->setUserId($userId);
         // }}}
 
-        $expectedSignatures = array($firstSignature, $secondSignature);
+        $expectedSignatures = [$firstSignature, $secondSignature];
 
         $filename = $this->getDataFilename('testVerifyFileDualNormalSignedData.asc');
 
@@ -678,7 +678,7 @@ TEXT;
         $secondSignature->setUserId($userId);
         // }}}
 
-        $expectedSignatures = array($firstSignature, $secondSignature);
+        $expectedSignatures = [$firstSignature, $secondSignature];
 
         $filename = $this->getDataFilename('testVerifyFileDualClearsignedData.asc');
 
@@ -737,7 +737,7 @@ JaPThD7lRVE9ve57AJ0Yy7JwiT9sGXomln4JtRvuSpGtsg==
 TEXT;
         // }}}
 
-        $expectedSignatures = array($firstSignature, $secondSignature);
+        $expectedSignatures = [$firstSignature, $secondSignature];
 
         $filename = $this->getDataFilename('testFileMedium.plain');
 

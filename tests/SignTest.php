@@ -116,7 +116,7 @@ class SignTest extends Crypt_GPG_TestCase
      */
     public function testSignNoPassphrase()
     {
-        $this->gpg->setEngineOptions(array('sign' => '--emit-version'));
+        $this->gpg->setEngineOptions(['sign' => '--emit-version']);
 
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('no-passphrase@example.com');
@@ -124,7 +124,7 @@ class SignTest extends Crypt_GPG_TestCase
 
         // Check if --emit-version option works
         $this->assertTrue(strpos($signedData, 'Version:') !== false);
-        $this->gpg->setEngineOptions(array());
+        $this->gpg->setEngineOptions([]);
 
         $signatures = $this->gpg->verify($signedData);
         $this->assertEquals(1, count($signatures));

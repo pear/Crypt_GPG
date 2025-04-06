@@ -62,7 +62,7 @@ class GetKeysTest extends Crypt_GPG_TestCase
      */
     public function testGetKeys()
     {
-        $expectedKeys = array();
+        $expectedKeys = [];
 
         // {{{ first-keypair@example.com
         $key = new Crypt_GPG_Key();
@@ -252,7 +252,7 @@ class GetKeysTest extends Crypt_GPG_TestCase
     public function testGetKeysWithKeyId()
     {
         $keyId = 'first-keypair@example.com';
-        $expectedKeys = array();
+        $expectedKeys = [];
 
         // {{{ first-keypair@example.com
         $key = new Crypt_GPG_Key();
@@ -298,7 +298,7 @@ class GetKeysTest extends Crypt_GPG_TestCase
     public function testGetKeysNone()
     {
         $keyId = 'non-existent-key@example.com';
-        $expectedKeys = array();
+        $expectedKeys = [];
         $keys = $this->gpg->getKeys($keyId);
         $this->assertEquals($expectedKeys, $keys);
     }

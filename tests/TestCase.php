@@ -90,7 +90,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
             file_put_contents(__DIR__ . '/debug.log', $text . "\n", FILE_APPEND);
         };
 
-        $config = array(
+        $config = [
             'homedir' => __DIR__ . '/' . self::HOMEDIR,
             // 'binary' => '/usr/bin/gpg2',
             // 'agent'  => '/usr/bin/gpg-agent',
@@ -100,7 +100,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
             // 'compress-algo' => 'zip',
             'debug'  => $debugFunction,
             // 'options' => array(),
-        );
+        ];
 
         if ($binary = getenv('TESTS_GPG_BINARY')) {
             $config['binary'] = $binary;
@@ -129,7 +129,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
 
             $this->config = $GLOBALS['Crypt_GPG_Unittest_Config'];
         } else {
-            $this->config = array();
+            $this->config = [];
         }
 
         // default test config values
@@ -557,10 +557,10 @@ TEXT;
 
     private function _tearDownKeyring()
     {
-        $dirnames = array(
+        $dirnames = [
             $this->getKeyringFilename('private-keys-v1.d'),
             $this->getKeyringFilename('openpgp-revocs.d')
-        );
+        ];
 
         foreach ($dirnames as $dirname) {
             if (file_exists($dirname)) {

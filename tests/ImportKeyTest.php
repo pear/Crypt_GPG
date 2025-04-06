@@ -75,14 +75,14 @@ class ImportKeyTest extends Crypt_GPG_TestCase
         // Note: Some of GnuPG 2.1.x versions return different private_imported
         // and private_uchanged values, bug? GnuPG 2.1.15 returns 1 as expected.
 
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
-            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
+            'fingerprints'      => ['F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'],
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 1,
             'private_unchanged' => 0
-        );
+        ];
 
         // {{{ private key data
         $privateKeyData = <<<TEXT
@@ -133,14 +133,14 @@ TEXT;
      */
     public function testImportKey_public()
     {
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
-            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
+            'fingerprints'      => ['948F9835FF09F5F91CFF2AC1268AB7103435E65D'],
             'public_imported'   => 1,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
             'private_unchanged' => 0
-        );
+        ];
 
         // {{{ public key data
         $publicKeyData = <<<TEXT
@@ -230,27 +230,27 @@ TEXT;
 
         $result = $this->gpg->importKey($privateKeyData);
 
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
-            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
+            'fingerprints'      => ['F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'],
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 1,
             'private_unchanged' => 0
-        );
+        ];
 
         $this->assertEquals($expectedResult, $result);
 
         $result = $this->gpg->importKey($privateKeyData);
 
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
-            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
+            'fingerprints'      => ['F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'],
             'public_imported'   => 0,
             'public_unchanged'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 1 : 0,
             'private_imported'  => 0,
             'private_unchanged'  => 1,
-        );
+        ];
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -299,27 +299,27 @@ TEXT;
 
         $result = $this->gpg->importKey($publicKeyData);
 
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
-            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
+            'fingerprints'      => ['948F9835FF09F5F91CFF2AC1268AB7103435E65D'],
             'public_imported'   => 1,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
             'private_unchanged' => 0
-        );
+        ];
 
         $this->assertEquals($expectedResult, $result);
 
         $result = $this->gpg->importKey($publicKeyData);
 
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
-            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
+            'fingerprints'      => ['948F9835FF09F5F91CFF2AC1268AB7103435E65D'],
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 0,
             'private_unchanged' => 0
-        );
+        ];
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -351,14 +351,14 @@ TEXT;
      */
     public function testImportKeyFile_private()
     {
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
-            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
+            'fingerprints'      => ['F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'],
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 1,
             'private_unchanged' => 0
-        );
+        ];
 
         $filename = $this->getDataFilename('testImportKeyFile_private.asc');
         $result   = $this->gpg->importKeyFile($filename);
@@ -371,14 +371,14 @@ TEXT;
      */
     public function testImportKeyFile_public()
     {
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
-            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
+            'fingerprints'      => ['948F9835FF09F5F91CFF2AC1268AB7103435E65D'],
             'public_imported'   => 1,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
             'private_unchanged' => 0
-        );
+        ];
 
         $filename = $this->getDataFilename('testImportKeyFile_public.asc');
         $result   = $this->gpg->importKeyFile($filename);
@@ -394,27 +394,27 @@ TEXT;
         $filename = $this->getDataFilename('testImportKeyFile_private.asc');
         $result   = $this->gpg->importKeyFile($filename);
 
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
-            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
+            'fingerprints'      => ['F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'],
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 1,
             'private_unchanged' => 0
-        );
+        ];
 
         $this->assertEquals($expectedResult, $result);
 
         $result = $this->gpg->importKeyFile($filename);
 
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
-            'fingerprints'      => array('F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'),
+            'fingerprints'      => ['F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'],
             'public_imported'   => 0,
             'public_unchanged'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 1 : 0,
             'private_imported'  => 0,
             'private_unchanged'  => 1,
-        );
+        ];
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -427,27 +427,27 @@ TEXT;
         $filename = $this->getDataFilename('testImportKeyFile_public.asc');
         $result = $this->gpg->importKeyFile($filename);
 
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
-            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
+            'fingerprints'      => ['948F9835FF09F5F91CFF2AC1268AB7103435E65D'],
             'public_imported'   => 1,
             'public_unchanged'  => 0,
             'private_imported'  => 0,
             'private_unchanged' => 0
-        );
+        ];
 
         $this->assertEquals($expectedResult, $result);
 
         $result = $this->gpg->importKeyFile($filename);
 
-        $expectedResult = array(
+        $expectedResult = [
             'fingerprint'       => '948F9835FF09F5F91CFF2AC1268AB7103435E65D',
-            'fingerprints'      => array('948F9835FF09F5F91CFF2AC1268AB7103435E65D'),
+            'fingerprints'      => ['948F9835FF09F5F91CFF2AC1268AB7103435E65D'],
             'public_imported'   => 0,
             'public_unchanged'  => 1,
             'private_imported'  => 0,
             'private_unchanged' => 0
-        );
+        ];
 
         $this->assertEquals($expectedResult, $result);
     }

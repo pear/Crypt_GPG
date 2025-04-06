@@ -16,8 +16,8 @@
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-$GLOBALS['Crypt_GPG_Unittest_Config'] = array(
+$GLOBALS['Crypt_GPG_Unittest_Config'] = [
     'enable-key-generation' => false,
-);
+];
 
 ?>

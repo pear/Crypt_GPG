@@ -12,35 +12,35 @@ echo "<?php\n\n";
 
 $HOMEDIR = $_SERVER['argv'][1];
 
-$dataFiles = array(
+$dataFiles = [
     'pubring'     => 'pubring.gpg',
     'secring'     => 'secring.gpg',
     'trustdb'     => 'trustdb.gpg',
     'random_seed' => 'random_seed'
-);
+];
 
-$keyFiles = array(
+$keyFiles = [
     'expectedKeyData'   => 'public-only-pub.asc',
     'privateKeyData'    => 'public-only-sec.asc',
     'publicKeyData'     => 'external-public-pub.asc'
-);
+];
 
-$signatureFiles = array(
+$signatureFiles = [
     'normalSignedData'      => 'normal-signed-data.asc',
     'clearsignedData'       => 'clearsigned-data.asc',
     'detachedSignature'     => 'detached-signature.asc',
     'dualNormalSignedData'  => 'dual-normal-signed-data.asc',
     'dualClearsignedData'   => 'dual-clearsigned-data.asc',
     'dualDetachedSignature' => 'dual-detached-signature.asc'
-);
+];
 
-$encryptedFiles = array(
+$encryptedFiles = [
     'encryptedData'                  => 'encrypted-data.asc',
     'encryptedDataNoPassphrase'      => 'encrypted-data-no-passphrase.asc',
     'encryptedDataMissingKey'        => 'encrypted-data-missing-key.asc',
     'dualEncryptedData'              => 'dual-encrypted-data.asc',
     'dualEncryptedDataOnePassphrase' => 'dual-encrypted-data-one-passphrase.asc'
-);
+];
 
 echo "\n// For TestCase\n";
 

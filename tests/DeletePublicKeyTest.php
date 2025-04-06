@@ -65,7 +65,7 @@ class DeletePublicKeyTest extends Crypt_GPG_TestCase
         $keyId = 'public-only@example.com';
         $this->gpg->deletePublicKey($keyId);
 
-        $expectedKeys = array();
+        $expectedKeys = [];
         $keys = $this->gpg->getKeys($keyId);
         $this->assertEquals($expectedKeys, $keys);
     }

@@ -80,10 +80,10 @@ class DecryptAndVerifyTest extends Crypt_GPG_TestCase
         $signature->setUserId($userId);
         // }}}
 
-        $expectedResults = array(
+        $expectedResults = [
             'data'       => 'Hello, Alice! Goodbye, Bob!',
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         // encrypted with first-keypair@example.com, signed with
         // first-keypair@example.com
@@ -141,10 +141,10 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedResults = array(
+        $expectedResults = [
             'data'       => 'Hello, Alice! Goodbye, Bob!',
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         // encrypted with no-passphrase@example.com, signed with
         // first-keypair@example.com
@@ -305,10 +305,10 @@ TEXT;
         $signature = new Crypt_GPG_Signature();
         $signature->setKeyId('8E3D36B1EA5AC75E');
 
-        $expectedResults = array(
+        $expectedResults = [
             'data'       => 'Hello, Alice! Goodbye, Bob!',
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         // was encrypted with first-keypair@example.com, signed with
         // missing-key@example.com
@@ -473,10 +473,10 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedResults = array(
+        $expectedResults = [
             'data'       => 'Hello, Alice! Goodbye, Bob!',
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         // encrypted with both first-keypair@example.com and
         // second-keypair@example.com, signed with first-keypair@example.com
@@ -553,10 +553,10 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedResults = array(
+        $expectedResults = [
             'data'       => 'Hello, Alice! Goodbye, Bob!',
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         // encrypted with both first-keypair@example.com and
         // no-passhprase@example.com, signed with first-keypair@example.com
@@ -702,10 +702,10 @@ TEXT;
         $signature2->setUserId($userId2);
         // }}}
 
-        $expectedResults = array(
+        $expectedResults = [
             'data'       => 'Hello, Alice! Goodbye, Bob!',
-            'signatures' => array($signature1, $signature2)
-        );
+            'signatures' => [$signature1, $signature2]
+        ];
 
         // encrypted with first-keypair@example.com and signed with
         // first-keypair@example.com and second-keypair@example.com
@@ -764,10 +764,10 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedResults = array(
+        $expectedResults = [
             'data'       => 'Hello, Alice! Goodbye, Bob!',
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         // signed with first-keypair@example.com
         // {{{ signed data
@@ -811,10 +811,10 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedResults = array(
+        $expectedResults = [
             'data'       => 'Hello, Alice! Goodbye, Bob!',
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         // encrypted with first subkey (ELG-E) of multiple-subkeys@example.com,
         // signed with first-keypair@example.com
@@ -867,10 +867,10 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedResults = array(
+        $expectedResults = [
             'data'       => 'Hello, Alice! Goodbye, Bob!',
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         // encrypted with second subkey (RSA) of multiple-subkeys@example.com,
         // signed with first-keypair@example.com
@@ -916,10 +916,10 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedResults = array(
+        $expectedResults = [
             'data'       => "Hello, Bob! Goodbye, Alice!\n",
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         // {{{ clearsigned data
         $clearsignedData = <<<TEXT
@@ -966,10 +966,10 @@ TEXT;
         // }}}
 
         $expectedMd5Sum     = 'f96267d87551ee09bfcac16921e351c1';
-        $expectedResults    = array(
+        $expectedResults    = [
             'data'       => null,
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         $inputFilename  = $this->getDataFilename('testDecryptVerifyFile.asc');
         $outputFilename = $this->getTempFilename('testDecryptVerifyFile.plain');
@@ -1010,11 +1010,10 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedSignatures = array($signature);
-        $expectedResults    = array(
+        $expectedResults = [
             'data'       => 'Hello, Alice! Goodbye, Bob!',
-            'signatures' => $expectedSignatures
-        );
+            'signatures' => [$signature]
+        ];
 
         $inputFilename  = $this->getDataFilename(
             'testDecryptVerifyFileToString.asc'
@@ -1050,11 +1049,11 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedMd5Sum     = 'f96267d87551ee09bfcac16921e351c1';
-        $expectedResults    = array(
+        $expectedMd5Sum  = 'f96267d87551ee09bfcac16921e351c1';
+        $expectedResults = [
             'data'       => null,
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         $inputFilename  = $this->getDataFilename(
             'testDecryptVerifyFileNoPassphrase.asc'
@@ -1149,11 +1148,11 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedMd5Sum     = 'f96267d87551ee09bfcac16921e351c1';
-        $expectedResults    = array(
+        $expectedMd5Sum  = 'f96267d87551ee09bfcac16921e351c1';
+        $expectedResults = [
             'data'       => null,
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         $inputFilename  = $this->getDataFilename(
             'testDecryptVerifyFileDual.asc'
@@ -1226,10 +1225,10 @@ TEXT;
         // }}}
 
         $expectedMd5Sum  = 'f96267d87551ee09bfcac16921e351c1';
-        $expectedResults = array(
+        $expectedResults = [
             'data'       => null,
-            'signatures' => array($signature1, $signature2)
-        );
+            'signatures' => [$signature1, $signature2]
+        ];
 
         $inputFilename  = $this->getDataFilename(
             'testDecryptVerifyFileDualSignatories.asc'
@@ -1271,11 +1270,11 @@ TEXT;
         $signature->setUserId($userId);
         // }}}
 
-        $expectedMd5Sum     = 'f96267d87551ee09bfcac16921e351c1';
-        $expectedResults    = array(
+        $expectedMd5Sum  = 'f96267d87551ee09bfcac16921e351c1';
+        $expectedResults = [
             'data'       => null,
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         $inputFilename  = $this->getDataFilename(
             'testDecryptVerifyFileDualOnePassphrase.asc'
@@ -1341,10 +1340,10 @@ TEXT;
         // }}}
 
         $expectedMd5Sum = 'f96267d87551ee09bfcac16921e351c1';
-        $expectedResults    = array(
+        $expectedResults = [
             'data'       => null,
-            'signatures' => array($signature)
-        );
+            'signatures' => [$signature]
+        ];
 
         $inputFilename = $this->getDataFilename(
             'testVerifyFileNormalSignedData.asc'

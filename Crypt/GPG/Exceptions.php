@@ -277,7 +277,7 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
      *
      * @var array
      */
-    private $_missingPassphrases = array();
+    private $_missingPassphrases = [];
 
     /**
      * Keys for which the passhprase is incorrect
@@ -286,7 +286,7 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
      *
      * @var array
      */
-    private $_badPassphrases = array();
+    private $_badPassphrases = [];
 
     /**
      * Creates a new Crypt_GPG_BadPassphraseException
@@ -298,9 +298,7 @@ class Crypt_GPG_BadPassphraseException extends Crypt_GPG_Exception
      * @param array  $missingPassphrases An array containing user ids of keys
      *                                   for which the passphrase is missing.
      */
-    public function __construct($message, $code = 0,
-        array $badPassphrases = array(), array $missingPassphrases = array()
-    ) {
+    public function __construct($message, $code = 0, array $badPassphrases = [], array $missingPassphrases = []) {
         $this->_badPassphrases     = (array) $badPassphrases;
         $this->_missingPassphrases = (array) $missingPassphrases;
 

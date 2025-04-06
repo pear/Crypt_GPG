@@ -94,7 +94,7 @@ class Crypt_GPG_ProcessHandler
      * @see self::setData()
      * @see self::getData()
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * The name of the current operation
@@ -157,7 +157,7 @@ class Crypt_GPG_ProcessHandler
 
         $this->operation        = $op;
         $this->operationArg     = $opArg;
-        $this->data['Warnings'] = array();
+        $this->data['Warnings'] = [];
     }
 
     /**
@@ -200,7 +200,7 @@ class Crypt_GPG_ProcessHandler
             $this->data['Import']['fingerprint'] = $tokens[2];
 
             if (empty($this->data['Import']['fingerprints'])) {
-                $this->data['Import']['fingerprints'] = array($tokens[2]);
+                $this->data['Import']['fingerprints'] = [$tokens[2]];
             } else if (!in_array($tokens[2], $this->data['Import']['fingerprints'])) {
                 $this->data['Import']['fingerprints'][] = $tokens[2];
             }
@@ -271,7 +271,7 @@ class Crypt_GPG_ProcessHandler
             if (!empty($_ENV['PINENTRY_USER_DATA'])) {
                 $passphrases = json_decode($_ENV['PINENTRY_USER_DATA'], true);
             } else {
-                $passphrases = array();
+                $passphrases = [];
             }
 
             // @TODO: Get user name/email
@@ -837,13 +837,13 @@ class Crypt_GPG_ProcessHandler
     protected function badPassException($code, $message)
     {
         $badPassphrases = array_diff_key(
-            isset($this->data['BadPassphrases']) ? $this->data['BadPassphrases'] : array(),
-            isset($this->data['MissingPassphrases']) ? $this->data['MissingPassphrases'] : array()
+            isset($this->data['BadPassphrases']) ? $this->data['BadPassphrases'] : [],
+            isset($this->data['MissingPassphrases']) ? $this->data['MissingPassphrases'] : []
         );
 
         $missingPassphrases = array_intersect_key(
-            isset($this->data['BadPassphrases']) ? $this->data['BadPassphrases'] : array(),
-            isset($this->data['MissingPassphrases']) ? $this->data['MissingPassphrases'] : array()
+            isset($this->data['BadPassphrases']) ? $this->data['BadPassphrases'] : [],
+            isset($this->data['MissingPassphrases']) ? $this->data['MissingPassphrases'] : []
         );
 
         if (count($badPassphrases) > 0) {

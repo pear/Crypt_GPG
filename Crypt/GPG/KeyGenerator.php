@@ -171,7 +171,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *         if no <kbd>agent</kbd> is provided and no suitable gpg-agent
      *         could be found.
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         parent::__construct($options);
     }
@@ -434,7 +434,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
 
         $userId = $this->getUserId($name, $email, $comment);
 
-        $keyParams = array(
+        $keyParams = [
             'Key-Type'      => $this->keyAlgorithm,
             'Key-Length'    => $this->keySize,
             'Key-Usage'     => $this->getUsage($this->keyUsage),
@@ -442,7 +442,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             'Subkey-Length' => $this->subKeySize,
             'Subkey-Usage'  => $this->getUsage($this->subKeyUsage),
             'Handle'        => $handle,
-        );
+        ];
 
         if ($this->expirationDate != 0) {
             // GnuPG only accepts granularity of days
@@ -470,7 +470,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $keyParams['Name-Comment'] = $comment;
         }
 
-        $keyParamsFormatted = array();
+        $keyParamsFormatted = [];
         foreach ($keyParams as $name => $value) {
             $keyParamsFormatted[] = $name . ': ' . $value;
         }
@@ -486,7 +486,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         $this->engine->setProcessData('Handle', $handle);
         $this->engine->setInput($input);
         $this->engine->setOutput($output);
-        $this->engine->setOperation('--gen-key', array('--batch'));
+        $this->engine->setOperation('--gen-key', ['--batch']);
 
         try {
             $this->engine->run();
@@ -543,18 +543,18 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      */
     protected function getUsage($usage)
     {
-        $map = array(
+        $map = [
             Crypt_GPG_SubKey::USAGE_ENCRYPT        => 'encrypt',
             Crypt_GPG_SubKey::USAGE_SIGN           => 'sign',
             Crypt_GPG_SubKey::USAGE_CERTIFY        => 'cert',
             Crypt_GPG_SubKey::USAGE_AUTHENTICATION => 'auth',
-        );
+        ];
 
         // cert is always used for primary keys and does not need to be
         // specified
         $usage &= ~Crypt_GPG_SubKey::USAGE_CERTIFY;
 
-        $usageArray = array();
+        $usageArray = [];
 
         foreach ($map as $key => $value) {
             if (($usage & $key) === $key) {

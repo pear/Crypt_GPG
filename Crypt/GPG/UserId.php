@@ -198,7 +198,7 @@ class Crypt_GPG_UserId
      */
     public function __toString()
     {
-        $components = array();
+        $components = [];
 
         if (mb_strlen($this->_name, '8bit') > 0) {
             $components[] = $this->_name;
@@ -299,14 +299,12 @@ class Crypt_GPG_UserId
         $comment = '';
 
         // get email address from end of string if it exists
-        $matches = array();
         if (preg_match('/^(.*?)<([^>]+)>$/', $string, $matches) === 1) {
             $string = trim($matches[1]);
             $email  = $matches[2];
         }
 
         // get comment from end of string if it exists
-        $matches = array();
         if (preg_match('/^(.+?) \(([^\)]+)\)$/', $string, $matches) === 1) {
             $string  = $matches[1];
             $comment = $matches[2];

@@ -189,7 +189,7 @@ class ExceptionsTest extends Crypt_GPG_TestCase
     public function testBadPassphraseException_getBadPassphrases()
     {
         $e = new Crypt_GPG_BadPassphraseException('test exception', 0,
-            array('C097D9EC94C06363', '9F93F9116728EF12'));
+            ['C097D9EC94C06363', '9F93F9116728EF12']);
 
         $keyIds = $e->getBadPassphrases();
         $this->assertTrue(is_array($keyIds), 'Failed to assert returned ' .
@@ -204,8 +204,8 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testBadPassphraseException_getMissingPassphrase()
     {
-        $e = new Crypt_GPG_BadPassphraseException('test exception', 0, array(),
-            array('C097D9EC94C06363', '9F93F9116728EF12'));
+        $e = new Crypt_GPG_BadPassphraseException('test exception', 0, [],
+            ['C097D9EC94C06363', '9F93F9116728EF12']);
 
         $keyIds = $e->getMissingPassphrases();
         $this->assertTrue(is_array($keyIds), 'Failed to assert returned ' .

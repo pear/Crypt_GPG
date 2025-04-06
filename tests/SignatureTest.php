@@ -67,7 +67,7 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testConstructFromSignature()
     {
-        $expectedSignature = new Crypt_GPG_Signature(array(
+        $expectedSignature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'keyId'       => '0C097D9EC94C06363',
@@ -75,7 +75,7 @@ class SignatureTest extends Crypt_GPG_TestCase
             'expiration'  => 1421785858,
             'valid'       => false,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $signature = new Crypt_GPG_Signature($expectedSignature);
 
@@ -87,7 +87,7 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testConstructFromArray()
     {
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'keyId'       => '0C097D9EC94C06363',
@@ -95,7 +95,7 @@ class SignatureTest extends Crypt_GPG_TestCase
             'expiration'  => 1421785858,
             'valid'       => false,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $this->assertEquals('KuhELanvhPRXozEjFWb2mam1q20',
             $signature->getId());
@@ -119,14 +119,14 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testGetId()
     {
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $this->assertEquals('KuhELanvhPRXozEjFWb2mam1q20', $signature->getId());
     }
@@ -136,14 +136,14 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testGetKeyFingerprint()
     {
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $this->assertEquals('8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             $signature->getKeyFingerprint());
@@ -154,7 +154,7 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testGetKeyId()
     {
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'keyId'       => '0C097D9EC94C06363',
@@ -162,7 +162,7 @@ class SignatureTest extends Crypt_GPG_TestCase
             'expiration'  => 1421785858,
             'valid'       => false,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $this->assertEquals('0C097D9EC94C06363', $signature->getKeyId());
     }
@@ -172,14 +172,14 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testGetCreationDate()
     {
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $this->assertEquals(1221785858, $signature->getCreationDate());
     }
@@ -189,14 +189,14 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testGetExpirationDate()
     {
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $this->assertEquals(1421785858, $signature->getExpirationDate());
     }
@@ -206,26 +206,25 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testIsValid()
     {
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $this->assertTrue($signature->isValid());
 
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
             'userId'      => 'Alice <alice@example.com>'
-        ));
-
+        ]);
 
         $this->assertFalse($signature->isValid());
     }
@@ -235,19 +234,19 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testGetUserId()
     {
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
-        $expectedUserId = new Crypt_GPG_UserId(array(
+        $expectedUserId = new Crypt_GPG_UserId([
             'name'  => 'Alice',
             'email' => 'alice@example.com'
-        ));
+        ]);
 
         $this->assertEquals($expectedUserId, $signature->getUserId());
     }
@@ -257,23 +256,23 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testSetId()
     {
-        $expectedSignature = new Crypt_GPG_Signature(array(
+        $expectedSignature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'something different',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $signature->setId('KuhELanvhPRXozEjFWb2mam1q20');
 
@@ -285,23 +284,23 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testSetKeyFingerprint()
     {
-        $expectedSignature = new Crypt_GPG_Signature(array(
+        $expectedSignature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => 'bad fingerprint',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -314,7 +313,7 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testSetKeyId()
     {
-        $expectedSignature = new Crypt_GPG_Signature(array(
+        $expectedSignature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'keyId'       => '0C097D9EC94C06363',
@@ -322,9 +321,9 @@ class SignatureTest extends Crypt_GPG_TestCase
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'keyId'       => 'bad key id',
@@ -332,7 +331,7 @@ class SignatureTest extends Crypt_GPG_TestCase
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $signature->setKeyId('0C097D9EC94C06363');
 
@@ -344,23 +343,23 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testSetCreationDate()
     {
-        $expectedSignature = new Crypt_GPG_Signature(array(
+        $expectedSignature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1111111111,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $signature->setCreationDate(1221785858);
 
@@ -372,23 +371,23 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testSetExpirationDate()
     {
-        $expectedSignature = new Crypt_GPG_Signature(array(
+        $expectedSignature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 0,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $signature->setExpirationDate(1421785858);
 
@@ -400,23 +399,23 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testSetValid()
     {
-        $expectedSignature = new Crypt_GPG_Signature(array(
+        $expectedSignature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
         $signature->setValid(true);
 
@@ -428,28 +427,28 @@ class SignatureTest extends Crypt_GPG_TestCase
      */
     public function testSetUserId()
     {
-        $expectedSignature = new Crypt_GPG_Signature(array(
+        $expectedSignature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Alice <alice@example.com>'
-        ));
+        ]);
 
-        $signature = new Crypt_GPG_Signature(array(
+        $signature = new Crypt_GPG_Signature([
             'id'          => 'KuhELanvhPRXozEjFWb2mam1q20',
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
             'userId'      => 'Bob <bob@example.com>'
-        ));
+        ]);
 
-        $userId = new Crypt_GPG_UserId(array(
+        $userId = new Crypt_GPG_UserId([
             'name'  => 'Alice',
             'email' => 'alice@example.com'
-        ));
+        ]);
 
         $signature->setUserId($userId);
 

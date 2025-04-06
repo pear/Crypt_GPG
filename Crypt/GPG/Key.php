@@ -65,7 +65,7 @@ class Crypt_GPG_Key
      * @see Crypt_GPG_Key::addUserId()
      * @see Crypt_GPG_Key::getUserIds()
      */
-    private $_userIds = array();
+    private $_userIds = [];
 
     /**
      * The subkeys of this key
@@ -77,7 +77,7 @@ class Crypt_GPG_Key
      * @see Crypt_GPG_Key::addSubKey()
      * @see Crypt_GPG_Key::getSubKeys()
      */
-    private $_subKeys = array();
+    private $_subKeys = [];
 
     /**
      * Gets the sub-keys of this key

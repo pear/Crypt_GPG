@@ -12,12 +12,12 @@ echo "<?php\n\n";
 
 $HOMEDIR = $_SERVER['argv'][1];
 
-$dataFiles = array(
+$dataFiles = [
     'pubring'     => 'pubring.gpg',
     'secring'     => 'secring.gpg',
     'trustdb'     => 'trustdb.gpg',
     'random_seed' => 'random_seed'
-);
+];
 
 
 echo "\n// For TestCase\n";

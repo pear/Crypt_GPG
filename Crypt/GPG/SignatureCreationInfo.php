@@ -88,7 +88,7 @@ class Crypt_GPG_SignatureCreationInfo
      * @see RFC 3156 / 5. OpenPGP signed data
      * @var array
      */
-    protected static $hashAlgorithmNames = array(
+    protected static $hashAlgorithmNames = [
         1 => 'md5',
         2 => 'sha1',
         3 => 'ripemd160',
@@ -99,7 +99,7 @@ class Crypt_GPG_SignatureCreationInfo
         9 => 'sha384',
         10 => 'sha512',
         11 => 'sha224',
-    );
+    ];
 
     /**
      * Parse a SIG_CREATED line from gnupg

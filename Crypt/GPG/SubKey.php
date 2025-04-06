@@ -617,12 +617,12 @@ class Crypt_GPG_SubKey
         }
 
         $usage = 0;
-        $usage_map = array(
+        $usage_map = [
             'a' => self::USAGE_AUTHENTICATION,
             'c' => self::USAGE_CERTIFY,
             'e' => self::USAGE_ENCRYPT,
             's' => self::USAGE_SIGN,
-        );
+        ];
 
         foreach ($usage_map as $key => $flag) {
             if (strpos($tokens[11], $key) !== false) {

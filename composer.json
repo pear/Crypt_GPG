@@ -51,6 +51,6 @@
         "phpunit/phpunit": "^9"
     },
     "archive": {
-        "exclude": ["tools", "package.php"]
+        "exclude": ["tools"]
     }
 }

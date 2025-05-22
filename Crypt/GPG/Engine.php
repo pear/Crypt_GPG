@@ -1831,7 +1831,8 @@ class Crypt_GPG_Engine
      */
     private function _closeIdleAgents()
     {
-        if ($this->_gpgconf) {
+        // Note: We check that this binary is executable again for security reasons
+        if ($this->_gpgconf && is_executable($this->_gpgconf)) {
             // before 2.1.13 --homedir wasn't supported, use env variable
             $env = ['GNUPGHOME' => $this->_homedir];
             $cmd = $this->_gpgconf . ' --kill gpg-agent';

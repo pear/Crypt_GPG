@@ -29,10 +29,10 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2025-04-06</date>
- <time>11:00:03</time>
+ <date>2025-05-22</date>
+ <time>14:00:00</time>
  <version>
-  <release>1.6.10</release>
+  <release>1.6.11</release>
   <api>1.6.8</api>
  </version>
  <stability>
@@ -41,10 +41,7 @@ This package requires PHP version 5.4.8 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Use short array syntax [alec]
-Filter non-scalar ENV values to prevent PHP 8.2 proc_open() warnings [alec]
-Tests: Handle OpenPGP-compliant CSF message verfication [dkg]
-CI: Add PHP 8.4 [alec]
+Validate gpgconf binary on object destruction [alec]
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -168,20 +165,17 @@ CI: Add PHP 8.4 [alec]
  <changelog>
   <release>
    <version>
-    <release>1.6.10</release>
+    <release>1.6.11</release>
     <api>1.6.8</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2025-04-06</date>
+   <date>2025-05-22</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-Use short array syntax [alec]
-Filter non-scalar ENV values to prevent PHP 8.2 proc_open() warnings [alec]
-Tests: Handle OpenPGP-compliant CSF message verfication [dkg]
-CI: Add PHP 8.4 [alec]
+Validate gpgconf binary on object destruction [alec]
    </notes>
   </release>
  </changelog>

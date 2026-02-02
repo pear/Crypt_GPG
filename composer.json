@@ -51,5 +51,10 @@
     },
     "archive": {
         "exclude": ["tools"]
+    },
+    "config": {
+        "audit": {
+            "block-insecure": false
+        }
     }
 }

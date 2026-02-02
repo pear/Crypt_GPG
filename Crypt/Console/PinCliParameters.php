@@ -2,16 +2,12 @@
 
 namespace Console;
 
-require_once __DIR__ . '/ArrayAccessTrait.php';
-
-class PinCliParameters implements \ArrayAccess
+class PinCliParameters
 {
-    use \Console\ArrayAccessTrait;
+    private $verbose;
+    private $log;
 
-    private $verbose = false;
-    private $log = null;
-
-    public function __construct($verbose = false, $log = null) {
+    public function __construct($verbose = 0, $log = null) {
         $this->verbose = $verbose;
         $this->log = $log;
     }

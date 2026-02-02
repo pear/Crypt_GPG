@@ -32,7 +32,7 @@
 /**
  * CLI user-interface and parser.
  */
-require_once 'Console/CommandLine.php';
+require_once __DIR__ . '/../Console/SimpleConsoleWrapper.php';
 
 /**
  * A command-line dummy pinentry program for use with gpg-agent and Crypt_GPG
@@ -137,7 +137,7 @@ class Crypt_GPG_PinEntry
     /**
      * The command-line interface parser for this pinentry
      *
-     * @var Console_CommandLine
+     * @var \Console\SimpleConsoleWrapper
      *
      * @see Crypt_GPG_PinEntry::getParser()
      */
@@ -192,13 +192,13 @@ class Crypt_GPG_PinEntry
      */
     public function __invoke()
     {
-        $this->parser = $this->getCommandLineParser();
+        $this->parser = new \Console\SimpleConsoleWrapper();
 
         try {
-            $result = $this->parser->parse();
+            $result = $this->parser->parseCli();
 
-            $this->setVerbosity($result->options['verbose']);
-            $this->setLogFilename($result->options['log']);
+            $this->setVerbosity($result->getVerbose());
+            $this->setLogFilename($result->getLog());
 
             $this->connect();
             $this->initPinsFromENV();
@@ -331,7 +331,7 @@ class Crypt_GPG_PinEntry
                 fwrite($this->logFile, $data);
                 fflush($this->logFile);
             } else {
-                $this->parser->outputter->stderr($data);
+                $this->parser->writeToErrOrEcho($data);
             }
         }
 

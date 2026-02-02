@@ -47,8 +47,7 @@
     },
     "require-dev": {
         "phpstan/phpstan": "^1.2",
-        "phpunit/phpunit": "^9",
-        "roave/security-advisories": "dev-latest"
+        "phpunit/phpunit": "^9"
     },
     "archive": {
         "exclude": ["tools"]

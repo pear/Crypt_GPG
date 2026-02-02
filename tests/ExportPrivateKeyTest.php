@@ -104,7 +104,7 @@ class ExportPrivateKeyTest extends Crypt_GPG_TestCase
      */
     public function testExportPrivateKey_with_bad_pass()
     {
-        $this->expectException(\Crypt_GPG_BadPassphraseException::class);
+        $this->expectException('\Crypt_GPG_BadPassphraseException');
 
         if (version_compare($this->gpg->getVersion(), '2.1.0', 'lt')) {
             $this->markTestSkipped('GnuPG >= 2.1 requires passphrase to export private key.');

@@ -211,10 +211,6 @@ class Crypt_GPG_PinEntry
             }
 
             $this->disconnect();
-
-        } catch (Console_CommandLine_Exception $e) {
-            $this->log($e->getMessage() . PHP_EOL, self::VERBOSITY_ERRORS);
-            exit(1);
         } catch (Exception $e) {
             $this->log($e->getMessage() . PHP_EOL, self::VERBOSITY_ERRORS);
             $this->log($e->getTraceAsString() . PHP_EOL, self::VERBOSITY_ERRORS);

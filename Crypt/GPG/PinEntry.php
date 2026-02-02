@@ -271,44 +271,6 @@ class Crypt_GPG_PinEntry
     }
 
     /**
-     * Gets the CLI user-interface definition for this pinentry
-     *
-     * Detects whether or not this package is PEAR-installed and appropriately
-     * locates the XML UI definition.
-     *
-     * @return string|null The location of the CLI user-interface definition XML.
-     */
-    protected function getUIXML()
-    {
-        // Find PinEntry config depending on the way how the package is installed
-        $ds    = DIRECTORY_SEPARATOR;
-        $root  = __DIR__ . $ds . '..' . $ds . '..' . $ds;
-        $paths = [
-            '@data-dir@' . $ds . '@package-name@' . $ds . 'data', // PEAR
-            $root . 'data', // Git
-            $root . 'data' . $ds . 'Crypt_GPG' . $ds . 'data', // Composer
-        ];
-
-        foreach ($paths as $path) {
-            if (file_exists($path . $ds . 'pinentry-cli.xml')) {
-                return $path . $ds . 'pinentry-cli.xml';
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Gets the CLI parser for this pinentry
-     *
-     * @return Console_CommandLine the CLI parser for this pinentry.
-     */
-    protected function getCommandLineParser()
-    {
-        return Console_CommandLine::fromXmlFile($this->getUIXML());
-    }
-
-    /**
      * Logs a message at the specified verbosity level
      *
      * If a log file is used, the message is written to the log. Otherwise,

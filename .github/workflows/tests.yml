@@ -41,7 +41,7 @@ jobs:
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Install GnuPG v1 (GnuPG v2 does not work with Github Actions)
-        run: sudo apt-get install -y gnupg1
+        run: sudo apt-get install -y gnupg2
 
       - name: Execute tests
         run: TESTS_GPG_BINARY=/usr/bin/gpg1 vendor/bin/phpunit --stop-on-error tests

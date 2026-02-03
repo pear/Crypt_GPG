@@ -5,11 +5,7 @@ namespace Console;
 
 require_once __DIR__ . '/PinCliParameters.php';
 
-
-/**
- * very
- */
-class SimpleConsoleWrapper
+class SimpleCliWrapper
 {
     const DEFAULT_VERBOSITY = 0;
     const INVALID_INPUT = -1;
@@ -64,15 +60,15 @@ class SimpleConsoleWrapper
             exit(1);
         }
 
-        $verbosityLevel = $this->getVerbosityLevel($opts);
+        $verbosityLevel = self::getVerbosityLevel($opts);
         if ($verbosityLevel === self::INVALID_INPUT) {
-            $this->writeToErrOrEcho("Invalid verbosity level. Please use -v or --verbose to set the verbosity level.\n");
+            $this->writeToErrOrEcho("Invalid verbosity level. Please use -h or --help.\n");
             exit(1);
         }
 
-        $logLocation = $this->getLogLocation($opts);
+        $logLocation = self::getLogLocation($opts);
         if ($logLocation === self::INVALID_INPUT) {
-            $this->writeToErrOrEcho("Invalid log location. Please use -l or --log to set the log location.\n");
+            $this->writeToErrOrEcho("Invalid log location. Please use -h or --help.\n");
             exit(1);
         }
 
@@ -138,7 +134,7 @@ Options:
      *
      * @return int
      */
-    private function getVerbosityLevel(array $opts)
+    public static function getVerbosityLevel(array $opts)
     {
         if (!isset($opts[self::VERBOSE_SHORT]) && !isset($opts[self::VERBOSE_LONG])) {
             return self::DEFAULT_VERBOSITY;
@@ -169,7 +165,7 @@ Options:
     }
 
 
-    private function getLogLocation(array $opts)
+    public static function getLogLocation(array $opts)
     {
         if (!isset($opts[self::LOG_SHORT]) && !isset($opts[self::LOG_LONG])) {
             return "";

@@ -32,7 +32,7 @@
 /**
  * CLI user-interface and parser.
  */
-require_once __DIR__ . '/../Console/SimpleConsoleWrapper.php';
+require_once __DIR__ . '/../Console/SimpleCliWrapper.php';
 
 /**
  * A command-line dummy pinentry program for use with gpg-agent and Crypt_GPG
@@ -137,7 +137,7 @@ class Crypt_GPG_PinEntry
     /**
      * The command-line interface parser for this pinentry
      *
-     * @var \Console\SimpleConsoleWrapper
+     * @var \Console\SimpleCliWrapper
      *
      * @see Crypt_GPG_PinEntry::getParser()
      */
@@ -192,7 +192,7 @@ class Crypt_GPG_PinEntry
      */
     public function __invoke()
     {
-        $this->parser = new \Console\SimpleConsoleWrapper();
+        $this->parser = new \Console\SimpleCliWrapper();
 
         try {
             $result = $this->parser->parseCli();
@@ -255,16 +255,16 @@ class Crypt_GPG_PinEntry
         }
 
         if ($filename != '') {
-            if (($this->logFile = fopen($filename, 'w')) === false) {
+            if (($this->logFile = fopen($filename, 'wb')) === false) {
                 $this->log(
                     'Unable to open log file "' . $filename . '" '
                     . 'for writing.' . PHP_EOL,
                     self::VERBOSITY_ERRORS
                 );
                 exit(1);
-            } else {
-                stream_set_write_buffer($this->logFile, 0);
             }
+
+            stream_set_write_buffer($this->logFile, 0);
         }
 
         return $this;

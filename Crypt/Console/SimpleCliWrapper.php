@@ -43,14 +43,14 @@ class SimpleCliWrapper
     public function parseCli()
     {
         $shortOpts = implode('', [
-            self::VERBOSE_SHORT. self::OPTIONAL_INDICATOR,
-            self::LOG_SHORT. self::OPTIONAL_INDICATOR,
+            self::VERBOSE_SHORT . self::OPTIONAL_INDICATOR,
+            self::LOG_SHORT . self::OPTIONAL_INDICATOR,
             self::HELP_SHORT . self::OPTIONAL_INDICATOR
         ]);
 
         $longOpts = [
-            self::VERBOSE_LONG. self::OPTIONAL_INDICATOR,
-            self::LOG_LONG. self::OPTIONAL_INDICATOR,
+            self::VERBOSE_LONG . self::OPTIONAL_INDICATOR,
+            self::LOG_LONG . self::OPTIONAL_INDICATOR,
             self::HELP_LONG . self::OPTIONAL_INDICATOR
         ];
 
@@ -96,7 +96,8 @@ class SimpleCliWrapper
      * @param $msg
      * @return void
      */
-    public function writeToErrOrEcho($msg) {
+    public function writeToErrOrEcho($msg)
+    {
         if (defined('STDERR')) {
             fwrite(STDERR, $msg);
         } else {
@@ -129,7 +130,6 @@ Options:
 
 
     /**
-     * we keep the current
      * @param array $opts
      *
      * @return int
@@ -149,7 +149,7 @@ Options:
             }
 
             // the first v will be stripped -v so we count the amounts of v's after that
-            return (int) mb_strlen($opts[self::VERBOSE_SHORT]);
+            return (int)mb_strlen($opts[self::VERBOSE_SHORT]);
         }
 
         if (isset($opts[self::VERBOSE_LONG]) && !is_numeric($opts[self::VERBOSE_LONG])) {
@@ -157,7 +157,7 @@ Options:
         }
 
         if (isset($opts[self::VERBOSE_LONG])) {
-            return (int) $opts[self::VERBOSE_LONG];
+            return (int)$opts[self::VERBOSE_LONG];
         }
 
         return self::INVALID_INPUT;

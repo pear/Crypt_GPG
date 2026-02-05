@@ -44,8 +44,6 @@
  * Base test case.
  */
 
-use function PHPUnit\Framework\isTrue;
-
 require_once 'TestCase.php';
 
 /**

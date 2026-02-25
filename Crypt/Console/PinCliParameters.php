@@ -1,6 +1,6 @@
 <?php
 
-namespace Console;
+namespace Crypt\Console;
 
 class PinCliParameters
 {

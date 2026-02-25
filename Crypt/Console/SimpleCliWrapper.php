@@ -1,6 +1,6 @@
 <?php
 
-namespace Console;
+namespace Crypt\Console;
 
 
 require_once __DIR__ . '/PinCliParameters.php';

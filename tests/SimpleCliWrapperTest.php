@@ -49,7 +49,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_NoOptions()
     {
         $opts = [];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(0, $result);
     }
 
@@ -59,7 +59,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_ShortOptionFalse()
     {
         $opts = ['v' => false];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(0, $result);
     }
 
@@ -69,7 +69,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_ShortOptionOneV()
     {
         $opts = ['v' => 'v'];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(1, $result);
     }
 
@@ -79,7 +79,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_ShortOptionTwoVs()
     {
         $opts = ['v' => 'vv'];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(2, $result);
     }
 
@@ -89,7 +89,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_ShortOptionThreeVs()
     {
         $opts = ['v' => 'vvv'];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(3, $result);
     }
 
@@ -99,7 +99,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_LongOptionNumeric()
     {
         $opts = ['verbose' => '3'];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(3, $result);
     }
 
@@ -109,7 +109,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_LongOptionZero()
     {
         $opts = ['verbose' => '0'];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(0, $result);
     }
 
@@ -119,7 +119,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_LongOptionLargeNumber()
     {
         $opts = ['verbose' => '10'];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(10, $result);
     }
 
@@ -129,7 +129,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_LongOptionNonNumeric()
     {
         $opts = ['verbose' => 'invalid'];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(-1, $result);
     }
 
@@ -139,7 +139,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_LongOptionFalse()
     {
         $opts = ['verbose' => false];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(-1, $result);
     }
 
@@ -149,7 +149,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_BothOptions()
     {
         $opts = ['v' => 'vv', 'verbose' => '5'];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(2, $result);
     }
 
@@ -159,7 +159,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetVerbosityLevel_ShortFalseLongNumeric()
     {
         $opts = ['v' => false, 'verbose' => '3'];
-        $result = \Console\SimpleCliWrapper::getVerbosityLevel($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getVerbosityLevel($opts);
         $this->assertEquals(0, $result);
     }
 
@@ -169,7 +169,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetLogLocation_NoOptions()
     {
         $opts = [];
-        $result = \Console\SimpleCliWrapper::getLogLocation($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getLogLocation($opts);
         $this->assertEquals("", $result);
     }
 
@@ -179,7 +179,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetLogLocation_ShortOptionValidPath()
     {
         $opts = ['l' => '/path/to/log/file'];
-        $result = \Console\SimpleCliWrapper::getLogLocation($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getLogLocation($opts);
         $this->assertEquals('/path/to/log/file', $result);
     }
 
@@ -189,7 +189,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetLogLocation_LongOptionValidPath()
     {
         $opts = ['log' => '/var/log/app.log'];
-        $result = \Console\SimpleCliWrapper::getLogLocation($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getLogLocation($opts);
         $this->assertEquals('/var/log/app.log', $result);
     }
 
@@ -199,7 +199,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetLogLocation_ShortOptionRelativePath()
     {
         $opts = ['l' => 'logs/app.log'];
-        $result = \Console\SimpleCliWrapper::getLogLocation($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getLogLocation($opts);
         $this->assertEquals('logs/app.log', $result);
     }
 
@@ -209,7 +209,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetLogLocation_BothOptions()
     {
         $opts = ['l' => '/short/path', 'log' => '/long/path'];
-        $result = \Console\SimpleCliWrapper::getLogLocation($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getLogLocation($opts);
         $this->assertEquals('/short/path', $result);
     }
 
@@ -219,7 +219,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetLogLocation_ShortOptionFalse()
     {
         $opts = ['l' => false];
-        $result = \Console\SimpleCliWrapper::getLogLocation($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getLogLocation($opts);
         $this->assertEquals(-1, $result);
     }
 
@@ -229,7 +229,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetLogLocation_LongOptionFalse()
     {
         $opts = ['log' => false];
-        $result = \Console\SimpleCliWrapper::getLogLocation($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getLogLocation($opts);
         $this->assertEquals(-1, $result);
     }
 
@@ -239,7 +239,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetLogLocation_ShortOptionInteger()
     {
         $opts = ['l' => 123];
-        $result = \Console\SimpleCliWrapper::getLogLocation($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getLogLocation($opts);
         $this->assertEquals(-1, $result);
     }
 
@@ -249,7 +249,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetLogLocation_LongOptionArray()
     {
         $opts = ['log' => ['path']];
-        $result = \Console\SimpleCliWrapper::getLogLocation($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getLogLocation($opts);
         $this->assertEquals(-1, $result);
     }
 
@@ -259,7 +259,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetLogLocation_ShortFalseLongValid()
     {
         $opts = ['l' => false, 'log' => '/valid/path'];
-        $result = \Console\SimpleCliWrapper::getLogLocation($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getLogLocation($opts);
         $this->assertEquals('/valid/path', $result);
     }
 
@@ -269,7 +269,7 @@ class SimpleCliWrapperTest extends TestCase
     public function testGetLogLocation_EmptyStringPath()
     {
         $opts = ['l' => ''];
-        $result = \Console\SimpleCliWrapper::getLogLocation($opts);
+        $result = \Crypt\Console\SimpleCliWrapper::getLogLocation($opts);
         $this->assertEquals('', $result);
     }
 }

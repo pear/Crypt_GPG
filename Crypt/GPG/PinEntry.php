@@ -137,7 +137,7 @@ class Crypt_GPG_PinEntry
     /**
      * The command-line interface parser for this pinentry
      *
-     * @var \Console\SimpleCliWrapper
+     * @var \Crypt\Console\SimpleCliWrapper
      *
      * @see Crypt_GPG_PinEntry::getParser()
      */
@@ -192,7 +192,7 @@ class Crypt_GPG_PinEntry
      */
     public function __invoke()
     {
-        $this->parser = new \Console\SimpleCliWrapper();
+        $this->parser = new \Crypt\Console\SimpleCliWrapper();
 
         try {
             $result = $this->parser->parseCli();

@@ -32,7 +32,7 @@
 /**
  * CLI user-interface and parser.
  */
-require_once 'Console/CommandLine.php';
+require_once __DIR__ . '/../Console/SimpleCliWrapper.php';
 
 /**
  * A command-line dummy pinentry program for use with gpg-agent and Crypt_GPG
@@ -137,7 +137,7 @@ class Crypt_GPG_PinEntry
     /**
      * The command-line interface parser for this pinentry
      *
-     * @var Console_CommandLine
+     * @var \Crypt\Console\SimpleCliWrapper
      *
      * @see Crypt_GPG_PinEntry::getParser()
      */
@@ -192,13 +192,13 @@ class Crypt_GPG_PinEntry
      */
     public function __invoke()
     {
-        $this->parser = $this->getCommandLineParser();
+        $this->parser = new \Crypt\Console\SimpleCliWrapper();
 
         try {
-            $result = $this->parser->parse();
+            $result = $this->parser->parseCli();
 
-            $this->setVerbosity($result->options['verbose']);
-            $this->setLogFilename($result->options['log']);
+            $this->setVerbosity($result->getVerbose());
+            $this->setLogFilename($result->getLog());
 
             $this->connect();
             $this->initPinsFromENV();
@@ -211,10 +211,6 @@ class Crypt_GPG_PinEntry
             }
 
             $this->disconnect();
-
-        } catch (Console_CommandLine_Exception $e) {
-            $this->log($e->getMessage() . PHP_EOL, self::VERBOSITY_ERRORS);
-            exit(1);
         } catch (Exception $e) {
             $this->log($e->getMessage() . PHP_EOL, self::VERBOSITY_ERRORS);
             $this->log($e->getTraceAsString() . PHP_EOL, self::VERBOSITY_ERRORS);
@@ -259,57 +255,19 @@ class Crypt_GPG_PinEntry
         }
 
         if ($filename != '') {
-            if (($this->logFile = fopen($filename, 'w')) === false) {
+            if (($this->logFile = fopen($filename, 'wb')) === false) {
                 $this->log(
                     'Unable to open log file "' . $filename . '" '
                     . 'for writing.' . PHP_EOL,
                     self::VERBOSITY_ERRORS
                 );
                 exit(1);
-            } else {
-                stream_set_write_buffer($this->logFile, 0);
             }
+
+            stream_set_write_buffer($this->logFile, 0);
         }
 
         return $this;
-    }
-
-    /**
-     * Gets the CLI user-interface definition for this pinentry
-     *
-     * Detects whether or not this package is PEAR-installed and appropriately
-     * locates the XML UI definition.
-     *
-     * @return string|null The location of the CLI user-interface definition XML.
-     */
-    protected function getUIXML()
-    {
-        // Find PinEntry config depending on the way how the package is installed
-        $ds    = DIRECTORY_SEPARATOR;
-        $root  = __DIR__ . $ds . '..' . $ds . '..' . $ds;
-        $paths = [
-            '@data-dir@' . $ds . '@package-name@' . $ds . 'data', // PEAR
-            $root . 'data', // Git
-            $root . 'data' . $ds . 'Crypt_GPG' . $ds . 'data', // Composer
-        ];
-
-        foreach ($paths as $path) {
-            if (file_exists($path . $ds . 'pinentry-cli.xml')) {
-                return $path . $ds . 'pinentry-cli.xml';
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Gets the CLI parser for this pinentry
-     *
-     * @return Console_CommandLine the CLI parser for this pinentry.
-     */
-    protected function getCommandLineParser()
-    {
-        return Console_CommandLine::fromXmlFile($this->getUIXML());
     }
 
     /**
@@ -331,7 +289,7 @@ class Crypt_GPG_PinEntry
                 fwrite($this->logFile, $data);
                 fflush($this->logFile);
             } else {
-                $this->parser->outputter->stderr($data);
+                $this->parser->writeToErrOrEcho($data);
             }
         }
 

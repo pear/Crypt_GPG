@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: ["5.6", "7.0", "7.1", "7.2", "7.3", "7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]
+        php: ["5.6", "7.0", "7.1", "7.2", "7.3", "7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5"]
 
     name: PHP ${{ matrix.php }}
 
@@ -41,10 +41,10 @@ jobs:
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Install GnuPG v1 (GnuPG v2 does not work with Github Actions)
-        run: sudo apt-get install -y gnupg1
+        run: sudo apt-get install -y gnupg2
 
       - name: Execute tests
-        run: TESTS_GPG_BINARY=/usr/bin/gpg1 vendor/bin/phpunit --stop-on-error tests
+        run: TESTS_GPG_BINARY=/usr/bin/gpg vendor/bin/phpunit --stop-on-error tests
 
       - name: Upload artifacts
         uses: actions/upload-artifact@master

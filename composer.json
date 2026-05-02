@@ -25,9 +25,8 @@
         }
     ],
     "require": {
-        "php": ">=5.4.8",
+        "php": ">=5.6",
         "ext-mbstring": "*",
-        "pear/console_commandline": "*",
         "pear/pear_exception": "*"
     },
     "suggest": {
@@ -52,5 +51,10 @@
     },
     "archive": {
         "exclude": ["tools"]
+    },
+    "config": {
+        "audit": {
+            "block-insecure": false
+        }
     }
 }

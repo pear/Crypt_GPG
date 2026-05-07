@@ -40,8 +40,12 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Install GnuPG v1 (GnuPG v2 does not work with Github Actions)
+      - name: Install GnuPG v2
         run: sudo apt-get install -y gnupg2
+
+      - name: Execute phpstan
+        if: matrix.php >= 7.4
+        run: php -dmemory_limit=256M vendor/bin/phpstan analyse -v
 
       - name: Execute tests
         run: TESTS_GPG_BINARY=/usr/bin/gpg vendor/bin/phpunit --stop-on-error tests

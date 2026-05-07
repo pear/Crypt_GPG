@@ -2,7 +2,6 @@
 
 namespace Crypt\Console;
 
-
 require_once __DIR__ . '/PinCliParameters.php';
 
 class SimpleCliWrapper
@@ -93,7 +92,6 @@ class SimpleCliWrapper
      * }
      * ```
      *
-     * @param $msg
      * @return void
      */
     public function writeToErrOrEcho($msg)
@@ -128,10 +126,7 @@ Options:
 ";
     }
 
-
     /**
-     * @param array $opts
-     *
      * @return int
      */
     public static function getVerbosityLevel(array $opts)
@@ -139,7 +134,6 @@ Options:
         if (!isset($opts[self::VERBOSE_SHORT]) && !isset($opts[self::VERBOSE_LONG])) {
             return self::DEFAULT_VERBOSITY;
         }
-
 
         // the default options with just a -v is false, but based
         // on the old system, it would be level 0
@@ -164,11 +158,10 @@ Options:
 
     }
 
-
     public static function getLogLocation(array $opts)
     {
         if (!isset($opts[self::LOG_SHORT]) && !isset($opts[self::LOG_LONG])) {
-            return "";
+            return '';
         }
 
         if (isset($opts[self::LOG_SHORT]) && is_string($opts[self::LOG_SHORT])) {

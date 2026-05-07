@@ -7,16 +7,19 @@ class PinCliParameters
     private $verbose;
     private $log;
 
-    public function __construct($verbose = 0, $log = null) {
+    public function __construct($verbose = 0, $log = null)
+    {
         $this->verbose = $verbose;
         $this->log = $log;
     }
 
-    public function getVerbose() {
+    public function getVerbose()
+    {
         return $this->verbose;
     }
 
-    public function getLog() {
+    public function getLog()
+    {
         return $this->log;
     }
 }

@@ -60,6 +60,11 @@ require_once 'Crypt/GPG/ProcessControl.php';
 require_once 'Crypt/GPG/SignatureCreationInfo.php';
 
 /**
+ * Key editor
+ */
+require_once 'Crypt/GPG/KeyEditor.php';
+
+/**
  * Standard PEAR exception is used if GPG binary is not found.
  */
 require_once 'PEAR/Exception.php';
@@ -997,6 +1002,29 @@ class Crypt_GPG_Engine
         if ($this->_processHandler) {
             $this->_processHandler->setData($name, $value);
         }
+    }
+
+    /**
+     * Initialize key editor instance
+     *
+     * @return Crypt_GPG_KeyEditor Key editor object
+     */
+    public function getKeyEditor()
+    {
+        $keys = ['homedir', 'binary', 'publicKeyring', 'privateKeyring', 'trustDb'];
+        $options = [];
+
+        foreach ($keys as $key) {
+            if (isset($this->{"_{$key}"})) {
+                $options[$key] = $this->{"_{$key}"};
+            }
+        }
+
+        if ($this->_debug) {
+            $options['debug'] = function ($line) { $this->_debug($line); };
+        }
+
+        return new Crypt_GPG_KeyEditor($this, $options);
     }
 
     /**

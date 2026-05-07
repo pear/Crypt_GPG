@@ -236,6 +236,16 @@ class Crypt_GPG extends Crypt_GPGAbstract
     protected $passphrases = [];
 
     /**
+     * Get a key editor instance
+     *
+     * @return Crypt_GPG_KeyEditor Key editor object
+     */
+    public function getKeyEditor()
+    {
+        return $this->engine->getKeyEditor();
+    }
+
+    /**
      * Imports a public or private key into the keyring
      *
      * Keys may be removed from the keyring using

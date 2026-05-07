@@ -29,11 +29,11 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2025-05-22</date>
- <time>14:00:00</time>
+ <date>2026-05-07</date>
+ <time>18:00:00</time>
  <version>
-  <release>1.6.11</release>
-  <api>1.6.8</api>
+  <release>1.7.0</release>
+  <api>1.7.0</api>
  </version>
  <stability>
   <release>stable</release>
@@ -41,11 +41,15 @@ This package requires PHP version 5.4.8 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Validate gpgconf binary on object destruction [alec]
+Removed dependency on Console_CommandLine [chilimatic]
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
    <dir name="Crypt">
+    <dir name="Console">
+     <file baseinstalldir="/" name="PinCliParameters.php" role="php" />
+     <file baseinstalldir="/" name="SimpleCliWrapper.php" role="php" />
+    </dir>
     <dir name="GPG">
      <file baseinstalldir="/" name="Engine.php" role="php">
       <tasks:replace from="@bin-dir@" to="bin_dir" type="pear-config" />
@@ -63,20 +67,15 @@ Validate gpgconf binary on object destruction [alec]
      <file baseinstalldir="/" name="SignatureCreationInfo.php" role="php" />
      <file baseinstalldir="/" name="SubKey.php" role="php" />
      <file baseinstalldir="/" name="UserId.php" role="php" />
-    </dir> <!-- /Crypt/GPG -->
+    </dir>
     <file baseinstalldir="/" name="GPG.php" role="php" />
     <file baseinstalldir="/" name="GPGAbstract.php" role="php" />
-   </dir> <!-- /Crypt -->
-   <dir name="data">
-    <file baseinstalldir="/" name="pinentry-cli.xml" role="data">
-     <tasks:replace from="@package-version@" to="version" type="package-info" />
-    </file>
-   </dir> <!-- /data -->
+   </dir>
    <dir name="scripts">
     <file baseinstalldir="/" name="crypt-gpg-pinentry" role="script">
      <tasks:replace from="@php-dir@" to="php_dir" type="pear-config" />
     </file>
-   </dir> <!-- /scripts -->
+   </dir>
    <dir name="tests">
     <dir name="data-files">
      <file baseinstalldir="/" name="testDecryptFile.asc" role="test" />
@@ -100,7 +99,7 @@ Validate gpgconf binary on object destruction [alec]
      <file baseinstalldir="/" name="testVerifyFileDualClearsignedData.asc" role="test" />
      <file baseinstalldir="/" name="testVerifyFileDualNormalSignedData.asc" role="test" />
      <file baseinstalldir="/" name="testVerifyFileNormalSignedData.asc" role="test" />
-    </dir> <!-- /tests/data-files -->
+    </dir>
     <file baseinstalldir="/" name="config.php.dist" role="test" />
     <file baseinstalldir="/" name="DecryptAndVerifyTest.php" role="test" />
     <file baseinstalldir="/" name="DecryptTest.php" role="test" />
@@ -121,6 +120,7 @@ Validate gpgconf binary on object destruction [alec]
     <file baseinstalldir="/" name="SignatureCreationInfoTest.php" role="test" />
     <file baseinstalldir="/" name="SignatureTest.php" role="test" />
     <file baseinstalldir="/" name="SignTest.php" role="test" />
+    <file baseinstalldir="/" name="SimpleCliWrapperTest.php" role="test" />
     <file baseinstalldir="/" name="SubKeyTest.php" role="test" />
     <file baseinstalldir="/" name="TestCase.php" role="test" />
     <file baseinstalldir="/" name="UserIdTest.php" role="test" />
@@ -164,6 +164,8 @@ Validate gpgconf binary on object destruction [alec]
  </phprelease>
  <changelog>
   <release>
+   <date>2025-05-22</date>
+   <time>14:00:00</time>
    <version>
     <release>1.6.11</release>
     <api>1.6.8</api>
@@ -172,7 +174,6 @@ Validate gpgconf binary on object destruction [alec]
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2025-05-22</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
 Validate gpgconf binary on object destruction [alec]

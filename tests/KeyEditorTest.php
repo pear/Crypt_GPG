@@ -30,9 +30,6 @@
  */
 
 require_once 'TestCase.php';
-require_once 'Crypt/GPG/Key.php';
-require_once 'Crypt/GPG/UserId.php';
-require_once 'Crypt/GPG/SubKey.php';
 require_once 'Crypt/GPG/KeyEditor.php';
 
 /**
@@ -107,11 +104,13 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $userIds = array_filter($userIds, function ($id) use ($user) { return $id->getName() == $user->getName(); });
         $this->assertCount(0, $userIds);
 
+        // Test editing a key that has no secret key
+        $this->expectException('Crypt_GPG_Exception');
+        $keyEditor->edit('public-only@example.com', 'test')->addUserId($user)->save();
+
         // Test invalid password
         $this->expectException('Crypt_GPG_BadPassphraseException');
-        $keyEditor->edit('second-keypair@example.com', 'wrong')
-            ->addUserId($user)
-            ->save();
+        $keyEditor->edit('second-keypair@example.com', 'wrong')->addUserId($user)->save();
     }
 
     /**
@@ -119,6 +118,78 @@ class KeyEditorTest extends Crypt_GPG_TestCase
      */
     public function testDeleteUserId()
     {
-        $this->markTestIncomplete();
+        $keyEditor = $this->gpg->getKeyEditor();
+
+        // First add some users to the key
+        $user1 = new Crypt_GPG_UserId([
+            'name'    => 'Alice',
+            'comment' => 'shipping',
+            'email'   => 'alice@example.com'
+        ]);
+
+        $user2 = new Crypt_GPG_UserId([
+            'name'    => 'John',
+            'comment' => '',
+            'email'   => 'john@example.com'
+        ]);
+
+        $user3 = new Crypt_GPG_UserId([
+            'name'    => '',
+            'comment' => '',
+            'email'   => 'john@example.com'
+        ]);
+
+        $keyEditor->edit('second-keypair@example.com', 'test2')
+            ->addUserId($user1)
+            ->addUserId($user2)
+            ->addUserId($user3)
+            ->save();
+
+        // Test deleting user with name, comment and email
+        $keyEditor->edit('second-keypair@example.com', 'test2')->deleteUserId($user1)->save();
+
+        $keys = $this->gpg->getKeys('second-keypair@example.com');
+        $userIds = $keys[0]->getUserIds();
+        $this->assertCount(3, $userIds);
+        $userIds = array_filter($userIds, function ($id) use ($user1) { return $id->getEmail() != $user1->getEmail(); });
+        $this->assertCount(3, $userIds);
+
+        // Test deleting users with no name or no comment
+        $keyEditor->edit('second-keypair@example.com', 'test2')
+            ->deleteUserId($user2)
+            ->deleteUserId($user3)
+            ->save();
+
+        $keys = $this->gpg->getKeys('second-keypair@example.com');
+        $userIds = $keys[0]->getUserIds();
+        $this->assertCount(1, $userIds);
+        $userIds = array_filter($userIds, function ($id) use ($user1) { return $id->getEmail() != $user1->getEmail(); });
+        $this->assertCount(1, $userIds);
+
+        // Test deleting the last user
+        $user = new Crypt_GPG_UserId('Second Keypair Test Key (do not encrypt important data with this key) <second-keypair@example.com>');
+        $this->expectException('Crypt_GPG_Exception');
+        $keyEditor->edit('second-keypair@example.com', 'test2')->deleteUserId($user)->save();
+
+        // Test deleting the last user
+        $user = new Crypt_GPG_UserId('<unknown-keypair@example.com>');
+        $this->expectException('Crypt_GPG_Exception');
+        $keyEditor->edit('second-keypair@example.com', 'test2')->deleteUserId($user)->save();
+    }
+
+    /**
+     * Test `passwd` command
+     */
+    public function testPasswd()
+    {
+        $keyEditor = $this->gpg->getKeyEditor();
+        $keyEditor->edit('first-keypair@example.com', 'test1')->passwd('new pass')->save();
+
+        // Assert the new password in fact works
+        $keyEditor->edit('first-keypair@example.com', 'new pass')
+            ->addUserId($user = new Crypt_GPG_UserId('alice@example.com'))
+            ->save();
+
+        $this->assertTrue(true);
     }
 }

@@ -2,7 +2,7 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-require_once 'Crypt/GPG/Engine.php';
+require_once 'Crypt/GPGAbstract.php';
 
 /**
  * A class for editing keys (using GnuPG interactive --key-edit shell)
@@ -182,7 +182,12 @@ class Crypt_GPG_KeyEditor
             'passphrase.enter' => $this->passphrase,
         ];
 
-        $this->_write('adduid')->_read($handlers, ['keyedit.prompt']);
+        $output = $this->_write('adduid')->_read($handlers, ['keyedit.prompt']);
+
+        if (strpos($output, 'Need the secret key to do this')) {
+            $this->_close();
+            throw new Crypt_GPG_Exception('Failed to add a user. No secret key found.');
+        }
 
         return $this;
     }
@@ -190,11 +195,72 @@ class Crypt_GPG_KeyEditor
     /**
      * Delete a user identity from a key (`deluid`).
      *
+     * @param Crypt_GPG_UserId $userid   User identity to delete
+     * @param bool             $by_email Delete all identities with specified email address
+     *
      * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
      */
-    public function deleteUserId(Crypt_GPG_UserId $userid)
+    public function deleteUserId(Crypt_GPG_UserId $userid, $by_email = false)
     {
-        // TODO: Find the identity index (`uid 0`), call `uid X`, call `deluid`.
+        // Find the identity index (`uid 0`), call `uid X`, call `deluid`.
+        $output = $this->_write('list')->_read([], ['keyedit.prompt']);
+
+        // Process the output to find and match the user entries, and get their ids
+        $uids = [];
+        foreach (explode("\n", $output) as $line) {
+            if (preg_match('/^\[[^\]]+\]\s+\(([0-9]+)\)\.?\s+(.*)$/', $line, $matches)) {
+                $ident = Crypt_GPG_UserId::parse($matches[2]);
+                if ((string) $ident === (string) $userid || ($by_email && $ident->getEmail() === $userid->getEmail())) {
+                    $uids[] = $matches[1];
+                }
+            }
+        }
+
+        if (empty($uids)) {
+            throw new Exception("No matching users in the key.");
+        }
+
+        // We'll delete users in order where deletion does not change other IDs
+        arsort($uids, SORT_NUMERIC);
+
+        $handlers = [
+            'keyedit.remove.uid.okay' => true,
+            'passphrase.enter' => $this->passphrase,
+        ];
+
+        foreach ($uids as $uid) {
+            $this->_write("uid {$uid}")->_read($handlers, ['keyedit.prompt']);
+            $output = $this->_write('deluid')->_read($handlers, ['keyedit.prompt']);
+
+            if (strpos($output, 'You can\'t delete the last')) {
+                $this->_close();
+                throw new Crypt_GPG_Exception('Failed to delete user from a key. You can\'t delete the last user.');
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Change a key passphrase (`passwd`).
+     *
+     * @param string $passphrase New passphrase
+     *
+     * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
+     */
+    public function passwd($passphrase)
+    {
+        // FIXME: Seems old and new pass use the same 'passphrase.enter' command
+        // What if the key has no password (or it is in cache)?
+
+        $handlers = [
+            'passphrase.enter' => [$this->passphrase, $passphrase],
+        ];
+
+        // TODO: This does not seem to work with empty passphrase
+
+        $this->_write('passwd')->_read($handlers, ['keyedit.prompt']);
+
         return $this;
     }
 
@@ -205,7 +271,7 @@ class Crypt_GPG_KeyEditor
      */
     public function quit()
     {
-        $this->_write('quit')->_read(['keyedit.save.okay' => 'N']);
+        $this->_write('quit')->_read(['keyedit.save.okay' => false]);
         $this->_close();
         return $this;
     }
@@ -238,6 +304,7 @@ class Crypt_GPG_KeyEditor
             $this->_debug("CLOSED GPG SUBPROCESS");
         }
 
+        $this->passphrase = '';
         $this->process = null;
         $this->pipes = [];
     }
@@ -247,6 +314,11 @@ class Crypt_GPG_KeyEditor
      */
     private function _read($handlers = [], $stop_at = [])
     {
+        if (empty($this->pipes[Crypt_GPG_Engine::FD_ERROR])) {
+            $this->_close();
+            throw new Crypt_GPG_Exception('The key editor output stream is closed.');
+        }
+
         $output = '';
         $passInput = false;
 
@@ -255,17 +327,18 @@ class Crypt_GPG_KeyEditor
             $outputStreams = [];
             $exceptionStreams = [];
 
-            if (!feof($this->pipes[Crypt_GPG_Engine::FD_ERROR])) {
+            if (!empty($this->pipes[Crypt_GPG_Engine::FD_ERROR]) && !feof($this->pipes[Crypt_GPG_Engine::FD_ERROR])) {
                 $inputStreams[] = $this->pipes[Crypt_GPG_Engine::FD_ERROR];
             }
 
             if (count($inputStreams) === 0) {
                 break;
             }
-            
+
             $ready = stream_select($inputStreams, $outputStreams, $exceptionStreams, null);
 
             if ($ready === false || $ready === 0) {
+                $this->_close();
                 throw new Crypt_GPG_Exception('Error selecting stream for communication with GPG subprocess');
             }
 
@@ -283,10 +356,17 @@ class Crypt_GPG_KeyEditor
                     $token = $matches[2];
 
                     if (isset($handlers[$token])) {
-                        if (is_string($handlers[$token])) {
-                            $this->_write($handlers[$token]);
-                        } elseif (is_callable($handlers[$token])) {
-                            $handlers[$token]($token, $output);
+                        $handler = $handlers[$token];
+                        if (is_array($handler)) {
+                            $handler = array_shift($handlers[$token]);
+                        }
+
+                        if (is_string($handler)) {
+                            $this->_write($handler);
+                        } elseif (is_bool($handler)) {
+                            $this->_write($handler ? 'y' : 'N');
+                        } elseif (is_callable($handler)) {
+                            $handler($token, $output);
                         }
 
                         $output = '';
@@ -316,6 +396,10 @@ class Crypt_GPG_KeyEditor
      */
     private function _write($input)
     {
+        if (empty($this->pipes[Crypt_GPG_Engine::FD_INPUT]) || feof($this->pipes[Crypt_GPG_Engine::FD_INPUT])) {
+            throw new Crypt_GPG_Exception('The key editor input stream is closed.');
+        }
+
         $this->_debug("< $input");
 
         fwrite($this->pipes[Crypt_GPG_Engine::FD_INPUT], "$input\n");

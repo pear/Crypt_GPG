@@ -108,7 +108,7 @@ class Crypt_GPG_Key
      *
      * The primary key is the first added sub-key.
      *
-     * @return Crypt_GPG_SubKey the primary sub-key of this key.
+     * @return ?Crypt_GPG_SubKey the primary sub-key of this key.
      */
     public function getPrimaryKey()
     {
@@ -166,7 +166,7 @@ class Crypt_GPG_Key
      *
      * @param Crypt_GPG_SubKey $subKey the sub-key to add.
      *
-     * @return Crypt_GPG_Key the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      */
     public function addSubKey(Crypt_GPG_SubKey $subKey)
     {
@@ -179,7 +179,7 @@ class Crypt_GPG_Key
      *
      * @param Crypt_GPG_UserId $userId the user id to add.
      *
-     * @return Crypt_GPG_Key the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      */
     public function addUserId(Crypt_GPG_UserId $userId)
     {

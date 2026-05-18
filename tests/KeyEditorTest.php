@@ -170,8 +170,14 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $user = new Crypt_GPG_UserId('Second Keypair Test Key (do not encrypt important data with this key) <second-keypair@example.com>');
         $this->expectException('Crypt_GPG_Exception');
         $keyEditor->edit('second-keypair@example.com', 'test2')->deleteUserId($user)->save();
+    }
 
-        // Test deleting the last user
+    /**
+     * Test `deluid` command with a non-existing user
+     */
+    public function testDeleteUserIdUnknown()
+    {
+        $keyEditor = $this->gpg->getKeyEditor();
         $user = new Crypt_GPG_UserId('<unknown-keypair@example.com>');
         $this->expectException('Crypt_GPG_Exception');
         $keyEditor->edit('second-keypair@example.com', 'test2')->deleteUserId($user)->save();
@@ -191,5 +197,44 @@ class KeyEditorTest extends Crypt_GPG_TestCase
             ->save();
 
         $this->assertTrue(true);
+    }
+
+    /**
+     * Test `revuid` command
+     */
+    public function testRevokeUserId()
+    {
+        $keyEditor = $this->gpg->getKeyEditor();
+
+        // First add some users to the key
+        $user1 = (new Crypt_GPG_UserId())->setEmail('alice@example.com');
+
+        // Add the user to revoke
+        $keyEditor->edit('second-keypair@example.com', 'test2')->addUserId($user1)->save();
+
+        // Test deleting user with name, comment and email
+        $keyEditor->edit('second-keypair@example.com', 'test2')->revokeUserId($user1)->save();
+
+        $keys = $this->gpg->getKeys('second-keypair@example.com');
+        $userIds = $keys[0]->getUserIds();
+        $this->assertCount(2, $userIds);
+        $userIds = array_filter($userIds, function ($id) use ($user1) { return $id->getEmail() == $user1->getEmail(); });
+        $this->assertCount(1, $userIds);
+
+        // Test revoking the last user
+        $user = new Crypt_GPG_UserId('Second Keypair Test Key (do not encrypt important data with this key) <second-keypair@example.com>');
+        $this->expectException('Crypt_GPG_Exception');
+        $keyEditor->edit('second-keypair@example.com', 'test2')->revokeUserId($user)->save();
+    }
+
+    /**
+     * Test `revuid` command with a non-existing user
+     */
+    public function testRevokeUserIdUnknown()
+    {
+        $keyEditor = $this->gpg->getKeyEditor();
+        $user = new Crypt_GPG_UserId('<unknown-keypair@example.com>');
+        $this->expectException('Crypt_GPG_Exception');
+        $keyEditor->edit('second-keypair@example.com', 'test2')->revokeUserId($user)->save();
     }
 }

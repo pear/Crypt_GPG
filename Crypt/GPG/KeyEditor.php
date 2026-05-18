@@ -202,33 +202,12 @@ class Crypt_GPG_KeyEditor
      */
     public function deleteUserId(Crypt_GPG_UserId $userid, $by_email = false)
     {
-        // Find the identity index (`uid 0`), call `uid X`, call `deluid`.
-        $output = $this->_write('list')->_read([], ['keyedit.prompt']);
-
-        // Process the output to find and match the user entries, and get their ids
-        $uids = [];
-        foreach (explode("\n", $output) as $line) {
-            if (preg_match('/^\[[^\]]+\]\s+\(([0-9]+)\)\.?\s+(.*)$/', $line, $matches)) {
-                $ident = Crypt_GPG_UserId::parse($matches[2]);
-                if ((string) $ident === (string) $userid || ($by_email && $ident->getEmail() === $userid->getEmail())) {
-                    $uids[] = $matches[1];
-                }
-            }
-        }
-
-        if (empty($uids)) {
-            throw new Exception("No matching users in the key.");
-        }
-
-        // We'll delete users in order where deletion does not change other IDs
-        arsort($uids, SORT_NUMERIC);
-
         $handlers = [
             'keyedit.remove.uid.okay' => true,
             'passphrase.enter' => $this->passphrase,
         ];
 
-        foreach ($uids as $uid) {
+        foreach ($this->_find_users($userid, $by_email) as $uid) {
             $this->_write("uid {$uid}")->_read($handlers, ['keyedit.prompt']);
             $output = $this->_write('deluid')->_read($handlers, ['keyedit.prompt']);
 
@@ -260,6 +239,39 @@ class Crypt_GPG_KeyEditor
         // TODO: This does not seem to work with empty passphrase
 
         $this->_write('passwd')->_read($handlers, ['keyedit.prompt']);
+
+        return $this;
+    }
+
+    /**
+     * Revoke a user identity (`revuid`).
+     *
+     * @param Crypt_GPG_UserId $userid     User identity to delete
+     * @param bool             $by_email   Delete all identities with specified email address
+     * @param bool             $is_invalid Mark the user as "no longer valid"
+     * @param string           $reason     Revocation reason description
+     *
+     * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
+     */
+    public function revokeUserId(Crypt_GPG_UserId $userid, $by_email = false, $is_invalid = true, $reason = '')
+    {
+        $handlers = [
+            'keyedit.revoke.uid.okay' => true,
+            'ask_revocation_reason.code' => $is_invalid ? '4' : '0',
+            'ask_revocation_reason.text' => $reason,
+            'ask_revocation_reason.okay' => true,
+            'passphrase.enter' => $this->passphrase,
+        ];
+
+        foreach ($this->_find_users($userid, $by_email) as $uid) {
+            $this->_write("uid {$uid}")->_read([], ['keyedit.prompt']);
+            $output = $this->_write('revuid')->_read($handlers, ['keyedit.prompt']);
+
+            if (strpos($output, 'Cannot revoke the last valid user')) {
+                $this->_close();
+                throw new Crypt_GPG_Exception('Failed to revoke the user. You can\'t revoke the last valid user.');
+            }
+        }
 
         return $this;
     }
@@ -352,7 +364,7 @@ class Crypt_GPG_KeyEditor
 
                 $output .= $line;
 
-                if (preg_match('/(GET_LINE|GET_HIDDEN|GET_BOOL) ([a-z.]+)/', $line, $matches)) {
+                if (preg_match('/(GET_LINE|GET_HIDDEN|GET_BOOL) ([a-z._]+)/', $line, $matches)) {
                     $token = $matches[2];
 
                     if (isset($handlers[$token])) {
@@ -416,5 +428,33 @@ class Crypt_GPG_KeyEditor
         if (!empty($this->options['debug'])) {
             call_user_func($this->options['debug'], $line);
         }
+    }
+
+    /**
+     * Find user identities in the key (by full identity or email)
+     */
+    private function _find_users(Crypt_GPG_UserId $userid, $by_email = false)
+    {
+        $output = $this->_write('list')->_read([], ['keyedit.prompt']);
+
+        // Process the list output to find and match the user entries, and get their ids
+        $uids = [];
+        foreach (explode("\n", $output) as $line) {
+            if (preg_match('/^\[[^\]]+\]\s+\(([0-9]+)\)\.?\s+(.*)$/', $line, $matches)) {
+                $ident = Crypt_GPG_UserId::parse($matches[2]);
+                if ((string) $ident === (string) $userid || ($by_email && $ident->getEmail() === $userid->getEmail())) {
+                    $uids[] = $matches[1];
+                }
+            }
+        }
+
+        if (empty($uids)) {
+            throw new Crypt_GPG_Exception("No matching users in the key.");
+        }
+
+        // We'll delete users in order where deletion does not change other IDs
+        arsort($uids, SORT_NUMERIC);
+
+        return $uids;
     }
 }

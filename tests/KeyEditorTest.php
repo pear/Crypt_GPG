@@ -184,6 +184,32 @@ class KeyEditorTest extends Crypt_GPG_TestCase
     }
 
     /**
+     * Test `expire` command
+     */
+    public function testExpire()
+    {
+        $keyEditor = $this->gpg->getKeyEditor();
+
+        // Test setting an expiration date (one year from today)
+        $keyEditor->edit('second-keypair@example.com', 'test2')->expire('1y')->save();
+
+        $keys = $this->gpg->getKeys('second-keypair@example.com');
+        $primary = $keys[0]->getPrimaryKey();
+        $this->assertSame((date('Y') + 1) . date('-m-d'), $primary->getExpirationDateTime()->format('Y-m-d'));
+
+        // Test unsetting an expiration date
+        $keyEditor->edit('second-keypair@example.com', 'test2')->expire(0)->save();
+
+        $keys = $this->gpg->getKeys('second-keypair@example.com');
+        $primary = $keys[0]->getPrimaryKey();
+        $this->assertNull($primary->getExpirationDateTime());
+
+        // Test invalid period
+        $this->expectException('Crypt_GPG_Exception');
+        $keyEditor->edit('second-keypair@example.com', 'test2')->expire('-1')->save();
+    }
+
+    /**
      * Test `passwd` command
      */
     public function testPasswd()
@@ -218,8 +244,9 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $keys = $this->gpg->getKeys('second-keypair@example.com');
         $userIds = $keys[0]->getUserIds();
         $this->assertCount(2, $userIds);
-        $userIds = array_filter($userIds, function ($id) use ($user1) { return $id->getEmail() == $user1->getEmail(); });
+        $userIds = array_values(array_filter($userIds, function ($id) use ($user1) { return $id->getEmail() == $user1->getEmail(); }));
         $this->assertCount(1, $userIds);
+        $this->assertTrue($userIds[0]->isRevoked());
 
         // Test revoking the last user
         $user = new Crypt_GPG_UserId('Second Keypair Test Key (do not encrypt important data with this key) <second-keypair@example.com>');

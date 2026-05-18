@@ -221,6 +221,39 @@ class Crypt_GPG_KeyEditor
     }
 
     /**
+     * Set expiration date for a primary key (`expire`).
+     *
+     * @param string|int $period  Validation period: Either of:
+     *                            - 0 or an empty string for no expiration
+     *                            - <n>  - expiration in days
+     *                            - <n>w - expiration in weeks
+     *                            - <n>m - expiration in months
+     *                            - <n>y - expiration in years
+     *
+     * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
+     */
+    public function expire($period = '')
+    {
+        if ($period === '') {
+            $period = '0';
+        }
+
+        if (!preg_match('/^[0-9]+[wmy]?$/i', (string) $period)) {
+            $this->_close();
+            throw new Crypt_GPG_Exception('Failed to set expiration. Invalid period specification.');
+        }
+
+        $handlers = [
+            'keygen.valid' => (string) $period,
+            'passphrase.enter' => $this->passphrase,
+        ];
+
+        $this->_write('expire')->_read($handlers, ['keyedit.prompt']);
+
+        return $this;
+    }
+
+    /**
      * Change a key passphrase (`passwd`).
      *
      * @param string $passphrase New passphrase

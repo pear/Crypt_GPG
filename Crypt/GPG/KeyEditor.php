@@ -73,7 +73,7 @@ class Crypt_GPG_KeyEditor
      *                           {@link Crypt_GPG_Key} or {@link Crypt_GPG_SubKey}.
      * @param string $passphrase The passphrase of the key required for signing (optional).
      *
-     * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      *
      * @sensitive $passphrase
      */
@@ -171,7 +171,7 @@ class Crypt_GPG_KeyEditor
     /**
      * Add a user identity to a key (`adduid`).
      *
-     * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function addUserId(Crypt_GPG_UserId $userid)
     {
@@ -198,7 +198,7 @@ class Crypt_GPG_KeyEditor
      * @param Crypt_GPG_UserId $userid   User identity to delete
      * @param bool             $by_email Delete all identities with specified email address
      *
-     * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function deleteUserId(Crypt_GPG_UserId $userid, $by_email = false)
     {
@@ -230,7 +230,7 @@ class Crypt_GPG_KeyEditor
      *                            - <n>m - expiration in months
      *                            - <n>y - expiration in years
      *
-     * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function expire($period = '')
     {
@@ -258,7 +258,7 @@ class Crypt_GPG_KeyEditor
      *
      * @param string $passphrase New passphrase
      *
-     * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function passwd($passphrase)
     {
@@ -284,7 +284,7 @@ class Crypt_GPG_KeyEditor
      * @param bool             $is_invalid Mark the user as "no longer valid"
      * @param string           $reason     Revocation reason description
      *
-     * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function revokeUserId(Crypt_GPG_UserId $userid, $by_email = false, $is_invalid = true, $reason = '')
     {
@@ -312,7 +312,7 @@ class Crypt_GPG_KeyEditor
     /**
      * Quit the current editing session without saving changes (`quit`).
      *
-     * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function quit()
     {
@@ -324,7 +324,7 @@ class Crypt_GPG_KeyEditor
     /**
      * Save the changes and exit (`save`).
      *
-     * @return Crypt_GPG_KeyEditor The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function save()
     {

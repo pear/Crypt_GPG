@@ -29,11 +29,11 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2026-05-07</date>
- <time>18:00:00</time>
+ <date>2026-05-21</date>
+ <time>10:00:00</time>
  <version>
-  <release>1.7.0</release>
-  <api>1.7.0</api>
+  <release>1.8.0</release>
+  <api>1.8.0</api>
  </version>
  <stability>
   <release>stable</release>
@@ -41,7 +41,7 @@ This package requires PHP version 5.4.8 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Removed dependency on Console_CommandLine [chilimatic]
+Added (experimental) key editing tool [alec]
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -56,6 +56,7 @@ Removed dependency on Console_CommandLine [chilimatic]
      </file>
      <file baseinstalldir="/" name="Exceptions.php" role="php" />
      <file baseinstalldir="/" name="Key.php" role="php" />
+     <file baseinstalldir="/" name="KeyEditor.php" role="php" />
      <file baseinstalldir="/" name="KeyGenerator.php" role="php" />
      <file baseinstalldir="/" name="PinEntry.php" role="php">
       <tasks:replace from="@package-name@" to="name" type="package-info" />
@@ -114,6 +115,7 @@ Removed dependency on Console_CommandLine [chilimatic]
     <file baseinstalldir="/" name="GetFingerprintTest.php" role="test" />
     <file baseinstalldir="/" name="GetKeysTest.php" role="test" />
     <file baseinstalldir="/" name="ImportKeyTest.php" role="test" />
+    <file baseinstalldir="/" name="KeyEditorTest.php" role="test" />
     <file baseinstalldir="/" name="KeyGeneratorTest.php" role="test" />
     <file baseinstalldir="/" name="KeyTest.php" role="test" />
     <file baseinstalldir="/" name="phpunit.xml" role="test" />
@@ -133,16 +135,11 @@ Removed dependency on Console_CommandLine [chilimatic]
  <dependencies>
   <required>
    <php>
-    <min>5.4.8</min>
+    <min>5.6.0</min>
    </php>
    <pearinstaller>
     <min>1.4.0</min>
    </pearinstaller>
-   <package>
-    <name>Console_CommandLine</name>
-    <channel>pear.php.net</channel>
-    <min>1.1.10</min>
-   </package>
    <extension>
     <name>mbstring</name>
    </extension>
@@ -164,11 +161,11 @@ Removed dependency on Console_CommandLine [chilimatic]
  </phprelease>
  <changelog>
   <release>
-   <date>2025-05-22</date>
-   <time>14:00:00</time>
+   <date>2026-05-07</date>
+   <time>18:00:00</time>
    <version>
-    <release>1.6.11</release>
-    <api>1.6.8</api>
+    <release>1.7.0</release>
+    <api>1.7.0</api>
    </version>
    <stability>
     <release>stable</release>
@@ -176,7 +173,7 @@ Removed dependency on Console_CommandLine [chilimatic]
    </stability>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-Validate gpgconf binary on object destruction [alec]
+Removed dependency on Console_CommandLine [chilimatic]
    </notes>
   </release>
  </changelog>

@@ -274,22 +274,18 @@ class KeyEditorTest extends Crypt_GPG_TestCase
 
         $keyEditor = $this->gpg->getKeyEditor();
 
-        // Sign a key using second-keypair@example.com key
+        // Sign the key using second-keypair@example.com key
         $opts = ['--allow-weak-key-signatures', '--local-user=second-keypair@example.com'];
-        $keyEditor->edit('public-only@example.com', 'test2', $opts)
-            ->sign()
-            ->save();
+        $keyEditor->edit('public-only@example.com', 'test2', $opts)->sign()->save();
 
         $this->assertSame(
             ['public-only@example.com', 'second-keypair@example.com'],
             $this->_getKeySignaturesEmails('public-only@example.com')
         );
 
-        // Sign a key using second-keypair@example.com key
+        // Sign the key using first-keypair@example.com key
         $opts = ['--allow-weak-key-signatures', '--local-user=first-keypair@example.com'];
-        $keyEditor->edit('public-only@example.com', 'test1', $opts)
-            ->sign()
-            ->save();
+        $keyEditor->edit('public-only@example.com', 'test1', $opts)->sign()->save();
 
         $this->assertSame(
             ['first-keypair@example.com', 'public-only@example.com', 'second-keypair@example.com'],

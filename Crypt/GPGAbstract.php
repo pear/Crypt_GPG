@@ -406,7 +406,7 @@ abstract class Crypt_GPGAbstract
         $userId = null; // current user-id
 
         foreach (explode(PHP_EOL, $output) as $line) {
-            [$type] = explode(':', $line, 2);
+            list($type) = explode(':', $line, 2);
 
             if ($type == 'pub') {
                 // new primary key means last key should be added to the array

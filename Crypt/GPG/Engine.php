@@ -1102,6 +1102,12 @@ class Crypt_GPG_Engine
         $fdCommand = $this->_pipes[self::FD_COMMAND];
         $fdMessage = $this->_pipes[self::FD_MESSAGE];
 
+        // Ignore "Broken pipe" notice from fwrite() below, as gpg could close
+        // the command stream before we finished writing (e.g. in bad passphrase case).
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+                return strpos($errfile, 'Engine.php') !== false && strpos($errstr, 'errno=32') !== false;
+            }, E_NOTICE);
+
         // select loop delay in milliseconds
         $delay         = 0;
         $inputPosition = 0;
@@ -1446,6 +1452,8 @@ class Crypt_GPG_Engine
             }
 
         } // end loop while streams are open
+
+        restore_error_handler();
 
         $this->_debug('END PROCESSING');
     }

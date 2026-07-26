@@ -264,4 +264,57 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $this->expectException('Crypt_GPG_Exception');
         $keyEditor->edit('second-keypair@example.com', 'test2')->revokeUserId($user)->save();
     }
+
+    /**
+     * Test `sign` command
+     */
+    public function testSign()
+    {
+        $keys = $this->gpg->getKeys('public-only@example.com');
+
+        $keyEditor = $this->gpg->getKeyEditor();
+
+        // Sign a key using second-keypair@example.com key
+        $opts = ['--allow-weak-key-signatures', '--local-user=second-keypair@example.com'];
+        $keyEditor->edit('public-only@example.com', 'test2', $opts)
+            ->sign()
+            ->save();
+
+        $this->assertSame(
+            ['public-only@example.com', 'second-keypair@example.com'],
+            $this->_getKeySignaturesEmails('public-only@example.com')
+        );
+
+        // Sign a key using second-keypair@example.com key
+        $opts = ['--allow-weak-key-signatures', '--local-user=first-keypair@example.com'];
+        $keyEditor->edit('public-only@example.com', 'test1', $opts)
+            ->sign()
+            ->save();
+
+        $this->assertSame(
+            ['first-keypair@example.com', 'public-only@example.com', 'second-keypair@example.com'],
+            $this->_getKeySignaturesEmails('public-only@example.com')
+        );
+    }
+
+    /**
+     * Get emails for all signatures on a public key
+     */
+    private function _getKeySignaturesEmails($keyId)
+    {
+        $emails = [];
+
+        foreach ($this->gpg->setEngineOptions(['list-public-keys' => '--with-sig-list'])->getKeys($keyId) as $key) {
+            foreach ($key->getUserIds() as $user) {
+                foreach ($user->getSignatures() as $sig) {
+                    $user = $sig->getUserId();
+                    $emails[] = $user->getEmail();
+                }
+            }
+        }
+
+        sort($emails);
+
+        return $emails;
+    }
 }

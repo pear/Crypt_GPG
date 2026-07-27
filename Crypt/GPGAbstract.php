@@ -264,7 +264,7 @@ abstract class Crypt_GPGAbstract
      *
      * @param Crypt_GPG_Engine $engine the engine to use.
      *
-     * @return Crypt_GPGAbstract the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      */
     public function setEngine(Crypt_GPG_Engine $engine)
     {
@@ -283,7 +283,7 @@ abstract class Crypt_GPGAbstract
      *                       added to the related command. For example:
      *                       ['sign' => '--emit-version'].
      *
-     * @return Crypt_GPGAbstract the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      */
     public function setEngineOptions(array $options)
     {

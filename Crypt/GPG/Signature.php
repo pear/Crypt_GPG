@@ -247,7 +247,11 @@ class Crypt_GPG_Signature
     }
 
     /**
-     * Gets the user id associated with this signature
+     * Gets the user id associated with this signature.
+     *
+     * Warning: When listing keys with signatures GnuPG returns only a single user
+     * identity per signature. So, if the signing key has more user identities
+     * there's only one here.
      *
      * @return Crypt_GPG_UserId|null The user id associated with this signature.
      */

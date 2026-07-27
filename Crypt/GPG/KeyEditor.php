@@ -325,6 +325,7 @@ class Crypt_GPG_KeyEditor
     public function sign()
     {
         $handlers = [
+            'keyedit.sign_all.okay' => true,
             'passphrase.enter' => $this->passphrase,
         ];
 

@@ -352,7 +352,7 @@ class Crypt_GPG_KeyEditor
      *
      * @return $this The current object, for fluent interface.
      */
-    public function trust(int $level)
+    public function trust($level)
     {
         $handlers = [
             'edit_ownertrust.value' => [

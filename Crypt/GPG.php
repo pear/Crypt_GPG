@@ -1254,6 +1254,34 @@ class Crypt_GPG extends Crypt_GPGAbstract
     }
 
     /**
+     * Exports an owner trust information.
+     *
+     * @return array<string, int> Key fingerprint to trust level map
+     *
+     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     */
+    public function getOwnerTrust()
+    {
+        $output = '';
+        $this->engine->reset();
+        $this->engine->setOutput($output);
+        $this->engine->setOperation('--export-ownertrust', []);
+        $this->engine->run();
+
+        $result = [];
+        foreach (explode(PHP_EOL, $output) as $line) {
+            if (substr_count($line, ':') > 1) {
+                list($fingerprint, $level) = explode(':', $line, 3);
+                $result[$fingerprint] = (int) $level;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Tell if there are encryption keys registered
      *
      * @return bool True if the data shall be encrypted

@@ -294,6 +294,33 @@ class KeyEditorTest extends Crypt_GPG_TestCase
     }
 
     /**
+     * Test `trust` command
+     */
+    public function testTrust()
+    {
+        $keys = $this->gpg->getKeys('public-only@example.com');
+        $fingerprint = $keys[0]->getPrimaryKey()->getFingerprint();
+
+        $keyEditor = $this->gpg->getKeyEditor();
+
+        // Set the trust level on this key
+        $keyEditor->edit('public-only@example.com')->trust($keyEditor::TRUST_ULTIMATE)->quit();
+        $ownertrust = $this->gpg->getOwnertrust();
+
+        $this->assertSame($keyEditor::TRUST_ULTIMATE + 1, $ownertrust[$fingerprint]);
+
+        // Change the trust level on this key
+        $keyEditor->edit('public-only@example.com')->trust($keyEditor::TRUST_FULL)->quit();
+        $ownertrust = $this->gpg->getOwnertrust();
+
+        $this->assertSame($keyEditor::TRUST_FULL + 1, $ownertrust[$fingerprint]);
+
+        // Use invalid level
+        $this->expectException('Crypt_GPG_Exception');
+        $keyEditor->edit('public-only@example.com')->trust(123)->save();
+    }
+
+    /**
      * Get emails for all signatures on a public key
      */
     private function _getKeySignaturesEmails($keyId)

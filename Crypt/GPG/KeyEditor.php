@@ -72,12 +72,13 @@ class Crypt_GPG_KeyEditor
      * @param mixed  $key        The key to use. This may be a key identifier, user id, fingerprint,
      *                           {@link Crypt_GPG_Key} or {@link Crypt_GPG_SubKey}.
      * @param string $passphrase The passphrase of the key required for signing (optional).
+     * @param array  $options    Additional command line options
      *
      * @return $this The current object, for fluent interface.
      *
      * @sensitive $passphrase
      */
-    public function edit($key, $passphrase = null)
+    public function edit($key, $passphrase = null, $options = [])
     {
         if ($this->key && $this->process) {
             $this->save();
@@ -124,6 +125,10 @@ class Crypt_GPG_KeyEditor
 
         if (!empty($this->options['trustDb'])) {
             $arguments[] = '--trustdb-name ' . escapeshellarg($this->options['trustDb']);
+        }
+
+        if (!empty($options)) {
+            $arguments = array_merge($arguments, $options);
         }
 
         $command = $this->options['binary'] . ' ' . implode(' ', $arguments) . ' --edit-key ' . escapeshellarg($this->key);
@@ -304,6 +309,31 @@ class Crypt_GPG_KeyEditor
                 $this->_close();
                 throw new Crypt_GPG_Exception('Failed to revoke the user. You can\'t revoke the last valid user.');
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sign a key.
+     *
+     * Signing key selection can be done by adding `--local-user=AABBCCDD`
+     * to the edit() method `$options` argument.
+     *
+     * @return $this The current object, for fluent interface.
+     */
+    public function sign()
+    {
+        $handlers = [
+            'keyedit.sign_all.okay' => true,
+            'passphrase.enter' => $this->passphrase,
+        ];
+
+        $output = $this->_write('sign')->_read($handlers, ['keyedit.prompt']);
+
+        if (preg_match('/signing failed:(.*)/', $output, $matches)) {
+            $this->_close();
+            throw new Crypt_GPG_Exception('Failed to sign the key. Error: ' . trim($matches[1]));
         }
 
         return $this;

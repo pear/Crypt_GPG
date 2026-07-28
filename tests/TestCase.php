@@ -99,7 +99,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
             // 'digest-algo' => 'SHA512',
             // 'compress-algo' => 'zip',
             'debug'  => $debugFunction,
-            // 'options' => array(),
+            'options' => [],
         ];
 
         if ($binary = getenv('TESTS_GPG_BINARY')) {

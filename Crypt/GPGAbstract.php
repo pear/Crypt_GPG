@@ -57,6 +57,11 @@ require_once 'Crypt/GPG/SubKey.php';
 require_once 'Crypt/GPG/UserId.php';
 
 /**
+ * GPG signature class
+ */
+require_once 'Crypt/GPG/Signature.php';
+
+/**
  * GPG process and I/O engine class
  */
 require_once 'Crypt/GPG/Engine.php';
@@ -376,58 +381,61 @@ abstract class Crypt_GPGAbstract
         $this->engine->setOperation($operation, $arguments);
         $this->engine->run();
 
+        $keys = self::_parseListOutput($output);
+
+        foreach ($keys as $key) {
+            foreach ($key->getSubKeys() as $subkey) {
+                // if private key exists, set has private to true
+                if (in_array($subkey->getFingerprint(), $privateKeyFingerprints)) {
+                    $subkey->setHasPrivate(true);
+                }
+            }
+        }
+
+        return $keys;
+    }
+
+    /**
+     * Parse output from a keys/signatures listing command
+     */
+    protected static function _parseListOutput($output)
+    {
         $keys   = [];
         $key    = null; // current key
         $subKey = null; // current sub-key
+        $userId = null; // current user-id
 
         foreach (explode(PHP_EOL, $output) as $line) {
-            $lineExp = explode(':', $line);
+            list($type) = explode(':', $line, 2);
 
-            if ($lineExp[0] == 'pub') {
-
+            if ($type == 'pub') {
                 // new primary key means last key should be added to the array
-                if ($key !== null) {
+                if ($key) {
                     $keys[] = $key;
+                    $userId = null;
                 }
 
                 $key = new Crypt_GPG_Key();
-
                 $subKey = Crypt_GPG_SubKey::parse($line);
                 $key->addSubKey($subKey);
-
-            } elseif ($lineExp[0] == 'sub') {
-
+            } elseif ($type == 'sub') {
                 $subKey = Crypt_GPG_SubKey::parse($line);
                 $key->addSubKey($subKey);
-
-            } elseif ($lineExp[0] == 'fpr') {
-
-                $fingerprint = $lineExp[9];
-
-                // set current sub-key fingerprint
-                $subKey->setFingerprint($fingerprint);
-
-                // if private key exists, set has private to true
-                if (in_array($fingerprint, $privateKeyFingerprints)) {
-                    $subKey->setHasPrivate(true);
-                }
-
-            } elseif ($lineExp[0] == 'uid') {
-
-                $string = stripcslashes($lineExp[9]); // as per documentation
-                $userId = new Crypt_GPG_UserId($string);
-
-                if ($lineExp[1] == 'r') {
-                    $userId->setRevoked(true);
-                }
-
+                $userId = null;
+            } elseif ($type == 'fpr') {
+                $lineExp = explode(':', $line);
+                $subKey->setFingerprint($lineExp[9]);
+            } elseif ($type == 'uid') {
+                $userId = Crypt_GPG_UserId::parse($line);
                 $key->addUserId($userId);
-
+            } elseif ($type == 'sig' && $userId) {
+                // Note: sig: lines are available when using --with-sig-list or --with-sig-check
+                $userId->addSignature(Crypt_GPG_Signature::parse($line));
             }
         }
 
         // add last key
-        if ($key !== null) {
+        if ($key) {
             $keys[] = $key;
         }
 

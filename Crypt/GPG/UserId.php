@@ -82,6 +82,13 @@ class Crypt_GPG_UserId
     private $_isValid = true;
 
     /**
+     * List of signatures on this user id
+     *
+     * @var array
+     */
+    private $_signatures = [];
+
+    /**
      * Creates a new user id
      *
      * User ids can be initialized from an array of named values. Available
@@ -139,6 +146,19 @@ class Crypt_GPG_UserId
     }
 
     /**
+     * Adds a signature to this user id
+     *
+     * @param Crypt_GPG_Signature $sig The signature to add.
+     *
+     * @return $this the current object, for fluent interface.
+     */
+    public function addSignature(Crypt_GPG_Signature $sig)
+    {
+        $this->_signatures[] = $sig;
+        return $this;
+    }
+
+    /**
      * Gets the name field of this user id
      *
      * @return string the name field of this user id.
@@ -166,6 +186,16 @@ class Crypt_GPG_UserId
     public function getEmail()
     {
         return $this->_email;
+    }
+
+    /**
+     * Get list of signatures to this user id
+     *
+     * @return array<Crypt_GPG_Signature> List of signatures.
+     */
+    public function getSignatures()
+    {
+        return $this->_signatures;
     }
 
     /**
@@ -281,7 +311,7 @@ class Crypt_GPG_UserId
     }
 
     /**
-     * Parses a user id object from a user id string
+     * Parses a user id object from a user id string (or uid: line)
      *
      * A user id string is of the form:
      * <b><kbd>name (comment) <email-address></kbd></b> with the <i>comment</i>
@@ -293,6 +323,16 @@ class Crypt_GPG_UserId
      */
     public static function parse($string)
     {
+        // keys listing's 'uid' format
+        if (strpos($string, 'uid:') === 0 && substr_count($string, ':') > 10) {
+            $exp = explode(':', $string);
+
+            $userId = self::parse(stripcslashes($exp[9]));
+            $userId->setRevoked($exp[1] == 'r');
+
+            return $userId;
+        }
+
         $userId  = new Crypt_GPG_UserId();
         $name    = '';
         $email   = '';

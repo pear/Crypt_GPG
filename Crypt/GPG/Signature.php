@@ -247,7 +247,11 @@ class Crypt_GPG_Signature
     }
 
     /**
-     * Gets the user id associated with this signature
+     * Gets the user id associated with this signature.
+     *
+     * Warning: When listing keys with signatures GnuPG returns only a single user
+     * identity per signature. So, if the signing key has more user identities
+     * there's only one here.
      *
      * @return Crypt_GPG_UserId|null The user id associated with this signature.
      */
@@ -264,6 +268,31 @@ class Crypt_GPG_Signature
     public function isValid()
     {
         return $this->_isValid;
+    }
+
+    /**
+     * Parses a sig: line from keys listing output (available with --with-sig-list)
+     *
+     * See <b>doc/DETAILS</b> in the
+     * {@link http://www.gnupg.org/download/ GPG distribution} for information
+     * on how the sub-key string is parsed.
+     *
+     * @param string $string The string containing the sig: line
+     *
+     * @return Crypt_GPG_Signature The signature object
+     */
+    public static function parse($string)
+    {
+        $tokens = explode(':', $string);
+
+        $sig = new self();
+
+        $sig->setValid(empty($tokens[1]) || $tokens[1] == '!');
+        $sig->setKeyFingerprint($tokens[12] ?: $tokens[4]);
+        $sig->setCreationDate($tokens[5]);
+        $sig->setUserId(new Crypt_GPG_UserId(stripcslashes($tokens[9])));
+
+        return $sig;
     }
 
     /**

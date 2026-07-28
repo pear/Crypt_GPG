@@ -1272,9 +1272,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
 
         $result = [];
         foreach (explode(PHP_EOL, $output) as $line) {
-            if (substr_count($line, ':') > 1) {
-                list($fingerprint, $level) = explode(':', $line, 3);
-                $result[$fingerprint] = (int) $level;
+            if (preg_match('/^([0-9A-F]{16,}):(\d+):/', $line, $matches)) {
+                $result[$matches[1]] = (int) $matches[2];
             }
         }
 

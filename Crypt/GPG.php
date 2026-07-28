@@ -1256,6 +1256,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Exports an owner trust information.
      *
+     * Note that trust level values here are shifted by +1 in relation
+     * to the levels in the key editor's trust command.
+     *
      * @return array<string, int> Key fingerprint to trust level map
      *
      * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.

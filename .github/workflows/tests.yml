@@ -48,7 +48,10 @@ jobs:
         run: php -dmemory_limit=256M vendor/bin/phpstan analyse -v
 
       - name: Execute tests
-        run: TESTS_GPG_BINARY=/usr/bin/gpg vendor/bin/phpunit --stop-on-error tests
+        run: |
+          mv tests/config.php.dist tests/config.php
+          sed -i 's/false/true/g' tests/config.php
+          TESTS_GPG_BINARY=/usr/bin/gpg vendor/bin/phpunit --stop-on-error tests
 
       - name: Upload artifacts
         uses: actions/upload-artifact@master

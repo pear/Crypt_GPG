@@ -32,6 +32,12 @@ require_once 'Crypt/GPGAbstract.php';
  */
 class Crypt_GPG_KeyEditor
 {
+    const TRUST_UNKNOWN = 1;
+    const TRUST_NONE = 2;
+    const TRUST_MARGINAL = 3;
+    const TRUST_FULL = 4;
+    const TRUST_ULTIMATE = 5;
+
     /** @var array The GnuPG engine/key editor options */
     protected $options;
 
@@ -340,6 +346,31 @@ class Crypt_GPG_KeyEditor
     }
 
     /**
+     * Trust a key.
+     *
+     * @param int $level Trust level (see self::TRUST_* constants)
+     *
+     * @return $this The current object, for fluent interface.
+     */
+    public function trust($level)
+    {
+        $handlers = [
+            'edit_ownertrust.value' => [
+                $level,
+                // A repeated question for the level indicates invalid input value
+                function () use ($level) {
+                    throw new Crypt_GPG_Exception("Failed to trust the key. Invalid trust level: {$level}");
+                },
+            ],
+            'edit_ownertrust.set_ultimate.okay' => true,
+        ];
+
+        $this->_write('trust')->_read($handlers, ['keyedit.prompt']);
+
+        return $this;
+    }
+
+    /**
      * Quit the current editing session without saving changes (`quit`).
      *
      * @return $this The current object, for fluent interface.
@@ -436,7 +467,7 @@ class Crypt_GPG_KeyEditor
                             $handler = array_shift($handlers[$token]);
                         }
 
-                        if (is_string($handler)) {
+                        if (is_string($handler) || is_int($handler)) {
                             $this->_write($handler);
                         } elseif (is_bool($handler)) {
                             $this->_write($handler ? 'y' : 'N');

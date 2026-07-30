@@ -110,8 +110,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         );
 
         $this->assertEquals(
-            $subKeyA1->getExpirationDate(),
-            $subKeyA2->getExpirationDate(),
+            date('Ymd', $subKeyA1->getExpirationDate()),
+            date('Ymd', $subKeyA2->getExpirationDate()),
             'Primary key expiration dates do not match.'
         );
 
@@ -146,8 +146,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         );
 
         $this->assertEquals(
-            $subKeyB1->getExpirationDate(),
-            $subKeyB2->getExpirationDate(),
+            date('Ymd', $subKeyB1->getExpirationDate()),
+            date('Ymd', $subKeyB2->getExpirationDate()),
             'Secondary key expiration dates do not match.'
         );
 
@@ -729,6 +729,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
 
         // {{{ generate-test@example.com
         $expectedKey = new Crypt_GPG_Key();
+        $expectedDate = new DateTime((date('Y') + 1) . '-01-01 00:00:00', new DateTimeZone('UTC'));
 
         $userId = new Crypt_GPG_UserId();
         $userId->setName('Test Keypair');
@@ -738,7 +739,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $subKey = new Crypt_GPG_SubKey();
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
         $subKey->setLength(1024);
-        $subKey->setExpirationDate(1999998000); // truncated to day
+        $subKey->setExpirationDate($expectedDate);
         $subKey->setCanSign(true);
         $subKey->setCanEncrypt(false);
         $subKey->setHasPrivate(true);
@@ -747,20 +748,22 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $subKey = new Crypt_GPG_SubKey();
         $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
         $subKey->setLength(2048);
-        $subKey->setExpirationDate(1999998000); // truncated to day
+        $subKey->setExpirationDate($expectedDate);
         $subKey->setCanSign(false);
         $subKey->setCanEncrypt(true);
         $subKey->setHasPrivate(true);
         $expectedKey->addSubKey($subKey);
         // }}}
 
-        $key = $this->generator->setExpirationDate(2000000000)->generateKey(
+        $key = $this->generator->setExpirationDate($expectedDate->format('U'))->generateKey(
             new Crypt_GPG_UserId(
                 'Test Keypair <generate-test@example.com>'
             )
         );
 
-        // @TODO: I've got difference in expiration dates here
+        // FIXME: The expiration date may be shifted by GnuPG, that's why
+        // we compare Y-m-d dates instead of timestamps, but I don't know exactly
+        // why it is like this.
 
         $this->assertKeyEquals($expectedKey, $key);
     }

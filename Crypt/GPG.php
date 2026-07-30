@@ -672,12 +672,6 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * Data is encrypted and signed in a single pass.
      *
-     * NOTE: Until GnuPG version 1.4.10, it was not possible to verify
-     * encrypted-signed data without decrypting it at the same time. If you try
-     * to use {@link Crypt_GPG::verify()} method on encrypted-signed data with
-     * earlier GnuPG versions, you will get an error. Please use
-     * {@link Crypt_GPG::decryptAndVerify()} to verify encrypted-signed data.
-     *
      * @param string $data  The data to be encrypted and signed.
      * @param bool   $armor Optional. If true, ASCII armored data is returned;
      *                      otherwise, binary data is returned. Defaults to
@@ -708,13 +702,6 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * Encrypts and signs a file
      *
      * The file is encrypted and signed in a single pass.
-     *
-     * NOTE: Until GnuPG version 1.4.10, it was not possible to verify
-     * encrypted-signed files without decrypting them at the same time. If you
-     * try to use {@link Crypt_GPG::verify()} method on encrypted-signed files
-     * with earlier GnuPG versions, you will get an error. Please use
-     * {@link Crypt_GPG::decryptAndVerifyFile()} to verify encrypted-signed
-     * files.
      *
      * @param string  $filename   the name of the file containing the data to
      *                            be encrypted and signed.
@@ -1441,13 +1428,6 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $result    = [];
         $arguments = [];
         $input     = $this->_prepareInput($key, $isFile, false);
-        $version   = $this->engine->getVersion();
-
-        if (version_compare($version, '1.0.5', 'ge')
-            && version_compare($version, '1.0.7', 'lt')
-        ) {
-            $arguments[] = '--allow-secret-key-import';
-        }
 
         if (empty($this->passphrases)) {
             $arguments[] = '--batch';

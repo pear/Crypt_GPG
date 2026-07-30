@@ -69,9 +69,6 @@ class ExportPrivateKeyTest extends Crypt_GPG_TestCase
         // at the creation time, so we only check if it's valid format
         $expectedKeyData = "-----END PGP PRIVATE KEY BLOCK-----\n";
 
-        // Note: This operation expects passphrase in GnuPG 2.1 < 2.1.15
-        //       because of https://bugs.gnupg.org/gnupg/issue2070.
-
         $keyData = $this->gpg->exportPrivateKey($keyId);
 
         $this->assertStringEndsWith($expectedKeyData, $keyData);
@@ -82,18 +79,12 @@ class ExportPrivateKeyTest extends Crypt_GPG_TestCase
      */
     public function testExportPrivateKey_with_good_pass()
     {
-        if (version_compare($this->gpg->getVersion(), '2.1.0', 'lt')) {
-            $this->markTestSkipped('GnuPG >= 2.1 requires passphrase to export private key.');
-        }
-
         $keyId = 'first-keypair@example.com';
 
-        // This operation requires passphrase in GnuPG 2.1
         $this->gpg->addPassphrase('94C06363', 'test1');
 
         $keyData = $this->gpg->exportPrivateKey($keyId);
 
-        // Here we're really testing only the passphrase handling in GnuPG 2.1
         $this->assertStringStartsWith('-----BEGIN PGP PRIVATE KEY BLOCK-----', $keyData);
     }
 
@@ -104,13 +95,8 @@ class ExportPrivateKeyTest extends Crypt_GPG_TestCase
     {
         $this->expectException('\Crypt_GPG_BadPassphraseException');
 
-        if (version_compare($this->gpg->getVersion(), '2.1.0', 'lt')) {
-            $this->markTestSkipped('GnuPG >= 2.1 requires passphrase to export private key.');
-        }
-
         $keyId = 'first-keypair@example.com';
 
-        // This operation requires passphrase in GnuPG 2.1
         $this->gpg->addPassphrase('94C06363', 'bad');
 
         $keyData = $this->gpg->exportPrivateKey($keyId);

@@ -94,14 +94,6 @@ class Crypt_GPG_KeyEditor
         $this->key = (string) $key;
         $this->passphrase = (string) $passphrase;
 
-        $version = $this->engine->getVersion();
-
-        // Since 2.1.13 we can use "loopback mode" instead of gpg-agent
-        // We do not support older versions here
-        if (!version_compare($version, '2.1.13', 'ge')) {
-            throw new PEAR_Exception("Key editor requires GnuPG >= 2.1.13");
-        }
-
         $arguments = [
             '--no-default-keyring', // ignored if keyring files are not specified
             '--no-options',         // prevent creation of ~/.gnupg directory

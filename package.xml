@@ -10,7 +10,7 @@
 
 Though GnuPG can support symmetric-key cryptography, this package is intended only to facilitate public-key cryptography.
 
-This package requires PHP version 5.4.8 or greater.</description>
+This package requires PHP version 5.6 or greater.</description>
  <lead>
   <name>Mike Gauthier</name>
   <user>gauthierm</user>
@@ -29,11 +29,11 @@ This package requires PHP version 5.4.8 or greater.</description>
   <email>alec@alec.pl</email>
   <active>yes</active>
  </lead>
- <date>2026-05-21</date>
- <time>10:00:00</time>
+ <date>2026-07-30</date>
+ <time>12:00:00</time>
  <version>
-  <release>1.8.0</release>
-  <api>1.8.0</api>
+  <release>1.9.0</release>
+  <api>1.9.0</api>
  </version>
  <stability>
   <release>stable</release>
@@ -41,7 +41,10 @@ This package requires PHP version 5.4.8 or greater.</description>
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-Added (experimental) key editing tool [alec]
+Add KeyEditor::trust() [alec]
+Add KeyEditor::sign() [alec]
+Add Crypt_GPG::getOwnerTrust() [alec]
+Silently handle "Broken pipe" notice on fwrite() [alec]
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -161,11 +164,11 @@ Added (experimental) key editing tool [alec]
  </phprelease>
  <changelog>
   <release>
-   <date>2026-05-07</date>
-   <time>18:00:00</time>
+   <date>2026-05-21</date>
+   <time>10:00:00</time>
    <version>
-    <release>1.7.0</release>
-    <api>1.7.0</api>
+    <release>1.8.0</release>
+    <api>1.8.0</api>
    </version>
    <stability>
     <release>stable</release>
@@ -173,7 +176,7 @@ Added (experimental) key editing tool [alec]
    </stability>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
-Removed dependency on Console_CommandLine [chilimatic]
+Added (experimental) key editing tool [alec]
    </notes>
   </release>
  </changelog>

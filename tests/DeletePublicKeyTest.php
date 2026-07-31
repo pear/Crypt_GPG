@@ -72,13 +72,12 @@ class DeletePublicKeyTest extends Crypt_GPG_TestCase
 
     /**
      * @group delete-public
+     * @doesNotPerformAssertions
      */
     public function testDeletePublicKey_privExists()
     {
         $keyId = 'first-keypair@example.com';
         $this->gpg->deletePublicKey($keyId);
-
-        $this->assertTrue(true);
     }
 
     /**

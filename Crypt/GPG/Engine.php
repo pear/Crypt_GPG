@@ -1408,11 +1408,6 @@ class Crypt_GPG_Engine
             $this->_debug('USING GPG ' . $version . ' with PHP ' . PHP_VERSION);
         }
 
-        // Binary operations will not work on Windows with PHP < 5.2.6. This is
-        // in case stream_select() ever works on Windows.
-        $rb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'r' : 'rb';
-        $wb = (version_compare(PHP_VERSION, '5.2.6') < 0) ? 'w' : 'wb';
-
         // Get environment variables. Exclude non-scalar values to prevent from a warning in proc_open().
         // Possibly related to https://bugs.php.net/bug.php?id=75712, which was fixed in PHP 8.2.17.
         $env = array_filter($_ENV, 'is_scalar');
@@ -1482,12 +1477,12 @@ class Crypt_GPG_Engine
         $commandLine .= ' ' . implode(' ', $arguments) . ' ' . $this->_operation;
 
         $descriptorSpec = [
-            self::FD_INPUT   => ['pipe', $rb], // stdin
-            self::FD_OUTPUT  => ['pipe', $wb], // stdout
-            self::FD_ERROR   => ['pipe', $wb], // stderr
-            self::FD_STATUS  => ['pipe', $wb], // status
-            self::FD_COMMAND => ['pipe', $rb], // command
-            self::FD_MESSAGE => ['pipe', $rb]  // message
+            self::FD_INPUT   => ['pipe', 'rb'], // stdin
+            self::FD_OUTPUT  => ['pipe', 'wb'], // stdout
+            self::FD_ERROR   => ['pipe', 'wb'], // stderr
+            self::FD_STATUS  => ['pipe', 'wb'], // status
+            self::FD_COMMAND => ['pipe', 'rb'], // command
+            self::FD_MESSAGE => ['pipe', 'rb']  // message
         ];
 
         $this->_debug('OPENING GPG SUBPROCESS WITH THE FOLLOWING COMMAND:');

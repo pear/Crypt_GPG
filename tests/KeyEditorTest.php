@@ -211,6 +211,7 @@ class KeyEditorTest extends Crypt_GPG_TestCase
 
     /**
      * Test `passwd` command
+     * @doesNotPerformAssertions
      */
     public function testPasswd()
     {
@@ -221,8 +222,6 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $keyEditor->edit('first-keypair@example.com', 'new pass')
             ->addUserId($user = new Crypt_GPG_UserId('alice@example.com'))
             ->save();
-
-        $this->assertTrue(true);
     }
 
     /**

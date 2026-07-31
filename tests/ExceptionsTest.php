@@ -192,8 +192,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
             ['C097D9EC94C06363', '9F93F9116728EF12']);
 
         $keyIds = $e->getBadPassphrases();
-        $this->assertTrue(is_array($keyIds), 'Failed to assert returned ' .
-            'key ids for bad passphrases is an array.');
 
         $this->assertContains('C097D9EC94C06363', $keyIds);
         $this->assertContains('9F93F9116728EF12', $keyIds);
@@ -208,8 +206,6 @@ class ExceptionsTest extends Crypt_GPG_TestCase
             ['C097D9EC94C06363', '9F93F9116728EF12']);
 
         $keyIds = $e->getMissingPassphrases();
-        $this->assertTrue(is_array($keyIds), 'Failed to assert returned ' .
-            'key ids for missing passphrases is an array.');
 
         $this->assertContains('C097D9EC94C06363', $keyIds);
         $this->assertContains('9F93F9116728EF12', $keyIds);

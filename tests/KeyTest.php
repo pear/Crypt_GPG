@@ -108,8 +108,6 @@ class KeyTest extends Crypt_GPG_TestCase
         $key->addSubKey($secondSubKey);
 
         $subKeys = $key->getSubKeys();
-        $this->assertTrue(is_array($subKeys),
-            'Failed to assert returned sub-keys is an array.');
 
         $this->assertEquals(2, count($subKeys),
             'Failed to assert number of returned sub-keys is the same as ' .
@@ -154,10 +152,8 @@ class KeyTest extends Crypt_GPG_TestCase
         $key->addUserId($secondUserId);
 
         $userIds = $key->getUserIds();
-        $this->assertTrue(is_array($userIds),
-            'Failed to assert returned user ids is an array.');
 
-        $this->assertEquals(2, count($userIds),
+        $this->assertCount(2, $userIds,
             'Failed to assert number of returned user ids is the same as ' .
             'the number of user ids added.');
 
@@ -366,10 +362,8 @@ class KeyTest extends Crypt_GPG_TestCase
         $key = new Crypt_GPG_Key();
 
         $subKeys = $key->getSubKeys();
-        $this->assertTrue(is_array($subKeys),
-            'Failed to assert returned sub-keys is an array.');
 
-        $this->assertEquals(0, count($subKeys),
+        $this->assertCount(0, $subKeys,
             'Failed to assert there are no sub-keys.');
 
         // add first sub-key
@@ -388,10 +382,8 @@ class KeyTest extends Crypt_GPG_TestCase
         $key->addSubKey($firstSubKey);
 
         $subKeys = $key->getSubKeys();
-        $this->assertTrue(is_array($subKeys),
-            'Failed to assert returned sub-keys is an array.');
 
-        $this->assertEquals(1, count($subKeys),
+        $this->assertCount(1, $subKeys,
             'Failed to assert number of returned sub-keys is the same as ' .
             'the number of sub-keys added.');
 
@@ -420,10 +412,8 @@ class KeyTest extends Crypt_GPG_TestCase
         $key->addSubKey($secondSubKey);
 
         $subKeys = $key->getSubKeys();
-        $this->assertTrue(is_array($subKeys),
-            'Failed to assert returned sub-keys is an array.');
 
-        $this->assertEquals(2, count($subKeys),
+        $this->assertCount(2, $subKeys,
             'Failed to assert number of returned sub-keys is the same as ' .
             'the number of sub-keys added.');
 
@@ -450,11 +440,8 @@ class KeyTest extends Crypt_GPG_TestCase
         $key = new Crypt_GPG_Key();
 
         $userIds = $key->getUserIds();
-        $this->assertTrue(is_array($userIds),
-            'Failed to assert returned user ids is an array.');
 
-        $this->assertEquals(0, count($userIds),
-            'Failed to assert there are no user ids.');
+        $this->assertCount(0, $userIds, 'Failed to assert there are no user ids.');
 
         // add first user id
         $firstUserId = new Crypt_GPG_UserId([
@@ -466,10 +453,8 @@ class KeyTest extends Crypt_GPG_TestCase
         $key->addUserId($firstUserId);
 
         $userIds = $key->getUserIds();
-        $this->assertTrue(is_array($userIds),
-            'Failed to assert returned user ids is an array.');
 
-        $this->assertEquals(1, count($userIds),
+        $this->assertCount(1, $userIds,
             'Failed to assert number of returned user ids is the same as ' .
             'the number of user ids added.');
 
@@ -492,10 +477,8 @@ class KeyTest extends Crypt_GPG_TestCase
         $key->addUserId($secondUserId);
 
         $userIds = $key->getUserIds();
-        $this->assertTrue(is_array($userIds),
-            'Failed to assert returned user ids is an array.');
 
-        $this->assertEquals(2, count($userIds),
+        $this->assertCount(2, $userIds,
             'Failed to assert number of returned user ids is the same as ' .
             'the number of user ids added.');
 

@@ -32,7 +32,7 @@ class Crypt_GPG_SignatureCreationInfo
      * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
      * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
      *
-     * @var int
+     * @var ?int
      */
     protected $mode;
 
@@ -153,7 +153,7 @@ class Crypt_GPG_SignatureCreationInfo
      * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
      * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
      *
-     * @return int
+     * @return ?int
      */
     public function getMode()
     {

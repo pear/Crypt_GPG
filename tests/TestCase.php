@@ -753,16 +753,6 @@ TEXT;
 
         $prop = $reflectionClass->getProperty($property);
 
-        $prop->setAccessible(true);
-
         return $prop->getValue($object);
-    }
-
-    /**
-     * This method is used only when we run tests under PHPUnit 4.8 via Github Actions
-     */
-    protected function setExpectedExceptionMessage($message)
-    {
-        // do nothing
     }
 }

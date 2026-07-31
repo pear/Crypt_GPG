@@ -100,7 +100,7 @@ class Crypt_GPG_Signature
     /**
      * The user id associated with this signature
      *
-     * @var Crypt_GPG_UserId
+     * @var Crypt_GPG_UserId|null
      */
     private $_userId = null;
 
@@ -134,10 +134,24 @@ class Crypt_GPG_Signature
      *                                    signature. This may also be a
      *                                    {@link Crypt_GPG_UserId} object.
      *
-     * @param array|null $signature Optional array of initial values.
+     * @param Crypt_GPG_Signature|array|null $signature Either an existing signature object,
+     *                                                  which is copied; or an array of initial values.
      */
     public function __construct($signature = null)
     {
+       if ($signature instanceof Crypt_GPG_Signature) {
+            $this->_id             = $signature->_id;
+            $this->_keyFingerprint = $signature->_keyFingerprint;
+            $this->_keyId          = $signature->_keyId;
+            $this->_creationDate   = $signature->_creationDate;
+            $this->_expirationDate = $signature->_expirationDate;
+            $this->_isValid        = $signature->_isValid;
+
+            if ($signature->_userId instanceof Crypt_GPG_UserId) {
+                $this->_userId = clone $signature->_userId;
+            }
+        }
+
         // initialize from array
         if (is_array($signature)) {
             if (array_key_exists('id', $signature)) {

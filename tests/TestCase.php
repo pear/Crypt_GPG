@@ -549,7 +549,7 @@ TEXT;
 
     public function tearDown(): void
     {
-        unset($this->gpg);
+        $this->gpg = null;
 
         $this->_tearDownKeyring();
         $this->_tearDownTempdir();

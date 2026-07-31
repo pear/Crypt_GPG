@@ -1,4 +1,4 @@
-name: tests
+name: GnuPG 2.5
 
 on:
   push:
@@ -6,13 +6,13 @@ on:
 
 jobs:
   linux_tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[ci skip]')"
 
     strategy:
       fail-fast: true
       matrix:
-        php: ["5.6", "7.0", "7.1", "7.2", "7.3", "7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5", "8.6"]
+        php: ["8.6"]
 
     name: PHP ${{ matrix.php }}
 
@@ -30,27 +30,21 @@ jobs:
       - name: Setup problem matchers
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
-      - name: Setup tests for PHP < 7.4
-        if: matrix.php < 7.4
+      - name: Install GnuPG 2.5
         run: |
-          composer require --dev 'phpunit/phpunit:^4.8.36 || ^5.7.21 || ^6 || ^7' --no-update
-          sed -i 's/: void//g' tests/*.php
-          composer remove --dev phpstan/phpstan --no-update
+          curl https://repos.gnupg.org/deb/gnupg/resolute/gnupg-signing-key.gpg | sudo gpg --dearmor --yes --output /usr/share/keyrings/gnupg-keyring.gpg
+          echo -e "Types: deb deb-src\nURIs: https://repos.gnupg.org/deb/gnupg/resolute/\nSuites: resolute\nComponents: main\nSigned-By: /usr/share/keyrings/gnupg-keyring.gpg" | sudo tee /etc/apt/sources.list.d/gnupg.sources
+          sudo apt-get update
+          sudo apt-get install scdaemon
+          sudo apt-get install --only-upgrade gnupg2
+          /usr/bin/gpg2 --version
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Install GnuPG v2
-        run: sudo apt-get install -y gnupg2
-
-      - name: Execute phpstan
-        if: matrix.php >= 7.4
-        run: php -dmemory_limit=256M vendor/bin/phpstan analyse -v
-
       - name: Execute tests
         run: |
-          mv tests/config.php.dist tests/config.php
-          sed -i 's/false/true/g' tests/config.php
+          mv tests/config.php.dist tests/config.php && sed -i 's/false/true/g' tests/config.php
           TESTS_GPG_BINARY=/usr/bin/gpg vendor/bin/phpunit --stop-on-error tests
 
       - name: Upload artifacts

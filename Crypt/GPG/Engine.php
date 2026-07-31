@@ -410,7 +410,7 @@ class Crypt_GPG_Engine
      *         example, the Apache user) does not have permission to read the
      *         files.
      *
-     * @throws PEAR_Exception if the provided <kbd>binary</kbd> is invalid, or
+     * @throws Crypt_GPG_Exception if the provided <kbd>binary</kbd> is invalid, or
      *         if no <kbd>binary</kbd> is provided and no suitable binary could
      *         be found.
      */
@@ -495,7 +495,7 @@ class Crypt_GPG_Engine
         }
 
         if ($this->_binary == '' || !is_executable($this->_binary)) {
-            throw new PEAR_Exception(
+            throw new Crypt_GPG_Exception(
                 'GPG binary not found. If you are sure the GPG binary is ' .
                 'installed, please specify the location of the GPG binary ' .
                 'using the \'binary\' driver option.'

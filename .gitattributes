@@ -3,5 +3,4 @@ tools/ export-ignore
 .gitattributes export-ignore
 .github/ export-ignore
 .gitignore export-ignore
-package.xml export-ignore
 phpstan.neon export-ignore

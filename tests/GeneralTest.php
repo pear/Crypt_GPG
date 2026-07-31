@@ -128,14 +128,14 @@ class GeneralTest extends Crypt_GPG_TestCase
 
     public function testBinaryPEARException()
     {
-        $this->expectException('PEAR_Exception');
+        $this->expectException('Crypt_GPG_Exception');
 
         new Crypt_GPG(['binary' => './non-existent-binary']);
     }
 
     public function testGPGBinaryPEARException()
     {
-        $this->expectException('PEAR_Exception');
+        $this->expectException('Crypt_GPG_Exception');
 
         new Crypt_GPG(['gpgBinary' => './non-existent-binary']);
     }

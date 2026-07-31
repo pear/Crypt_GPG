@@ -163,11 +163,11 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *         example, the Apache user) does not have permission to read the
      *         files.
      *
-     * @throws PEAR_Exception if the provided <kbd>binary</kbd> is invalid, or
+     * @throws Crypt_GPG_Exception if the provided <kbd>binary</kbd> is invalid, or
      *         if no <kbd>binary</kbd> is provided and no suitable binary could
      *         be found.
      *
-     * @throws PEAR_Exception if the provided <kbd>agent</kbd> is invalid, or
+     * @throws Crypt_GPG_Exception if the provided <kbd>agent</kbd> is invalid, or
      *         if no <kbd>agent</kbd> is provided and no suitable gpg-agent
      *         could be found.
      */

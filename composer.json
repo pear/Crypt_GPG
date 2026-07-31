@@ -26,8 +26,7 @@
     ],
     "require": {
         "php": ">=5.6",
-        "ext-mbstring": "*",
-        "pear/pear_exception": "*"
+        "ext-mbstring": "*"
     },
     "suggest": {
         "ext-posix": "May require the posix PHP extension"

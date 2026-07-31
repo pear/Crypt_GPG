@@ -335,37 +335,14 @@ abstract class Crypt_GPGAbstract
      */
     protected function _getKeys($keyId = '')
     {
-        // get private key fingerprints
-        if ($keyId == '') {
-            $operation = '--list-secret-keys';
-        } else {
-            $operation = '--utf8-strings --list-secret-keys -- ' . escapeshellarg($keyId);
-        }
-
-        // According to The file 'doc/DETAILS' in the GnuPG distribution, using
         // double '--with-fingerprint' also prints the fingerprint for subkeys.
         $arguments = [
             '--with-colons',
             '--with-fingerprint',
             '--with-fingerprint',
-            '--fixed-list-mode'
+            '--fixed-list-mode',
+            '--with-secret',
         ];
-
-        $output = '';
-
-        $this->engine->reset();
-        $this->engine->setOutput($output);
-        $this->engine->setOperation($operation, $arguments);
-        $this->engine->run();
-
-        $privateKeyFingerprints = [];
-
-        foreach (explode(PHP_EOL, $output) as $line) {
-            $lineExp = explode(':', $line);
-            if ($lineExp[0] == 'fpr') {
-                $privateKeyFingerprints[] = $lineExp[9];
-            }
-        }
 
         // get public keys
         if ($keyId == '') {
@@ -381,18 +358,7 @@ abstract class Crypt_GPGAbstract
         $this->engine->setOperation($operation, $arguments);
         $this->engine->run();
 
-        $keys = self::_parseListOutput($output);
-
-        foreach ($keys as $key) {
-            foreach ($key->getSubKeys() as $subkey) {
-                // if private key exists, set has private to true
-                if (in_array($subkey->getFingerprint(), $privateKeyFingerprints)) {
-                    $subkey->setHasPrivate(true);
-                }
-            }
-        }
-
-        return $keys;
+        return self::_parseListOutput($output);
     }
 
     /**

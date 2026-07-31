@@ -611,6 +611,7 @@ class Crypt_GPG_SubKey
         $subKey->setAlgorithm($tokens[3]);
         $subKey->setCreationDate(self::_parseDate($tokens[5]));
         $subKey->setExpirationDate(self::_parseDate($tokens[6]));
+        $subKey->setHasPrivate(isset($tokens[14]) && $tokens[14] == '+');
 
         if ($tokens[1] == 'r') {
             $subKey->setRevoked(true);

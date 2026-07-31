@@ -32,9 +32,6 @@
     "suggest": {
         "ext-posix": "May require the posix PHP extension"
     },
-    "bin": [
-        "scripts/crypt-gpg-pinentry"
-    ],
     "autoload": {
         "classmap": ["Crypt/"]
     },

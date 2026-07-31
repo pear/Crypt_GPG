@@ -128,7 +128,7 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         ]);
 
         $user2 = new Crypt_GPG_UserId([
-            'name'    => 'John',
+            'name'    => 'Jonathan',
             'comment' => '',
             'email'   => 'john@example.com'
         ]);

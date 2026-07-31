@@ -247,7 +247,7 @@ TEXT;
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
             'fingerprints'      => ['F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'],
             'public_imported'   => 0,
-            'public_unchanged'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 1 : 0,
+            'public_unchanged'  => 1,
             'private_imported'  => 0,
             'private_unchanged'  => 1,
         ];
@@ -411,7 +411,7 @@ TEXT;
             'fingerprint'       => 'F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB',
             'fingerprints'      => ['F83118CB6F5892DC1C3E936DABA81EF54E8C0DEB'],
             'public_imported'   => 0,
-            'public_unchanged'  => version_compare($this->gpg->getVersion(), '2.1.0', 'ge') ? 1 : 0,
+            'public_unchanged'  => 1,
             'private_imported'  => 0,
             'private_unchanged'  => 1,
         ];

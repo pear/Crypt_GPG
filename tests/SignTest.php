@@ -123,12 +123,12 @@ class SignTest extends TestCase
         $signedData = $this->gpg->sign($data);
 
         // Check if --emit-version option works
-        $this->assertTrue(strpos($signedData, 'Version:') !== false);
+        $this->assertStringContainsString($signedData, 'Version:');
         $this->gpg->setEngineOptions([]);
 
         $signatures = $this->gpg->verify($signedData);
 
-        $this->assertEquals(1, count($signatures));
+        $this->assertCount(1, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -144,7 +144,7 @@ class SignTest extends TestCase
         $signedData = $this->gpg->sign($data);
         $signatures = $this->gpg->verify($signedData);
 
-        $this->assertEquals(1, count($signatures));
+        $this->assertCount(1, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -160,7 +160,7 @@ class SignTest extends TestCase
         $signedData = $this->gpg->sign($data, GPG::SIGN_MODE_CLEAR);
 
         $signatures = $this->gpg->verify($signedData);
-        $this->assertEquals(1, count($signatures));
+        $this->assertCount(1, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -176,7 +176,7 @@ class SignTest extends TestCase
         $signatureData = $this->gpg->sign($data, GPG::SIGN_MODE_DETACHED);
         $signatures = $this->gpg->verify($data, $signatureData);
 
-        $this->assertEquals(1, count($signatures));
+        $this->assertCount(1, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -193,7 +193,7 @@ class SignTest extends TestCase
         $signedData = $this->gpg->sign($data);
         $signatures = $this->gpg->verify($signedData);
 
-        $this->assertEquals(2, count($signatures));
+        $this->assertCount(2, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -210,7 +210,7 @@ class SignTest extends TestCase
         $signedData = $this->gpg->sign($data);
         $signatures = $this->gpg->verify($signedData);
 
-        $this->assertEquals(2, count($signatures));
+        $this->assertCount(2, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -227,7 +227,7 @@ class SignTest extends TestCase
         $signedData = $this->gpg->sign($data, GPG::SIGN_MODE_CLEAR);
         $signatures = $this->gpg->verify($signedData);
 
-        $this->assertEquals(2, count($signatures));
+        $this->assertCount(2, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -244,7 +244,7 @@ class SignTest extends TestCase
         $signatureData = $this->gpg->sign($data, GPG::SIGN_MODE_DETACHED);
         $signatures = $this->gpg->verify($data, $signatureData);
 
-        $this->assertEquals(2, count($signatures));
+        $this->assertCount(2, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -262,7 +262,7 @@ class SignTest extends TestCase
         $signedData = $this->gpg->sign($data);
         $signatures = $this->gpg->verify($signedData);
 
-        $this->assertEquals(1, count($signatures));
+        $this->assertCount(1, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -293,7 +293,7 @@ class SignTest extends TestCase
 
         // verify data
         $signatures = $this->gpg->verify($data, $signatureData);
-        $this->assertEquals(1, count($signatures));
+        $this->assertCount(1, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue(
                 $signature->isValid(),
@@ -315,7 +315,7 @@ class SignTest extends TestCase
         $this->gpg->signFile($inputFilename, $outputFilename);
 
         $signatures = $this->gpg->verifyFile($outputFilename);
-        $this->assertEquals(1, count($signatures));
+        $this->assertCount(1, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -333,7 +333,7 @@ class SignTest extends TestCase
         $this->gpg->signFile($inputFilename, $outputFilename);
 
         $signatures = $this->gpg->verifyFile($outputFilename);
-        $this->assertEquals(1, count($signatures));
+        $this->assertCount(1, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -426,7 +426,7 @@ class SignTest extends TestCase
         $this->gpg->signFile($inputFilename, $outputFilename);
 
         $signatures = $this->gpg->verifyFile($outputFilename);
-        $this->assertEquals(2, count($signatures));
+        $this->assertCount(2, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -445,7 +445,7 @@ class SignTest extends TestCase
         $this->gpg->signFile($inputFilename, $outputFilename, GPG::SIGN_MODE_CLEAR);
         $signatures = $this->gpg->verifyFile($outputFilename);
 
-        $this->assertEquals(2, count($signatures));
+        $this->assertCount(2, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -467,7 +467,7 @@ class SignTest extends TestCase
         $signatureData = file_get_contents($outputFilename);
         $signatures = $this->gpg->verifyFile($inputFilename, $signatureData);
 
-        $this->assertEquals(2, count($signatures));
+        $this->assertCount(2, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }
@@ -517,7 +517,7 @@ class SignTest extends TestCase
         $signedData = $this->gpg->signFile($filename);
         $signatures = $this->gpg->verify($signedData);
 
-        $this->assertEquals(1, count($signatures));
+        $this->assertCount(1, $signatures);
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
         }

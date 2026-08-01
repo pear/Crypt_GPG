@@ -748,7 +748,7 @@ class Engine
         $this->_arguments = $arguments;
 
         foreach ($this->_options as $optname => $args) {
-            if (strpos($operation, '--' . $optname) !== false) {
+            if (str_contains($operation, '--' . $optname)) {
                 $this->_arguments[] = $args;
             }
         }
@@ -1002,13 +1002,13 @@ class Engine
         // Ignore "Broken pipe" notice from fwrite() below, as gpg could close
         // the command stream before we finished writing (e.g. in bad passphrase case).
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-                return strpos($errfile, 'Engine.php') !== false && strpos($errstr, 'errno=32') !== false;
+                return str_contains($errfile, 'Engine.php') && str_contains($errstr, 'errno=32');
             }, E_NOTICE);
 
         // select loop delay in milliseconds
         $delay         = 0;
         $inputPosition = 0;
-        $eolLength     = mb_strlen(PHP_EOL, '8bit');
+        $eolLength     = strlen(PHP_EOL);
 
         while (true) {
             $inputStreams     = [];
@@ -1109,8 +1109,8 @@ class Engine
             if (in_array($fdInput, $outputStreams, true)) {
                 $this->_debug('GPG is ready for input');
 
-                $chunk  = mb_substr($inputBuffer, $inputPosition, self::CHUNK_SIZE, '8bit');
-                $length = mb_strlen($chunk, '8bit');
+                $chunk  = substr($inputBuffer, $inputPosition, self::CHUNK_SIZE);
+                $length = strlen($chunk);
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to GPG input'
@@ -1132,7 +1132,7 @@ class Engine
                         $inputPosition += $length;
                     } else {
                         $inputPosition = 0;
-                        $inputBuffer   = mb_substr($inputBuffer, $length, null, '8bit');
+                        $inputBuffer   = substr($inputBuffer, $length);
                     }
                 }
             }
@@ -1140,9 +1140,7 @@ class Engine
             // read input (from PHP stream)
             // If the buffer is too big wait until it's smaller, we don't want
             // to use too much memory
-            if (in_array($this->_input, $inputStreams, true)
-                && mb_strlen($inputBuffer, '8bit') < self::CHUNK_SIZE
-            ) {
+            if (in_array($this->_input, $inputStreams, true) && strlen($inputBuffer) < self::CHUNK_SIZE) {
                 $this->_debug('input stream is ready for reading');
                 $this->_debug(
                     '=> about to read ' . self::CHUNK_SIZE .
@@ -1150,7 +1148,7 @@ class Engine
                 );
 
                 $chunk        = fread($this->_input, self::CHUNK_SIZE);
-                $length       = mb_strlen($chunk, '8bit');
+                $length       = strlen($chunk);
                 $inputBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -1160,8 +1158,8 @@ class Engine
             if (in_array($fdMessage, $outputStreams, true)) {
                 $this->_debug('GPG is ready for message data');
 
-                $chunk  = mb_substr($messageBuffer, 0, self::CHUNK_SIZE, '8bit');
-                $length = mb_strlen($chunk, '8bit');
+                $chunk  = substr($messageBuffer, 0, self::CHUNK_SIZE);
+                $length = strlen($chunk);
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to GPG message'
@@ -1179,7 +1177,7 @@ class Engine
                     $this->_closePipe(self::FD_MESSAGE);
                 } else {
                     $this->_debug('=> wrote ' . $length . ' bytes');
-                    $messageBuffer = mb_substr($messageBuffer, $length, null, '8bit');
+                    $messageBuffer = substr($messageBuffer, $length);
                 }
             }
 
@@ -1192,7 +1190,7 @@ class Engine
                 );
 
                 $chunk          = fread($this->_message, self::CHUNK_SIZE);
-                $length         = mb_strlen($chunk, '8bit');
+                $length         = strlen($chunk);
                 $messageBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -1207,7 +1205,7 @@ class Engine
                 );
 
                 $chunk         = fread($fdOutput, self::CHUNK_SIZE);
-                $length        = mb_strlen($chunk, '8bit');
+                $length        = strlen($chunk);
                 $outputBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
@@ -1217,8 +1215,8 @@ class Engine
             if (in_array($this->_output, $outputStreams, true)) {
                 $this->_debug('output stream is ready for data');
 
-                $chunk  = mb_substr($outputBuffer, 0, self::CHUNK_SIZE, '8bit');
-                $length = mb_strlen($chunk, '8bit');
+                $chunk  = substr($outputBuffer, 0, self::CHUNK_SIZE);
+                $length = strlen($chunk);
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to output stream'
@@ -1236,7 +1234,7 @@ class Engine
                     $this->_closePipe(self::FD_OUTPUT);
                 } else {
                     $this->_debug('=> wrote ' . $length . ' bytes');
-                    $outputBuffer = mb_substr($outputBuffer, $length, null, '8bit');
+                    $outputBuffer = substr($outputBuffer, $length);
                 }
             }
 
@@ -1249,14 +1247,14 @@ class Engine
                 );
 
                 $chunk        = fread($fdError, self::CHUNK_SIZE);
-                $length       = mb_strlen($chunk, '8bit');
+                $length       = strlen($chunk);
                 $errorBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
 
                 // pass lines to error handlers
                 while (($pos = strpos($errorBuffer, PHP_EOL)) !== false) {
-                    $line = mb_substr($errorBuffer, 0, $pos, '8bit');
+                    $line = substr($errorBuffer, 0, $pos);
                     foreach ($this->_errorHandlers as $handler) {
                         array_unshift($handler['args'], $line);
                         call_user_func_array(
@@ -1267,7 +1265,7 @@ class Engine
                         array_shift($handler['args']);
                     }
 
-                    $errorBuffer = mb_substr($errorBuffer, $pos + $eolLength, null, '8bit');
+                    $errorBuffer = substr($errorBuffer, $pos + $eolLength);
                 }
             }
 
@@ -1280,17 +1278,17 @@ class Engine
                 );
 
                 $chunk         = fread($fdStatus, self::CHUNK_SIZE);
-                $length        = mb_strlen($chunk, '8bit');
+                $length        = strlen($chunk);
                 $statusBuffer .= $chunk;
 
                 $this->_debug('=> read ' . $length . ' bytes');
 
                 // pass lines to status handlers
                 while (($pos = strpos($statusBuffer, PHP_EOL)) !== false) {
-                    $line = mb_substr($statusBuffer, 0, $pos, '8bit');
+                    $line = substr($statusBuffer, 0, $pos);
                     // only pass lines beginning with magic prefix
-                    if (mb_substr($line, 0, 9, '8bit') == '[GNUPG:] ') {
-                        $line = mb_substr($line, 9, null, '8bit');
+                    if (str_starts_with($line, '[GNUPG:] ')) {
+                        $line = substr($line, 9);
                         foreach ($this->_statusHandlers as $handler) {
                             array_unshift($handler['args'], $line);
                             call_user_func_array(
@@ -1302,7 +1300,7 @@ class Engine
                         }
                     }
 
-                    $statusBuffer = mb_substr($statusBuffer, $pos + $eolLength, null, '8bit');
+                    $statusBuffer = substr($statusBuffer, $pos + $eolLength);
                 }
             }
 
@@ -1311,8 +1309,8 @@ class Engine
                 $this->_debug('GPG is ready for command data');
 
                 // send commands
-                $chunk  = mb_substr($this->_commandBuffer, 0, self::CHUNK_SIZE, '8bit');
-                $length = mb_strlen($chunk, '8bit');
+                $chunk  = substr($this->_commandBuffer, 0, self::CHUNK_SIZE);
+                $length = strlen($chunk);
 
                 $this->_debug(
                     '=> about to write ' . $length . ' bytes to GPG command'
@@ -1330,7 +1328,7 @@ class Engine
                     $this->_closePipe(self::FD_COMMAND);
                 } else {
                     $this->_debug('=> wrote ' . $length);
-                    $this->_commandBuffer = mb_substr($this->_commandBuffer, $length, null, '8bit');
+                    $this->_commandBuffer = substr($this->_commandBuffer, $length);
                 }
             }
 

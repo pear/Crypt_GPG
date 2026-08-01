@@ -742,7 +742,7 @@ class GPG
         $fingerprint = null;
 
         foreach (explode(PHP_EOL, $output) as $line) {
-            if (mb_substr($line, 0, 3, '8bit') == 'fpr') {
+            if (str_starts_with($line, 'fpr')) {
                 $lineExp     = explode(':', $line);
                 $fingerprint = $lineExp[9];
 
@@ -1940,8 +1940,7 @@ class GPG
         $arguments = $armor ? ['--armor'] : [];
 
         foreach ($this->signKeys as $key) {
-            $arguments[] = '--local-user ' .
-                escapeshellarg($key['fingerprint']);
+            $arguments[] = '--local-user ' . escapeshellarg($key['fingerprint']);
         }
 
         foreach ($this->encryptKeys as $key) {

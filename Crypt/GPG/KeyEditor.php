@@ -189,7 +189,7 @@ class KeyEditor
 
         $output = $this->_write('adduid')->_read($handlers, ['keyedit.prompt']);
 
-        if (strpos($output, 'Need the secret key to do this')) {
+        if (str_contains($output, 'Need the secret key to do this')) {
             $this->_close();
             throw new Exceptions\Exception('Failed to add a user. No secret key found.');
         }
@@ -216,7 +216,7 @@ class KeyEditor
             $this->_write("uid {$uid}")->_read($handlers, ['keyedit.prompt']);
             $output = $this->_write('deluid')->_read($handlers, ['keyedit.prompt']);
 
-            if (strpos($output, 'You can\'t delete the last')) {
+            if (str_contains($output, 'You can\'t delete the last')) {
                 $this->_close();
                 throw new Exceptions\Exception('Failed to delete user from a key. You can\'t delete the last user.');
             }
@@ -305,7 +305,7 @@ class KeyEditor
             $this->_write("uid {$uid}")->_read([], ['keyedit.prompt']);
             $output = $this->_write('revuid')->_read($handlers, ['keyedit.prompt']);
 
-            if (strpos($output, 'Cannot revoke the last valid user')) {
+            if (str_contains($output, 'Cannot revoke the last valid user')) {
                 $this->_close();
                 throw new Exceptions\Exception('Failed to revoke the user. You can\'t revoke the last valid user.');
             }
@@ -479,7 +479,7 @@ class KeyEditor
                     $passInput = $token == 'passphrase.enter';
                 }
 
-                if ($passInput && strpos($line, 'Bad passphrase')) {
+                if ($passInput && str_contains($line, 'Bad passphrase')) {
                     $this->_close();
                     throw new Exceptions\BadPassphraseException('Missing or wrong key passphrase');
                 }

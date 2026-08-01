@@ -628,7 +628,7 @@ class SubKey
         ];
 
         foreach ($usage_map as $key => $flag) {
-            if (strpos($tokens[11], $key) !== false) {
+            if (str_contains($tokens[11], $key)) {
                 $usage |= $flag;
             }
         }
@@ -654,7 +654,7 @@ class SubKey
         // all times are in UTC according to GPG documentation
         $timeZone = new \DateTimeZone('UTC');
 
-        if (strpos($string, 'T') === false) {
+        if (!str_contains($string, 'T')) {
             // interpret as UNIX timestamp
             $string = '@' . $string;
         }

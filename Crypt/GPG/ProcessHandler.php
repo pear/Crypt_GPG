@@ -138,12 +138,12 @@ class ProcessHandler
             . '|detach-sign|decrypt|verify|export-secret-keys|export|gen-key'
             . ')/';
 
-        if (strpos($operation, ' ') === false) {
+        if (!str_contains($operation, ' ')) {
             $op = trim($operation, '- ');
         } else if (preg_match($regexp, $operation, $matches, PREG_OFFSET_CAPTURE)) {
             $op      = trim($matches[0][0], '-');
-            $op_len  = $matches[0][1] + mb_strlen($op, '8bit') + 3;
-            $command = mb_substr($operation, $op_len, null, '8bit');
+            $op_len  = $matches[0][1] + strlen($op) + 3;
+            $command = substr($operation, $op_len, null);
 
             // we really need the argument if it is a key ID/fingerprint or email
             // address se we can use simplified regexp to "revert escapeshellarg()"
@@ -351,9 +351,9 @@ class ProcessHandler
             // 16 or 8 hexadecimal characters. Fingerprints are strings of 40
             // hexadecimal characters. The key id is the last 16 characters of
             // the key fingerprint.
-            if (mb_strlen($tokens[1], '8bit') > 16) {
+            if (strlen($tokens[1]) > 16) {
                 $signature->setKeyFingerprint($tokens[1]);
-                $signature->setKeyId(mb_substr($tokens[1], -16, null, '8bit'));
+                $signature->setKeyId(substr($tokens[1], -16));
             } else {
                 $signature->setKeyId($tokens[1]);
             }
@@ -379,14 +379,14 @@ class ProcessHandler
             $signature->setValid(true);
             $signature->setKeyFingerprint($tokens[1]);
 
-            if (strpos($tokens[3], 'T') === false) {
+            if (!str_contains($tokens[3], 'T')) {
                 $signature->setCreationDate($tokens[3]);
             } else {
                 $signature->setCreationDate(strtotime($tokens[3]));
             }
 
             if (array_key_exists(4, $tokens)) {
-                if (strpos($tokens[4], 'T') === false) {
+                if (!str_contains($tokens[4], 'T')) {
                     $signature->setExpirationDate($tokens[4]);
                 } else {
                     $signature->setExpirationDate(strtotime($tokens[4]));
@@ -862,19 +862,19 @@ class ProcessHandler
     protected function getPin($key)
     {
         $passphrase  = '';
-        $keyIdLength = mb_strlen($key, '8bit');
+        $keyIdLength = strlen($key);
 
         if ($keyIdLength && !empty($_ENV['PINENTRY_USER_DATA'])) {
             $passphrases = json_decode($_ENV['PINENTRY_USER_DATA'], true);
             foreach ($passphrases as $_keyId => $pass) {
                 $keyId        = $key;
-                $_keyIdLength = mb_strlen($_keyId, '8bit');
+                $_keyIdLength = strlen($_keyId);
 
                 // Get last X characters of key identifier to compare
                 if ($keyIdLength < $_keyIdLength) {
-                    $_keyId = mb_substr($_keyId, -$keyIdLength, null, '8bit');
+                    $_keyId = substr($_keyId, -$keyIdLength);
                 } else if ($keyIdLength > $_keyIdLength) {
-                    $keyId = mb_substr($keyId, -$_keyIdLength, null, '8bit');
+                    $keyId = substr($keyId, -$_keyIdLength);
                 }
 
                 if ($_keyId === $keyId) {

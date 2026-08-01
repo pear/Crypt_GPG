@@ -233,15 +233,15 @@ class UserId
     {
         $components = [];
 
-        if (mb_strlen($this->_name, '8bit') > 0) {
+        if (strlen($this->_name) > 0) {
             $components[] = $this->_name;
         }
 
-        if (mb_strlen($this->_comment, '8bit') > 0) {
+        if (strlen($this->_comment) > 0) {
             $components[] = '(' . $this->_comment . ')';
         }
 
-        if (mb_strlen($this->_email, '8bit') > 0) {
+        if (strlen($this->_email) > 0) {
             $components[] = '<' . $this->_email. '>';
         }
 
@@ -327,7 +327,7 @@ class UserId
     public static function parse($string)
     {
         // keys listing's 'uid' format
-        if (strpos($string, 'uid:') === 0 && substr_count($string, ':') > 10) {
+        if (str_starts_with($string, 'uid:') && substr_count($string, ':') > 10) {
             $exp = explode(':', $string);
 
             $userId = self::parse(stripcslashes($exp[9]));

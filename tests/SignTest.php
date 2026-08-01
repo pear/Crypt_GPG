@@ -123,7 +123,7 @@ class SignTest extends TestCase
         $signedData = $this->gpg->sign($data);
 
         // Check if --emit-version option works
-        $this->assertStringContainsString($signedData, 'Version:');
+        $this->assertStringContainsString('Version:', $signedData);
         $this->gpg->setEngineOptions([]);
 
         $signatures = $this->gpg->verify($signedData);

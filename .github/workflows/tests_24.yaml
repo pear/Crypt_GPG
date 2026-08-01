@@ -24,7 +24,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, posix
+          extensions: posix
           coverage: none
 
       - name: Setup problem matchers

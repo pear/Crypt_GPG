@@ -36,29 +36,14 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
 
-/**
- * Key class.
- */
-require_once 'Crypt/GPG/Key.php';
-
-/**
- * User id class.
- */
-require_once 'Crypt/GPG/UserId.php';
-
-/**
- * Sub-key class.
- */
-require_once 'Crypt/GPG/SubKey.php';
+use Crypt\GPG\Key;
+use Crypt\GPG\SubKey;
+use Crypt\GPG\UserId;
 
 /**
  * Key class tests for Crypt_GPG.
@@ -70,18 +55,18 @@ require_once 'Crypt/GPG/SubKey.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class KeyTest extends Crypt_GPG_TestCase
+class KeyTest extends TestCase
 {
     /**
      * @group accessors
      */
     public function testGetSubKeys()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
-        $firstSubKey = new Crypt_GPG_SubKey([
+        $firstSubKey = new SubKey([
             'id'          => 'C097D9EC94C06363',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785805,
@@ -93,9 +78,9 @@ class KeyTest extends Crypt_GPG_TestCase
 
         $key->addSubKey($firstSubKey);
 
-        $secondSubKey = new Crypt_GPG_SubKey([
+        $secondSubKey = new SubKey([
             'id'          => '9F93F9116728EF12',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => 'C9C65B3BBF040E40D0EA27B79F93F9116728EF12',
             'length'      => 2048,
             'creation'    => 1221785821,
@@ -113,7 +98,7 @@ class KeyTest extends Crypt_GPG_TestCase
             'Failed to assert number of returned sub-keys is the same as ' .
             'the number of sub-keys added.');
 
-        $this->assertContainsOnly('Crypt_GPG_SubKey', $subKeys, false,
+        $this->assertContainsOnly(SubKey::class, $subKeys, false,
             'Failed to assert all returned sub-keys are Crypt_GPG_SubKey ' .
             'objects.');
 
@@ -133,9 +118,9 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function testGetUserIds()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
-        $firstUserId = new Crypt_GPG_UserId([
+        $firstUserId = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
             'email'   => 'alice@example.com'
@@ -143,7 +128,7 @@ class KeyTest extends Crypt_GPG_TestCase
 
         $key->addUserId($firstUserId);
 
-        $secondUserId = new Crypt_GPG_UserId([
+        $secondUserId = new UserId([
             'name'    => 'Bob',
             'comment' => 'receiving',
             'email'   => 'bob@example.com'
@@ -157,8 +142,8 @@ class KeyTest extends Crypt_GPG_TestCase
             'Failed to assert number of returned user ids is the same as ' .
             'the number of user ids added.');
 
-        $this->assertContainsOnly('Crypt_GPG_UserId', $userIds, false,
-            'Failed to assert all returned user ids are Crypt_GPG_UserId ' .
+        $this->assertContainsOnly(UserId::class, $userIds, false,
+            'Failed to assert all returned user ids are UserId ' .
             'objects.');
 
         $this->assertArrayHasKey(0, $userIds);
@@ -177,11 +162,11 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function testGetPrimaryKey()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
-        $firstSubKey = new Crypt_GPG_SubKey([
+        $firstSubKey = new SubKey([
             'id'          => 'C097D9EC94C06363',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785805,
@@ -193,9 +178,9 @@ class KeyTest extends Crypt_GPG_TestCase
 
         $key->addSubKey($firstSubKey);
 
-        $secondSubKey = new Crypt_GPG_SubKey([
+        $secondSubKey = new SubKey([
             'id'          => '9F93F9116728EF12',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => 'C9C65B3BBF040E40D0EA27B79F93F9116728EF12',
             'length'      => 2048,
             'creation'    => 1221785821,
@@ -219,15 +204,15 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function testCanSign_none()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
-        $subKey = new Crypt_GPG_SubKey(['canSign' => false]);
+        $subKey = new SubKey(['canSign' => false]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canSign' => false]);
+        $subKey = new SubKey(['canSign' => false]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canSign' => false]);
+        $subKey = new SubKey(['canSign' => false]);
         $key->addSubKey($subKey);
 
         $this->assertFalse($key->canSign());
@@ -238,15 +223,15 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function testCanSign_one()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
-        $subKey = new Crypt_GPG_SubKey(['canSign' => false]);
+        $subKey = new SubKey(['canSign' => false]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canSign' => false]);
+        $subKey = new SubKey(['canSign' => false]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canSign' => true]);
+        $subKey = new SubKey(['canSign' => true]);
         $key->addSubKey($subKey);
 
         $this->assertTrue($key->canSign());
@@ -257,15 +242,15 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function testCanSign_all()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
-        $subKey = new Crypt_GPG_SubKey(['canSign' => true]);
+        $subKey = new SubKey(['canSign' => true]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canSign' => true]);
+        $subKey = new SubKey(['canSign' => true]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canSign' => true]);
+        $subKey = new SubKey(['canSign' => true]);
         $key->addSubKey($subKey);
 
         $this->assertTrue($key->canSign());
@@ -276,15 +261,15 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function testCanEncrypt_none()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
-        $subKey = new Crypt_GPG_SubKey(['canEncrypt' => false]);
+        $subKey = new SubKey(['canEncrypt' => false]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canEncrypt' => false]);
+        $subKey = new SubKey(['canEncrypt' => false]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canEncrypt' => false]);
+        $subKey = new SubKey(['canEncrypt' => false]);
         $key->addSubKey($subKey);
 
         $this->assertFalse($key->canEncrypt());
@@ -295,15 +280,15 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function testCanEncrypt_one()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
-        $subKey = new Crypt_GPG_SubKey(['canEncrypt' => false]);
+        $subKey = new SubKey(['canEncrypt' => false]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canEncrypt' => false]);
+        $subKey = new SubKey(['canEncrypt' => false]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canEncrypt' => true]);
+        $subKey = new SubKey(['canEncrypt' => true]);
         $key->addSubKey($subKey);
 
         $this->assertTrue($key->canEncrypt());
@@ -314,15 +299,15 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function testCanEncrypt_all()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
-        $subKey = new Crypt_GPG_SubKey(['canEncrypt' => true]);
+        $subKey = new SubKey(['canEncrypt' => true]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canEncrypt' => true]);
+        $subKey = new SubKey(['canEncrypt' => true]);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey(['canEncrypt' => true]);
+        $subKey = new SubKey(['canEncrypt' => true]);
         $key->addSubKey($subKey);
 
         $this->assertTrue($key->canEncrypt());
@@ -333,11 +318,11 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function test__toString()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
-        $firstSubKey = new Crypt_GPG_SubKey([
+        $firstSubKey = new SubKey([
             'id'          => 'C097D9EC94C06363',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785805,
@@ -359,7 +344,7 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function testAddSubKey()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
         $subKeys = $key->getSubKeys();
 
@@ -367,9 +352,9 @@ class KeyTest extends Crypt_GPG_TestCase
             'Failed to assert there are no sub-keys.');
 
         // add first sub-key
-        $firstSubKey = new Crypt_GPG_SubKey([
+        $firstSubKey = new SubKey([
             'id'          => 'C097D9EC94C06363',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785805,
@@ -387,8 +372,8 @@ class KeyTest extends Crypt_GPG_TestCase
             'Failed to assert number of returned sub-keys is the same as ' .
             'the number of sub-keys added.');
 
-        $this->assertContainsOnly('Crypt_GPG_SubKey', $subKeys, false,
-            'Failed to assert all returned sub-keys are Crypt_GPG_SubKey ' .
+        $this->assertContainsOnly(SubKey::class, $subKeys, false,
+            'Failed to assert all returned sub-keys are SubKey ' .
             'objects.');
 
         $this->assertArrayHasKey(0, $subKeys);
@@ -397,9 +382,9 @@ class KeyTest extends Crypt_GPG_TestCase
             'added sub-key.');
 
         // add second sub-key
-        $secondSubKey = new Crypt_GPG_SubKey([
+        $secondSubKey = new SubKey([
             'id'          => '9F93F9116728EF12',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => 'C9C65B3BBF040E40D0EA27B79F93F9116728EF12',
             'length'      => 2048,
             'creation'    => 1221785821,
@@ -417,9 +402,8 @@ class KeyTest extends Crypt_GPG_TestCase
             'Failed to assert number of returned sub-keys is the same as ' .
             'the number of sub-keys added.');
 
-        $this->assertContainsOnly('Crypt_GPG_SubKey', $subKeys, false,
-            'Failed to assert all returned sub-keys are Crypt_GPG_SubKey ' .
-            'objects.');
+        $this->assertContainsOnly(SubKey::class, $subKeys, false,
+            'Failed to assert all returned sub-keys are SubKey objects.');
 
         $this->assertArrayHasKey(0, $subKeys);
         $this->assertEquals($subKeys[0], $firstSubKey,
@@ -437,14 +421,14 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function testAddUserId()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
         $userIds = $key->getUserIds();
 
         $this->assertCount(0, $userIds, 'Failed to assert there are no user ids.');
 
         // add first user id
-        $firstUserId = new Crypt_GPG_UserId([
+        $firstUserId = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
             'email'   => 'alice@example.com'
@@ -458,9 +442,8 @@ class KeyTest extends Crypt_GPG_TestCase
             'Failed to assert number of returned user ids is the same as ' .
             'the number of user ids added.');
 
-        $this->assertContainsOnly('Crypt_GPG_UserId', $userIds, false,
-            'Failed to assert all returned user ids are Crypt_GPG_UserId ' .
-            'objects.');
+        $this->assertContainsOnly(UserId::class, $userIds, false,
+            'Failed to assert all returned user ids are UserId objects.');
 
         $this->assertArrayHasKey(0, $userIds);
         $this->assertEquals($userIds[0], $firstUserId,
@@ -468,7 +451,7 @@ class KeyTest extends Crypt_GPG_TestCase
             'added user id.');
 
         // add second user id
-        $secondUserId = new Crypt_GPG_UserId([
+        $secondUserId = new UserId([
             'name'    => 'Bob',
             'comment' => 'receiving',
             'email'   => 'bob@example.com'
@@ -482,8 +465,8 @@ class KeyTest extends Crypt_GPG_TestCase
             'Failed to assert number of returned user ids is the same as ' .
             'the number of user ids added.');
 
-        $this->assertContainsOnly('Crypt_GPG_UserId', $userIds, false,
-            'Failed to assert all returned user ids are Crypt_GPG_UserId ' .
+        $this->assertContainsOnly(UserId::class, $userIds, false,
+            'Failed to assert all returned user ids are UserId ' .
             'objects.');
 
         $this->assertArrayHasKey(0, $userIds);
@@ -502,12 +485,12 @@ class KeyTest extends Crypt_GPG_TestCase
      */
     public function testFluentInterface()
     {
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
 
         // add first sub-key
-        $firstSubKey = new Crypt_GPG_SubKey([
+        $firstSubKey = new SubKey([
             'id'          => 'C097D9EC94C06363',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785805,
@@ -525,7 +508,7 @@ class KeyTest extends Crypt_GPG_TestCase
             'Failed asserting fluent interface works for addSubKey() method.'
         );
 
-        $firstUserId = new Crypt_GPG_UserId([
+        $firstUserId = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
             'email'   => 'alice@example.com'

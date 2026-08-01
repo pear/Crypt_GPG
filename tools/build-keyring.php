@@ -107,5 +107,3 @@ foreach ($encryptedFiles as $key => $file) {
 }
 
 echo "\n?>\n";
-
-?>

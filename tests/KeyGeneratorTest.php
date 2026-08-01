@@ -36,19 +36,16 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id: GetKeysTestCase.php 274158 2009-01-22 06:33:54Z gauthierm $
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
 
-/**
- * The Crypt_GPG class to test
- */
-require_once 'Crypt/GPG/KeyGenerator.php';
+use Crypt\GPG\Exceptions;
+use Crypt\GPG\Key;
+use Crypt\GPG\KeyGenerator;
+use Crypt\GPG\SubKey;
+use Crypt\GPG\UserId;
 
 /**
  * Tests key generation of Crypt_GPG.
@@ -60,14 +57,12 @@ require_once 'Crypt/GPG/KeyGenerator.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class KeyGeneratorTest extends Crypt_GPG_TestCase
+class KeyGeneratorTest extends TestCase
 {
     protected $generator;
 
-    protected function assertKeyEquals(
-        Crypt_GPG_Key $key1,
-        Crypt_GPG_Key $key2
-    ) {
+    protected function assertKeyEquals(Key $key1, Key $key2)
+    {
         $userIds1 = $key1->getUserIds();
         $userIds2 = $key2->getUserIds();
         $userId1  = $userIds1[0];
@@ -173,7 +168,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->generator = new Crypt_GPG_KeyGenerator($this->getOptions());
+        $this->generator = new KeyGenerator($this->getOptions());
     }
 
     /**
@@ -184,7 +179,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $expectedDate = 0;
         $this->generator->setExpirationDate(0);
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'expirationDate');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'expirationDate');
         $this->assertSame($expectedDate, $value, 'Setting expiration date to zero failed.');
     }
 
@@ -196,7 +191,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $expectedDate = 2000000000;
         $this->generator->setExpirationDate(2000000000);
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'expirationDate');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'expirationDate');
         $this->assertSame($expectedDate, $value, 'Setting expiration date by integer failed.');
     }
 
@@ -210,7 +205,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $expectedDate = 2000000000;
         $this->generator->setExpirationDate('2033-05-18T03:33:20');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'expirationDate');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'expirationDate');
         $this->assertSame($expectedDate, $value, 'Setting expiration date by string failed.');
     }
 
@@ -264,7 +259,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $expectedPassphrase = 'test1';
         $this->generator->setPassphrase('test1');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'passphrase');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'passphrase');
         $this->assertSame($expectedPassphrase, $value, 'Setting passphrase failed.');
     }
 
@@ -273,22 +268,19 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testSetKeyParams_algorithm()
     {
-        $expectedAlgorithm = Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
+        $expectedAlgorithm = SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
         $expectedSize      = 1024;
-        $expectedUsage     = Crypt_GPG_SubKey::USAGE_SIGN
-            | Crypt_GPG_SubKey::USAGE_CERTIFY;
+        $expectedUsage     = SubKey::USAGE_SIGN | SubKey::USAGE_CERTIFY;
 
-        $this->generator->setKeyParams(
-            Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN
-        );
+        $this->generator->setKeyParams(SubKey::ALGORITHM_ELGAMAL_ENC_SGN);
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyAlgorithm');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'keyAlgorithm');
         $this->assertSame($expectedAlgorithm, $value, 'Setting key algorithm failed.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keySize');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'keySize');
         $this->assertSame($expectedSize, $value, 'Setting key algorithm changed key size.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyUsage');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'keyUsage');
         $this->assertSame($expectedUsage, $value, 'Setting key algorithm changed key usage.');
     }
 
@@ -297,24 +289,19 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testSetKeyParams_algorithm_and_size()
     {
-        $expectedAlgorithm = Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
+        $expectedAlgorithm = SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
         $expectedSize      = 512;
-        $expectedUsage     = Crypt_GPG_SubKey::USAGE_SIGN
-            | Crypt_GPG_SubKey::USAGE_CERTIFY;
+        $expectedUsage     = SubKey::USAGE_SIGN | SubKey::USAGE_CERTIFY;
 
-        $this->generator->setKeyParams(
-            Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN,
-            512
-        );
+        $this->generator->setKeyParams(SubKey::ALGORITHM_ELGAMAL_ENC_SGN, 512);
 
-
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyAlgorithm');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'keyAlgorithm');
         $this->assertSame($expectedAlgorithm, $value, 'Setting key algorithm failed.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keySize');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'keySize');
         $this->assertSame($expectedSize, $value, 'Setting key size failed.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyUsage');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'keyUsage');
         $this->assertSame($expectedUsage, $value, 'Setting key algorithm and size changed key usage.');
     }
 
@@ -323,28 +310,23 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testSetKeyParams_algorithm_size_and_usage()
     {
-        $expectedAlgorithm = Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
+        $expectedAlgorithm = SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
         $expectedSize      = 512;
-        $expectedUsage     = Crypt_GPG_SubKey::USAGE_SIGN
-            | Crypt_GPG_SubKey::USAGE_CERTIFY
-            | Crypt_GPG_SubKey::USAGE_ENCRYPT;
+        $expectedUsage     = SubKey::USAGE_SIGN | SubKey::USAGE_CERTIFY | SubKey::USAGE_ENCRYPT;
 
         $this->generator->setKeyParams(
-            Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN,
+            SubKey::ALGORITHM_ELGAMAL_ENC_SGN,
             512,
-              Crypt_GPG_SubKey::USAGE_SIGN
-            | Crypt_GPG_SubKey::USAGE_CERTIFY
-            | Crypt_GPG_SubKey::USAGE_ENCRYPT
+            SubKey::USAGE_SIGN | SubKey::USAGE_CERTIFY | SubKey::USAGE_ENCRYPT
         );
 
-
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyAlgorithm');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'keyAlgorithm');
         $this->assertSame($expectedAlgorithm, $value, 'Setting key algorithm failed.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keySize');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'keySize');
         $this->assertSame($expectedSize, $value, 'Setting key size failed.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'keyUsage');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'keyUsage');
         $this->assertSame($expectedUsage, $value, 'Setting key algorithm and size changed key usage.');
     }
 
@@ -353,9 +335,9 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testSetKeyParams_invalid_algorithm()
     {
-        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+        $this->expectException(Exceptions\InvalidKeyParamsException::class);
 
-        $this->generator->setKeyParams(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $this->generator->setKeyParams(SubKey::ALGORITHM_ELGAMAL_ENC);
     }
 
     /**
@@ -363,12 +345,12 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testSetKeyParams_invalid_dsa_usage()
     {
-        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+        $this->expectException(Exceptions\InvalidKeyParamsException::class);
 
         $this->generator->setKeyParams(
-            Crypt_GPG_SubKey::ALGORITHM_DSA,
+            SubKey::ALGORITHM_DSA,
             2048,
-            Crypt_GPG_SubKey::USAGE_ENCRYPT | Crypt_GPG_SubKey::USAGE_CERTIFY
+            SubKey::USAGE_ENCRYPT | SubKey::USAGE_CERTIFY
         );
     }
 
@@ -377,21 +359,19 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testSetSubKeyParams_algorithm()
     {
-        $expectedAlgorithm = Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
+        $expectedAlgorithm = SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
         $expectedSize      = 2048;
-        $expectedUsage     = Crypt_GPG_SubKey::USAGE_ENCRYPT;
+        $expectedUsage     = SubKey::USAGE_ENCRYPT;
 
-        $this->generator->setSubKeyParams(
-            Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN
-        );
+        $this->generator->setSubKeyParams(SubKey::ALGORITHM_ELGAMAL_ENC_SGN);
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyAlgorithm');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'subKeyAlgorithm');
         $this->assertSame($expectedAlgorithm, $value, 'Setting sub-key algorithm failed.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeySize');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'subKeySize');
         $this->assertSame($expectedSize, $value, 'Setting sub-key algorithm changed key size.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyUsage');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'subKeyUsage');
         $this->assertSame($expectedUsage, $value, 'Setting sub-key algorithm changed key usage.');
     }
 
@@ -400,22 +380,19 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testSetSubKeyParams_algorithm_and_size()
     {
-        $expectedAlgorithm = Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
+        $expectedAlgorithm = SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
         $expectedSize      = 1024;
-        $expectedUsage     = Crypt_GPG_SubKey::USAGE_ENCRYPT;
+        $expectedUsage     = SubKey::USAGE_ENCRYPT;
 
-        $this->generator->setSubKeyParams(
-            Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN,
-            1024
-        );
+        $this->generator->setSubKeyParams(SubKey::ALGORITHM_ELGAMAL_ENC_SGN, 1024);
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyAlgorithm');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'subKeyAlgorithm');
         $this->assertSame($expectedAlgorithm, $value, 'Setting sub-key algorithm failed.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeySize');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'subKeySize');
         $this->assertSame($expectedSize, $value, 'Setting sub-key algorithm changed key size.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyUsage');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'subKeyUsage');
         $this->assertSame($expectedUsage, $value, 'Setting sub-key algorithm changed key usage.');
     }
 
@@ -424,25 +401,23 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testSetSubKeyParams_algorithm_size_and_usage()
     {
-        $expectedAlgorithm = Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
+        $expectedAlgorithm = SubKey::ALGORITHM_ELGAMAL_ENC_SGN;
         $expectedSize      = 1024;
-        $expectedUsage     = Crypt_GPG_SubKey::USAGE_SIGN
-            | Crypt_GPG_SubKey::USAGE_ENCRYPT;
+        $expectedUsage     = SubKey::USAGE_SIGN | SubKey::USAGE_ENCRYPT;
 
         $this->generator->setSubKeyParams(
-            Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN,
+            SubKey::ALGORITHM_ELGAMAL_ENC_SGN,
             1024,
-              Crypt_GPG_SubKey::USAGE_SIGN
-            | Crypt_GPG_SubKey::USAGE_ENCRYPT
+            SubKey::USAGE_SIGN | SubKey::USAGE_ENCRYPT
         );
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyAlgorithm');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'subKeyAlgorithm');
         $this->assertSame($expectedAlgorithm, $value, 'Setting sub-key algorithm failed.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeySize');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'subKeySize');
         $this->assertSame($expectedSize, $value, 'Setting sub-key algorithm changed key size.');
 
-        $value = $this->getPropertyValue('Crypt_GPG_KeyGenerator', $this->generator, 'subKeyUsage');
+        $value = $this->getPropertyValue(KeyGenerator::class, $this->generator, 'subKeyUsage');
         $this->assertSame($expectedUsage, $value, 'Setting sub-key algorithm changed key usage.');
     }
 
@@ -451,12 +426,12 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testSetSubKeyParams_invalid_elgamal_usage()
     {
-        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+        $this->expectException(Exceptions\InvalidKeyParamsException::class);
 
         $this->generator->setSubKeyParams(
-            Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            SubKey::ALGORITHM_ELGAMAL_ENC,
             2048,
-            Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_ENCRYPT
+            SubKey::USAGE_SIGN | SubKey::USAGE_ENCRYPT
         );
     }
 
@@ -465,12 +440,12 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testSetSubKeyParams_invalid_dsa_usage()
     {
-        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+        $this->expectException(Exceptions\InvalidKeyParamsException::class);
 
         $this->generator->setSubKeyParams(
-            Crypt_GPG_SubKey::ALGORITHM_DSA,
+            SubKey::ALGORITHM_DSA,
             2048,
-            Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_ENCRYPT
+            SubKey::USAGE_SIGN | SubKey::USAGE_ENCRYPT
         );
     }
 
@@ -488,14 +463,14 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         }
 
         // {{{ generate-test@example.com
-        $expectedKey = new Crypt_GPG_Key();
+        $expectedKey = new Key();
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('Test Keypair');
         $expectedKey->addUserId($userId);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_DSA);
         $subKey->setLength(1024);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(true);
@@ -503,8 +478,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $subKey->setHasPrivate(true);
         $expectedKey->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_ELGAMAL_ENC);
         $subKey->setLength(2048);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(false);
@@ -532,15 +507,15 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         }
 
         // {{{ generate-test@example.com
-        $expectedKey = new Crypt_GPG_Key();
+        $expectedKey = new Key();
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('Test Keypair');
         $userId->setEmail('generate-test@example.com');
         $expectedKey->addUserId($userId);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_DSA);
         $subKey->setLength(1024);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(true);
@@ -548,8 +523,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $subKey->setHasPrivate(true);
         $expectedKey->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_ELGAMAL_ENC);
         $subKey->setLength(2048);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(false);
@@ -580,16 +555,16 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         }
 
         // {{{ generate-test@example.com
-        $expectedKey = new Crypt_GPG_Key();
+        $expectedKey = new Key();
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('Test Keypair');
         $userId->setComment('do not use this key');
         $userId->setEmail('generate-test@example.com');
         $expectedKey->addUserId($userId);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_DSA);
         $subKey->setLength(1024);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(true);
@@ -597,8 +572,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $subKey->setHasPrivate(true);
         $expectedKey->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_ELGAMAL_ENC);
         $subKey->setLength(2048);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(false);
@@ -630,15 +605,15 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         }
 
         // {{{ generate-test@example.com
-        $expectedKey = new Crypt_GPG_Key();
+        $expectedKey = new Key();
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('Test Keypair');
         $userId->setEmail('generate-test@example.com');
         $expectedKey->addUserId($userId);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_DSA);
         $subKey->setLength(1024);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(true);
@@ -646,8 +621,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $subKey->setHasPrivate(true);
         $expectedKey->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_ELGAMAL_ENC);
         $subKey->setLength(2048);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(false);
@@ -657,9 +632,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         // }}}
 
         $key = $this->generator->generateKey(
-            new Crypt_GPG_UserId(
-                'Test Keypair <generate-test@example.com>'
-            )
+            new UserId('Test Keypair <generate-test@example.com>')
         );
 
         $this->assertKeyEquals($expectedKey, $key);
@@ -679,15 +652,15 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         }
 
         // {{{ generate-test@example.com
-        $expectedKey = new Crypt_GPG_Key();
+        $expectedKey = new Key();
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('Test Keypair');
         $userId->setEmail('generate-test@example.com');
         $expectedKey->addUserId($userId);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_DSA);
         $subKey->setLength(1024);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(true);
@@ -695,8 +668,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $subKey->setHasPrivate(true);
         $expectedKey->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_ELGAMAL_ENC);
         $subKey->setLength(2048);
         $subKey->setExpirationDate(0);
         $subKey->setCanSign(false);
@@ -706,9 +679,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         // }}}
 
         $key = $this->generator->setPassphrase('test1')->generateKey(
-            new Crypt_GPG_UserId(
-                'Test Keypair <generate-test@example.com>'
-            )
+            new UserId('Test Keypair <generate-test@example.com>')
         );
 
         $this->assertKeyEquals($expectedKey, $key);
@@ -728,16 +699,16 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         }
 
         // {{{ generate-test@example.com
-        $expectedKey = new Crypt_GPG_Key();
-        $expectedDate = new DateTime((date('Y') + 1) . '-01-01 00:00:00', new DateTimeZone('UTC'));
+        $expectedKey = new Key();
+        $expectedDate = new \DateTime((date('Y') + 1) . '-01-01 00:00:00', new \DateTimeZone('UTC'));
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('Test Keypair');
         $userId->setEmail('generate-test@example.com');
         $expectedKey->addUserId($userId);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_DSA);
         $subKey->setLength(1024);
         $subKey->setExpirationDate($expectedDate);
         $subKey->setCanSign(true);
@@ -745,8 +716,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $subKey->setHasPrivate(true);
         $expectedKey->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey();
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey = new SubKey();
+        $subKey->setAlgorithm(SubKey::ALGORITHM_ELGAMAL_ENC);
         $subKey->setLength(2048);
         $subKey->setExpirationDate($expectedDate);
         $subKey->setCanSign(false);
@@ -755,11 +726,9 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         $expectedKey->addSubKey($subKey);
         // }}}
 
-        $key = $this->generator->setExpirationDate($expectedDate->format('U'))->generateKey(
-            new Crypt_GPG_UserId(
-                'Test Keypair <generate-test@example.com>'
-            )
-        );
+        $key = $this->generator
+            ->setExpirationDate($expectedDate->format('U'))
+            ->generateKey(new UserId('Test Keypair <generate-test@example.com>'));
 
         // FIXME: The expiration date may be shifted by GnuPG, that's why
         // we compare Y-m-d dates instead of timestamps, but I don't know exactly
@@ -773,7 +742,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testGenerateKeyWithInvalidPrimaryKeyAlgorithm()
     {
-        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+        $this->expectException(Exceptions\InvalidKeyParamsException::class);
 
         if (!$this->config['enable-key-generation']) {
             $this->markTestSkipped(
@@ -784,12 +753,8 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         }
 
         $key = $this->generator
-            ->setKeyParams(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN)
-            ->generateKey(
-                new Crypt_GPG_UserId(
-                    'Test Keypair <generate-test@example.com>'
-                )
-            );
+            ->setKeyParams(SubKey::ALGORITHM_ELGAMAL_ENC_SGN)
+            ->generateKey(new UserId('Test Keypair <generate-test@example.com>'));
     }
 
     /**
@@ -797,7 +762,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
      */
     public function testGenerateKeyWithInvalidSubKeyAlgorithm()
     {
-        $this->expectException('Crypt_GPG_InvalidKeyParamsException');
+        $this->expectException(Exceptions\InvalidKeyParamsException::class);
 
         if (!$this->config['enable-key-generation']) {
             $this->markTestSkipped(
@@ -808,11 +773,7 @@ class KeyGeneratorTest extends Crypt_GPG_TestCase
         }
 
         $key = $this->generator
-            ->setSubKeyParams(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC_SGN)
-            ->generateKey(
-                new Crypt_GPG_UserId(
-                    'Test Keypair <generate-test@example.com>'
-                )
-            );
+            ->setSubKeyParams(SubKey::ALGORITHM_ELGAMAL_ENC_SGN)
+            ->generateKey(new UserId('Test Keypair <generate-test@example.com>'));
     }
 }

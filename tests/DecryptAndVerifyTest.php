@@ -40,10 +40,12 @@
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
+
+use Crypt\GPG;
+use Crypt\GPG\Exceptions;
+use Crypt\GPG\Signature;
+use Crypt\GPG\UserId;
 
 /**
  * Tests decrypt verify abilities of Crypt_GPG.
@@ -55,7 +57,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class DecryptAndVerifyTest extends Crypt_GPG_TestCase
+class DecryptAndVerifyTest extends TestCase
 {
     /**
      * @group string
@@ -63,7 +65,7 @@ class DecryptAndVerifyTest extends Crypt_GPG_TestCase
     public function testDecryptVerify()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('5dGf4//0CqBmlexYjyS7agt4Zn4');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -73,7 +75,7 @@ class DecryptAndVerifyTest extends Crypt_GPG_TestCase
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -124,7 +126,7 @@ TEXT;
     public function testDecryptVerifyNoPassphrase()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('0YWPoUQhN5G4uTi45QLy3GG3RWg');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -134,7 +136,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -183,7 +185,7 @@ TEXT;
      */
     public function testDecryptVerifyKeyNotFoundException_decrypt()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
 
         // was encrypted with missing-key@example.com, signed with
         // first-keypair@example.com
@@ -221,7 +223,7 @@ TEXT;
      */
     public function testDecryptVerifyKeyNotFoundException_verify()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
 
         // was encrypted with first-keypair@example.com, signed with
         // missing-key@example.com
@@ -265,7 +267,7 @@ TEXT;
      */
     public function testDecryptVerifyKeyNotFoundException_both()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
 
         // was encrypted and signed with missing-key@example.com
         // {{{ encrypted data
@@ -302,7 +304,7 @@ TEXT;
      */
     public function testDecryptVerifyKeyNotFoundIgnoreVerifyErrors()
     {
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setKeyId('8E3D36B1EA5AC75E');
 
         $expectedResults = [
@@ -343,7 +345,7 @@ x5MBl/I2kBCHeH4=
 TEXT;
         // }}}
 
-        $this->gpg = new Crypt_GPG($this->getOptions());
+        $this->gpg = new GPG($this->getOptions());
 
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
         $results = $this->gpg->decryptAndVerify($encryptedData, true);
@@ -356,7 +358,7 @@ TEXT;
      */
     public function testDecryptVerifyNoDataException_invalid()
     {
-        $this->expectException('Crypt_GPG_NoDataException');
+        $this->expectException(Exceptions\NoDataException::class);
 
         $encryptedData = 'Invalid OpenPGP data.';
         $this->gpg->decryptAndVerify($encryptedData);
@@ -367,7 +369,7 @@ TEXT;
      */
     public function testDecryptVerifyNoDataException_empty()
     {
-        $this->expectException('Crypt_GPG_NoDataException');
+        $this->expectException(Exceptions\NoDataException::class);
 
         $encryptedData = '';
         $this->gpg->decryptAndVerify($encryptedData);
@@ -378,7 +380,7 @@ TEXT;
      */
     public function testDecryptVerifyBadPassphraseException_missing()
     {
-        $this->expectException('Crypt_GPG_BadPassphraseException');
+        $this->expectException(Exceptions\BadPassphraseException::class);
 
         // encrypted with first-keypair@example.com, signed with
         // first-keypair@example.com
@@ -416,7 +418,7 @@ TEXT;
      */
     public function testDecryptVerifyBadPassphraseException_bad()
     {
-        $this->expectException('Crypt_GPG_BadPassphraseException');
+        $this->expectException(Exceptions\BadPassphraseException::class);
 
         // encrypted with first-keypair@example.com, signed with
         // first-keypair@example.com
@@ -456,7 +458,7 @@ TEXT;
     public function testDecryptVerifyDual()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('TAsI7RYUgZAud0wMZu3Iab3bZXo');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -466,7 +468,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -536,7 +538,7 @@ TEXT;
     public function testDecryptVerifyDualOnePassphrase()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('3OJnX+PqHI0YUCeFxICCxhPHY1Q');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -546,7 +548,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -613,7 +615,7 @@ TEXT;
      */
     public function testDecryptAndVerifyDualNoPassphraseKeyMissing()
     {
-        $this->expectException('Crypt_GPG_BadPassphraseException');
+        $this->expectException(Exceptions\BadPassphraseException::class);
 
         // encrypted with both first-keypair@example.com and
         // second-keypair@example.com
@@ -668,7 +670,7 @@ TEXT;
     public function testDecryptVerifyDualSignatories()
     {
         // {{{ signature1
-        $signature1 = new Crypt_GPG_Signature();
+        $signature1 = new Signature();
         $signature1->setId('7PujVkx4qk28IejcD6BirrwBmRE');
         $signature1->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -678,14 +680,14 @@ TEXT;
         $signature1->setExpirationDate(0);
         $signature1->setValid(true);
 
-        $userId1 = new Crypt_GPG_UserId();
+        $userId1 = new UserId();
         $userId1->setName('First Keypair Test Key');
         $userId1->setComment('do not encrypt important data with this key');
         $userId1->setEmail('first-keypair@example.com');
         $signature1->setUserId($userId1);
         // }}}
         // {{{ signature2
-        $signature2 = new Crypt_GPG_Signature();
+        $signature2 = new Signature();
         $signature2->setId('AhrDdkdcBsEsOSQOYENhl5C7auc');
         $signature2->setKeyFingerprint(
             '880922DBEA733E906693E4A903CC890AFA1DAD4B');
@@ -695,7 +697,7 @@ TEXT;
         $signature2->setExpirationDate(0);
         $signature2->setValid(true);
 
-        $userId2 = new Crypt_GPG_UserId();
+        $userId2 = new UserId();
         $userId2->setName('Second Keypair Test Key');
         $userId2->setComment('do not encrypt important data with this key');
         $userId2->setEmail('second-keypair@example.com');
@@ -747,7 +749,7 @@ TEXT;
     public function testDecryptVerifySignedOnly()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('LS9EdhGLaEUllGk3Snc0Bk+Cn3E');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -757,7 +759,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -794,7 +796,7 @@ TEXT;
     public function testDecryptVerifyFirstSubKey()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('YUeHL9fEAK4hMokvXsNgUP5vaJ8');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -804,7 +806,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -850,7 +852,7 @@ TEXT;
     public function testDecryptVerifySecondSubKey()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('ZLZFDxxO+zdCEklUu6eppBCPCsA');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -860,7 +862,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -906,10 +908,10 @@ TEXT;
     public function testDecryptVerifySignedOnlyBadSignature()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setValid(false);
         $signature->setKeyId('C097D9EC94C06363');
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -948,7 +950,7 @@ TEXT;
     public function testDecryptVerifyFile()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('kVwy2yYB0TlXyGd9FUvVYp5jCoI');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -958,7 +960,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -993,7 +995,7 @@ TEXT;
     public function testDecryptVerifyFileToString()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('GTvYFmQ5yfMM/UOffkYCx21Se2M');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -1003,7 +1005,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -1032,7 +1034,7 @@ TEXT;
     public function testDecryptVerifyFileNoPassphrase()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('unMY9l/f9sFaMvMV0H1ZuNJRY6Q');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -1042,7 +1044,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -1079,7 +1081,7 @@ TEXT;
      */
     public function testDecryptVerifyFileFileException_input()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
 
         // input file does not exist
         $inputFilename = $this->getDataFilename(
@@ -1094,7 +1096,7 @@ TEXT;
      */
     public function testDecryptVerifyFileFileException_output()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
 
         // input file is encrypted with first-keypair@example.com
         // output file does not exist
@@ -1111,7 +1113,7 @@ TEXT;
      */
     public function testDecryptVerifyFileKeyNotFoundException_decrypt()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
 
         // file is encrypted with missing-key@example.com, not signed
         $inputFilename = $this->getDataFilename(
@@ -1131,7 +1133,7 @@ TEXT;
     public function testDecryptVerifyFileDual()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('7TYk0hpio90QZHHHb4UtgCWAEq4');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -1141,7 +1143,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -1190,7 +1192,7 @@ TEXT;
     public function testDecryptVerifyFileDualSignatories()
     {
         // {{{ signature1
-        $signature1 = new Crypt_GPG_Signature();
+        $signature1 = new Signature();
         $signature1->setId('MF8xqL325bs7KiokMHTnHirF4go');
         $signature1->setKeyFingerprint(
             '880922DBEA733E906693E4A903CC890AFA1DAD4B');
@@ -1200,14 +1202,14 @@ TEXT;
         $signature1->setExpirationDate(0);
         $signature1->setValid(true);
 
-        $userId1 = new Crypt_GPG_UserId();
+        $userId1 = new UserId();
         $userId1->setName('Second Keypair Test Key');
         $userId1->setComment('do not encrypt important data with this key');
         $userId1->setEmail('second-keypair@example.com');
         $signature1->setUserId($userId1);
         // }}}
         // {{{ signature2
-        $signature2 = new Crypt_GPG_Signature();
+        $signature2 = new Signature();
         $signature2->setId('d0q7jibZpJSLpGAhNWhpSkZZeUg');
         $signature2->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -1217,7 +1219,7 @@ TEXT;
         $signature2->setExpirationDate(0);
         $signature2->setValid(true);
 
-        $userId2 = new Crypt_GPG_UserId();
+        $userId2 = new UserId();
         $userId2->setName('First Keypair Test Key');
         $userId2->setComment('do not encrypt important data with this key');
         $userId2->setEmail('first-keypair@example.com');
@@ -1253,7 +1255,7 @@ TEXT;
     public function testDecryptVerifyFileDualOnePassphrase()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('kgyLjfFigxOrliyc8XlS6NaLJuw');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -1263,7 +1265,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
@@ -1310,7 +1312,7 @@ TEXT;
      */
     public function testDecryptVerifyFileNoDataException()
     {
-        $this->expectException('Crypt_GPG_NoDataException');
+        $this->expectException(Exceptions\NoDataException::class);
 
         $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->decryptAndVerifyFile($filename);
@@ -1322,7 +1324,7 @@ TEXT;
     public function testDecryptVerifyFileSignedOnly()
     {
         // {{{ signature
-        $signature = new Crypt_GPG_Signature();
+        $signature = new Signature();
         $signature->setId('vctnI/HnsRYmqcVwCJcJhS60lKU');
         $signature->setKeyFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -1332,7 +1334,7 @@ TEXT;
         $signature->setExpirationDate(0);
         $signature->setValid(true);
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');

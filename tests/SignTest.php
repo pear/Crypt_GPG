@@ -36,14 +36,14 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
+
+use Crypt\GPG;
+use Crypt\GPG\Exceptions;
+use Crypt\GPG\SignatureCreationInfo;
 
 /**
  * Tests signing abilities of Crypt_GPG.
@@ -55,7 +55,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class SignTest extends Crypt_GPG_TestCase
+class SignTest extends TestCase
 {
     public function testHasSignKeys()
     {
@@ -69,7 +69,7 @@ class SignTest extends Crypt_GPG_TestCase
      */
     public function testSignKeyNotFoundException_invalid()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
 
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('non-existent-key@example.com');
@@ -81,7 +81,7 @@ class SignTest extends Crypt_GPG_TestCase
      */
     public function testSignKeyNotFoundException_none()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
 
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->sign($data);
@@ -92,7 +92,7 @@ class SignTest extends Crypt_GPG_TestCase
      */
     public function testSignBadPassphraseException_missing()
     {
-        $this->expectException('Crypt_GPG_BadPassphraseException');
+        $this->expectException(Exceptions\BadPassphraseException::class);
 
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com');
@@ -104,7 +104,7 @@ class SignTest extends Crypt_GPG_TestCase
      */
     public function testSignBadPassphraseException_bad()
     {
-        $this->expectException('Crypt_GPG_BadPassphraseException');
+        $this->expectException(Exceptions\BadPassphraseException::class);
 
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com', 'incorrect');
@@ -127,6 +127,7 @@ class SignTest extends Crypt_GPG_TestCase
         $this->gpg->setEngineOptions([]);
 
         $signatures = $this->gpg->verify($signedData);
+
         $this->assertEquals(1, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -141,8 +142,8 @@ class SignTest extends Crypt_GPG_TestCase
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $signedData = $this->gpg->sign($data);
-
         $signatures = $this->gpg->verify($signedData);
+
         $this->assertEquals(1, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -156,7 +157,7 @@ class SignTest extends Crypt_GPG_TestCase
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
-        $signedData = $this->gpg->sign($data, Crypt_GPG::SIGN_MODE_CLEAR);
+        $signedData = $this->gpg->sign($data, GPG::SIGN_MODE_CLEAR);
 
         $signatures = $this->gpg->verify($signedData);
         $this->assertEquals(1, count($signatures));
@@ -172,10 +173,9 @@ class SignTest extends Crypt_GPG_TestCase
     {
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
-        $signatureData = $this->gpg->sign($data,
-            Crypt_GPG::SIGN_MODE_DETACHED);
-
+        $signatureData = $this->gpg->sign($data, GPG::SIGN_MODE_DETACHED);
         $signatures = $this->gpg->verify($data, $signatureData);
+
         $this->assertEquals(1, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -191,8 +191,8 @@ class SignTest extends Crypt_GPG_TestCase
         $this->gpg->addSignKey('no-passphrase@example.com');
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $signedData = $this->gpg->sign($data);
-
         $signatures = $this->gpg->verify($signedData);
+
         $this->assertEquals(2, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -208,8 +208,8 @@ class SignTest extends Crypt_GPG_TestCase
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addSignKey('second-keypair@example.com', 'test2');
         $signedData = $this->gpg->sign($data);
-
         $signatures = $this->gpg->verify($signedData);
+
         $this->assertEquals(2, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -224,9 +224,9 @@ class SignTest extends Crypt_GPG_TestCase
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addSignKey('second-keypair@example.com', 'test2');
-        $signedData = $this->gpg->sign($data, Crypt_GPG::SIGN_MODE_CLEAR);
-
+        $signedData = $this->gpg->sign($data, GPG::SIGN_MODE_CLEAR);
         $signatures = $this->gpg->verify($signedData);
+
         $this->assertEquals(2, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -241,10 +241,9 @@ class SignTest extends Crypt_GPG_TestCase
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addSignKey('second-keypair@example.com', 'test2');
-        $signatureData = $this->gpg->sign($data,
-            Crypt_GPG::SIGN_MODE_DETACHED);
-
+        $signatureData = $this->gpg->sign($data, GPG::SIGN_MODE_DETACHED);
         $signatures = $this->gpg->verify($data, $signatureData);
+
         $this->assertEquals(2, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -287,12 +286,7 @@ class SignTest extends Crypt_GPG_TestCase
             . "it was the winter of despair,";
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
-        $signatureData = $this->gpg->sign(
-            $data,
-            Crypt_GPG::SIGN_MODE_DETACHED,
-            true,
-            true
-        );
+        $signatureData = $this->gpg->sign($data, GPG::SIGN_MODE_DETACHED, true, true);
 
         // convert data to Windows line endings
         $data = str_replace("\n", "\r\n", $data);
@@ -354,10 +348,9 @@ class SignTest extends Crypt_GPG_TestCase
         $outputFilename = $this->getTempFilename('testSignFileClear.asc');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
-        $this->gpg->signFile($inputFilename, $outputFilename,
-            Crypt_GPG::SIGN_MODE_CLEAR);
-
+        $this->gpg->signFile($inputFilename, $outputFilename, GPG::SIGN_MODE_CLEAR);
         $signatures = $this->gpg->verifyFile($outputFilename);
+
         $this->assertEquals(1, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -373,12 +366,10 @@ class SignTest extends Crypt_GPG_TestCase
         $outputFilename = $this->getTempFilename('testSignFileDetached.asc');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
-        $this->gpg->signFile($inputFilename, $outputFilename,
-            Crypt_GPG::SIGN_MODE_DETACHED);
-
+        $this->gpg->signFile($inputFilename, $outputFilename, GPG::SIGN_MODE_DETACHED);
         $signatureData = file_get_contents($outputFilename);
-
         $signatures = $this->gpg->verifyFile($inputFilename, $signatureData);
+
         $this->assertEquals(1, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -393,10 +384,9 @@ class SignTest extends Crypt_GPG_TestCase
         $filename = $this->getDataFilename('testFileMedium.plain');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
-        $signatureData = $this->gpg->signFile($filename, null,
-            Crypt_GPG::SIGN_MODE_DETACHED);
-
+        $signatureData = $this->gpg->signFile($filename, null, GPG::SIGN_MODE_DETACHED);
         $signatures = $this->gpg->verifyFile($filename, $signatureData);
+
         $this->assertEquals(1, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -452,10 +442,9 @@ class SignTest extends Crypt_GPG_TestCase
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addSignKey('second-keypair@example.com', 'test2');
-        $this->gpg->signFile($inputFilename, $outputFilename,
-            Crypt_GPG::SIGN_MODE_CLEAR);
-
+        $this->gpg->signFile($inputFilename, $outputFilename, GPG::SIGN_MODE_CLEAR);
         $signatures = $this->gpg->verifyFile($outputFilename);
+
         $this->assertEquals(2, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -473,12 +462,11 @@ class SignTest extends Crypt_GPG_TestCase
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addSignKey('second-keypair@example.com', 'test2');
-        $this->gpg->signFile($inputFilename, $outputFilename,
-            Crypt_GPG::SIGN_MODE_DETACHED);
+        $this->gpg->signFile($inputFilename, $outputFilename, GPG::SIGN_MODE_DETACHED);
 
         $signatureData = file_get_contents($outputFilename);
-
         $signatures = $this->gpg->verifyFile($inputFilename, $signatureData);
+
         $this->assertEquals(2, count($signatures));
         foreach ($signatures as $signature) {
             $this->assertTrue($signature->isValid());
@@ -490,7 +478,7 @@ class SignTest extends Crypt_GPG_TestCase
      */
     public function testSignFileFileException_input()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
 
         // input file does not exist
         $inputFilename =
@@ -505,7 +493,7 @@ class SignTest extends Crypt_GPG_TestCase
      */
     public function testSignFileFileException_output()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
 
         // input file is encrypted with first-keypair@example.com
         // output file does not exist
@@ -538,13 +526,13 @@ class SignTest extends Crypt_GPG_TestCase
     public function testGetLastSignatureInfo()
     {
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
-        $signedData = $this->gpg->sign('test', Crypt_GPG::SIGN_MODE_DETACHED);
-
+        $signedData = $this->gpg->sign('test', GPG::SIGN_MODE_DETACHED);
         $sigInfo = $this->gpg->getLastSignatureInfo();
-        $this->assertInstanceOf('Crypt_GPG_SignatureCreationInfo', $sigInfo);
+
+        $this->assertInstanceOf(SignatureCreationInfo::class, $sigInfo);
         $this->assertTrue($sigInfo->isValid());
         $this->assertEquals(date('Y-m-d'), date('Y-m-d', $sigInfo->getTimestamp()));
-        $this->assertEquals(Crypt_GPG::SIGN_MODE_DETACHED, $sigInfo->getMode());
+        $this->assertEquals(GPG::SIGN_MODE_DETACHED, $sigInfo->getMode());
         $this->assertEquals(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             $sigInfo->getKeyFingerprint()

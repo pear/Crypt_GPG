@@ -36,14 +36,12 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
+
+use Crypt\GPG;
 
 /**
  * Tests fingerprint retrieval of Crypt_GPG.
@@ -55,7 +53,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class GetFingerprintTest extends Crypt_GPG_TestCase
+class GetFingerprintTest extends TestCase
 {
     /**
      * @group get-fingerprint
@@ -87,8 +85,7 @@ class GetFingerprintTest extends Crypt_GPG_TestCase
         $expectedFingerprint =
             'F8:31:18:CB:6F:58:92:DC:1C:3E:93:6D:AB:A8:1E:F5:4E:8C:0D:EB';
 
-        $fingerprint = $this->gpg->getFingerprint($keyId,
-            Crypt_GPG::FORMAT_X509);
+        $fingerprint = $this->gpg->getFingerprint($keyId, GPG::FORMAT_X509);
 
         $this->assertEquals($expectedFingerprint, $fingerprint);
     }
@@ -102,8 +99,7 @@ class GetFingerprintTest extends Crypt_GPG_TestCase
         $expectedFingerprint =
             'F831 18CB 6F58 92DC 1C3E  936D ABA8 1EF5 4E8C 0DEB';
 
-        $fingerprint = $this->gpg->getFingerprint($keyId,
-            Crypt_GPG::FORMAT_CANONICAL);
+        $fingerprint = $this->gpg->getFingerprint($keyId, GPG::FORMAT_CANONICAL);
 
         $this->assertEquals($expectedFingerprint, $fingerprint);
     }

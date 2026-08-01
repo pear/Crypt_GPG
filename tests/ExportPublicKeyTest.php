@@ -36,14 +36,12 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
+
+use Crypt\GPG\Exceptions;
 
 /**
  * Tests key export abilities of Crypt_GPG.
@@ -55,7 +53,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class ExportPublicKeyTest extends Crypt_GPG_TestCase
+class ExportPublicKeyTest extends TestCase
 {
     /**
      * @group export
@@ -78,7 +76,7 @@ class ExportPublicKeyTest extends Crypt_GPG_TestCase
      */
     public function testExportPublicKeyNotFoundException()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
 
         $keyId = 'non-existent-key@example.com';
         $this->gpg->exportPublicKey($keyId);

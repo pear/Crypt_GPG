@@ -21,9 +21,9 @@ To test, run either
 ```php
 <?php
 
-require_once 'Crypt/GPG.php';
+use Crypt/GPG;
 
-$gpg = new Crypt_GPG();
+$gpg = new GPG();
 $gpg->addEncryptKey('test@example.com');
 $data = $gpg->encrypt('my secret data');
 

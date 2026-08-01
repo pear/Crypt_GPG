@@ -36,14 +36,14 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
+
+use Crypt\GPG;
+use Crypt\GPG\Engine;
+use Crypt\GPG\Exceptions;
 
 /**
  * General tests for Crypt_GPG.
@@ -55,35 +55,35 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class GeneralTest extends Crypt_GPG_TestCase
+class GeneralTest extends TestCase
 {
     public function testPublicKeyringFileException()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
 
         $publicKeyringFile = $this->getTempFilename('pubring.gpg');
-        new Crypt_GPG(['publicKeyring' => $publicKeyringFile]);
+        new GPG(['publicKeyring' => $publicKeyringFile]);
     }
 
     public function testPrivateKeyringFileException()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
 
         $privateKeyringFile = $this->getTempFilename('secring.gpg');
-        new Crypt_GPG(['privateKeyring' => $privateKeyringFile]);
+        new GPG(['privateKeyring' => $privateKeyringFile]);
     }
 
     public function testTrustDatabaseFileException()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
 
         $trustDbFile = $this->getTempFilename('secring.gpg');
-        new Crypt_GPG(['trustDb' => $trustDbFile]);
+        new GPG(['trustDb' => $trustDbFile]);
     }
 
     public function testHomedirFileException_NoCreate()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
         $this->expectExceptionMessage('cannot be created');
 
         if (posix_getuid() === 0) {
@@ -91,12 +91,12 @@ class GeneralTest extends Crypt_GPG_TestCase
         }
 
         $nonCreatableDirectory = '//.gnupg';
-        new Crypt_GPG(['homedir' => $nonCreatableDirectory]);
+        new GPG(['homedir' => $nonCreatableDirectory]);
     }
 
     public function testHomedirFileException_NoExecute()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
         $this->expectExceptionMessage('is not enterable');
 
         if (posix_getuid() === 0) {
@@ -107,12 +107,12 @@ class GeneralTest extends Crypt_GPG_TestCase
         mkdir($nonExecutableDirectory);
         chmod($nonExecutableDirectory, 0600); // rw- --- ---
 
-        new Crypt_GPG(['homedir' => $nonExecutableDirectory]);
+        new GPG(['homedir' => $nonExecutableDirectory]);
     }
 
     public function testHomedirFileException_NoWrite()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
         $this->expectExceptionMessage('is not writable');
 
         if (posix_getuid() === 0) {
@@ -123,30 +123,30 @@ class GeneralTest extends Crypt_GPG_TestCase
         mkdir($nonWriteableDirectory);
         chmod($nonWriteableDirectory, 0500); // r-x --- ---
 
-        new Crypt_GPG(['homedir' => $nonWriteableDirectory]);
+        new GPG(['homedir' => $nonWriteableDirectory]);
     }
 
     public function testBinaryPEARException()
     {
-        $this->expectException('Crypt_GPG_Exception');
+        $this->expectException(Exceptions\Exception::class);
 
-        new Crypt_GPG(['binary' => './non-existent-binary']);
+        new GPG(['binary' => './non-existent-binary']);
     }
 
     public function testGPGBinaryPEARException()
     {
-        $this->expectException('Crypt_GPG_Exception');
+        $this->expectException(Exceptions\Exception::class);
 
-        new Crypt_GPG(['gpgBinary' => './non-existent-binary']);
+        new GPG(['gpgBinary' => './non-existent-binary']);
     }
 
     public function testSetEngine()
     {
-        $engine = new Crypt_GPG_Engine($this->getOptions());
-        $gpg = new Crypt_GPG();
+        $engine = new Engine($this->getOptions());
+        $gpg = new GPG();
         $gpg->setEngine($engine);
 
-        $this->assertSame($this->getPropertyValue('Crypt_GPG', $gpg, 'engine'), $engine);
+        $this->assertSame($this->getPropertyValue(GPG::class, $gpg, 'engine'), $engine);
     }
 
     /**
@@ -154,9 +154,7 @@ class GeneralTest extends Crypt_GPG_TestCase
      */
     public function testFluentInterface()
     {
-        $returnedGpg = $this->gpg->setEngine(
-            new Crypt_GPG_Engine($this->getOptions())
-        );
+        $returnedGpg = $this->gpg->setEngine(new Engine($this->getOptions()));
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,

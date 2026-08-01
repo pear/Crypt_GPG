@@ -36,14 +36,16 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
+
+use Crypt\GPG;
+use Crypt\GPG\Exceptions;
+use Crypt\GPG\Key;
+use Crypt\GPG\SubKey;
+use Crypt\GPG\UserId;
 
 /**
  * Tests private key deletion abilities of Crypt_GPG.
@@ -55,7 +57,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class DeletePrivateKeyTest extends Crypt_GPG_TestCase
+class DeletePrivateKeyTest extends TestCase
 {
     /**
      * @group delete-private
@@ -68,29 +70,29 @@ class DeletePrivateKeyTest extends Crypt_GPG_TestCase
         $expectedKeys = [];
 
         // {{{ first-keypair@example.com
-        $key = new Crypt_GPG_Key();
+        $key = new Key();
         $expectedKeys[] = $key;
 
-        $userId = new Crypt_GPG_UserId();
+        $userId = new UserId();
         $userId->setName('First Keypair Test Key');
         $userId->setComment('do not encrypt important data with this key');
         $userId->setEmail('first-keypair@example.com');
         $key->addUserId($userId);
 
-        $subKey = new Crypt_GPG_SubKey();
+        $subKey = new SubKey();
         $subKey->setId('C097D9EC94C06363');
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_DSA);
+        $subKey->setAlgorithm(SubKey::ALGORITHM_DSA);
         $subKey->setFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
         $subKey->setLength(1024);
         $subKey->setCreationDate(1221785805);
         $subKey->setExpirationDate(0);
-        $subKey->setUsage(Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_CERTIFY);
+        $subKey->setUsage(SubKey::USAGE_SIGN | SubKey::USAGE_CERTIFY);
         $subKey->setHasPrivate(false);
         $key->addSubKey($subKey);
 
-        $subKey = new Crypt_GPG_SubKey();
+        $subKey = new SubKey();
         $subKey->setId('9F93F9116728EF12');
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey->setAlgorithm(SubKey::ALGORITHM_ELGAMAL_ENC);
         $subKey->setFingerprint('C9C65B3BBF040E40D0EA27B79F93F9116728EF12');
         $subKey->setLength(2048);
         $subKey->setCreationDate(1221785821);
@@ -110,7 +112,7 @@ class DeletePrivateKeyTest extends Crypt_GPG_TestCase
      */
     public function testDeletePrivateKeyNotFoundException()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
 
         $keyId = 'non-existent-key@example.com';
         $this->gpg->deletePrivateKey($keyId);
@@ -121,7 +123,7 @@ class DeletePrivateKeyTest extends Crypt_GPG_TestCase
      */
     public function testDeletePrivateKeyNotFoundException_public_only()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
 
         $keyId = 'public-only@example.com';
         $this->gpg->deletePrivateKey($keyId);

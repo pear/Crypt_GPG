@@ -32,10 +32,9 @@
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * User id class definition
- */
-require_once 'Crypt/GPG/UserId.php';
+namespace Crypt\GPG;
+
+use Crypt\GPG\UserId;
 
 /**
  * A class for GPG signature information
@@ -49,9 +48,9 @@ require_once 'Crypt/GPG/UserId.php';
  * @copyright 2005-2013 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
- * @see       Crypt_GPG::verify()
+ * @see       \Crypt\GPG::verify()
  */
-class Crypt_GPG_Signature
+class Signature
 {
     /**
      * A base64-encoded string containing a unique id for this signature if
@@ -100,7 +99,7 @@ class Crypt_GPG_Signature
     /**
      * The user id associated with this signature
      *
-     * @var Crypt_GPG_UserId|null
+     * @var UserId|null
      */
     private $_userId = null;
 
@@ -132,14 +131,14 @@ class Crypt_GPG_Signature
      * - <kbd>bool    valid</kbd>       - whether or not the signature is valid.
      * - <kbd>string  userId</kbd>      - the user id associated with the
      *                                    signature. This may also be a
-     *                                    {@link Crypt_GPG_UserId} object.
+     *                                    {@link \Crypt\GPG\UserId} object.
      *
-     * @param Crypt_GPG_Signature|array|null $signature Either an existing signature object,
-     *                                                  which is copied; or an array of initial values.
+     * @param Signature|array|null $signature Either an existing signature object,
+     *                                        which is copied; or an array of initial values.
      */
     public function __construct($signature = null)
     {
-       if ($signature instanceof Crypt_GPG_Signature) {
+       if ($signature instanceof self) {
             $this->_id             = $signature->_id;
             $this->_keyFingerprint = $signature->_keyFingerprint;
             $this->_keyId          = $signature->_keyId;
@@ -147,7 +146,7 @@ class Crypt_GPG_Signature
             $this->_expirationDate = $signature->_expirationDate;
             $this->_isValid        = $signature->_isValid;
 
-            if ($signature->_userId instanceof Crypt_GPG_UserId) {
+            if ($signature->_userId instanceof UserId) {
                 $this->_userId = clone $signature->_userId;
             }
         }
@@ -179,8 +178,7 @@ class Crypt_GPG_Signature
             }
 
             if (array_key_exists('userId', $signature)) {
-                $userId = new Crypt_GPG_UserId($signature['userId']);
-                $this->setUserId($userId);
+                $this->setUserId(new UserId($signature['userId']));
             }
         }
     }
@@ -251,7 +249,7 @@ class Crypt_GPG_Signature
      * identity per signature. So, if the signing key has more user identities
      * there's only one here.
      *
-     * @return Crypt_GPG_UserId|null The user id associated with this signature.
+     * @return UserId|null The user id associated with this signature.
      */
     public function getUserId()
     {
@@ -277,7 +275,7 @@ class Crypt_GPG_Signature
      *
      * @param string $string The string containing the sig: line
      *
-     * @return Crypt_GPG_Signature The signature object
+     * @return self signature object
      */
     public static function parse($string)
     {
@@ -287,8 +285,8 @@ class Crypt_GPG_Signature
 
         $sig->setValid(empty($tokens[1]) || $tokens[1] == '!');
         $sig->setKeyFingerprint($tokens[12] ?: $tokens[4]);
-        $sig->setCreationDate($tokens[5]);
-        $sig->setUserId(new Crypt_GPG_UserId(stripcslashes($tokens[9])));
+        $sig->setCreationDate((int) $tokens[5]);
+        $sig->setUserId(new UserId(stripcslashes($tokens[9])));
 
         return $sig;
     }
@@ -299,9 +297,9 @@ class Crypt_GPG_Signature
      * @param string $id a base64-encoded string containing a unique id for
      *                   this signature.
      *
-     * @return Crypt_GPG_Signature the current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      *
-     * @see Crypt_GPG_Signature::getId()
+     * @see self::getId()
      */
     public function setId($id)
     {
@@ -316,7 +314,7 @@ class Crypt_GPG_Signature
      *                            is the fingerprint of the primary key used to
      *                            create this signature.
      *
-     * @return Crypt_GPG_Signature the current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setKeyFingerprint($fingerprint)
     {
@@ -330,7 +328,7 @@ class Crypt_GPG_Signature
      * @param string $id the key id of this signature. This is the id of the
      *                   primary key used to create this signature.
      *
-     * @return Crypt_GPG_Signature the current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setKeyId($id)
     {
@@ -344,7 +342,7 @@ class Crypt_GPG_Signature
      * @param int $creationDate The creation date of this signature. This
      *                          is a Unix timestamp.
      *
-     * @return Crypt_GPG_Signature the current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setCreationDate($creationDate)
     {
@@ -359,7 +357,7 @@ class Crypt_GPG_Signature
      *                            This is a Unix timestamp. Specify zero if
      *                            this signature does not expire.
      *
-     * @return Crypt_GPG_Signature the current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setExpirationDate($expirationDate)
     {
@@ -370,12 +368,11 @@ class Crypt_GPG_Signature
     /**
      * Sets the user id associated with this signature
      *
-     * @param Crypt_GPG_UserId $userId the user id associated with this
-     *                                 signature.
+     * @param UserId $userId the user id associated with this signature.
      *
-     * @return Crypt_GPG_Signature the current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
-    public function setUserId(Crypt_GPG_UserId $userId)
+    public function setUserId(UserId $userId)
     {
         $this->_userId = $userId;
         return $this;
@@ -384,10 +381,9 @@ class Crypt_GPG_Signature
     /**
      * Sets whether or not this signature is valid
      *
-     * @param bool $isValid True if this signature is valid and false if it
-     *                      is not.
+     * @param bool $isValid True if this signature is valid and false if it is not.
      *
-     * @return Crypt_GPG_Signature the current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setValid($isValid)
     {

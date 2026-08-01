@@ -25,16 +25,13 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
 
-//require_once 'Crypt/GPG/SignatureCreationInfo.php';
+use Crypt\GPG;
+use Crypt\GPG\SignatureCreationInfo;
 
 /**
  * Test the signature creation information class
@@ -46,16 +43,15 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class SignatureCreationInfoTest extends Crypt_GPG_TestCase
+class SignatureCreationInfoTest extends TestCase
 {
-
     public function testValidSigCreatedLine()
     {
-        $sci = new Crypt_GPG_SignatureCreationInfo(
+        $sci = new SignatureCreationInfo(
             'SIG_CREATED D 17 2 00 1440922957 8D2299D9C5C211128B32BBB0C097D9EC94C06363'
         );
         $this->assertTrue($sci->isValid());
-        $this->assertEquals(Crypt_GPG::SIGN_MODE_DETACHED, $sci->getMode());
+        $this->assertEquals(GPG::SIGN_MODE_DETACHED, $sci->getMode());
         $this->assertEquals(1440922957, $sci->getTimestamp());
         $this->assertEquals(17, $sci->getPkAlgorithm());
         $this->assertEquals(2, $sci->getHashAlgorithm());
@@ -68,7 +64,7 @@ class SignatureCreationInfoTest extends Crypt_GPG_TestCase
 
     public function testInvalidSigCreatedLine()
     {
-        $sci = new Crypt_GPG_SignatureCreationInfo('foo bar');
+        $sci = new SignatureCreationInfo('foo bar');
         $this->assertNull($sci->getMode());
         $this->assertFalse($sci->isValid());
     }

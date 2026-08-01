@@ -32,10 +32,12 @@
  * @link      http://www.gnupg.org/
  */
 
-/**
- * Base class for GPG methods
- */
-require_once 'Crypt/GPGAbstract.php';
+namespace Crypt\GPG;
+
+use Crypt\GPG;
+use Crypt\GPG\Exceptions;
+use Crypt\GPG\SubKey;
+use Crypt\GPG\UserId;
 
 /**
  * GnuPG key generator
@@ -65,14 +67,14 @@ require_once 'Crypt/GPGAbstract.php';
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
  */
-class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
+class KeyGenerator extends GPG
 {
     /**
      * The expiration date of generated keys
      *
      * @var int
      *
-     * @see Crypt_GPG_KeyGenerator::setExpirationDate()
+     * @see self::setExpirationDate()
      */
     protected $expirationDate = 0;
 
@@ -81,7 +83,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @var string
      *
-     * @see Crypt_GPG_KeyGenerator::setPassphrase()
+     * @see self::setPassphrase()
      */
     protected $passphrase = '';
 
@@ -90,16 +92,16 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @var int
      *
-     * @see Crypt_GPG_KeyGenerator::setKeyParams()
+     * @see self::setKeyParams()
      */
-    protected $keyAlgorithm = Crypt_GPG_SubKey::ALGORITHM_DSA;
+    protected $keyAlgorithm = SubKey::ALGORITHM_DSA;
 
     /**
      * The size of generated primary keys
      *
      * @var int
      *
-     * @see Crypt_GPG_KeyGenerator::setKeyParams()
+     * @see self::setKeyParams()
      */
     protected $keySize = 1024;
 
@@ -111,7 +113,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @var int
      *
-     * @see Crypt_GPG_KeyGenerator::setKeyParams()
+     * @see self::setKeyParams()
      */
     protected $keyUsage = 6; // USAGE_SIGN | USAGE_CERTIFY
 
@@ -120,16 +122,16 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *
      * @var int
      *
-     * @see Crypt_GPG_KeyGenerator::setSubKeyParams()
+     * @see self::setSubKeyParams()
      */
-    protected $subKeyAlgorithm = Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC;
+    protected $subKeyAlgorithm = SubKey::ALGORITHM_ELGAMAL_ENC;
 
     /**
      * The size of generated sub-keys
      *
      * @var int
      *
-     * @see Crypt_GPG_KeyGenerator::setSubKeyParams()
+     * @see self::setSubKeyParams()
      */
     protected $subKeySize = 2048;
 
@@ -137,44 +139,13 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      * The usages of generated sub-keys
      *
      * This is a bitwise combination of the usage constants in
-     * {@link Crypt_GPG_SubKey}.
+     * {@link \Crypt\GPG\SubKey}.
      *
      * @var int
      *
-     * @see Crypt_GPG_KeyGenerator::setSubKeyParams()
+     * @see self::setSubKeyParams()
      */
-    protected $subKeyUsage = Crypt_GPG_SubKey::USAGE_ENCRYPT;
-
-    /**
-     * Creates a new GnuPG key generator
-     *
-     * @param array $options An array of options used to create the object.
-     *                       All options are optional and are represented as key-value
-     *                       pairs. See Crypt_GPGAbstract::__construct() for more info.
-     *
-     * @throws Crypt_GPG_FileException if the <kbd>homedir</kbd> does not exist
-     *         and cannot be created. This can happen if <kbd>homedir</kbd> is
-     *         not specified, Crypt_GPG is run as the web user, and the web
-     *         user has no home directory. This exception is also thrown if any
-     *         of the options <kbd>publicKeyring</kbd>,
-     *         <kbd>privateKeyring</kbd> or <kbd>trustDb</kbd> options are
-     *         specified but the files do not exist or are are not readable.
-     *         This can happen if the user running the Crypt_GPG process (for
-     *         example, the Apache user) does not have permission to read the
-     *         files.
-     *
-     * @throws Crypt_GPG_Exception if the provided <kbd>binary</kbd> is invalid, or
-     *         if no <kbd>binary</kbd> is provided and no suitable binary could
-     *         be found.
-     *
-     * @throws Crypt_GPG_Exception if the provided <kbd>agent</kbd> is invalid, or
-     *         if no <kbd>agent</kbd> is provided and no suitable gpg-agent
-     *         could be found.
-     */
-    public function __construct(array $options = [])
-    {
-        parent::__construct($options);
-    }
+    protected $subKeyUsage = \Crypt\GPG\SubKey::USAGE_ENCRYPT;
 
     /**
      * Sets the expiration date of generated keys
@@ -188,12 +159,12 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *                         an expiration date of 0 for keys that do not
      *                         expire.
      *
-     * @throws InvalidArgumentException If the date is not a valid format, or
+     * @throws \InvalidArgumentException If the date is not a valid format, or
      *                                  if the date is not at least one day in
      *                                  the future, or if the date is greater
      *                                  than 2038-01-19T03:14:07.
      *
-     * @return Crypt_GPG_KeyGenerator The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setExpirationDate($date)
     {
@@ -204,7 +175,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         }
 
         if ($expirationDate === false) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 sprintf(
                     'Invalid expiration date format: "%s". Please use a ' .
                     'format compatible with PHP\'s strtotime().',
@@ -214,14 +185,14 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         }
 
         if ($expirationDate !== 0 && $expirationDate < time() + 86400) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'Expiration date must be at least a day in the future.'
             );
         }
 
         // GnuPG suffers from the 2038 bug
         if ($expirationDate > 2147483647) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'Expiration date must not be greater than 2038-01-19T03:14:07.'
             );
         }
@@ -237,7 +208,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      * @param string $passphrase the passphrase to use for generated keys. Use
      *                           null or an empty string for no passphrase.
      *
-     * @return Crypt_GPG_KeyGenerator the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      */
     public function setPassphrase($passphrase)
     {
@@ -249,7 +220,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      * Sets the parameters for the primary key of generated key-pairs
      *
      * @param int $algorithm the algorithm used by the key. This should be
-     *                       one of the Crypt_GPG_SubKey::ALGORITHM_*
+     *                       one of the \Crypt\GPG\SubKey::ALGORITHM_*
      *                       constants.
      * @param int $size      optional. The size of the key. Different
      *                       algorithms have different size requirements.
@@ -261,18 +232,18 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *                       If not specified, the primary key will be used
      *                       only to sign and certify. This is the default
      *                       behavior of GnuPG in interactive mode. Use
-     *                       the Crypt_GPG_SubKey::USAGE_* constants here.
+     *                       the \Crypt\GPG\SubKey::USAGE_* constants here.
      *                       The primary key may be used to certify even
      *                       if the certify usage is not specified.
      *
-     * @return Crypt_GPG_KeyGenerator the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      */
     public function setKeyParams($algorithm, $size = 0, $usage = 0)
     {
         $algorithm = intval($algorithm);
 
-        if ($algorithm === Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC) {
-            throw new Crypt_GPG_InvalidKeyParamsException(
+        if ($algorithm === SubKey::ALGORITHM_ELGAMAL_ENC) {
+            throw new Exceptions\InvalidKeyParamsException(
                 'Primary key algorithm must be capable of signing. The ' .
                 'Elgamal algorithm can only encrypt.',
                 0,
@@ -290,12 +261,12 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $usage = intval($usage);
         }
 
-        $usageEncrypt = Crypt_GPG_SubKey::USAGE_ENCRYPT;
+        $usageEncrypt = SubKey::USAGE_ENCRYPT;
 
-        if ($algorithm === Crypt_GPG_SubKey::ALGORITHM_DSA
+        if ($algorithm === SubKey::ALGORITHM_DSA
             && ($usage & $usageEncrypt) === $usageEncrypt
         ) {
-            throw new Crypt_GPG_InvalidKeyParamsException(
+            throw new Exceptions\InvalidKeyParamsException(
                 'The DSA algorithm is not capable of encrypting. Please ' .
                 'specify a different algorithm or do not include encryption ' .
                 'as a usage for the primary key.',
@@ -323,7 +294,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      * Sets the parameters for the sub-key of generated key-pairs
      *
      * @param int $algorithm The algorithm used by the key. This should be
-     *                       one of the Crypt_GPG_SubKey::ALGORITHM_*
+     *                       one of the \Crypt\GPG\SubKey::ALGORITHM_*
      *                       constants.
      * @param int $size      Optional size of the key. Different
      *                       algorithms have different size requirements.
@@ -335,9 +306,9 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      *                       If not specified, the sub-key will be used
      *                       only to encrypt. This is the default behavior
      *                       of GnuPG in interactive mode. Use the
-     *                       Crypt_GPG_SubKey::USAGE_* constants here.
+     *                       \Crypt\GPG\SubKey::USAGE_* constants here.
      *
-     * @return Crypt_GPG_KeyGenerator The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setSubKeyParams($algorithm, $size = 0, $usage = 0)
     {
@@ -351,12 +322,10 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             $usage = intval($usage);
         }
 
-        $usageSign = Crypt_GPG_SubKey::USAGE_SIGN;
+        $usageSign = SubKey::USAGE_SIGN;
 
-        if ($algorithm === Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC
-            && ($usage & $usageSign) === $usageSign
-        ) {
-            throw new Crypt_GPG_InvalidKeyParamsException(
+        if ($algorithm === SubKey::ALGORITHM_ELGAMAL_ENC && ($usage & $usageSign) === $usageSign) {
+            throw new Exceptions\InvalidKeyParamsException(
                 'The Elgamal algorithm is not capable of signing. Please ' .
                 'specify a different algorithm or do not include signing ' .
                 'as a usage for the sub-key.',
@@ -367,12 +336,10 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
             );
         }
 
-        $usageEncrypt = Crypt_GPG_SubKey::USAGE_ENCRYPT;
+        $usageEncrypt = SubKey::USAGE_ENCRYPT;
 
-        if ($algorithm === Crypt_GPG_SubKey::ALGORITHM_DSA
-            && ($usage & $usageEncrypt) === $usageEncrypt
-        ) {
-            throw new Crypt_GPG_InvalidKeyParamsException(
+        if ($algorithm === SubKey::ALGORITHM_DSA && ($usage & $usageEncrypt) === $usageEncrypt) {
+            throw new Exceptions\InvalidKeyParamsException(
                 'The DSA algorithm is not capable of encrypting. Please ' .
                 'specify a different algorithm or do not include encryption ' .
                 'as a usage for the sub-key.',
@@ -408,23 +375,23 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      * administrators of Debian systems may want to install the 'randomsound'
      * package.
      *
-     * @param string|Crypt_GPG_UserId $name    either a {@link Crypt_GPG_UserId}
-     *                                         object, or a string containing
-     *                                         the name of the user id.
-     * @param string                  $email   optional. If <i>$name</i> is
-     *                                         specified as a string, this is
-     *                                         the email address of the user id.
-     * @param string                  $comment optional. If <i>$name</i> is
-     *                                         specified as a string, this is
-     *                                         the comment of the user id.
+     * @param string|UserId $name    either a {@link \Crypt\GPG\UserId}
+     *                               object, or a string containing
+     *                               the name of the user id.
+     * @param string        $email   optional. If <i>$name</i> is
+     *                               specified as a string, this is
+     *                               the email address of the user id.
+     * @param string        $comment optional. If <i>$name</i> is
+     *                               specified as a string, this is
+     *                               the comment of the user id.
      *
-     * @return Crypt_GPG_Key the newly generated key.
+     * @return \Crypt\GPG\Key the newly generated key.
      *
-     * @throws Crypt_GPG_KeyNotCreatedException if the key parameters are
+     * @throws Exceptions\KeyNotCreatedException if the key parameters are
      *         incorrect, if an unknown error occurs during key generation, or
      *         if the newly generated key is not found in the keyring.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -490,10 +457,10 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
 
         try {
             $this->engine->run();
-        } catch (Crypt_GPG_InvalidKeyParamsException $e) {
+        } catch (Exceptions\InvalidKeyParamsException $e) {
             switch ($this->engine->getProcessData('LineNumber')) {
             case 1:
-                throw new Crypt_GPG_InvalidKeyParamsException(
+                throw new Exceptions\InvalidKeyParamsException(
                     'Invalid primary key algorithm specified.',
                     0,
                     $this->keyAlgorithm,
@@ -501,7 +468,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
                     $this->keyUsage
                 );
             case 4:
-                throw new Crypt_GPG_InvalidKeyParamsException(
+                throw new Exceptions\InvalidKeyParamsException(
                     'Invalid sub-key algorithm specified.',
                     0,
                     $this->subKeyAlgorithm,
@@ -517,7 +484,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
         $keys        = $this->_getKeys($fingerprint);
 
         if (count($keys) === 0) {
-            throw new Crypt_GPG_KeyNotCreatedException(
+            throw new Exceptions\KeyNotCreatedException(
                 sprintf(
                     'Newly created key "%s" not found in keyring.',
                     $fingerprint
@@ -536,7 +503,7 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
      * information on the key usage format.
      *
      * @param int $usage A bitwise combination of the key usages. This is
-     *                   a combination of the Crypt_GPG_SubKey::USAGE_*
+     *                   a combination of the \Crypt\GPG\SubKey::USAGE_*
      *                   constants.
      *
      * @return string The key usage string.
@@ -544,15 +511,15 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     protected function getUsage($usage)
     {
         $map = [
-            Crypt_GPG_SubKey::USAGE_ENCRYPT        => 'encrypt',
-            Crypt_GPG_SubKey::USAGE_SIGN           => 'sign',
-            Crypt_GPG_SubKey::USAGE_CERTIFY        => 'cert',
-            Crypt_GPG_SubKey::USAGE_AUTHENTICATION => 'auth',
+            SubKey::USAGE_ENCRYPT        => 'encrypt',
+            SubKey::USAGE_SIGN           => 'sign',
+            SubKey::USAGE_CERTIFY        => 'cert',
+            SubKey::USAGE_AUTHENTICATION => 'auth',
         ];
 
         // cert is always used for primary keys and does not need to be
         // specified
-        $usage &= ~Crypt_GPG_SubKey::USAGE_CERTIFY;
+        $usage &= ~SubKey::USAGE_CERTIFY;
 
         $usageArray = [];
 
@@ -568,24 +535,24 @@ class Crypt_GPG_KeyGenerator extends Crypt_GPGAbstract
     /**
      * Gets a user id object from parameters
      *
-     * @param string|Crypt_GPG_UserId $name    either a {@link Crypt_GPG_UserId}
-     *                                         object, or a string containing
-     *                                         the name of the user id.
-     * @param string                  $email   optional. If <i>$name</i> is
-     *                                         specified as a string, this is
-     *                                         the email address of the user id.
-     * @param string                  $comment optional. If <i>$name</i> is
-     *                                         specified as a string, this is
-     *                                         the comment of the user id.
+     * @param string|UserId $name    either a {@link \Crypt\GPG\UserId}
+     *                               object, or a string containing
+     *                               the name of the user id.
+     * @param string        $email   optional. If <i>$name</i> is
+     *                               specified as a string, this is
+     *                               the email address of the user id.
+     * @param string        $comment optional. If <i>$name</i> is
+     *                               specified as a string, this is
+     *                               the comment of the user id.
      *
-     * @return Crypt_GPG_UserId a user id object for the specified parameters.
+     * @return UserId a user id object for the specified parameters.
      */
     protected function getUserId($name, $email = '', $comment = '')
     {
-        if ($name instanceof Crypt_GPG_UserId) {
+        if ($name instanceof UserId) {
             $userId = $name;
         } else {
-            $userId = new Crypt_GPG_UserId();
+            $userId = new UserId();
             $userId->setName($name)->setEmail($email)->setComment($comment);
         }
 

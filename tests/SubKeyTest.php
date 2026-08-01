@@ -36,19 +36,13 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
 
-/**
- * Sub-key class.
- */
-require_once 'Crypt/GPG/SubKey.php';
+use Crypt\GPG\SubKey;
+use Crypt\GPG\UserId;
 
 /**
  * Sub-key class tests for Crypt_GPG.
@@ -60,16 +54,16 @@ require_once 'Crypt/GPG/SubKey.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class SubKeyTest extends Crypt_GPG_TestCase
+class SubKeyTest extends TestCase
 {
     /**
      * @group construct
      */
     public function testConstructFromString()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'length'      => 2048,
             'creation'    => 1221528655,
             'expiration'  => 0,
@@ -79,7 +73,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
         ]);
 
         $string = 'sub:r:2048:16:8C37DBD2A01B7976:1221528655::::::e:';
-        $subKey = new Crypt_GPG_SubKey($string);
+        $subKey = new SubKey($string);
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
@@ -89,9 +83,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testConstructFromSubKey()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -102,7 +96,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'isRevoked'   => true
         ]);
 
-        $subKey = new Crypt_GPG_SubKey($expectedSubKey);
+        $subKey = new SubKey($expectedSubKey);
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
@@ -112,9 +106,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testConstructFromArray()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -126,7 +120,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
         ]);
 
         $this->assertEquals('8C37DBD2A01B7976', $subKey->getId());
-        $this->assertEquals(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+        $this->assertEquals(SubKey::ALGORITHM_ELGAMAL_ENC,
             $subKey->getAlgorithm());
 
         $this->assertEquals('8D2299D9C5C211128B32BBB0C097D9EC94C06363',
@@ -152,9 +146,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testParse()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'length'      => 2048,
             'creation'    => 1221528655,
             'expiration'  => 3321785858,
@@ -164,15 +158,15 @@ class SubKeyTest extends Crypt_GPG_TestCase
         ]);
 
         $string = 'sub:r:2048:16:8C37DBD2A01B7976:1221528655:3321785858:::::e:';
-        $subKey = Crypt_GPG_SubKey::parse($string);
+        $subKey = SubKey::parse($string);
 
         $this->assertEquals($expectedSubKey, $subKey);
 
         // test parsing 'usage' flags
         $string = 'sub:r:2048:16:8C37DBD2A01B7976:1221528655::::::esca:';
-        $subKey = Crypt_GPG_SubKey::parse($string);
-        $usage  = Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_ENCRYPT
-            | Crypt_GPG_SubKey::USAGE_CERTIFY | Crypt_GPG_SubKey::USAGE_AUTHENTICATION;
+        $subKey = SubKey::parse($string);
+        $usage  = SubKey::USAGE_SIGN | SubKey::USAGE_ENCRYPT
+            | SubKey::USAGE_CERTIFY | SubKey::USAGE_AUTHENTICATION;
 
         $this->assertEquals($usage, $subKey->usage());
     }
@@ -182,9 +176,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testParseCreationDateIso()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'length'      => 2048,
             'creation'    => 1221442255,
             'expiration'  => 0,
@@ -193,7 +187,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
         ]);
 
         $string = 'sub:u:2048:16:8C37DBD2A01B7976:20080915T013055::::::e:';
-        $subKey = Crypt_GPG_SubKey::parse($string);
+        $subKey = SubKey::parse($string);
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
@@ -203,9 +197,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testGetId()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -223,9 +217,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testGetAlgorithm()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -235,7 +229,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $this->assertEquals(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+        $this->assertEquals(SubKey::ALGORITHM_ELGAMAL_ENC,
             $subKey->getAlgorithm());
     }
 
@@ -244,9 +238,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testGetFingerprint()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -265,9 +259,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testGetLength()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -285,9 +279,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testGetCreationDate()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -305,9 +299,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testGetCreationDateTime()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -319,9 +313,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertSame('2008-09-19T00:57:38+00:00', $subKey->getCreationDateTime()->format('c'));
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 0,
@@ -339,9 +333,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testGetExpirationDate()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -359,9 +353,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testGetExpirationDateTime()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -373,9 +367,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertSame('2015-01-20T20:30:58+00:00', $subKey->getExpirationDateTime()->format('c'));
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 0,
@@ -393,9 +387,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testCanSign()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785858,
@@ -407,9 +401,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertTrue($subKey->canSign());
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -427,9 +421,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testCanEncrypt()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -441,9 +435,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertTrue($subKey->canEncrypt());
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785858,
@@ -461,11 +455,11 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testUsage()
     {
-        $usage = Crypt_GPG_SubKey::USAGE_SIGN | Crypt_GPG_SubKey::USAGE_ENCRYPT
-            | Crypt_GPG_SubKey::USAGE_CERTIFY | Crypt_GPG_SubKey::USAGE_AUTHENTICATION;
-        $subKey = new Crypt_GPG_SubKey([
+        $usage = SubKey::USAGE_SIGN | SubKey::USAGE_ENCRYPT
+            | SubKey::USAGE_CERTIFY | SubKey::USAGE_AUTHENTICATION;
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -476,9 +470,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertSame($usage, $subKey->usage());
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785858,
@@ -488,7 +482,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $this->assertSame(Crypt_GPG_SubKey::USAGE_SIGN, $subKey->usage());
+        $this->assertSame(SubKey::USAGE_SIGN, $subKey->usage());
     }
 
     /**
@@ -496,9 +490,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testHasPrivate()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785858,
@@ -510,9 +504,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertTrue($subKey->hasPrivate());
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785858,
@@ -530,9 +524,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testIsRevoked()
     {
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785858,
@@ -545,9 +539,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
 
         $this->assertTrue($subKey->isRevoked());
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785858,
@@ -566,9 +560,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testSetId()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -578,9 +572,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => 'something different',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -600,9 +594,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testSetAlgorithm()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -612,9 +606,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -624,7 +618,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $subKey->setAlgorithm(Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC);
+        $subKey->setAlgorithm(SubKey::ALGORITHM_ELGAMAL_ENC);
 
         $this->assertEquals($expectedSubKey, $subKey);
     }
@@ -634,9 +628,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testSetFingerprint()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -646,9 +640,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => 'something different',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -668,9 +662,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testSetLength()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -680,9 +674,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785858,
@@ -702,9 +696,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testSetCreationDate()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -714,9 +708,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1111111111,
@@ -736,9 +730,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testSetExpirationDate()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -748,9 +742,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -770,9 +764,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testSetCanSign()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785858,
@@ -782,9 +776,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_DSA,
+            'algorithm'   => SubKey::ALGORITHM_DSA,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 1024,
             'creation'    => 1221785858,
@@ -804,9 +798,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testSetCanEncrypt()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -816,9 +810,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -838,9 +832,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testSetHasPrivate()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -850,9 +844,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'hasPrivate'  => true
         ]);
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -872,9 +866,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testSetRevoked()
     {
-        $expectedSubKey = new Crypt_GPG_SubKey([
+        $expectedSubKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -885,9 +879,9 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'isRevoked'   => true
         ]);
 
-        $subKey = new Crypt_GPG_SubKey([
+        $subKey = new SubKey([
             'id'          => '8C37DBD2A01B7976',
-            'algorithm'   => Crypt_GPG_SubKey::ALGORITHM_ELGAMAL_ENC,
+            'algorithm'   => SubKey::ALGORITHM_ELGAMAL_ENC,
             'fingerprint' => '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
             'length'      => 2048,
             'creation'    => 1221785858,
@@ -908,7 +902,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
      */
     public function testFluentInterface()
     {
-        $subKey         = new Crypt_GPG_SubKey();
+        $subKey         = new SubKey();
         $returnedSubKey = $subKey->setId('8C37DBD2A01B7976');
         $this->assertEquals(
             $subKey,
@@ -916,17 +910,15 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'Failed asserting fluent interface works for setId() method.'
         );
 
-        $subKey         = new Crypt_GPG_SubKey();
-        $returnedSubKey = $subKey->setAlgorithm(
-            Crypt_GPG_SubKey::ALGORITHM_DSA
-        );
+        $subKey         = new SubKey();
+        $returnedSubKey = $subKey->setAlgorithm(SubKey::ALGORITHM_DSA);
         $this->assertEquals(
             $subKey,
             $returnedSubKey,
             'Failed asserting fluent interface works for setAlgorithm() method.'
         );
 
-        $subKey         = new Crypt_GPG_SubKey();
+        $subKey         = new SubKey();
         $returnedSubKey = $subKey->setFingerprint(
             '8D2299D9C5C211128B32BBB0C097D9EC94C06363'
         );
@@ -937,7 +929,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'method.'
         );
 
-        $subKey         = new Crypt_GPG_SubKey();
+        $subKey         = new SubKey();
         $returnedSubKey = $subKey->setLength(2048);
         $this->assertEquals(
             $subKey,
@@ -945,7 +937,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'Failed asserting fluent interface works for setLength() method.'
         );
 
-        $subKey         = new Crypt_GPG_SubKey();
+        $subKey         = new SubKey();
         $returnedSubKey = $subKey->setCreationDate(1234567890);
         $this->assertEquals(
             $subKey,
@@ -954,7 +946,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'method.'
         );
 
-        $subKey         = new Crypt_GPG_SubKey();
+        $subKey         = new SubKey();
         $returnedSubKey = $subKey->setExpirationDate(1234567890);
         $this->assertEquals(
             $subKey,
@@ -963,7 +955,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'method.'
         );
 
-        $subKey         = new Crypt_GPG_SubKey();
+        $subKey         = new SubKey();
         $returnedSubKey = $subKey->setCanSign(true);
         $this->assertEquals(
             $subKey,
@@ -971,7 +963,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'Failed asserting fluent interface works for setCanSign() method.'
         );
 
-        $subKey         = new Crypt_GPG_SubKey();
+        $subKey         = new SubKey();
         $returnedSubKey = $subKey->setCanEncrypt(true);
         $this->assertEquals(
             $subKey,
@@ -980,7 +972,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'method.'
         );
 
-        $subKey         = new Crypt_GPG_SubKey();
+        $subKey         = new SubKey();
         $returnedSubKey = $subKey->setHasPrivate(true);
         $this->assertEquals(
             $subKey,
@@ -989,7 +981,7 @@ class SubKeyTest extends Crypt_GPG_TestCase
             'method.'
         );
 
-        $subKey         = new Crypt_GPG_SubKey();
+        $subKey         = new SubKey();
         $returnedSubKey = $subKey->setRevoked(true);
         $this->assertEquals(
             $subKey,

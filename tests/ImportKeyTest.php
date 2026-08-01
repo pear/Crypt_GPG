@@ -36,14 +36,12 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
+
+use Crypt\GPG\Exceptions;
 
 /**
  * Tests key import abilities of Crypt_GPG.
@@ -55,7 +53,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class ImportKeyTest extends Crypt_GPG_TestCase
+class ImportKeyTest extends TestCase
 {
     public function setUp(): void
     {
@@ -329,7 +327,7 @@ TEXT;
      */
     public function testImportKeyNoDataException_invalid()
     {
-        $this->expectException('Crypt_GPG_NoDataException');
+        $this->expectException(Exceptions\NoDataException::class);
 
         $keyData = 'Invalid OpenPGP data.';
         $this->gpg->importKey($keyData);
@@ -340,7 +338,7 @@ TEXT;
      */
     public function testImportKeyNoDataException_empty()
     {
-        $this->expectException('Crypt_GPG_NoDataException');
+        $this->expectException(Exceptions\NoDataException::class);
 
         $keyData = '';
         $this->gpg->importKey($keyData);
@@ -457,11 +455,10 @@ TEXT;
      */
     public function testImportKeyFileFileException()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
 
         // input file does not exist
-        $filename =
-            $this->getDataFilename('testImportKeyFileFileException.asc');
+        $filename = $this->getDataFilename('testImportKeyFileFileException.asc');
 
         $this->gpg->importKeyFile($filename);
     }
@@ -471,7 +468,7 @@ TEXT;
      */
     public function testImportKeyFileNoDataException()
     {
-        $this->expectException('Crypt_GPG_NoDataException');
+        $this->expectException(Exceptions\NoDataException::class);
 
         $filename = $this->getDataFilename('testFileEmpty.plain');
         $this->gpg->importKeyFile($filename);

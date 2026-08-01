@@ -15,16 +15,6 @@
  * encrypt, decrypt, sign and verify data; import and delete keys; and perform
  * other useful GPG tasks.
  *
- * Example usage:
- * <code>
- * <?php
- * // encrypt some data
- * $gpg = new Crypt_GPG();
- * $gpg->addEncryptKey($mySecretKeyId);
- * $encryptedData = $gpg->encrypt($data);
- * ?>
- * </code>
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify
@@ -52,15 +42,15 @@
  * @link      http://www.gnupg.org/
  */
 
-/**
- * Base class for GPG methods
- */
-require_once 'Crypt/GPGAbstract.php';
+namespace Crypt;
 
-/**
- * GPG exception classes.
- */
-require_once 'Crypt/GPG/Exceptions.php';
+use Crypt\GPG\Engine;
+use Crypt\GPG\Exceptions;
+use Crypt\GPG\Key;
+use Crypt\GPG\KeyEditor;
+use Crypt\GPG\Signature;
+use Crypt\GPG\SubKey;
+use Crypt\GPG\UserId;
 
 /**
  * A class to use GPG from PHP
@@ -79,7 +69,7 @@ require_once 'Crypt/GPG/Exceptions.php';
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
  */
-class Crypt_GPG extends Crypt_GPGAbstract
+class GPG
 {
     /**
      * Signing mode for normal signing of data. The signed message will not
@@ -87,8 +77,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * This is the default signing mode.
      *
-     * @see Crypt_GPG::sign()
-     * @see Crypt_GPG::signFile()
+     * @see self::sign()
+     * @see self::signFile()
      */
     const SIGN_MODE_NORMAL = 1;
 
@@ -98,8 +88,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * message is unencrypted, the message will still be readable. The message
      * text will be in the original encoding.
      *
-     * @see Crypt_GPG::sign()
-     * @see Crypt_GPG::signFile()
+     * @see self::sign()
+     * @see self::signFile()
      */
     const SIGN_MODE_CLEAR = 2;
 
@@ -110,8 +100,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * useful for miltipart/signed email messages as per
      * {@link http://www.ietf.org/rfc/rfc3156.txt RFC 3156}.
      *
-     * @see Crypt_GPG::sign()
-     * @see Crypt_GPG::signFile()
+     * @see self::sign()
+     * @see self::signFile()
      */
     const SIGN_MODE_DETACHED = 3;
 
@@ -120,7 +110,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * Example: C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4
      *
-     * @see Crypt_GPG::getFingerprint()
+     * @see self::getFingerprint()
      */
     const FORMAT_NONE = 1;
 
@@ -130,7 +120,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * Example: C3BC 615A D9C7 66E5 A85C  1F27 16D2 7458 B1BB A1C4
      *
-     * @see Crypt_GPG::getFingerprint()
+     * @see self::getFingerprint()
      */
     const FORMAT_CANONICAL = 2;
 
@@ -140,7 +130,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * Example: C3:BC:61:5A:D9:C7:66:E5:A8:5C:1F:27:16:D2:74:58:B1:BB:A1:C4
      *
-     * @see Crypt_GPG::getFingerprint()
+     * @see self::getFingerprint()
      */
     const FORMAT_X509 = 3;
 
@@ -165,6 +155,97 @@ class Crypt_GPG extends Crypt_GPGAbstract
     const TEXT_RAW = false;
 
     /**
+     * Error code returned when there is no error.
+     */
+    const ERROR_NONE = 0;
+
+    /**
+     * Error code returned when an unknown or unhandled error occurs.
+     */
+    const ERROR_UNKNOWN = 1;
+
+    /**
+     * Error code returned when a bad passphrase is used.
+     */
+    const ERROR_BAD_PASSPHRASE = 2;
+
+    /**
+     * Error code returned when a required passphrase is missing.
+     */
+    const ERROR_MISSING_PASSPHRASE = 3;
+
+    /**
+     * Error code returned when a key that is already in the keyring is
+     * imported.
+     */
+    const ERROR_DUPLICATE_KEY = 4;
+
+    /**
+     * Error code returned the required data is missing for an operation.
+     *
+     * This could be missing key data, missing encrypted data or missing
+     * signature data.
+     */
+    const ERROR_NO_DATA = 5;
+
+    /**
+     * Error code returned when an unsigned key is used.
+     */
+    const ERROR_UNSIGNED_KEY = 6;
+
+    /**
+     * Error code returned when a key that is not self-signed is used.
+     */
+    const ERROR_NOT_SELF_SIGNED = 7;
+
+    /**
+     * Error code returned when a public or private key that is not in the
+     * keyring is used.
+     */
+    const ERROR_KEY_NOT_FOUND = 8;
+
+    /**
+     * Error code returned when an attempt to delete public key having a
+     * private key is made.
+     */
+    const ERROR_DELETE_PRIVATE_KEY = 9;
+
+    /**
+     * Error code returned when one or more bad signatures are detected.
+     */
+    const ERROR_BAD_SIGNATURE = 10;
+
+    /**
+     * Error code returned when there is a problem reading GnuPG data files.
+     */
+    const ERROR_FILE_PERMISSIONS = 11;
+
+    /**
+     * Error code returned when a key could not be created.
+     */
+    const ERROR_KEY_NOT_CREATED = 12;
+
+    /**
+     * Error code returned when bad key parameters are used during key
+     * generation.
+     */
+    const ERROR_BAD_KEY_PARAMS = 13;
+
+    /**
+     * URI at which package bugs may be reported.
+     */
+    const BUG_URI = 'https://github.com/pear/Crypt_GPG/issues';
+
+    /**
+     * Engine used to control the GPG subprocess
+     *
+     * @var Engine
+     *
+     * @see self::setEngine()
+     */
+    protected $engine = null;
+
+    /**
      * Keys used to encrypt
      *
      * The array is of the form:
@@ -178,8 +259,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * </code>
      *
      * @var array
-     * @see Crypt_GPG::addEncryptKey()
-     * @see Crypt_GPG::clearEncryptKeys()
+     * @see self::addEncryptKey()
+     * @see self::clearEncryptKeys()
      */
     protected $encryptKeys = [];
 
@@ -197,8 +278,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * </code>
      *
      * @var array
-     * @see Crypt_GPG::addSignKey()
-     * @see Crypt_GPG::clearSignKeys()
+     * @see self::addSignKey()
+     * @see self::clearSignKeys()
      */
     protected $signKeys = [];
 
@@ -216,8 +297,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * </code>
      *
      * @var array
-     * @see Crypt_GPG::addDecryptKey()
-     * @see Crypt_GPG::clearDecryptKeys()
+     * @see self::addDecryptKey()
+     * @see self::clearDecryptKeys()
      */
     protected $decryptKeys = [];
 
@@ -230,15 +311,106 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * </code>
      *
      * @var array
-     * @see Crypt_GPG::addPassphrase()
-     * @see Crypt_GPG::clearPassphrases()
+     * @see self::addPassphrase()
+     * @see self::clearPassphrases()
      */
     protected $passphrases = [];
+
+
+    /**
+     * Creates a new GPG object
+     *
+     * Available options are:
+     *
+     * - <kbd>string homedir</kbd> - the directory where the GPG keyring files are
+     *                      stored. If not specified, Crypt_GPG uses the default
+     *                      of <kbd>~/.gnupg</kbd>.
+     * - <kbd>string publicKeyring</kbd> - the file path of the public keyring.
+     *                      Use this if the public keyring is not in the homedir,
+     *                      or if the keyring is in a directory not writable
+     *                      by the process invoking GPG (like Apache). Then you
+     *                      can specify the path to the keyring with this option
+     *                      (/foo/bar/pubring.gpg), and specify a writable directory
+     *                      (like /tmp) using the <i>homedir</i> option.
+     * - <kbd>string privateKeyring</kbd> - the file path of the private keyring.
+     *                      Use this if the private keyring is not in the homedir,
+     *                      or if the keyring is in a directory not writable
+     *                      by the process invoking GPG (like Apache). Then
+     *                      you can specify the path to the keyring with this option
+     *                      (/foo/bar/secring.gpg), and specify a writable directory
+     *                      (like /tmp) using the <i>homedir</i> option.
+     * - <kbd>string trustDb</kbd> - the file path of the web-of-trust database.
+     *                      Use this if the trust database is not in the homedir, or
+     *                      if the database is in a directory not writable
+     *                      by the process invoking GPG (like Apache). Then you can
+     *                      specify the path to the trust database with this option
+     *                      (/foo/bar/trustdb.gpg), and specify a writable directory
+     *                      (like /tmp) using the <i>homedir</i> option.
+     * - <kbd>string binary</kbd> - the location of the GPG binary.
+     *                      If not specified, the driver attempts to auto-detect
+     *                      the GPG binary location using a list of known default
+     *                      locations for the current operating system. The option
+     *                      <kbd>gpgBinary</kbd> is a deprecated alias.
+     * - <kbd>string agent</kbd> - the location of the GnuPG agent binary.
+     *                      The gpg-agent is only used for GnuPG 2.x. If not
+     *                      specified, the engine attempts to auto-detect
+     *                      the gpg-agent binary location using a list of
+     *                      know default locations for the current operating system.
+     * - <kbd>string|false gpgconf</kbd> - the location of the GnuPG conf binary.
+     *                      The gpgconf is only used for GnuPG >= 2.1. If not
+     *                      specified, the engine attempts to auto-detect
+     *                      the location using a list of know default locations.
+     *                      When set to FALSE `gpgconf --kill` will not be executed
+     *                      via destructor.
+     * - <kbd>string digest-algo</kbd> - Sets the message digest algorithm.
+     * - <kbd>string cipher-algo</kbd> - Sets the symmetric cipher.
+     * - <kbd>string compress-algo</kbd> - Sets the compression algorithm.
+     * - <kbd>bool   strict</kbd> - In strict mode clock problems on subkeys
+     *                      and signatures are not ignored (--ignore-time-conflict
+     *                      and --ignore-valid-from options).
+     * - <kbd>mixed debug</kbd> - whether or not to use debug mode.
+     *                      When debug mode is on, all communication to and from
+     *                      the GPG subprocess is logged. This can be useful to
+     *                      diagnose errors when using Crypt_GPG.
+     * - <kbd>array options</kbd> - additional per-command options to the GPG
+     *                      command. Key of the array is a command (e.g.
+     *                      gen-key, import, sign, encrypt, list-keys).
+     *                      Value is a string containing command line arguments to be
+     *                      added to the related command. For example:
+     *                      ['sign' => '--emit-version'].
+     *
+     * @param array $options optional. An array of options used to create the
+     *                       GPG object. All options are optional and are
+     *                       represented as key-value pairs.
+     *
+     * @throws Exceptions\FileException if the <kbd>homedir</kbd> does not exist
+     *         and cannot be created. This can happen if <kbd>homedir</kbd> is
+     *         not specified, Crypt_GPG is run as the web user, and the web
+     *         user has no home directory. This exception is also thrown if any
+     *         of the options <kbd>publicKeyring</kbd>,
+     *         <kbd>privateKeyring</kbd> or <kbd>trustDb</kbd> options are
+     *         specified but the files do not exist or are are not readable.
+     *         This can happen if the user running the Crypt_GPG process (for
+     *         example, the Apache user) does not have permission to read the
+     *         files.
+     *
+     * @throws Exceptions\Exception if the provided <kbd>binary</kbd> is invalid, or
+     *         if no <kbd>binary</kbd> is provided and no suitable binary could
+     *         be found.
+     *
+     * @throws Exceptions\Exception if the provided <kbd>agent</kbd> is invalid, or
+     *         if no <kbd>agent</kbd> is provided and no suitable gpg-agent
+     *         could be found.
+     */
+    public function __construct(array $options = [])
+    {
+        $this->setEngine(new Engine($options));
+    }
 
     /**
      * Get a key editor instance
      *
-     * @return Crypt_GPG_KeyEditor Key editor object
+     * @return KeyEditor Key editor object
      */
     public function getKeyEditor()
     {
@@ -249,8 +421,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * Imports a public or private key into the keyring
      *
      * Keys may be removed from the keyring using
-     * {@link Crypt_GPG::deletePublicKey()} or
-     * {@link Crypt_GPG::deletePrivateKey()}.
+     * {@link self::deletePublicKey()} or
+     * {@link self::deletePrivateKey()}.
      *
      * @param string $data the key data to be imported.
      *
@@ -266,19 +438,19 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *               - <kbd>private_unchanged</kbd> - the number of unchanged
      *                                                private keys.
      *
-     * @throws Crypt_GPG_NoDataException if the key data is missing or if the
+     * @throws Exceptions\NoDataException if the key data is missing or if the
      *         data is is not valid key data.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
      *         {@link Crypt_GPG::addPassphrase()}.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see Crypt_GPG::addPassphrase()
-     * @see Crypt_GPG::clearPassphrases()
+     * @see self::addPassphrase()
+     * @see self::clearPassphrases()
      */
     public function importKey($data)
     {
@@ -289,8 +461,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * Imports a public or private key file into the keyring
      *
      * Keys may be removed from the keyring using
-     * {@link Crypt_GPG::deletePublicKey()} or
-     * {@link Crypt_GPG::deletePrivateKey()}.
+     * {@link self::deletePublicKey()} or
+     * {@link self::deletePrivateKey()}.
      *
      * @param string $filename the key file to be imported.
      *
@@ -307,16 +479,16 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                                                private keys.
      *                                                  private keys.
      *
-     * @throws Crypt_GPG_NoDataException if the key data is missing or if the
+     * @throws Exceptions\NoDataException if the key data is missing or if the
      *         data is is not valid key data.
      *
-     * @throws Crypt_GPG_FileException if the key file is not readable.
+     * @throws Exceptions\FileException if the key file is not readable.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
-     *         {@link Crypt_GPG::addPassphrase()}.
+     *         {@link self::addPassphrase()}.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -329,7 +501,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * Exports a private key from the keyring
      *
      * The exported key remains on the keyring. To delete the key, use
-     * {@link Crypt_GPG::deletePrivateKey()}.
+     * {@link self::deletePrivateKey()}.
      *
      * If more than one key fingerprint is available for the specified
      * <kbd>$keyId</kbd> (for example, if you use a non-unique uid) only the
@@ -346,14 +518,14 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @return string the private key data.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if a private key with the given
+     * @throws Exceptions\KeyNotFoundException if a private key with the given
      *         <kbd>$keyId</kbd> is not found.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
-     *         {@link Crypt_GPG::addPassphrase()}.
+     *         {@link self::addPassphrase()}.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -366,7 +538,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * Exports a public key from the keyring
      *
      * The exported key remains on the keyring. To delete the public key, use
-     * {@link Crypt_GPG::deletePublicKey()}.
+     * {@link self::deletePublicKey()}.
      *
      * If more than one key fingerprint is available for the specified
      * <kbd>$keyId</kbd> (for example, if you use a non-unique uid) only the
@@ -383,10 +555,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @return string the public key data.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
+     * @throws Exceptions\KeyNotFoundException if a public key with the given
      *         <kbd>$keyId</kbd> is not found.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -404,7 +576,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * The private key must be deleted first or an exception will be thrown.
      * In GnuPG >= 2.1 this limitation does not exist.
-     * See {@link Crypt_GPG::deletePrivateKey()}.
+     * See {@link self::deletePrivateKey()}.
      *
      * @param string $keyId either the full uid of the public key, the email
      *                      part of the uid of the public key or the key id of
@@ -414,14 +586,14 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @return void
      *
-     * @throws Crypt_GPG_KeyNotFoundException if a public key with the given
+     * @throws Exceptions\KeyNotFoundException if a public key with the given
      *         <kbd>$keyId</kbd> is not found.
      *
-     * @throws Crypt_GPG_DeletePrivateKeyException if the specified public key
+     * @throws Exceptions\DeletePrivateKeyException if the specified public key
      *         has an associated private key on the keyring. The private key
      *         must be deleted first (when using GnuPG < 2.1).
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -430,7 +602,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $fingerprint = $this->getFingerprint($keyId);
 
         if ($fingerprint === null) {
-            throw new Crypt_GPG_KeyNotFoundException(
+            throw new Exceptions\KeyNotFoundException(
                 'Public key not found: ' . $keyId,
                 self::ERROR_KEY_NOT_FOUND,
                 $keyId
@@ -465,10 +637,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @return void
      *
-     * @throws Crypt_GPG_KeyNotFoundException if a private key with the given
+     * @throws Exceptions\KeyNotFoundException if a private key with the given
      *         <kbd>$keyId</kbd> is not found.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -477,7 +649,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $fingerprint = $this->getFingerprint($keyId);
 
         if ($fingerprint === null) {
-            throw new Crypt_GPG_KeyNotFoundException(
+            throw new Exceptions\KeyNotFoundException(
                 'Private key not found: ' . $keyId,
                 self::ERROR_KEY_NOT_FOUND,
                 $keyId
@@ -508,19 +680,19 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                      a user id, a key id or a key fingerprint. If not
      *                      specified, all keys are returned.
      *
-     * @return array an array of {@link Crypt_GPG_Key} objects. If no keys
+     * @return array an array of {@link \Crypt\GPG\Key} objects. If no keys
      *               match the specified <kbd>$keyId</kbd> an empty array is
      *               returned.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see Crypt_GPG_Key
+     * @see \Crypt\GPG\Key
      */
     public function getKeys($keyId = '')
     {
-        return parent::_getKeys($keyId);
+        return $this->_getKeys($keyId);
     }
 
     /**
@@ -539,17 +711,17 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                        "Test User (example) <test@example.com>",
      *                        "test@example.com" or a hexadecimal string.
      * @param int     $format optional. How the fingerprint should be formatted.
-     *                        Use {@link Crypt_GPG::FORMAT_X509} for X.509
+     *                        Use {@link self::FORMAT_X509} for X.509
      *                        certificate format,
-     *                        {@link Crypt_GPG::FORMAT_CANONICAL} for the format
+     *                        {@link self::FORMAT_CANONICAL} for the format
      *                        used by GnuPG output and
-     *                        {@link Crypt_GPG::FORMAT_NONE} for no formatting.
-     *                        Defaults to <code>Crypt_GPG::FORMAT_NONE</code>.
+     *                        {@link self::FORMAT_NONE} for no formatting.
+     *                        Defaults to <code>self::FORMAT_NONE</code>.
      *
      * @return string|null The fingerprint of the key, or null if no fingerprint
      *                     is found for the given <kbd>$keyId</kbd>.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -597,7 +769,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Get information about the last signature that was created.
      *
-     * @return Crypt_GPG_SignatureCreationInfo
+     * @return \Crypt\GPG\SignatureCreationInfo
      */
     public function getLastSignatureInfo()
     {
@@ -617,10 +789,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @return string the encrypted data.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified.
-     *         See {@link Crypt_GPG::addEncryptKey()}.
+     * @throws Exceptions\KeyNotFoundException if no encryption key is specified.
+     *         See {@link self::addEncryptKey()}.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
@@ -649,21 +821,18 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @return void|string if the <kbd>$encryptedFile</kbd> parameter is null,
      *                     a string containing the encrypted data is returned.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified.
-     *         See {@link Crypt_GPG::addEncryptKey()}.
+     * @throws Exceptions\KeyNotFoundException if no encryption key is specified.
+     *         See {@link self::addEncryptKey()}.
      *
-     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     * @throws Exceptions\FileException if the output file is not writeable or
      *         if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function encryptFile(
-        $filename,
-        $encryptedFile = null,
-        $armor = self::ARMOR_ASCII
-    ) {
+    public function encryptFile($filename, $encryptedFile = null, $armor = self::ARMOR_ASCII)
+    {
         return $this->_encrypt($filename, true, $encryptedFile, $armor);
     }
 
@@ -679,19 +848,19 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @return string The encrypted signed data.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified
+     * @throws Exceptions\KeyNotFoundException if no encryption key is specified
      *         or if no signing key is specified. See
-     *         {@link Crypt_GPG::addEncryptKey()} and
-     *         {@link Crypt_GPG::addSignKey()}.
+     *         {@link self::addEncryptKey()} and
+     *         {@link self::addSignKey()}.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a specified passphrase is
+     * @throws Exceptions\BadPassphraseException if a specified passphrase is
      *         incorrect or if a required passphrase is not specified.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see Crypt_GPG::decryptAndVerify()
+     * @see self::decryptAndVerify()
      */
     public function encryptAndSign($data, $armor = self::ARMOR_ASCII)
     {
@@ -717,22 +886,22 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                     string containing the encrypted, signed data is
      *                     returned.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified
+     * @throws Exceptions\KeyNotFoundException if no encryption key is specified
      *         or if no signing key is specified. See
-     *         {@link Crypt_GPG::addEncryptKey()} and
-     *         {@link Crypt_GPG::addSignKey()}.
+     *         {@link self::addEncryptKey()} and
+     *         {@link self::addSignKey()}.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a specified passphrase is
+     * @throws Exceptions\BadPassphraseException if a specified passphrase is
      *         incorrect or if a required passphrase is not specified.
      *
-     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     * @throws Exceptions\FileException if the output file is not writeable or
      *         if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see Crypt_GPG::decryptAndVerifyFile()
+     * @see self::decryptAndVerifyFile()
      */
     public function encryptAndSignFile(
         $filename,
@@ -747,24 +916,24 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * This method assumes the required private key is available in the keyring
      * and throws an exception if the private key is not available. To add a
-     * private key to the keyring, use the {@link Crypt_GPG::importKey()} or
-     * {@link Crypt_GPG::importKeyFile()} methods.
+     * private key to the keyring, use the {@link self::importKey()} or
+     * {@link self::importKeyFile()} methods.
      *
      * @param string $encryptedData the data to be decrypted.
      *
      * @return string the decrypted data.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
+     * @throws Exceptions\KeyNotFoundException if the private key needed to
      *         decrypt the data is not in the user's keyring.
      *
-     * @throws Crypt_GPG_NoDataException if specified data does not contain
+     * @throws Exceptions\NoDataException if specified data does not contain
      *         GPG encrypted data.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
-     *         {@link Crypt_GPG::addDecryptKey()}.
+     *         {@link self::addDecryptKey()}.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -778,8 +947,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * This method assumes the required private key is available in the keyring
      * and throws an exception if the private key is not available. To add a
-     * private key to the keyring, use the {@link Crypt_GPG::importKey()} or
-     * {@link Crypt_GPG::importKeyFile()} methods.
+     * private key to the keyring, use the {@link self::importKey()} or
+     * {@link self::importKeyFile()} methods.
      *
      * @param string $encryptedFile the name of the encrypted file data to
      *                              decrypt.
@@ -791,20 +960,20 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @return void|string if the <kbd>$decryptedFile</kbd> parameter is null,
      *                     a string containing the decrypted data is returned.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
+     * @throws Exceptions\KeyNotFoundException if the private key needed to
      *         decrypt the data is not in the user's keyring.
      *
-     * @throws Crypt_GPG_NoDataException if specified data does not contain
+     * @throws Exceptions\NoDataException if specified data does not contain
      *         GPG encrypted data.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
-     *         {@link Crypt_GPG::addDecryptKey()}.
+     *         {@link self::addDecryptKey()}.
      *
-     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     * @throws Exceptions\FileException if the output file is not writeable or
      *         if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -818,33 +987,33 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * This method assumes the required private key is available in the keyring
      * and throws an exception if the private key is not available. To add a
-     * private key to the keyring, use the {@link Crypt_GPG::importKey()} or
-     * {@link Crypt_GPG::importKeyFile()} methods.
+     * private key to the keyring, use the {@link self::importKey()} or
+     * {@link self::importKeyFile()} methods.
      *
      * @param string  $encryptedData      the encrypted, signed data to be decrypted
      *                                    and verified.
      * @param bool    $ignoreVerifyErrors enables ignoring of signature
      *                                    verification errors caused by missing public key
-     *                                    When enabled Crypt_GPG_KeyNotFoundException
+     *                                    When enabled \Crypt\GPG\KeyNotFoundException
      *                                    will not be thrown.
      *
      * @return array two element array. The array has an element 'data'
      *               containing the decrypted data and an element
      *               'signatures' containing an array of
-     *               {@link Crypt_GPG_Signature} objects for the signed data.
+     *               {@link \Crypt\GPG\Signature} objects for the signed data.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
+     * @throws Exceptions\KeyNotFoundException if the private key needed to
      *         decrypt the data or the public key to verify the signature
      *         is not in the user's keyring.
      *
-     * @throws Crypt_GPG_NoDataException if specified data does not contain
+     * @throws Exceptions\NoDataException if specified data does not contain
      *         GPG encrypted data.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
-     *         {@link Crypt_GPG::addDecryptKey()}.
+     *         {@link self::addDecryptKey()}.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -858,8 +1027,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * This method assumes the required private key is available in the keyring
      * and throws an exception if the private key is not available. To add a
-     * private key to the keyring, use the {@link Crypt_GPG::importKey()} or
-     * {@link Crypt_GPG::importKeyFile()} methods.
+     * private key to the keyring, use the {@link self::importKey()} or
+     * {@link self::importKeyFile()} methods.
      *
      * @param string  $encryptedFile      the name of the signed, encrypted file to
      *                                    to decrypt and verify.
@@ -869,31 +1038,31 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                                    returned in the results array.
      * @param bool    $ignoreVerifyErrors enables ignoring of signature
      *                                    verification errors caused by missing public key
-     *                                    When enabled Crypt_GPG_KeyNotFoundException
+     *                                    When enabled \Crypt\GPG\KeyNotFoundException
      *                                    will not be thrown.
      *
      * @return array two element array. The array has an element 'data'
      *               containing the decrypted data and an element
      *               'signatures' containing an array of
-     *               {@link Crypt_GPG_Signature} objects for the signed data.
+     *               {@link \Crypt\GPG\Signature} objects for the signed data.
      *               If the decrypted data is written to a file, the 'data'
      *               element is null.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
+     * @throws Exceptions\KeyNotFoundException if the private key needed to
      *         decrypt the data or the public key to verify the signature
      *         is not in the user's keyring.
      *
-     * @throws Crypt_GPG_NoDataException if specified data does not contain
+     * @throws Exceptions\NoDataException if specified data does not contain
      *         GPG encrypted data.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
-     *         {@link Crypt_GPG::addDecryptKey()}.
+     *         {@link self::addDecryptKey()}.
      *
-     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     * @throws Exceptions\FileException if the output file is not writeable or
      *         if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -903,43 +1072,92 @@ class Crypt_GPG extends Crypt_GPGAbstract
     }
 
     /**
+     * Sets the I/O engine to use for GnuPG operations
+     *
+     * Normally this method does not need to be used. It provides a means for
+     * dependency injection.
+     *
+     * @param Engine $engine the engine to use.
+     *
+     * @return $this the current object, for fluent interface.
+     */
+    public function setEngine(Engine $engine)
+    {
+        $this->engine = $engine;
+        return $this;
+    }
+
+    /**
+     * Sets per-command additional arguments
+     *
+     * @param array $options Additional per-command options for GPG command.
+     *                       Note: This will unset options set previously.
+     *                       Key of the array is a command (e.g.
+     *                       gen-key, import, sign, encrypt, list-keys).
+     *                       Value is a string containing command line arguments to be
+     *                       added to the related command. For example:
+     *                       ['sign' => '--emit-version'].
+     *
+     * @return $this the current object, for fluent interface.
+     */
+    public function setEngineOptions(array $options)
+    {
+        $this->engine->setOptions($options);
+        return $this;
+    }
+
+    /**
+     * Returns version of the engine (GnuPG) used for operation.
+     *
+     * @return string GnuPG version.
+     *
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     */
+    public function getVersion()
+    {
+        return $this->engine->getVersion();
+    }
+
+    /**
      * Signs data
      *
      * Data may be signed using any one of the three available signing modes:
-     * - {@link Crypt_GPG::SIGN_MODE_NORMAL}
-     * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
-     * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
+     * - {@link self::SIGN_MODE_NORMAL}
+     * - {@link self::SIGN_MODE_CLEAR}
+     * - {@link self::SIGN_MODE_DETACHED}
      *
      * @param string  $data     the data to be signed.
      * @param int     $mode     optional. The data signing mode to use. Should
-     *                          be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
-     *                          {@link Crypt_GPG::SIGN_MODE_CLEAR} or
-     *                          {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
+     *                          be one of {@link self::SIGN_MODE_NORMAL},
+     *                          {@link self::SIGN_MODE_CLEAR} or
+     *                          {@link self::SIGN_MODE_DETACHED}. If not
      *                          specified, defaults to
-     *                          <kbd>Crypt_GPG::SIGN_MODE_NORMAL</kbd>.
+     *                          <kbd>self::SIGN_MODE_NORMAL</kbd>.
      * @param bool    $armor    optional. If true, ASCII armored data is
      *                          returned; otherwise, binary data is returned.
      *                          Defaults to true. This has no effect if the
-     *                          mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                          mode <kbd>self::SIGN_MODE_CLEAR</kbd> is
      *                          used.
      * @param bool    $textmode optional. If true, line-breaks in signed data
      *                          are normalized. Use this option when signing
      *                          e-mail, or for greater compatibility between
      *                          systems with different line-break formats.
      *                          Defaults to false. This has no effect if the
-     *                          mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                          mode <kbd>self::SIGN_MODE_CLEAR</kbd> is
      *                          used as clear-signing always uses textmode.
      *
      * @return string the signed data, or the signature data if a detached
      *                signature is requested.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if no signing key is specified.
-     *         See {@link Crypt_GPG::addSignKey()}.
+     * @throws Exceptions\KeyNotFoundException if no signing key is specified.
+     *         See {@link self::addSignKey()}.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a specified passphrase is
+     * @throws Exceptions\BadPassphraseException if a specified passphrase is
      *         incorrect or if a required passphrase is not specified.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -957,9 +1175,9 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * The file may be signed using any one of the three available signing
      * modes:
-     * - {@link Crypt_GPG::SIGN_MODE_NORMAL}
-     * - {@link Crypt_GPG::SIGN_MODE_CLEAR}
-     * - {@link Crypt_GPG::SIGN_MODE_DETACHED}
+     * - {@link self::SIGN_MODE_NORMAL}
+     * - {@link self::SIGN_MODE_CLEAR}
+     * - {@link self::SIGN_MODE_DETACHED}
      *
      * @param string  $filename   the name of the file containing the data to
      *                            be signed.
@@ -968,22 +1186,22 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                            unspecified, the signed data is returned as a
      *                            string.
      * @param int     $mode       optional. The data signing mode to use. Should
-     *                            be one of {@link Crypt_GPG::SIGN_MODE_NORMAL},
-     *                            {@link Crypt_GPG::SIGN_MODE_CLEAR} or
-     *                            {@link Crypt_GPG::SIGN_MODE_DETACHED}. If not
+     *                            be one of {@link self::SIGN_MODE_NORMAL},
+     *                            {@link self::SIGN_MODE_CLEAR} or
+     *                            {@link self::SIGN_MODE_DETACHED}. If not
      *                            specified, defaults to
-     *                            <kbd>Crypt_GPG::SIGN_MODE_NORMAL</kbd>.
+     *                            <kbd>self::SIGN_MODE_NORMAL</kbd>.
      * @param bool    $armor      optional. If true, ASCII armored data is
      *                            returned; otherwise, binary data is returned.
      *                            Defaults to true. This has no effect if the
-     *                            mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                            mode <kbd>self::SIGN_MODE_CLEAR</kbd> is
      *                            used.
      * @param bool    $textmode   optional. If true, line-breaks in signed data
      *                            are normalized. Use this option when signing
      *                            e-mail, or for greater compatibility between
      *                            systems with different line-break formats.
      *                            Defaults to false. This has no effect if the
-     *                            mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                            mode <kbd>self::SIGN_MODE_CLEAR</kbd> is
      *                            used as clear-signing always uses textmode.
      *
      * @return void|string if the <kbd>$signedFile</kbd> parameter is null, a
@@ -991,16 +1209,16 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                     data if a detached signature is requested) is
      *                     returned.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if no signing key is specified.
-     *         See {@link Crypt_GPG::addSignKey()}.
+     * @throws Exceptions\KeyNotFoundException if no signing key is specified.
+     *         See {@link self::addSignKey()}.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a specified passphrase is
+     * @throws Exceptions\BadPassphraseException if a specified passphrase is
      *         incorrect or if a required passphrase is not specified.
      *
-     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     * @throws Exceptions\FileException if the output file is not writeable or
      *         if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -1024,7 +1242,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Verifies signed data
      *
-     * The {@link Crypt_GPG::decrypt()} method may be used to get the original
+     * The {@link self::decrypt()} method may be used to get the original
      * message if the signed data is not clearsigned and does not use a
      * detached signature.
      *
@@ -1034,21 +1252,21 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                           signature data. The data that was signed is
      *                           specified in <kbd>$signedData</kbd>.
      *
-     * @return array an array of {@link Crypt_GPG_Signature} objects for the
+     * @return array an array of {@link \Crypt\GPG\Signature} objects for the
      *               signed data. For each signature that is valid, the
-     *               {@link Crypt_GPG_Signature::isValid()} will return true.
+     *               {@link \Crypt\GPG\Signature::isValid()} will return true.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if the public key needed for
+     * @throws Exceptions\KeyNotFoundException if the public key needed for
      *         signature verification is not in the user's keyring.
      *
-     * @throws Crypt_GPG_NoDataException if the provided data is not signed
+     * @throws Exceptions\NoDataException if the provided data is not signed
      *         data.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see Crypt_GPG_Signature
+     * @see \Crypt\GPG\Signature
      */
     public function verify($signedData, $signature = '')
     {
@@ -1058,7 +1276,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Verifies a signed file
      *
-     * The {@link Crypt_GPG::decryptFile()} method may be used to get the
+     * The {@link self::decryptFile()} method may be used to get the
      * original message if the signed data is not clearsigned and does not use
      * a detached signature.
      *
@@ -1068,23 +1286,23 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                          signature data. The file that was signed is
      *                          specified in <kbd>$filename</kbd>.
      *
-     * @return array an array of {@link Crypt_GPG_Signature} objects for the
+     * @return array an array of {@link \Crypt\GPG\Signature} objects for the
      *               signed data. For each signature that is valid, the
-     *               {@link Crypt_GPG_Signature::isValid()} will return true.
+     *               {@link \Crypt\GPG\Signature::isValid()} will return true.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if the public key needed for
+     * @throws Exceptions\KeyNotFoundException if the public key needed for
      *         signature verification is not in the user's keyring.
      *
-     * @throws Crypt_GPG_NoDataException if the provided data is not signed
+     * @throws Exceptions\NoDataException if the provided data is not signed
      *         data.
      *
-     * @throws Crypt_GPG_FileException if the input file is not readable.
+     * @throws Exceptions\FileException if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see Crypt_GPG_Signature
+     * @see \Crypt\GPG\Signature
      */
     public function verifyFile($filename, $signature = '')
     {
@@ -1095,18 +1313,18 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * Adds a key to use for decryption
      *
      * @param mixed  $key        the key to use. This may be a key identifier,
-     *                           user id, fingerprint, {@link Crypt_GPG_Key} or
-     *                           {@link Crypt_GPG_SubKey}. The key must be able
+     *                           user id, fingerprint, {@link \Crypt\GPG\Key} or
+     *                           {@link \Crypt\GPG\SubKey}. The key must be able
      *                           to encrypt.
      * @param string $passphrase optional. The passphrase of the key required
      *                           for decryption.
      *
-     * @return Crypt_GPG the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      *
-     * @see Crypt_GPG::decrypt()
-     * @see Crypt_GPG::decryptFile()
-     * @see Crypt_GPG::clearDecryptKeys()
-     * @see Crypt_GPG::_addKey()
+     * @see self::decrypt()
+     * @see self::decryptFile()
+     * @see self::clearDecryptKeys()
+     * @see self::_addKey()
      *
      * @sensitive $passphrase
      */
@@ -1120,16 +1338,16 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * Adds a key to use for encryption
      *
      * @param mixed $key the key to use. This may be a key identifier, user id
-     *                   user id, fingerprint, {@link Crypt_GPG_Key} or
-     *                   {@link Crypt_GPG_SubKey}. The key must be able to
+     *                   user id, fingerprint, {@link \Crypt\GPG\Key} or
+     *                   {@link \Crypt\GPG\SubKey}. The key must be able to
      *                   encrypt.
      *
-     * @return Crypt_GPG the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      *
-     * @see Crypt_GPG::encrypt()
-     * @see Crypt_GPG::encryptFile()
-     * @see Crypt_GPG::clearEncryptKeys()
-     * @see Crypt_GPG::_addKey()
+     * @see self::encrypt()
+     * @see self::encryptFile()
+     * @see self::clearEncryptKeys()
+     * @see self::_addKey()
      */
     public function addEncryptKey($key)
     {
@@ -1141,18 +1359,18 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * Adds a key to use for signing
      *
      * @param mixed  $key        the key to use. This may be a key identifier,
-     *                           user id, fingerprint, {@link Crypt_GPG_Key} or
-     *                           {@link Crypt_GPG_SubKey}. The key must be able
+     *                           user id, fingerprint, {@link \Crypt\GPG\Key} or
+     *                           {@link \Crypt\GPG\SubKey}. The key must be able
      *                           to sign.
      * @param string $passphrase optional. The passphrase of the key required
      *                           for signing.
      *
-     * @return Crypt_GPG the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      *
-     * @see Crypt_GPG::sign()
-     * @see Crypt_GPG::signFile()
-     * @see Crypt_GPG::clearSignKeys()
-     * @see Crypt_GPG::_addKey()
+     * @see self::sign()
+     * @see self::signFile()
+     * @see self::clearSignKeys()
+     * @see self::_addKey()
      *
      * @sensitive $passphrase
      */
@@ -1169,11 +1387,11 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                           or fingerprint.
      * @param string $passphrase The passphrase of the key.
      *
-     * @return Crypt_GPG the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      *
-     * @see Crypt_GPG::clearPassphrases()
-     * @see Crypt_GPG::importKey()
-     * @see Crypt_GPG::exportKey()
+     * @see self::clearPassphrases()
+     * @see self::importKey()
+     * @see self::exportKey()
      *
      * @sensitive $passphrase
      */
@@ -1186,10 +1404,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Clears all decryption keys
      *
-     * @return Crypt_GPG the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      *
-     * @see Crypt_GPG::decrypt()
-     * @see Crypt_GPG::addDecryptKey()
+     * @see self::decrypt()
+     * @see self::addDecryptKey()
      */
     public function clearDecryptKeys()
     {
@@ -1200,10 +1418,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Clears all encryption keys
      *
-     * @return Crypt_GPG the current object, for fluent interface.
+     * @return $this the current object, for fluent interface.
      *
-     * @see Crypt_GPG::encrypt()
-     * @see Crypt_GPG::addEncryptKey()
+     * @see self::encrypt()
+     * @see self::addEncryptKey()
      */
     public function clearEncryptKeys()
     {
@@ -1214,10 +1432,10 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Clears all signing keys
      *
-     * @return Crypt_GPG the current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      *
-     * @see Crypt_GPG::sign()
-     * @see Crypt_GPG::addSignKey()
+     * @see self::sign()
+     * @see self::addSignKey()
      */
     public function clearSignKeys()
     {
@@ -1228,11 +1446,11 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Clears all private key passphrases
      *
-     * @return Crypt_GPG the current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      *
-     * @see Crypt_GPG::importKey()
-     * @see Crypt_GPG::exportKey()
-     * @see Crypt_GPG::addPassphrase()
+     * @see self::importKey()
+     * @see self::exportKey()
+     * @see self::addPassphrase()
      */
     public function clearPassphrases()
     {
@@ -1248,7 +1466,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @return array<string, int> Key fingerprint to trust level map
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -1311,8 +1529,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                            encrypt
      * @param bool    $sign       Whether or not the key must be able to sign
      * @param mixed   $key        The key to add. This may be a key identifier,
-     *                            user id, fingerprint, {@link Crypt_GPG_Key} or
-     *                            {@link Crypt_GPG_SubKey}
+     *                            user id, fingerprint, {@link \Crypt\GPG\Key} or
+     *                            {@link \Crypt\GPG\SubKey}
      * @param string  $passphrase Optional passphrase associated with the key
      *
      * @return void
@@ -1327,7 +1545,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         if (is_scalar($key)) {
             $keys = $this->getKeys($key);
             if (count($keys) == 0) {
-                throw new Crypt_GPG_KeyNotFoundException(
+                throw new Exceptions\KeyNotFoundException(
                     'Key not found: ' . $key,
                     self::ERROR_KEY_NOT_FOUND,
                     $key
@@ -1336,17 +1554,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
             $key = $keys[0];
         }
 
-        if ($key instanceof Crypt_GPG_Key) {
+        if ($key instanceof \Crypt\GPG\Key) {
             if ($encrypt && !$key->canEncrypt()) {
-                throw new InvalidArgumentException(
-                    'Key "' . $key . '" cannot encrypt.'
-                );
+                throw new \InvalidArgumentException('Key "' . $key . '" cannot encrypt.');
             }
 
             if ($sign && !$key->canSign()) {
-                throw new InvalidArgumentException(
-                    'Key "' . $key . '" cannot sign.'
-                );
+                throw new \InvalidArgumentException('Key "' . $key . '" cannot sign.');
             }
 
             foreach ($key->getSubKeys() as $subKey) {
@@ -1362,27 +1576,21 @@ class Crypt_GPG extends Crypt_GPGAbstract
                     $subKeys[] = $subKey;
                 }
             }
-        } elseif ($key instanceof Crypt_GPG_SubKey) {
+        } elseif ($key instanceof SubKey) {
             $subKeys[] = $key;
         }
 
         if (count($subKeys) === 0) {
-            throw new InvalidArgumentException(
-                'Key "' . $key . '" is not in a recognized format.'
-            );
+            throw new \InvalidArgumentException('Key "' . $key . '" is not in a recognized format.');
         }
 
         foreach ($subKeys as $subKey) {
             if ($encrypt && !$subKey->canEncrypt()) {
-                throw new InvalidArgumentException(
-                    'Key "' . $key . '" cannot encrypt.'
-                );
+                throw new \InvalidArgumentException('Key "' . $key . '" cannot encrypt.');
             }
 
             if ($sign && !$subKey->canSign()) {
-                throw new InvalidArgumentException(
-                    'Key "' . $key . '" cannot sign.'
-                );
+                throw new \InvalidArgumentException('Key "' . $key . '" cannot sign.');
             }
 
             $array[$subKey->getId()] = [
@@ -1410,16 +1618,16 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *               - <kbd>private_unchanged</kbd> - the number of unchanged
      *                                                private keys.
      *
-     * @throws Crypt_GPG_NoDataException if the key data is missing or if the
+     * @throws Exceptions\NoDataException if the key data is missing or if the
      *         data is is not valid key data.
      *
-     * @throws Crypt_GPG_FileException if the key file is not readable.
+     * @throws Exceptions\FileException if the key file is not readable.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
-     *         {@link Crypt_GPG::addPassphrase()}.
+     *         {@link self::addPassphrase()}.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -1458,14 +1666,14 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *
      * @return string the key data.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if a key with the given
+     * @throws Exceptions\KeyNotFoundException if a key with the given
      *         <kbd>$keyId</kbd> is not found.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
-     *         {@link Crypt_GPG::addPassphrase()}.
+     *         {@link self::addPassphrase()}.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -1474,7 +1682,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $fingerprint = $this->getFingerprint($keyId);
 
         if ($fingerprint === null) {
-            throw new Crypt_GPG_KeyNotFoundException(
+            throw new Exceptions\KeyNotFoundException(
                 'Key not found: ' . $keyId,
                 self::ERROR_KEY_NOT_FOUND,
                 $keyId
@@ -1509,20 +1717,20 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the encrypted data is returned.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified.
-     *         See {@link Crypt_GPG::addEncryptKey()}.
+     * @throws Exceptions\KeyNotFoundException if no encryption key is specified.
+     *         See {@link self::addEncryptKey()}.
      *
-     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     * @throws Exceptions\FileException if the output file is not writeable or
      *         if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
     protected function _encrypt($data, $isFile, $outputFile, $armor)
     {
         if (!$this->hasEncryptKeys()) {
-            throw new Crypt_GPG_KeyNotFoundException(
+            throw new Exceptions\KeyNotFoundException(
                 'No encryption keys specified.'
             );
         }
@@ -1558,20 +1766,20 @@ class Crypt_GPG extends Crypt_GPGAbstract
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the decrypted data is returned.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
+     * @throws Exceptions\KeyNotFoundException if the private key needed to
      *         decrypt the data is not in the user's keyring.
      *
-     * @throws Crypt_GPG_NoDataException if specified data does not contain
+     * @throws Exceptions\NoDataException if specified data does not contain
      *         GPG encrypted data.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
-     *         {@link Crypt_GPG::addDecryptKey()}.
+     *         {@link self::addDecryptKey()}.
      *
-     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     * @throws Exceptions\FileException if the output file is not writeable or
      *         if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -1601,20 +1809,20 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                                should be stored. If null, the signed data is
      *                                returned as a string.
      * @param int         $mode       The data signing mode to use. Should be one of
-     *                                {@link Crypt_GPG::SIGN_MODE_NORMAL},
-     *                                {@link Crypt_GPG::SIGN_MODE_CLEAR} or
-     *                                {@link Crypt_GPG::SIGN_MODE_DETACHED}.
+     *                                {@link self::SIGN_MODE_NORMAL},
+     *                                {@link self::SIGN_MODE_CLEAR} or
+     *                                {@link self::SIGN_MODE_DETACHED}.
      * @param bool        $armor      If true, ASCII armored data is returned;
      *                                otherwise, binary data is returned. This has
      *                                no effect if the mode
-     *                                <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                                <kbd>self::SIGN_MODE_CLEAR</kbd> is
      *                                used.
      * @param bool        $textmode   If true, line-breaks in signed data be
      *                                normalized. Use this option when signing
      *                                e-mail, or for greater compatibility between
      *                                systems with different line-break formats.
      *                                Defaults to false. This has no effect if the
-     *                                mode <kbd>Crypt_GPG::SIGN_MODE_CLEAR</kbd> is
+     *                                mode <kbd>self::SIGN_MODE_CLEAR</kbd> is
      *                                used as clear-signing always uses textmode.
      *
      * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
@@ -1622,16 +1830,16 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                     data if a detached signature is requested) is
      *                     returned.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if no signing key is specified.
-     *         See {@link Crypt_GPG::addSignKey()}.
+     * @throws Exceptions\KeyNotFoundException if no signing key is specified.
+     *         See {@link self::addSignKey()}.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a specified passphrase is
+     * @throws Exceptions\BadPassphraseException if a specified passphrase is
      *         incorrect or if a required passphrase is not specified.
      *
-     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     * @throws Exceptions\FileException if the output file is not writeable or
      *         if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
@@ -1639,7 +1847,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         $textmode
     ) {
         if (!$this->hasSignKeys()) {
-            throw new Crypt_GPG_KeyNotFoundException(
+            throw new Exceptions\KeyNotFoundException(
                 'No signing keys specified.'
             );
         }
@@ -1702,33 +1910,29 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                     string containing the encrypted, signed data is
      *                     returned.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if no encryption key is specified
+     * @throws Exceptions\KeyNotFoundException if no encryption key is specified
      *         or if no signing key is specified. See
-     *         {@link Crypt_GPG::addEncryptKey()} and
-     *         {@link Crypt_GPG::addSignKey()}.
+     *         {@link self::addEncryptKey()} and
+     *         {@link self::addSignKey()}.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a specified passphrase is
+     * @throws Exceptions\BadPassphraseException if a specified passphrase is
      *         incorrect or if a required passphrase is not specified.
      *
-     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     * @throws Exceptions\FileException if the output file is not writeable or
      *         if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
     protected function _encryptAndSign($data, $isFile, $outputFile, $armor)
     {
         if (!$this->hasSignKeys()) {
-            throw new Crypt_GPG_KeyNotFoundException(
-                'No signing keys specified.'
-            );
+            throw new Exceptions\KeyNotFoundException('No signing keys specified.');
         }
 
         if (!$this->hasEncryptKeys()) {
-            throw new Crypt_GPG_KeyNotFoundException(
-                'No encryption keys specified.'
-            );
+            throw new Exceptions\KeyNotFoundException('No encryption keys specified.');
         }
 
         $input     = $this->_prepareInput($data, $isFile);
@@ -1765,22 +1969,22 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                           signature, this must be the detached signature
      *                           data. Otherwise, specify ''.
      *
-     * @return array an array of {@link Crypt_GPG_Signature} objects for the
+     * @return array an array of {@link \Crypt\GPG\Signature} objects for the
      *               signed data.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if the public key needed for
+     * @throws Exceptions\KeyNotFoundException if the public key needed for
      *         signature verification is not in the user's keyring.
      *
-     * @throws Crypt_GPG_NoDataException if the provided data is not signed
+     * @throws Exceptions\NoDataException if the provided data is not signed
      *         data.
      *
-     * @throws Crypt_GPG_FileException if the input file is not readable.
+     * @throws Exceptions\FileException if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see Crypt_GPG_Signature
+     * @see \Crypt\GPG\Signature
      */
     protected function _verify($data, $isFile, $signature)
     {
@@ -1788,9 +1992,8 @@ class Crypt_GPG extends Crypt_GPGAbstract
             $operation = '--verify';
             $arguments = [];
         } else {
-            // Signed data goes in FD_MESSAGE, detached signature data goes in
-            // FD_INPUT.
-            $operation = '--verify - "-&' . Crypt_GPG_Engine::FD_MESSAGE. '"';
+            // Signed data goes in FD_MESSAGE, detached signature data goes in FD_INPUT.
+            $operation = '--verify - "-&' . Engine::FD_MESSAGE. '"';
             $arguments = ['--enable-special-filenames'];
         }
 
@@ -1824,35 +2027,35 @@ class Crypt_GPG extends Crypt_GPGAbstract
      *                                        data is returned in the results array.
      * @param bool        $ignoreVerifyErrors Enables ignoring of signature verification
      *                                        errors caused by missing public key.
-     *                                        When enabled Crypt_GPG_KeyNotFoundException
+     *                                        When enabled \Crypt\GPG\KeyNotFoundException
      *                                        will not be thrown.
      *
      * @return array two element array. The array has an element 'data'
      *               containing the decrypted data and an element
      *               'signatures' containing an array of
-     *               {@link Crypt_GPG_Signature} objects for the signed data.
+     *               {@link \Crypt\GPG\Signature} objects for the signed data.
      *               If the decrypted data is written to a file, the 'data'
      *               element is null.
      *
-     * @throws Crypt_GPG_KeyNotFoundException if the private key needed to
+     * @throws Exceptions\KeyNotFoundException if the private key needed to
      *         decrypt the data is not in the user's keyring or if the public
      *         key needed for verification is not in the user's keyring.
      *
-     * @throws Crypt_GPG_NoDataException if specified data does not contain
+     * @throws Exceptions\NoDataException if specified data does not contain
      *         GPG signed, encrypted data.
      *
-     * @throws Crypt_GPG_BadPassphraseException if a required passphrase is
+     * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
-     *         {@link Crypt_GPG::addDecryptKey()}.
+     *         {@link self::addDecryptKey()}.
      *
-     * @throws Crypt_GPG_FileException if the output file is not writeable or
+     * @throws Exceptions\FileException if the output file is not writeable or
      *         if the input file is not readable.
      *
-     * @throws Crypt_GPG_Exception if an unknown or unexpected error occurs.
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see Crypt_GPG_Signature
+     * @see \Crypt\GPG\Signature
      */
     protected function _decryptAndVerify($data, $isFile, $outputFile, $ignoreVerifyErrors = false)
     {
@@ -1880,23 +2083,121 @@ class Crypt_GPG extends Crypt_GPGAbstract
     }
 
     /**
+     * Gets the available keys in the keyring
+     *
+     * Calls GPG with the <kbd>--list-keys</kbd> command and grabs keys. See
+     * the first section of <b>doc/DETAILS</b> in the
+     * {@link http://www.gnupg.org/download/ GPG package} for a detailed
+     * description of how the GPG command output is parsed.
+     *
+     * @param string $keyId optional. Only keys with that match the specified
+     *                      pattern are returned. The pattern may be part of
+     *                      a user id, a key id or a key fingerprint. If not
+     *                      specified, all keys are returned.
+     *
+     * @return array an array of {@link \Crypt\GPG\Key} objects. If no keys
+     *               match the specified <kbd>$keyId</kbd> an empty array is
+     *               returned.
+     *
+     * @throws Exceptions\Exception if an unknown or unexpected error occurs.
+     *         Use the <kbd>debug</kbd> option and file a bug report if these
+     *         exceptions occur.
+     *
+     * @see \Crypt\GPG\Key
+     */
+    protected function _getKeys($keyId = '')
+    {
+        // double '--with-fingerprint' also prints the fingerprint for subkeys.
+        $arguments = [
+            '--with-colons',
+            '--with-fingerprint',
+            '--with-fingerprint',
+            '--fixed-list-mode',
+            '--with-secret',
+        ];
+
+        // get public keys
+        if ($keyId == '') {
+            $operation = '--list-keys';
+        } else {
+            $operation = '--utf8-strings --list-keys -- ' . escapeshellarg($keyId);
+        }
+
+        $output = '';
+
+        $this->engine->reset();
+        $this->engine->setOutput($output);
+        $this->engine->setOperation($operation, $arguments);
+        $this->engine->run();
+
+        return self::_parseListOutput($output);
+    }
+
+    /**
+     * Parse output from a keys/signatures listing command
+     */
+    protected static function _parseListOutput($output)
+    {
+        $keys   = [];
+        $key    = null; // current key
+        $subKey = null; // current sub-key
+        $userId = null; // current user-id
+
+        foreach (explode(PHP_EOL, $output) as $line) {
+            list($type) = explode(':', $line, 2);
+
+            if ($type == 'pub') {
+                // new primary key means last key should be added to the array
+                if ($key) {
+                    $keys[] = $key;
+                    $userId = null;
+                }
+
+                $key = new Key();
+                $subKey = SubKey::parse($line);
+                $key->addSubKey($subKey);
+            } elseif ($type == 'sub') {
+                $subKey = SubKey::parse($line);
+                $key->addSubKey($subKey);
+                $userId = null;
+            } elseif ($type == 'fpr') {
+                $lineExp = explode(':', $line);
+                $subKey->setFingerprint($lineExp[9]);
+            } elseif ($type == 'uid') {
+                $userId = UserId::parse($line);
+                $key->addUserId($userId);
+            } elseif ($type == 'sig' && $userId) {
+                // Note: sig: lines are available when using --with-sig-list or --with-sig-check
+                $userId->addSignature(Signature::parse($line));
+            }
+        }
+
+        // add last key
+        if ($key) {
+            $keys[] = $key;
+        }
+
+        return $keys;
+    }
+
+    /**
      * Prepares command input
      *
      * @param string $data       The input data
      * @param bool   $isFile     Whether or not the input is a filename
      * @param bool   $allowEmpty Whether to check if the input is not empty
      *
-     * @throws Crypt_GPG_NoDataException if the key data is missing.
-     * @throws Crypt_GPG_FileException if the file is not readable.
+     * @throws Exceptions\NoDataException if the key data is missing.
+     * @throws Exceptions\FileException if the file is not readable.
      *
-     * @return string The command input
+     * @return string|resource The command input
      */
     protected function _prepareInput($data, $isFile = false, $allowEmpty = true)
     {
         if ($isFile) {
             $input = @fopen($data, 'rb');
             if ($input === false) {
-                throw new Crypt_GPG_FileException(
+                throw new Exceptions\FileException(
                     'Could not open input file "' . $data . '"',
                     0,
                     $data
@@ -1905,7 +2206,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
         } else {
             $input = strval($data);
             if (!$allowEmpty && $input === '') {
-                throw new Crypt_GPG_NoDataException(
+                throw new Exceptions\NoDataException(
                     'No valid input data found.',
                     self::ERROR_NO_DATA
                 );
@@ -1918,13 +2219,13 @@ class Crypt_GPG extends Crypt_GPGAbstract
     /**
      * Prepares command output
      *
-     * @param string|null $outputFile The name of the file in which the output
-     *                                data should be stored. If null, the output
-     *                                data is returned as a string.
-     * @param resource    $input      The input resource, in case it would need
-     *                                to be released (closed) on exception.
+     * @param string|null   $outputFile The name of the file in which the output
+     *                                  data should be stored. If null, the output
+     *                                  data is returned as a string.
+     * @param resource|null $input      The input resource, in case it would need
+     *                                  to be released (closed) on exception.
      *
-     * @throws Crypt_GPG_FileException if the file is not writeable.
+     * @throws Exceptions\FileException if the file is not writeable.
      *
      * @return string|resource The command output
      */
@@ -1938,7 +2239,7 @@ class Crypt_GPG extends Crypt_GPGAbstract
                 if (is_resource($input)) {
                     fclose($input);
                 }
-                throw new Crypt_GPG_FileException(
+                throw new Exceptions\FileException(
                     'Could not open output file "' . $outputFile . '"',
                     0,
                     $outputFile

@@ -1,8 +1,10 @@
 <?php
 
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+namespace Crypt\GPG;
 
-require_once 'Crypt/GPGAbstract.php';
+use Crypt\GPG\Engine;
+use Crypt\GPG\Exceptions;
+use Crypt\GPG\UserId;
 
 /**
  * A class for editing keys (using GnuPG interactive --key-edit shell)
@@ -30,7 +32,7 @@ require_once 'Crypt/GPGAbstract.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class Crypt_GPG_KeyEditor
+class KeyEditor
 {
     const TRUST_UNKNOWN = 1;
     const TRUST_NONE = 2;
@@ -41,7 +43,7 @@ class Crypt_GPG_KeyEditor
     /** @var array The GnuPG engine/key editor options */
     protected $options;
 
-    /** @var Crypt_GPG_Engine The GnuPG engine */
+    /** @var Engine The GnuPG engine */
     protected $engine;
 
     protected $key;
@@ -52,8 +54,8 @@ class Crypt_GPG_KeyEditor
     /**
      * Creates a new key editor
      *
-     * @param Crypt_GPG_Engine $engine  GnuPG engine
-     * @param array            $options GnuPG engine options
+     * @param Engine $engine  GnuPG engine
+     * @param array  $options GnuPG engine options
      */
     public function __construct($engine, array $options)
     {
@@ -76,7 +78,7 @@ class Crypt_GPG_KeyEditor
      * Starts key editing session
      *
      * @param mixed  $key        The key to use. This may be a key identifier, user id, fingerprint,
-     *                           {@link Crypt_GPG_Key} or {@link Crypt_GPG_SubKey}.
+     *                           {@link \Crypt\GPG\Key} or {@link \Crypt\GPG\SubKey}.
      * @param string $passphrase The passphrase of the key required for signing (optional).
      * @param array  $options    Additional command line options
      *
@@ -101,8 +103,8 @@ class Crypt_GPG_KeyEditor
             '--trust-model always',
             '--homedir ' . escapeshellarg($this->options['homedir']),
             '--pinentry-mode loopback', // passphrase input in stdin
-            '--command-fd ' . escapeshellarg(Crypt_GPG_Engine::FD_INPUT),
-            '--status-fd ' . escapeshellarg(Crypt_GPG_Engine::FD_ERROR),
+            '--command-fd ' . escapeshellarg((string) Engine::FD_INPUT),
+            '--status-fd ' . escapeshellarg((string) Engine::FD_ERROR),
             '--batch',
             '--yes',
         ];
@@ -143,29 +145,29 @@ class Crypt_GPG_KeyEditor
         $env['LC_ALL'] = 'C';
 
         $specs = [
-            Crypt_GPG_Engine::FD_INPUT => ['pipe', 'r'],
-            // Crypt_GPG_Engine::FD_OUTPUT => ['pipe', 'w'],
-            Crypt_GPG_Engine::FD_ERROR => ['pipe', 'w'],
+            Engine::FD_INPUT => ['pipe', 'r'],
+            // Engine::FD_OUTPUT => ['pipe', 'w'],
+            Engine::FD_ERROR => ['pipe', 'w'],
         ];
 
         $this->process = proc_open($command, $specs, $this->pipes, null, $env);
 
         if (!is_resource($this->process)) {
-            throw new Crypt_GPG_OpenSubprocessException('Unable to open GPG subprocess.', 0, $command);
+            throw new Exceptions\OpenSubprocessException('Unable to open GPG subprocess.', 0, $command);
         }
 
         // Set streams as non-blocking
         foreach ($this->pipes as $pipe) {
-            stream_set_blocking($pipe, 0);
+            stream_set_blocking($pipe, false);
             stream_set_write_buffer($pipe, 0);
             stream_set_read_buffer($pipe, 0);
         }
 
         $this->_read([], ['keyedit.prompt']);
 
-        if (feof($this->pipes[Crypt_GPG_Engine::FD_ERROR])) {
+        if (feof($this->pipes[Engine::FD_ERROR])) {
             $this->_close();
-            throw new Crypt_GPG_OpenSubprocessException('Failed to open GPG subprocess (key not found?).', 0, $command);
+            throw new Exceptions\OpenSubprocessException('Failed to open GPG subprocess (key not found?).', 0, $command);
         }
 
         return $this;
@@ -176,7 +178,7 @@ class Crypt_GPG_KeyEditor
      *
      * @return $this The current object, for fluent interface.
      */
-    public function addUserId(Crypt_GPG_UserId $userid)
+    public function addUserId(UserId $userid)
     {
         $handlers = [
             'keygen.name' => $userid->getName(),
@@ -189,7 +191,7 @@ class Crypt_GPG_KeyEditor
 
         if (strpos($output, 'Need the secret key to do this')) {
             $this->_close();
-            throw new Crypt_GPG_Exception('Failed to add a user. No secret key found.');
+            throw new Exceptions\Exception('Failed to add a user. No secret key found.');
         }
 
         return $this;
@@ -198,12 +200,12 @@ class Crypt_GPG_KeyEditor
     /**
      * Delete a user identity from a key (`deluid`).
      *
-     * @param Crypt_GPG_UserId $userid   User identity to delete
-     * @param bool             $by_email Delete all identities with specified email address
+     * @param UserId $userid   User identity to delete
+     * @param bool   $by_email Delete all identities with specified email address
      *
      * @return $this The current object, for fluent interface.
      */
-    public function deleteUserId(Crypt_GPG_UserId $userid, $by_email = false)
+    public function deleteUserId(UserId $userid, $by_email = false)
     {
         $handlers = [
             'keyedit.remove.uid.okay' => true,
@@ -216,7 +218,7 @@ class Crypt_GPG_KeyEditor
 
             if (strpos($output, 'You can\'t delete the last')) {
                 $this->_close();
-                throw new Crypt_GPG_Exception('Failed to delete user from a key. You can\'t delete the last user.');
+                throw new Exceptions\Exception('Failed to delete user from a key. You can\'t delete the last user.');
             }
         }
 
@@ -243,7 +245,7 @@ class Crypt_GPG_KeyEditor
 
         if (!preg_match('/^[0-9]+[wmy]?$/i', (string) $period)) {
             $this->_close();
-            throw new Crypt_GPG_Exception('Failed to set expiration. Invalid period specification.');
+            throw new Exceptions\Exception('Failed to set expiration. Invalid period specification.');
         }
 
         $handlers = [
@@ -282,14 +284,14 @@ class Crypt_GPG_KeyEditor
     /**
      * Revoke a user identity (`revuid`).
      *
-     * @param Crypt_GPG_UserId $userid     User identity to delete
-     * @param bool             $by_email   Delete all identities with specified email address
-     * @param bool             $is_invalid Mark the user as "no longer valid"
-     * @param string           $reason     Revocation reason description
+     * @param UserId $userid     User identity to delete
+     * @param bool   $by_email   Delete all identities with specified email address
+     * @param bool   $is_invalid Mark the user as "no longer valid"
+     * @param string $reason     Revocation reason description
      *
      * @return $this The current object, for fluent interface.
      */
-    public function revokeUserId(Crypt_GPG_UserId $userid, $by_email = false, $is_invalid = true, $reason = '')
+    public function revokeUserId(UserId $userid, $by_email = false, $is_invalid = true, $reason = '')
     {
         $handlers = [
             'keyedit.revoke.uid.okay' => true,
@@ -305,7 +307,7 @@ class Crypt_GPG_KeyEditor
 
             if (strpos($output, 'Cannot revoke the last valid user')) {
                 $this->_close();
-                throw new Crypt_GPG_Exception('Failed to revoke the user. You can\'t revoke the last valid user.');
+                throw new Exceptions\Exception('Failed to revoke the user. You can\'t revoke the last valid user.');
             }
         }
 
@@ -331,7 +333,7 @@ class Crypt_GPG_KeyEditor
 
         if (preg_match('/signing failed:(.*)/', $output, $matches)) {
             $this->_close();
-            throw new Crypt_GPG_Exception('Failed to sign the key. Error: ' . trim($matches[1]));
+            throw new Exceptions\Exception('Failed to sign the key. Error: ' . trim($matches[1]));
         }
 
         return $this;
@@ -351,7 +353,7 @@ class Crypt_GPG_KeyEditor
                 $level,
                 // A repeated question for the level indicates invalid input value
                 function () use ($level) {
-                    throw new Crypt_GPG_Exception("Failed to trust the key. Invalid trust level: {$level}");
+                    throw new Exceptions\Exception("Failed to trust the key. Invalid trust level: {$level}");
                 },
             ],
             'edit_ownertrust.set_ultimate.okay' => true,
@@ -412,9 +414,9 @@ class Crypt_GPG_KeyEditor
      */
     private function _read($handlers = [], $stop_at = [])
     {
-        if (empty($this->pipes[Crypt_GPG_Engine::FD_ERROR])) {
+        if (empty($this->pipes[Engine::FD_ERROR])) {
             $this->_close();
-            throw new Crypt_GPG_Exception('The key editor output stream is closed.');
+            throw new Exceptions\Exception('The key editor output stream is closed.');
         }
 
         $output = '';
@@ -425,8 +427,8 @@ class Crypt_GPG_KeyEditor
             $outputStreams = [];
             $exceptionStreams = [];
 
-            if (!empty($this->pipes[Crypt_GPG_Engine::FD_ERROR]) && !feof($this->pipes[Crypt_GPG_Engine::FD_ERROR])) {
-                $inputStreams[] = $this->pipes[Crypt_GPG_Engine::FD_ERROR];
+            if (!empty($this->pipes[Engine::FD_ERROR]) && !feof($this->pipes[Engine::FD_ERROR])) {
+                $inputStreams[] = $this->pipes[Engine::FD_ERROR];
             }
 
             if (count($inputStreams) === 0) {
@@ -437,11 +439,11 @@ class Crypt_GPG_KeyEditor
 
             if ($ready === false || $ready === 0) {
                 $this->_close();
-                throw new Crypt_GPG_Exception('Error selecting stream for communication with GPG subprocess');
+                throw new Exceptions\Exception('Error selecting stream for communication with GPG subprocess');
             }
 
-            if (in_array($this->pipes[Crypt_GPG_Engine::FD_ERROR], $inputStreams, true)) {
-                $line = fgets($this->pipes[Crypt_GPG_Engine::FD_ERROR], 8192);
+            if (in_array($this->pipes[Engine::FD_ERROR], $inputStreams, true)) {
+                $line = fgets($this->pipes[Engine::FD_ERROR], 8192);
                 if ($line === false) {
                     break;
                 }
@@ -479,7 +481,7 @@ class Crypt_GPG_KeyEditor
 
                 if ($passInput && strpos($line, 'Bad passphrase')) {
                     $this->_close();
-                    throw new  Crypt_GPG_BadPassphraseException('Missing or wrong key passphrase');
+                    throw new Exceptions\BadPassphraseException('Missing or wrong key passphrase');
                 }
             }
 
@@ -494,14 +496,14 @@ class Crypt_GPG_KeyEditor
      */
     private function _write($input)
     {
-        if (empty($this->pipes[Crypt_GPG_Engine::FD_INPUT]) || feof($this->pipes[Crypt_GPG_Engine::FD_INPUT])) {
-            throw new Crypt_GPG_Exception('The key editor input stream is closed.');
+        if (empty($this->pipes[Engine::FD_INPUT]) || feof($this->pipes[Engine::FD_INPUT])) {
+            throw new Exceptions\Exception('The key editor input stream is closed.');
         }
 
         $this->_debug("< $input");
 
-        fwrite($this->pipes[Crypt_GPG_Engine::FD_INPUT], "$input\n");
-        fflush($this->pipes[Crypt_GPG_Engine::FD_INPUT]);
+        fwrite($this->pipes[Engine::FD_INPUT], "$input\n");
+        fflush($this->pipes[Engine::FD_INPUT]);
 
         return $this;
     }
@@ -519,7 +521,7 @@ class Crypt_GPG_KeyEditor
     /**
      * Find user identities in the key (by full identity or email)
      */
-    private function _find_users(Crypt_GPG_UserId $userid, $by_email = false)
+    private function _find_users(UserId $userid, $by_email = false)
     {
         $output = $this->_write('list')->_read([], ['keyedit.prompt']);
 
@@ -527,7 +529,7 @@ class Crypt_GPG_KeyEditor
         $uids = [];
         foreach (explode("\n", $output) as $line) {
             if (preg_match('/^\[[^\]]+\]\s+\(([0-9]+)\)\.?\s+(.*)$/', $line, $matches)) {
-                $ident = Crypt_GPG_UserId::parse($matches[2]);
+                $ident = UserId::parse($matches[2]);
                 if ((string) $ident === (string) $userid || ($by_email && $ident->getEmail() === $userid->getEmail())) {
                     $uids[] = $matches[1];
                 }
@@ -535,7 +537,7 @@ class Crypt_GPG_KeyEditor
         }
 
         if (empty($uids)) {
-            throw new Crypt_GPG_Exception("No matching users in the key.");
+            throw new Exceptions\Exception("No matching users in the key.");
         }
 
         // We'll delete users in order where deletion does not change other IDs

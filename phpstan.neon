@@ -7,4 +7,4 @@ parameters:
         - tests
         - tools
 
-    level: 4
+    level: 5

@@ -34,15 +34,13 @@
  * @link      http://www.gnupg.org/
  */
 
-/**
- * GPG exception classes.
- */
-require_once 'Crypt/GPG/Exceptions.php';
+namespace Crypt\GPG;
 
-/**
- * Signature object class definition
- */
-require_once 'Crypt/GPG/Signature.php';
+use Crypt\GPG;
+use Crypt\GPG\Engine;
+use Crypt\GPG\Exceptions;
+use Crypt\GPG\Signature;
+use Crypt\GPG\UserId;
 
 /**
  * Status/Error handler for GPG process pipes.
@@ -60,12 +58,12 @@ require_once 'Crypt/GPG/Signature.php';
  * @link      http://pear.php.net/package/Crypt_GPG
  * @link      http://www.gnupg.org/
  */
-class Crypt_GPG_ProcessHandler
+class ProcessHandler
 {
     /**
      * Engine used to control the GPG subprocess
      *
-     * @var Crypt_GPG_Engine
+     * @var Engine
      */
     protected $engine;
 
@@ -74,13 +72,13 @@ class Crypt_GPG_ProcessHandler
      *
      * @var int
      */
-    protected $errorCode = Crypt_GPG::ERROR_NONE;
+    protected $errorCode = GPG::ERROR_NONE;
 
     /**
      * The number of currently needed passphrases
      *
      * If this is not zero when the GPG command is completed, the error code is
-     * set to {@link Crypt_GPG::ERROR_MISSING_PASSPHRASE}.
+     * set to {@link \Crypt\GPG::ERROR_MISSING_PASSPHRASE}.
      *
      * @var int
      */
@@ -115,9 +113,9 @@ class Crypt_GPG_ProcessHandler
     /**
      * Creates a new instance
      *
-     * @param Crypt_GPG_Engine $engine Engine object
+     * @param Engine $engine Engine object
      */
-    public function __construct($engine)
+    public function __construct(Engine $engine)
     {
         $this->engine = $engine;
     }
@@ -136,8 +134,7 @@ class Crypt_GPG_ProcessHandler
 
         // Regexp matching all GPG "operational" arguments
         $regexp = '/--('
-            . 'version|import|list-public-keys|list-secret-keys'
-            . '|list-keys|delete-key|delete-secret-key|encrypt|sign|clearsign'
+            . 'version|import|list-keys|delete-key|delete-secret-key|encrypt|sign|clearsign'
             . '|detach-sign|decrypt|verify|export-secret-keys|export|gen-key'
             . ')/';
 
@@ -177,21 +174,21 @@ class Crypt_GPG_ProcessHandler
         $tokens = explode(' ', $line);
         switch ($tokens[0]) {
         case 'NODATA':
-            $this->errorCode = Crypt_GPG::ERROR_NO_DATA;
+            $this->errorCode = GPG::ERROR_NO_DATA;
             break;
 
         case 'DECRYPTION_OKAY':
             // If the message is encrypted, this is the all-clear signal.
             $this->data['DecryptionOkay'] = true;
-            $this->errorCode = Crypt_GPG::ERROR_NONE;
+            $this->errorCode = GPG::ERROR_NONE;
             break;
 
         case 'DELETE_PROBLEM':
             if ($tokens[1] == '1') {
-                $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+                $this->errorCode = GPG::ERROR_KEY_NOT_FOUND;
                 break;
             } elseif ($tokens[1] == '2') {
-                $this->errorCode = Crypt_GPG::ERROR_DELETE_PRIVATE_KEY;
+                $this->errorCode = GPG::ERROR_DELETE_PRIVATE_KEY;
                 break;
             }
             break;
@@ -218,15 +215,15 @@ class Crypt_GPG_ProcessHandler
         case 'NO_SECKEY':
             $this->data['ErrorKeyId'] = $tokens[1];
 
-            if ($this->errorCode != Crypt_GPG::ERROR_MISSING_PASSPHRASE
-                && $this->errorCode != Crypt_GPG::ERROR_BAD_PASSPHRASE
+            if ($this->errorCode != GPG::ERROR_MISSING_PASSPHRASE
+                && $this->errorCode != GPG::ERROR_BAD_PASSPHRASE
                 && !(
                     $this->operation == 'decrypt'
                     && $tokens[0] == 'NO_PUBKEY'
                     && !empty($this->data['IgnoreVerifyErrors'])
                 )
             ) {
-                $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+                $this->errorCode = GPG::ERROR_KEY_NOT_FOUND;
             }
 
             // note: this message is also received if there are multiple
@@ -293,7 +290,7 @@ class Crypt_GPG_ProcessHandler
             break;
 
         case 'BAD_PASSPHRASE':
-            $this->errorCode = Crypt_GPG::ERROR_BAD_PASSPHRASE;
+            $this->errorCode = GPG::ERROR_BAD_PASSPHRASE;
             break;
 
         case 'MISSING_PASSPHRASE':
@@ -302,7 +299,7 @@ class Crypt_GPG_ProcessHandler
                     = $this->data['CurrentSubKeyId'];
             }
 
-            $this->errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+            $this->errorCode = GPG::ERROR_MISSING_PASSPHRASE;
             break;
 
         case 'GET_HIDDEN':
@@ -338,10 +335,10 @@ class Crypt_GPG_ProcessHandler
         case 'REVKEYSIG':
         case 'BADSIG':
         case 'ERRSIG':
-            $this->errorCode = Crypt_GPG::ERROR_BAD_SIGNATURE;
+            $this->errorCode = GPG::ERROR_BAD_SIGNATURE;
             // no break
         case 'GOODSIG':
-            $signature = new Crypt_GPG_Signature();
+            $signature = new Signature();
 
             // if there was a signature id, set it on the new signature
             if (!empty($this->data['SignatureId'])) {
@@ -366,7 +363,7 @@ class Crypt_GPG_ProcessHandler
                 $string = implode(' ', array_splice($tokens, 2));
                 $string = rawurldecode($string);
 
-                $signature->setUserId(Crypt_GPG_UserId::parse($string));
+                $signature->setUserId(UserId::parse($string));
             }
 
             $this->data['Signatures'][] = $signature;
@@ -406,7 +403,7 @@ class Crypt_GPG_ProcessHandler
 
         case 'KEY_NOT_CREATED':
             if (isset($this->data['Handle']) && $tokens[1] == $this->data['Handle']) {
-                $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_CREATED;
+                $this->errorCode = GPG::ERROR_KEY_NOT_CREATED;
             }
             break;
 
@@ -424,16 +421,16 @@ class Crypt_GPG_ProcessHandler
             switch ($errcode) {
             case 11: // bad passphrase
             case 87: // bad PIN
-                $this->errorCode = Crypt_GPG::ERROR_BAD_PASSPHRASE;
+                $this->errorCode = GPG::ERROR_BAD_PASSPHRASE;
                 break;
 
             case 177: // no passphrase
             case 178: // no PIN
-                $this->errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+                $this->errorCode = GPG::ERROR_MISSING_PASSPHRASE;
                 break;
 
             case 58:
-                $this->errorCode = Crypt_GPG::ERROR_NO_DATA;
+                $this->errorCode = GPG::ERROR_NO_DATA;
                 break;
             }
 
@@ -445,7 +442,7 @@ class Crypt_GPG_ProcessHandler
      * Handles error values in the error output from GPG
      *
      * This method is responsible for setting the
-     * {@link Crypt_GPG_Engine::$_errorCode}.
+     * {@link \Crypt\GPG\Engine::$_errorCode}.
      *
      * @param string $line the error line to handle.
      *
@@ -457,19 +454,19 @@ class Crypt_GPG_ProcessHandler
             $this->data['Warnings'][] = substr($line, 14);
         }
 
-        if ($this->errorCode !== Crypt_GPG::ERROR_NONE) {
+        if ($this->errorCode !== GPG::ERROR_NONE) {
             return;
         }
 
         $pattern = '/no valid OpenPGP data found/';
         if (preg_match($pattern, $line) === 1) {
-            $this->errorCode = Crypt_GPG::ERROR_NO_DATA;
+            $this->errorCode = GPG::ERROR_NO_DATA;
             return;
         }
 
         $pattern = '/No secret key|secret key not available/';
         if (preg_match($pattern, $line) === 1) {
-            $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+            $this->errorCode = GPG::ERROR_KEY_NOT_FOUND;
             return;
         }
 
@@ -479,14 +476,14 @@ class Crypt_GPG_ProcessHandler
                 return;
             }
 
-            $this->errorCode = Crypt_GPG::ERROR_KEY_NOT_FOUND;
+            $this->errorCode = GPG::ERROR_KEY_NOT_FOUND;
             return;
         }
 
         $pattern = '/can\'t (?:access|open) `(.*?)\'/';
         if (preg_match($pattern, $line, $matches) === 1) {
             $this->data['ErrorFilename'] = $matches[1];
-            $this->errorCode = Crypt_GPG::ERROR_FILE_PERMISSIONS;
+            $this->errorCode = GPG::ERROR_FILE_PERMISSIONS;
             return;
         }
 
@@ -501,9 +498,9 @@ class Crypt_GPG_ProcessHandler
             }
 
             if ($matches[2] == 'Bad') {
-                $this->errorCode = Crypt_GPG::ERROR_BAD_PASSPHRASE;
+                $this->errorCode = GPG::ERROR_BAD_PASSPHRASE;
             } else {
-                $this->errorCode = Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+                $this->errorCode = GPG::ERROR_MISSING_PASSPHRASE;
                 if (empty($this->data['MissingPassphrases'][$keyId])) {
                     $this->data['MissingPassphrases'][$keyId] = $keyId;
                 }
@@ -515,7 +512,7 @@ class Crypt_GPG_ProcessHandler
         if ($this->operation == 'gen-key') {
             $pattern = '/:([0-9]+): invalid algorithm$/';
             if (preg_match($pattern, $line, $matches) === 1) {
-                $this->errorCode          = Crypt_GPG::ERROR_BAD_KEY_PARAMS;
+                $this->errorCode          = GPG::ERROR_BAD_KEY_PARAMS;
                 $this->data['LineNumber'] = intval($matches[1]);
             }
         }
@@ -527,25 +524,25 @@ class Crypt_GPG_ProcessHandler
      * @param int $exitcode GPG process exit code
      *
      * @return void
-     * @throws Crypt_GPG_Exception
+     * @throws Exceptions\Exception
      */
     public function throwException($exitcode = 0)
     {
-        if ($exitcode > 0 && $this->errorCode === Crypt_GPG::ERROR_NONE) {
+        if ($exitcode > 0 && $this->errorCode === GPG::ERROR_NONE) {
             $this->errorCode = $this->setErrorCode($exitcode);
         }
 
-        if ($this->errorCode === Crypt_GPG::ERROR_NONE) {
+        if ($this->errorCode === GPG::ERROR_NONE) {
             return;
         }
 
         $code = $this->errorCode;
         $note = "Please use the 'debug' option when creating the Crypt_GPG " .
-            "object, and file a bug report at " . Crypt_GPG::BUG_URI;
+            "object, and file a bug report at " . GPG::BUG_URI;
 
         switch ($this->operation) {
         case 'version':
-            throw new Crypt_GPG_Exception(
+            throw new Exceptions\Exception(
                 'Unknown error getting GnuPG version information. ' . $note,
                 $code
             );
@@ -554,13 +551,13 @@ class Crypt_GPG_ProcessHandler
         case 'list-public-keys':
         case 'list-keys':
             switch ($code) {
-            case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+            case GPG::ERROR_KEY_NOT_FOUND:
                 // ignore not found key errors
                 break;
 
-            case Crypt_GPG::ERROR_FILE_PERMISSIONS:
+            case GPG::ERROR_FILE_PERMISSIONS:
                 if (!empty($this->data['ErrorFilename'])) {
-                    throw new Crypt_GPG_FileException(
+                    throw new Exceptions\FileException(
                         sprintf(
                             'Error reading GnuPG data file \'%s\'. Check to make ' .
                             'sure it is readable by the current user.',
@@ -570,14 +567,14 @@ class Crypt_GPG_ProcessHandler
                         $this->data['ErrorFilename']
                     );
                 }
-                throw new Crypt_GPG_FileException(
+                throw new Exceptions\FileException(
                     'Error reading GnuPG data file. Check to make sure that ' .
                     'GnuPG data files are readable by the current user.',
                     $code
                 );
 
             default:
-                throw new Crypt_GPG_Exception(
+                throw new Exceptions\Exception(
                     'Unknown error getting keys. ' . $note, $code
                 );
             }
@@ -586,15 +583,15 @@ class Crypt_GPG_ProcessHandler
         case 'delete-key':
         case 'delete-secret-key':
             switch ($code) {
-            case Crypt_GPG::ERROR_KEY_NOT_FOUND:
-                throw new Crypt_GPG_KeyNotFoundException(
+            case GPG::ERROR_KEY_NOT_FOUND:
+                throw new Exceptions\KeyNotFoundException(
                     'Key not found: ' . $this->operationArg,
                     $code,
                     $this->operationArg
                 );
 
-            case Crypt_GPG::ERROR_DELETE_PRIVATE_KEY:
-                throw new Crypt_GPG_DeletePrivateKeyException(
+            case GPG::ERROR_DELETE_PRIVATE_KEY:
+                throw new Exceptions\DeletePrivateKeyException(
                     'Private key must be deleted before public key can be ' .
                     'deleted.',
                     $code,
@@ -602,7 +599,7 @@ class Crypt_GPG_ProcessHandler
                 );
 
             default:
-                throw new Crypt_GPG_Exception(
+                throw new Exceptions\Exception(
                     'Unknown error deleting key. ' . $note, $code
                 );
             }
@@ -610,33 +607,27 @@ class Crypt_GPG_ProcessHandler
 
         case 'import':
             switch ($code) {
-            case Crypt_GPG::ERROR_NO_DATA:
-                throw new Crypt_GPG_NoDataException(
-                    'No valid GPG key data found.', $code
-                );
+            case GPG::ERROR_NO_DATA:
+                throw new Exceptions\NoDataException('No valid GPG key data found.', $code);
 
-            case Crypt_GPG::ERROR_BAD_PASSPHRASE:
-            case Crypt_GPG::ERROR_MISSING_PASSPHRASE:
+            case GPG::ERROR_BAD_PASSPHRASE:
+            case GPG::ERROR_MISSING_PASSPHRASE:
                 throw $this->badPassException($code, 'Cannot import private key.');
 
             default:
-                throw new Crypt_GPG_Exception(
-                    'Unknown error importing GPG key. ' . $note, $code
-                );
+                throw new Exceptions\Exception('Unknown error importing GPG key. ' . $note, $code);
             }
             break; // @phpstan-ignore-line
 
         case 'export':
         case 'export-secret-keys':
             switch ($code) {
-            case Crypt_GPG::ERROR_BAD_PASSPHRASE:
-            case Crypt_GPG::ERROR_MISSING_PASSPHRASE:
+            case GPG::ERROR_BAD_PASSPHRASE:
+            case GPG::ERROR_MISSING_PASSPHRASE:
                 throw $this->badPassException($code, 'Cannot export private key.');
 
             default:
-                throw new Crypt_GPG_Exception(
-                    'Unknown error exporting a key. ' . $note, $code
-                );
+                throw new Exceptions\Exception('Unknown error exporting a key. ' . $note, $code);
             }
             break; // @phpstan-ignore-line
 
@@ -645,26 +636,26 @@ class Crypt_GPG_ProcessHandler
         case 'clearsign':
         case 'detach-sign':
             switch ($code) {
-            case Crypt_GPG::ERROR_KEY_NOT_FOUND:
-                throw new Crypt_GPG_KeyNotFoundException(
+            case GPG::ERROR_KEY_NOT_FOUND:
+                throw new Exceptions\KeyNotFoundException(
                     'Cannot sign data. Private key not found. Import the '.
                     'private key before trying to sign data.',
                     $code,
                     !empty($this->data['ErrorKeyId']) ? $this->data['ErrorKeyId'] : null
                 );
 
-            case Crypt_GPG::ERROR_BAD_PASSPHRASE:
-                throw new Crypt_GPG_BadPassphraseException(
+            case GPG::ERROR_BAD_PASSPHRASE:
+                throw new Exceptions\BadPassphraseException(
                     'Cannot sign data. Incorrect passphrase provided.', $code
                 );
 
-            case Crypt_GPG::ERROR_MISSING_PASSPHRASE:
-                throw new Crypt_GPG_BadPassphraseException(
+            case GPG::ERROR_MISSING_PASSPHRASE:
+                throw new Exceptions\BadPassphraseException(
                     'Cannot sign data. No passphrase provided.', $code
                 );
 
             default:
-                throw new Crypt_GPG_Exception(
+                throw new Exceptions\Exception(
                     "Unknown error {$this->operation}ing data. $note", $code
                 );
             }
@@ -672,24 +663,24 @@ class Crypt_GPG_ProcessHandler
 
         case 'verify':
             switch ($code) {
-            case Crypt_GPG::ERROR_BAD_SIGNATURE:
+            case GPG::ERROR_BAD_SIGNATURE:
                 // ignore bad signature errors
                 break;
 
-            case Crypt_GPG::ERROR_NO_DATA:
-                throw new Crypt_GPG_NoDataException(
+            case GPG::ERROR_NO_DATA:
+                throw new Exceptions\NoDataException(
                     'No valid signature data found.', $code
                 );
 
-            case Crypt_GPG::ERROR_KEY_NOT_FOUND:
-                throw new Crypt_GPG_KeyNotFoundException(
+            case GPG::ERROR_KEY_NOT_FOUND:
+                throw new Exceptions\KeyNotFoundException(
                     'Public key required for data verification not in keyring.',
                     $code,
                     !empty($this->data['ErrorKeyId']) ? $this->data['ErrorKeyId'] : null
                 );
 
             default:
-                throw new Crypt_GPG_Exception(
+                throw new Exceptions\Exception(
                     'Unknown error validating signature details. ' . $note,
                     $code
                 );
@@ -698,18 +689,18 @@ class Crypt_GPG_ProcessHandler
 
         case 'decrypt':
             switch ($code) {
-            case Crypt_GPG::ERROR_BAD_SIGNATURE:
+            case GPG::ERROR_BAD_SIGNATURE:
                 // ignore bad signature errors
                 break;
 
-            case Crypt_GPG::ERROR_KEY_NOT_FOUND:
+            case GPG::ERROR_KEY_NOT_FOUND:
                 if (!empty($this->data['MissingKeys'])) {
                     $keyId = reset($this->data['MissingKeys']);
                 } else {
                     $keyId = '';
                 }
 
-                throw new Crypt_GPG_KeyNotFoundException(
+                throw new Exceptions\KeyNotFoundException(
                     'Cannot decrypt data. No suitable private key is in the ' .
                     'keyring. Import a suitable private key before trying to ' .
                     'decrypt this data.',
@@ -717,33 +708,31 @@ class Crypt_GPG_ProcessHandler
                     $keyId
                 );
 
-            case Crypt_GPG::ERROR_BAD_PASSPHRASE:
-            case Crypt_GPG::ERROR_MISSING_PASSPHRASE:
+            case GPG::ERROR_BAD_PASSPHRASE:
+            case GPG::ERROR_MISSING_PASSPHRASE:
                 throw $this->badPassException($code, 'Cannot decrypt data.');
 
-            case Crypt_GPG::ERROR_NO_DATA:
-                throw new Crypt_GPG_NoDataException(
+            case GPG::ERROR_NO_DATA:
+                throw new Exceptions\NoDataException(
                     'Cannot decrypt data. No PGP encrypted data was found in '.
                     'the provided data.',
                     $code
                 );
 
             default:
-                throw new Crypt_GPG_Exception(
-                    'Unknown error decrypting data.', $code
-                );
+                throw new Exceptions\Exception('Unknown error decrypting data.', $code);
             }
             break;
 
         case 'gen-key':
             switch ($code) {
-            case Crypt_GPG::ERROR_BAD_KEY_PARAMS:
-                throw new Crypt_GPG_InvalidKeyParamsException(
+            case GPG::ERROR_BAD_KEY_PARAMS:
+                throw new Exceptions\InvalidKeyParamsException(
                     'Invalid key algorithm specified.', $code
                 );
 
             default:
-                throw new Crypt_GPG_Exception(
+                throw new Exceptions\Exception(
                     'Unknown error generating key-pair. ' . $note, $code
                 );
             }
@@ -760,23 +749,23 @@ class Crypt_GPG_ProcessHandler
     protected function setErrorCode($exitcode)
     {
         if ($this->needPassphrase > 0) {
-            return Crypt_GPG::ERROR_MISSING_PASSPHRASE;
+            return GPG::ERROR_MISSING_PASSPHRASE;
         }
 
         if ($this->operation == 'import') {
-            return Crypt_GPG::ERROR_NONE;
+            return GPG::ERROR_NONE;
         }
 
         if ($this->operation == 'decrypt' && !empty($this->data['DecryptionOkay'])) {
             if (!empty($this->data['IgnoreVerifyErrors'])) {
-                return Crypt_GPG::ERROR_NONE;
+                return GPG::ERROR_NONE;
             }
             if (!empty($this->data['MissingKeys'])) {
-                return Crypt_GPG::ERROR_KEY_NOT_FOUND;
+                return GPG::ERROR_KEY_NOT_FOUND;
             }
         }
 
-        return Crypt_GPG::ERROR_UNKNOWN;
+        return GPG::ERROR_UNKNOWN;
     }
 
     /**
@@ -832,7 +821,7 @@ class Crypt_GPG_ProcessHandler
      * @param int    $code    Error code
      * @param string $message Error message
      *
-     * @return Crypt_GPG_BadPassphraseException
+     * @return Exceptions\BadPassphraseException
      */
     protected function badPassException($code, $message)
     {
@@ -855,7 +844,7 @@ class Crypt_GPG_ProcessHandler
                 implode('", "', $missingPassphrases) . '".';
         }
 
-        return new Crypt_GPG_BadPassphraseException(
+        return new Exceptions\BadPassphraseException(
             $message,
             $code,
             $badPassphrases,

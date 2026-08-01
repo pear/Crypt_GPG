@@ -37,5 +37,3 @@ foreach ($dataFiles as $key => $file) {
 }
 
 echo "\n?>\n";
-
-?>

@@ -34,20 +34,10 @@
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * The Crypt_GPG class to test
- */
-require_once 'Crypt/GPG.php';
+namespace Crypt\GPG\Tests;
 
-/**
- * Key class definition
- */
-require_once 'Crypt/GPG/Key.php';
-
-/**
- * Signature class definition
- */
-require_once 'Crypt/GPG/Signature.php';
+use Crypt\GPG;
+use Crypt\GPG\Signature;
 
 /**
  * Abstract base class for testing Crypt_GPG.
@@ -75,7 +65,7 @@ require_once 'Crypt/GPG/Signature.php';
  *    A public-private key pair that has multiple encrypting subkeys. The
  *    first subkey is an ELG-E key. The second is an RSA key.
  */
-abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
+abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     const HOMEDIR = 'test-keychain';
     const TEMPDIR = 'temp-files';
@@ -140,7 +130,7 @@ abstract class Crypt_GPG_TestCase extends PHPUnit\Framework\TestCase
         $this->_setUpKeyring();
         $this->_setUpTempdir();
 
-        $this->gpg = new Crypt_GPG($this->getOptions());
+        $this->gpg = new GPG($this->getOptions());
     }
 
     private function _setUpKeyring()
@@ -564,7 +554,7 @@ TEXT;
 
         foreach ($dirnames as $dirname) {
             if (file_exists($dirname)) {
-                $iterator = new DirectoryIterator($dirname);
+                $iterator = new \DirectoryIterator($dirname);
                 foreach ($iterator as $file) {
                     if (!$file->isDot()) {
                         $filename = $dirname . '/' . $file->getFilename();
@@ -578,7 +568,7 @@ TEXT;
         }
 
         $homedir  = __DIR__ . '/' . self::HOMEDIR;
-        $iterator = new DirectoryIterator($homedir);
+        $iterator = new \DirectoryIterator($homedir);
 
         foreach ($iterator as $file) {
             if (!$file->isDot()) {
@@ -597,7 +587,7 @@ TEXT;
         $directoryName = __DIR__ . '/' . self::TEMPDIR;
 
         // remove temporary files and temporary directory
-        $iterator = new DirectoryIterator($directoryName);
+        $iterator = new \DirectoryIterator($directoryName);
         foreach ($iterator as $file) {
             if (!$file->isDot()) {
                 $filename = $this->getTempFilename($file->getFilename());
@@ -696,10 +686,8 @@ TEXT;
         }
     }
 
-    protected function assertSignatureEquals(
-        Crypt_GPG_Signature $expected,
-        Crypt_GPG_Signature $actual
-    ) {
+    protected function assertSignatureEquals(Signature $expected, Signature $actual)
+    {
         $expectedUserId = $expected->getUserId();
         $actualUserId   = $actual->getUserId();
 
@@ -749,7 +737,7 @@ TEXT;
 
     protected function getPropertyValue($class, $object, $property)
     {
-        $reflectionClass = new ReflectionClass($class);
+        $reflectionClass = new \ReflectionClass($class);
 
         $prop = $reflectionClass->getProperty($property);
 

@@ -36,19 +36,12 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2008-2011 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
 
-/**
- * Exception classes.
- */
-require_once 'Crypt/GPG/Exceptions.php';
+use Crypt\GPG\Exceptions;
 
 /**
  * Exception classes tests for Crypt_GPG.
@@ -60,17 +53,17 @@ require_once 'Crypt/GPG/Exceptions.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class ExceptionsTest extends Crypt_GPG_TestCase
+class ExceptionsTest extends TestCase
 {
     /**
      * @group exception
      */
     public function testException()
     {
-        $this->expectException('Crypt_GPG_Exception');
+        $this->expectException(Exceptions\Exception::class);
         $this->expectExceptionMessage('test exception');
 
-        throw new Crypt_GPG_Exception('test exception');
+        throw new Exceptions\Exception('test exception');
     }
 
     /**
@@ -78,10 +71,10 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testFileException()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
         $this->expectExceptionMessage('test exception');
 
-        throw new Crypt_GPG_FileException('test exception');
+        throw new Exceptions\FileException('test exception');
     }
 
     /**
@@ -89,8 +82,7 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testFileException_getFilename()
     {
-        $e = new Crypt_GPG_FileException('test exception', 0,
-            'test-filename.php');
+        $e = new Exceptions\FileException('test exception', 0, 'test-filename.php');
 
         $this->assertEquals('test-filename.php', $e->getFilename());
     }
@@ -100,10 +92,10 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testOpenSubprocessException()
     {
-        $this->expectException('Crypt_GPG_OpenSubprocessException');
+        $this->expectException(Exceptions\OpenSubprocessException::class);
         $this->expectExceptionMessage('test exception');
 
-        throw new Crypt_GPG_OpenSubprocessException('test exception');
+        throw new Exceptions\OpenSubprocessException('test exception');
     }
 
     /**
@@ -111,8 +103,7 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testOpenSubprocessException_getCommand()
     {
-        $e = new Crypt_GPG_OpenSubprocessException('test exception', 0,
-            'gpg --verify');
+        $e = new Exceptions\OpenSubprocessException('test exception', 0, 'gpg --verify');
 
         $this->assertEquals('gpg --verify', $e->getCommand());
     }
@@ -122,10 +113,10 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testInvalidOperationException()
     {
-        $this->expectException('Crypt_GPG_InvalidOperationException');
+        $this->expectException(Exceptions\InvalidOperationException::class);
         $this->expectExceptionMessage('test exception');
 
-        throw new Crypt_GPG_InvalidOperationException('test exception');
+        throw new Exceptions\InvalidOperationException('test exception');
     }
 
     /**
@@ -133,8 +124,7 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testInvalidOperationException_getOperation()
     {
-        $e = new Crypt_GPG_InvalidOperationException('test exception', 0,
-            '--verify');
+        $e = new Exceptions\InvalidOperationException('test exception', 0, '--verify');
 
         $this->assertEquals('--verify', $e->getOperation());
     }
@@ -144,10 +134,10 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testKeyNotFoundException()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
         $this->expectExceptionMessage('test exception');
 
-        throw new Crypt_GPG_KeyNotFoundException('test exception');
+        throw new Exceptions\KeyNotFoundException('test exception');
     }
 
     /**
@@ -155,8 +145,7 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testKeyNotFoundException_getKeyId()
     {
-        $e = new Crypt_GPG_KeyNotFoundException('test exception', 0,
-            '9F93F9116728EF12');
+        $e = new Exceptions\KeyNotFoundException('test exception', 0, '9F93F9116728EF12');
 
         $this->assertEquals('9F93F9116728EF12', $e->getKeyId());
     }
@@ -166,10 +155,10 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testNoDataException()
     {
-        $this->expectException('Crypt_GPG_NoDataException');
+        $this->expectException(Exceptions\NoDataException::class);
         $this->expectExceptionMessage('test exception');
 
-        throw new Crypt_GPG_NoDataException('test exception');
+        throw new Exceptions\NoDataException('test exception');
     }
 
     /**
@@ -177,10 +166,10 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testBadPassphraseException()
     {
-        $this->expectException('Crypt_GPG_BadPassphraseException');
+        $this->expectException(Exceptions\BadPassphraseException::class);
         $this->expectExceptionMessage('test exception');
 
-        throw new Crypt_GPG_BadPassphraseException('test exception');
+        throw new Exceptions\BadPassphraseException('test exception');
     }
 
     /**
@@ -188,7 +177,7 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testBadPassphraseException_getBadPassphrases()
     {
-        $e = new Crypt_GPG_BadPassphraseException('test exception', 0,
+        $e = new Exceptions\BadPassphraseException('test exception', 0,
             ['C097D9EC94C06363', '9F93F9116728EF12']);
 
         $keyIds = $e->getBadPassphrases();
@@ -202,7 +191,7 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testBadPassphraseException_getMissingPassphrase()
     {
-        $e = new Crypt_GPG_BadPassphraseException('test exception', 0, [],
+        $e = new Exceptions\BadPassphraseException('test exception', 0, [],
             ['C097D9EC94C06363', '9F93F9116728EF12']);
 
         $keyIds = $e->getMissingPassphrases();
@@ -216,10 +205,10 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testDeletePrivateKeyException()
     {
-        $this->expectException('Crypt_GPG_DeletePrivateKeyException');
+        $this->expectException(Exceptions\DeletePrivateKeyException::class);
         $this->expectExceptionMessage('test exception');
 
-        throw new Crypt_GPG_DeletePrivateKeyException('test exception');
+        throw new Exceptions\DeletePrivateKeyException('test exception');
     }
 
     /**
@@ -227,7 +216,7 @@ class ExceptionsTest extends Crypt_GPG_TestCase
      */
     public function testDeletePrivateKeyException_getKeyId()
     {
-        $e = new Crypt_GPG_DeletePrivateKeyException('test exception', 0,
+        $e = new Exceptions\DeletePrivateKeyException('test exception', 0,
             '9F93F9116728EF12');
 
         $this->assertEquals('9F93F9116728EF12', $e->getKeyId());

@@ -36,14 +36,12 @@
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2008 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Base test case.
- */
-require_once 'TestCase.php';
+namespace Crypt\GPG\Tests;
+
+use Crypt\GPG\Exceptions;
 
 /**
  * Tests encryption abilities of Crypt_GPG.
@@ -55,7 +53,7 @@ require_once 'TestCase.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class EncryptTest extends Crypt_GPG_TestCase
+class EncryptTest extends TestCase
 {
     public function testHasEncryptKeys()
     {
@@ -111,7 +109,7 @@ class EncryptTest extends Crypt_GPG_TestCase
      */
     public function testEncryptNotFoundException_invalid()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
 
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->addEncryptKey('non-existent-key@example.com');
@@ -123,7 +121,7 @@ class EncryptTest extends Crypt_GPG_TestCase
      */
     public function testEncryptNotFoundException_none()
     {
-        $this->expectException('Crypt_GPG_KeyNotFoundException');
+        $this->expectException(Exceptions\KeyNotFoundException::class);
 
         $data = 'Hello, Alice! Goodbye, Bob!';
         $this->gpg->encrypt($data);
@@ -216,7 +214,7 @@ class EncryptTest extends Crypt_GPG_TestCase
      */
     public function testEncryptFileFileException_input()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
 
         // input file does not exist
         $filename =
@@ -231,7 +229,7 @@ class EncryptTest extends Crypt_GPG_TestCase
      */
     public function testEncryptFileFileException_output()
     {
-        $this->expectException('Crypt_GPG_FileException');
+        $this->expectException(Exceptions\FileException::class);
 
         // output file does not exist
         $inputFilename  = $this->getDataFilename('testFileMedium.plain');

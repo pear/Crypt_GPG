@@ -29,15 +29,10 @@
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-/**
- * Sub-key class definition
- */
-require_once 'Crypt/GPG/SubKey.php';
+namespace Crypt\GPG;
 
-/**
- * User id class definition
- */
-require_once 'Crypt/GPG/UserId.php';
+use Crypt\GPG\SubKey;
+use Crypt\GPG\UserId;
 
 /**
  * A data class for GPG key information
@@ -51,40 +46,40 @@ require_once 'Crypt/GPG/UserId.php';
  * @copyright 2008-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
- * @see       Crypt_GPG::getKeys()
+ * @see       \Crypt\GPG::getKeys()
  */
-class Crypt_GPG_Key
+class Key
 {
     /**
      * The user ids associated with this key
      *
-     * This is an array of {@link Crypt_GPG_UserId} objects.
+     * This is an array of {@link \Crypt\GPG\UserId} objects.
      *
-     * @var array<Crypt_GPG_UserId>
+     * @var array<UserId>
      *
-     * @see Crypt_GPG_Key::addUserId()
-     * @see Crypt_GPG_Key::getUserIds()
+     * @see self::addUserId()
+     * @see self::getUserIds()
      */
     private $_userIds = [];
 
     /**
      * The subkeys of this key
      *
-     * This is an array of {@link Crypt_GPG_SubKey} objects.
+     * This is an array of {@link \Crypt\GPG\SubKey} objects.
      *
-     * @var array<Crypt_GPG_SubKey>
+     * @var array<SubKey>
      *
-     * @see Crypt_GPG_Key::addSubKey()
-     * @see Crypt_GPG_Key::getSubKeys()
+     * @see self::addSubKey()
+     * @see self::getSubKeys()
      */
     private $_subKeys = [];
 
     /**
      * Gets the sub-keys of this key
      *
-     * @return array<Crypt_GPG_SubKey> the sub-keys of this key.
+     * @return array<SubKey> the sub-keys of this key.
      *
-     * @see Crypt_GPG_Key::addSubKey()
+     * @see self::addSubKey()
      */
     public function getSubKeys()
     {
@@ -94,9 +89,9 @@ class Crypt_GPG_Key
     /**
      * Gets the user ids of this key
      *
-     * @return array<Crypt_GPG_UserId> the user ids of this key.
+     * @return array<UserId> the user ids of this key.
      *
-     * @see Crypt_GPG_Key::addUserId()
+     * @see self::addUserId()
      */
     public function getUserIds()
     {
@@ -108,7 +103,7 @@ class Crypt_GPG_Key
      *
      * The primary key is the first added sub-key.
      *
-     * @return ?Crypt_GPG_SubKey the primary sub-key of this key.
+     * @return ?SubKey the primary sub-key of this key.
      */
     public function getPrimaryKey()
     {
@@ -164,11 +159,11 @@ class Crypt_GPG_Key
      *
      * The first added sub-key will be the primary key of this key.
      *
-     * @param Crypt_GPG_SubKey $subKey the sub-key to add.
+     * @param SubKey $subKey the sub-key to add.
      *
      * @return $this the current object, for fluent interface.
      */
-    public function addSubKey(Crypt_GPG_SubKey $subKey)
+    public function addSubKey(SubKey $subKey)
     {
         $this->_subKeys[] = $subKey;
         return $this;
@@ -177,11 +172,11 @@ class Crypt_GPG_Key
     /**
      * Adds a user id to this key
      *
-     * @param Crypt_GPG_UserId $userId the user id to add.
+     * @param UserId $userId the user id to add.
      *
      * @return $this the current object, for fluent interface.
      */
-    public function addUserId(Crypt_GPG_UserId $userId)
+    public function addUserId(UserId $userId)
     {
         $this->_userIds[] = $userId;
         return $this;

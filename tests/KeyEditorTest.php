@@ -29,8 +29,12 @@
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
-require_once 'TestCase.php';
-require_once 'Crypt/GPG/KeyEditor.php';
+namespace Crypt\GPG\Tests;
+
+use Crypt\GPG;
+use Crypt\GPG\Exceptions;
+use Crypt\GPG\KeyEditor;
+use Crypt\GPG\UserId;
 
 /**
  * KeyEditor class tests for Crypt_GPG.
@@ -42,14 +46,14 @@ require_once 'Crypt/GPG/KeyEditor.php';
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class KeyEditorTest extends Crypt_GPG_TestCase
+class KeyEditorTest extends TestCase
 {
     /**
      * Test unknown key
      */
     public function testUnknownKey()
     {
-        $this->expectException('Crypt_GPG_OpenSubprocessException');
+        $this->expectException(Exceptions\OpenSubprocessException::class);
 
         $keyEditor = $this->gpg->getKeyEditor();
         $keyEditor->edit('unknown@example.com', 'test');
@@ -63,7 +67,7 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $keyEditor = $this->gpg->getKeyEditor();
 
         // Test successful user addition
-        $user = new Crypt_GPG_UserId([
+        $user = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
             'email'   => 'alice@example.com'
@@ -86,7 +90,7 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $this->assertSame($user->getComment(), $userId->getComment());
 
         // Test that `quit` does not save.
-        $user = new Crypt_GPG_UserId([
+        $user = new UserId([
             'name'    => 'Alice2',
             'comment' => '',
             'email'   => 'alice2@example.com'
@@ -105,11 +109,11 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $this->assertCount(0, $userIds);
 
         // Test editing a key that has no secret key
-        $this->expectException('Crypt_GPG_Exception');
+        $this->expectException(Exceptions\Exception::class);
         $keyEditor->edit('public-only@example.com', 'test')->addUserId($user)->save();
 
         // Test invalid password
-        $this->expectException('Crypt_GPG_BadPassphraseException');
+        $this->expectException(Exceptions\BadPassphraseException::class);
         $keyEditor->edit('second-keypair@example.com', 'wrong')->addUserId($user)->save();
     }
 
@@ -121,19 +125,19 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $keyEditor = $this->gpg->getKeyEditor();
 
         // First add some users to the key
-        $user1 = new Crypt_GPG_UserId([
+        $user1 = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
             'email'   => 'alice@example.com'
         ]);
 
-        $user2 = new Crypt_GPG_UserId([
+        $user2 = new UserId([
             'name'    => 'Jonathan',
             'comment' => '',
             'email'   => 'john@example.com'
         ]);
 
-        $user3 = new Crypt_GPG_UserId([
+        $user3 = new UserId([
             'name'    => '',
             'comment' => '',
             'email'   => 'john@example.com'
@@ -167,8 +171,8 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $this->assertCount(1, $userIds);
 
         // Test deleting the last user
-        $user = new Crypt_GPG_UserId('Second Keypair Test Key (do not encrypt important data with this key) <second-keypair@example.com>');
-        $this->expectException('Crypt_GPG_Exception');
+        $user = new UserId('Second Keypair Test Key (do not encrypt important data with this key) <second-keypair@example.com>');
+        $this->expectException(Exceptions\Exception::class);
         $keyEditor->edit('second-keypair@example.com', 'test2')->deleteUserId($user)->save();
     }
 
@@ -178,8 +182,8 @@ class KeyEditorTest extends Crypt_GPG_TestCase
     public function testDeleteUserIdUnknown()
     {
         $keyEditor = $this->gpg->getKeyEditor();
-        $user = new Crypt_GPG_UserId('<unknown-keypair@example.com>');
-        $this->expectException('Crypt_GPG_Exception');
+        $user = new UserId('<unknown-keypair@example.com>');
+        $this->expectException(Exceptions\Exception::class);
         $keyEditor->edit('second-keypair@example.com', 'test2')->deleteUserId($user)->save();
     }
 
@@ -205,7 +209,7 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $this->assertNull($primary->getExpirationDateTime());
 
         // Test invalid period
-        $this->expectException('Crypt_GPG_Exception');
+        $this->expectException(Exceptions\Exception::class);
         $keyEditor->edit('second-keypair@example.com', 'test2')->expire('-1')->save();
     }
 
@@ -220,7 +224,7 @@ class KeyEditorTest extends Crypt_GPG_TestCase
 
         // Assert the new password in fact works
         $keyEditor->edit('first-keypair@example.com', 'new pass')
-            ->addUserId($user = new Crypt_GPG_UserId('alice@example.com'))
+            ->addUserId($user = new UserId('alice@example.com'))
             ->save();
     }
 
@@ -232,7 +236,7 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $keyEditor = $this->gpg->getKeyEditor();
 
         // First add some users to the key
-        $user1 = (new Crypt_GPG_UserId())->setEmail('alice@example.com');
+        $user1 = (new UserId())->setEmail('alice@example.com');
 
         // Add the user to revoke
         $keyEditor->edit('second-keypair@example.com', 'test2')->addUserId($user1)->save();
@@ -248,8 +252,8 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $this->assertTrue($userIds[0]->isRevoked());
 
         // Test revoking the last user
-        $user = new Crypt_GPG_UserId('Second Keypair Test Key (do not encrypt important data with this key) <second-keypair@example.com>');
-        $this->expectException('Crypt_GPG_Exception');
+        $user = new UserId('Second Keypair Test Key (do not encrypt important data with this key) <second-keypair@example.com>');
+        $this->expectException(Exceptions\Exception::class);
         $keyEditor->edit('second-keypair@example.com', 'test2')->revokeUserId($user)->save();
     }
 
@@ -259,8 +263,8 @@ class KeyEditorTest extends Crypt_GPG_TestCase
     public function testRevokeUserIdUnknown()
     {
         $keyEditor = $this->gpg->getKeyEditor();
-        $user = new Crypt_GPG_UserId('<unknown-keypair@example.com>');
-        $this->expectException('Crypt_GPG_Exception');
+        $user = new UserId('<unknown-keypair@example.com>');
+        $this->expectException(Exceptions\Exception::class);
         $keyEditor->edit('second-keypair@example.com', 'test2')->revokeUserId($user)->save();
     }
 
@@ -315,7 +319,7 @@ class KeyEditorTest extends Crypt_GPG_TestCase
         $this->assertSame($keyEditor::TRUST_FULL + 1, $ownertrust[$fingerprint]);
 
         // Use invalid level
-        $this->expectException('Crypt_GPG_Exception');
+        $this->expectException(Exceptions\Exception::class);
         $keyEditor->edit('public-only@example.com')->trust(123)->save();
     }
 
@@ -326,7 +330,7 @@ class KeyEditorTest extends Crypt_GPG_TestCase
     {
         $emails = [];
 
-        foreach ($this->gpg->setEngineOptions(['list-public-keys' => '--with-sig-list'])->getKeys($keyId) as $key) {
+        foreach ($this->gpg->setEngineOptions(['list-keys' => '--with-sig-list'])->getKeys($keyId) as $key) {
             foreach ($key->getUserIds() as $user) {
                 foreach ($user->getSignatures() as $sig) {
                     $user = $sig->getUserId();

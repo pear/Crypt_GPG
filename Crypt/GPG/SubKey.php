@@ -30,6 +30,8 @@
  * @link      http://pear.php.net/package/Crypt_GPG
  */
 
+namespace Crypt\GPG;
+
 /**
  * A class for GPG sub-key information
  *
@@ -43,10 +45,10 @@
  * @copyright 2005-2010 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
- * @see       Crypt_GPG::getKeys()
- * @see       Crypt_GPG_Key::getSubKeys()
+ * @see       \Crypt\GPG::getKeys()
+ * @see       \Crypt\GPG\Key::getSubKeys()
  */
-class Crypt_GPG_SubKey
+class SubKey
 {
     /**
      * RSA encryption algorithm.
@@ -99,7 +101,7 @@ class Crypt_GPG_SubKey
     /**
      * The algorithm used to create this sub-key
      *
-     * The value is one of the Crypt_GPG_SubKey::ALGORITHM_* constants.
+     * The value is one of the SubKey::ALGORITHM_* constants.
      *
      * @var int
      */
@@ -124,7 +126,7 @@ class Crypt_GPG_SubKey
      *
      * This is a Unix timestamp.
      *
-     * @var DateTime|null
+     * @var \DateTime|null
      */
     private $_creationDate = null;
 
@@ -134,7 +136,7 @@ class Crypt_GPG_SubKey
      * This is a Unix timestamp. If this sub-key does not expire, this will be
      * null.
      *
-     * @var DateTime|null
+     * @var \DateTime|null
      */
     private $_expirationDate = null;
 
@@ -187,10 +189,10 @@ class Crypt_GPG_SubKey
      * - <kbd>bool   isRevoked</kbd>   - whether or not this sub-key is
      *                                   revoked.
      *
-     * @param Crypt_GPG_SubKey|string|array|null $key Either an existing sub-key object,
-     *                                                which is copied; a sub-key string,
-     *                                                which is parsed; or an array
-     *                                                of initial values.
+     * @param SubKey|string|array|null $key Either an existing sub-key object,
+     *                                      which is copied; a sub-key string,
+     *                                      which is parsed; or an array
+     *                                      of initial values.
      */
     public function __construct($key = null)
     {
@@ -200,7 +202,7 @@ class Crypt_GPG_SubKey
         }
 
         // copy from object
-        if ($key instanceof Crypt_GPG_SubKey) {
+        if ($key instanceof self) {
             $this->_id             = $key->_id;
             $this->_algorithm      = $key->_algorithm;
             $this->_fingerprint    = $key->_fingerprint;
@@ -299,7 +301,7 @@ class Crypt_GPG_SubKey
     /**
      * Gets the creation date-time (UTC) of this sub-key
      *
-     * @return DateTime|null The creation date of this sub-key.
+     * @return \DateTime|null The creation date of this sub-key.
      */
     public function getCreationDateTime()
     {
@@ -323,7 +325,7 @@ class Crypt_GPG_SubKey
     /**
      * Gets the date-time (UTC) this sub-key expires
      *
-     * @return DateTime|null The date this sub-key expires.
+     * @return \DateTime|null The date this sub-key expires.
      */
     public function getExpirationDateTime()
     {
@@ -409,9 +411,9 @@ class Crypt_GPG_SubKey
      *
      * The creation date is a Unix timestamp or DateTime object.
      *
-     * @param int|DateTime $creationDate The creation date of this sub-key.
+     * @param int|\DateTime $creationDate The creation date of this sub-key.
      *
-     * @return Crypt_GPG_SubKey The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setCreationDate($creationDate)
     {
@@ -420,11 +422,11 @@ class Crypt_GPG_SubKey
             return $this;
         }
 
-        if ($creationDate instanceof DateTime) {
+        if ($creationDate instanceof \DateTime) {
             $this->_creationDate = $creationDate;
         } else {
-            $tz = new DateTimeZone('UTC');
-            $this->_creationDate = new DateTime("@$creationDate", $tz);
+            $tz = new \DateTimeZone('UTC');
+            $this->_creationDate = new \DateTime("@$creationDate", $tz);
         }
 
         return $this;
@@ -436,9 +438,9 @@ class Crypt_GPG_SubKey
      * The expiration date is a Unix timestamp. Specify zero if this sub-key
      * does not expire.
      *
-     * @param int|DateTime $expirationDate The expiration date of this sub-key.
+     * @param int|\DateTime $expirationDate The expiration date of this sub-key.
      *
-     * @return Crypt_GPG_SubKey The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setExpirationDate($expirationDate)
     {
@@ -447,11 +449,11 @@ class Crypt_GPG_SubKey
             return $this;
         }
 
-        if ($expirationDate instanceof DateTime) {
+        if ($expirationDate instanceof \DateTime) {
             $this->_expirationDate = $expirationDate;
         } else {
-            $tz = new DateTimeZone('UTC');
-            $this->_expirationDate = new DateTime("@$expirationDate", $tz);
+            $tz = new \DateTimeZone('UTC');
+            $this->_expirationDate = new \DateTime("@$expirationDate", $tz);
         }
 
         return $this;
@@ -462,7 +464,7 @@ class Crypt_GPG_SubKey
      *
      * @param string $id The id of this sub-key.
      *
-     * @return Crypt_GPG_SubKey The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setId($id)
     {
@@ -475,7 +477,7 @@ class Crypt_GPG_SubKey
      *
      * @param int $algorithm The algorithm used by this sub-key.
      *
-     * @return Crypt_GPG_SubKey The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setAlgorithm($algorithm)
     {
@@ -488,7 +490,7 @@ class Crypt_GPG_SubKey
      *
      * @param string $fingerprint The fingerprint of this sub-key.
      *
-     * @return Crypt_GPG_SubKey The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setFingerprint($fingerprint)
     {
@@ -501,7 +503,7 @@ class Crypt_GPG_SubKey
      *
      * @param int $length The length of this sub-key in bits.
      *
-     * @return Crypt_GPG_SubKey The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setLength($length)
     {
@@ -515,7 +517,7 @@ class Crypt_GPG_SubKey
      * @param bool $canSign True if this sub-key can sign data and false if
      *                      it can not.
      *
-     * @return Crypt_GPG_SubKey The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setCanSign($canSign)
     {
@@ -534,7 +536,7 @@ class Crypt_GPG_SubKey
      * @param bool $canEncrypt True if this sub-key can encrypt data and
      *                         false if it can not.
      *
-     * @return Crypt_GPG_SubKey The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setCanEncrypt($canEncrypt)
     {
@@ -552,7 +554,7 @@ class Crypt_GPG_SubKey
      *
      * @param int $usage Usage flags
      *
-     * @return Crypt_GPG_SubKey The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setUsage($usage)
     {
@@ -568,7 +570,7 @@ class Crypt_GPG_SubKey
      *                         exists in the keyring and false if it does
      *                         not.
      *
-     * @return Crypt_GPG_SubKey The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setHasPrivate($hasPrivate)
     {
@@ -581,7 +583,7 @@ class Crypt_GPG_SubKey
      *
      * @param bool $isRevoked Whether or not this sub-key is revoked.
      *
-     * @return Crypt_GPG_SubKey The current object, for fluent interface.
+     * @return $this The current object, for fluent interface.
      */
     public function setRevoked($isRevoked)
     {
@@ -598,17 +600,17 @@ class Crypt_GPG_SubKey
      *
      * @param string $string The string containing the sub-key.
      *
-     * @return Crypt_GPG_SubKey The sub-key object parsed from the string.
+     * @return self The sub-key object parsed from the string.
      */
     public static function parse($string)
     {
         $tokens = explode(':', $string);
 
-        $subKey = new Crypt_GPG_SubKey();
+        $subKey = new self();
 
         $subKey->setId($tokens[4]);
-        $subKey->setLength($tokens[2]);
-        $subKey->setAlgorithm($tokens[3]);
+        $subKey->setLength((int) $tokens[2]);
+        $subKey->setAlgorithm((int) $tokens[3]);
         $subKey->setCreationDate(self::_parseDate($tokens[5]));
         $subKey->setExpirationDate(self::_parseDate($tokens[6]));
         $subKey->setHasPrivate(isset($tokens[14]) && $tokens[14] == '+');
@@ -641,7 +643,7 @@ class Crypt_GPG_SubKey
      *
      * @param string $string The date string.
      *
-     * @return DateTime|null The date corresponding to the provided date string.
+     * @return \DateTime|null The date corresponding to the provided date string.
      */
     private static function _parseDate($string)
     {
@@ -650,13 +652,13 @@ class Crypt_GPG_SubKey
         }
 
         // all times are in UTC according to GPG documentation
-        $timeZone = new DateTimeZone('UTC');
+        $timeZone = new \DateTimeZone('UTC');
 
         if (strpos($string, 'T') === false) {
             // interpret as UNIX timestamp
             $string = '@' . $string;
         }
 
-        return new DateTime($string, $timeZone);
+        return new \DateTime($string, $timeZone);
     }
 }

@@ -89,15 +89,15 @@ class VerifyTest extends TestCase
         $data = 'Hello, Alice! Goodbye, Bob!';
         // {{{ detached signature
         $detachedSignature = <<<TEXT
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+            -----BEGIN PGP SIGNATURE-----
+            Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQBI1xN9CuJ9bDb23VARAkKSAKCG5/jPq1H7+mpMEpDITFnAJhSqlwCggzRx
-laNWOZOef2zfm1yANtWjPyU=
-=fhME
------END PGP SIGNATURE-----
+            iD8DBQBI1xN9CuJ9bDb23VARAkKSAKCG5/jPq1H7+mpMEpDITFnAJhSqlwCggzRx
+            laNWOZOef2zfm1yANtWjPyU=
+            =fhME
+            -----END PGP SIGNATURE-----
 
-TEXT;
+            TEXT;
         // }}}
         $this->gpg->verify($data, $detachedSignature);
     }
@@ -125,16 +125,16 @@ TEXT;
         // }}}
         // {{{ normal signed data
         $normalSignedData = <<<TEXT
------BEGIN PGP MESSAGE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+            -----BEGIN PGP MESSAGE-----
+            Version: GnuPG v1.4.6 (GNU/Linux)
 
-owGbwMvMwCR4YPrNN1MOJCczrjFOEsrLL8pNzNEtzkzPS03RTUksSfS49JPJIzUn
-J19HwTEnMzlVUcE9Pz8lqTJVR8EpP0mxw56ZlQGkBmaMIJO9GsOCo2L3pk5y2DNT
-yiFKb0X03YSJqscaGRb0BKjZ3P+6SvjG160/WOa9vpey4QUDAA==
-=wtCB
------END PGP MESSAGE-----
+            owGbwMvMwCR4YPrNN1MOJCczrjFOEsrLL8pNzNEtzkzPS03RTUksSfS49JPJIzUn
+            J19HwTEnMzlVUcE9Pz8lqTJVR8EpP0mxw56ZlQGkBmaMIJO9GsOCo2L3pk5y2DNT
+            yiFKb0X03YSJqscaGRb0BKjZ3P+6SvjG160/WOa9vpey4QUDAA==
+            =wtCB
+            -----END PGP MESSAGE-----
 
-TEXT;
+            TEXT;
         // }}}
 
         $expectedSignatures = [$signature];
@@ -166,19 +166,19 @@ TEXT;
         // }}}
         // {{{ clearsigned data
         $clearsignedData = <<<TEXT
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+            -----BEGIN PGP SIGNED MESSAGE-----
+            Hash: SHA1
 
-Hello, Alice! Goodbye, Bob!
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+            Hello, Alice! Goodbye, Bob!
+            -----BEGIN PGP SIGNATURE-----
+            Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQFI0vkCwJfZ7JTAY2MRAgzTAKCRecYZsCS+PE46Fa2QLTEP8XGLwwCfQEAL
-qO+KlKcldtYdMZH9AA+KOLQ=
-=EO2G
------END PGP SIGNATURE-----
+            iD8DBQFI0vkCwJfZ7JTAY2MRAgzTAKCRecYZsCS+PE46Fa2QLTEP8XGLwwCfQEAL
+            qO+KlKcldtYdMZH9AA+KOLQ=
+            =EO2G
+            -----END PGP SIGNATURE-----
 
-TEXT;
+            TEXT;
         // }}}
 
         $expectedSignatures = [$signature];
@@ -212,15 +212,15 @@ TEXT;
         // }}}
         // {{{ detached signature
         $detachedSignature = <<<TEXT
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+            -----BEGIN PGP SIGNATURE-----
+            Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQBI0vkCwJfZ7JTAY2MRAj8mAKC4IN01tGaEtNxWYS5eQiNT4Fua9ACeKum3
-BdQ5rTOK2pp2X2vy/k2aCPo=
-=upYI
------END PGP SIGNATURE-----
+            iD8DBQBI0vkCwJfZ7JTAY2MRAj8mAKC4IN01tGaEtNxWYS5eQiNT4Fua9ACeKum3
+            BdQ5rTOK2pp2X2vy/k2aCPo=
+            =upYI
+            -----END PGP SIGNATURE-----
 
-TEXT;
+            TEXT;
         // }}}
 
         $expectedSignatures = [$signature];
@@ -268,18 +268,18 @@ TEXT;
         // }}}
         // {{{ dual normal signed data
         $dualNormalSignedData = <<<TEXT
------BEGIN PGP MESSAGE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+            -----BEGIN PGP MESSAGE-----
+            Version: GnuPG v1.4.6 (GNU/Linux)
 
-owGbwMvMwCR4YPrNN1MOJCczTABzmc90cv2SXevNuMYiSTylNDFHNy+/KBdIFWem
-56Wm6KYkliR6XPrJ5JGak5Ovo+CYk5mcqqjgnp+fklSZqqPglJ+k2GHPzMoAUgMz
-S5DJXo1hns0D5bkxpVHbI8+1y866l6K4yE1vHcNcOS1T45mf+VMn1NxQnnVn3Uab
-dx7z4AbA3AY2YMGDvnnpCe982TwPTGyZdn+fMbu0fQDDgn098wSP/O79+/aYgon9
-y/y/MVtYcwE=
-=7EC6
------END PGP MESSAGE-----
+            owGbwMvMwCR4YPrNN1MOJCczTABzmc90cv2SXevNuMYiSTylNDFHNy+/KBdIFWem
+            56Wm6KYkliR6XPrJ5JGak5Ovo+CYk5mcqqjgnp+fklSZqqPglJ+k2GHPzMoAUgMz
+            S5DJXo1hns0D5bkxpVHbI8+1y866l6K4yE1vHcNcOS1T45mf+VMn1NxQnnVn3Uab
+            dx7z4AbA3AY2YMGDvnnpCe982TwPTGyZdn+fMbu0fQDDgn098wSP/O79+/aYgon9
+            y/y/MVtYcwE=
+            =7EC6
+            -----END PGP MESSAGE-----
 
-TEXT;
+            TEXT;
         // }}}
 
         $expectedSignatures = [$firstSignature, $secondSignature];
@@ -327,20 +327,20 @@ TEXT;
         // }}}
         // {{{ dual clearsigned data
         $dualClearsignedData = <<<TEXT
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+            -----BEGIN PGP SIGNED MESSAGE-----
+            Hash: SHA1
 
-Hello, Alice! Goodbye, Bob!
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+            Hello, Alice! Goodbye, Bob!
+            -----BEGIN PGP SIGNATURE-----
+            Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQFI0vkCA8yJCvodrUsRAgzTAJ9xSosvdq3fqaseRS6YV9VgnSGo2gCgiD+2
-TRUrY67ZzdfTjCd6cFZHqauIPwMFAUjS+QLAl9nslMBjYxECDNMAoKdQQAWe8EwG
-kZ/cCDE/fgToHk+7AJ9sU0NweUfUP3KNe2UK808Epd0Avg==
-=j0ot
------END PGP SIGNATURE-----
+            iD8DBQFI0vkCA8yJCvodrUsRAgzTAJ9xSosvdq3fqaseRS6YV9VgnSGo2gCgiD+2
+            TRUrY67ZzdfTjCd6cFZHqauIPwMFAUjS+QLAl9nslMBjYxECDNMAoKdQQAWe8EwG
+            kZ/cCDE/fgToHk+7AJ9sU0NweUfUP3KNe2UK808Epd0Avg==
+            =j0ot
+            -----END PGP SIGNATURE-----
 
-TEXT;
+            TEXT;
         // }}}
 
         $expectedSignatures = [$firstSignature, $secondSignature];
@@ -390,16 +390,16 @@ TEXT;
         // }}}
         // {{{ dual detached signature
         $dualDetachedSignature = <<<TEXT
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+            -----BEGIN PGP SIGNATURE-----
+            Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQBI0vkCA8yJCvodrUsRAj8mAKCJWz3ANeG9SPGUHMg04gH0rCOqKwCfaxUR
-Dypdcanj3VE3inTxleaQtdqIPwMFAEjS+QLAl9nslMBjYxECPyYAoN+Y3tibHIg+
-9+fdvxAEvANir2RQAKCuD2BsKzSmyV3G4/i6oPNhOrwtPg==
-=8P1D
------END PGP SIGNATURE-----
+            iD8DBQBI0vkCA8yJCvodrUsRAj8mAKCJWz3ANeG9SPGUHMg04gH0rCOqKwCfaxUR
+            Dypdcanj3VE3inTxleaQtdqIPwMFAEjS+QLAl9nslMBjYxECPyYAoN+Y3tibHIg+
+            9+fdvxAEvANir2RQAKCuD2BsKzSmyV3G4/i6oPNhOrwtPg==
+            =8P1D
+            -----END PGP SIGNATURE-----
 
-TEXT;
+            TEXT;
         // }}}
 
         $expectedSignatures = [$firstSignature, $secondSignature];
@@ -427,15 +427,15 @@ TEXT;
         // }}}
         // {{{ detached signature
         $detachedSignature = <<<TEXT
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+            -----BEGIN PGP SIGNATURE-----
+            Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQBI0vkCwJfZ7JTAY2MRAj8mAKC4IN01tGaEtNxWYS5eQiNT4Fua9ACeKum3
-BdQ5rTOK2pp2X2vy/k2aCPo=
-=upYI
------END PGP SIGNATURE-----
+            iD8DBQBI0vkCwJfZ7JTAY2MRAj8mAKC4IN01tGaEtNxWYS5eQiNT4Fua9ACeKum3
+            BdQ5rTOK2pp2X2vy/k2aCPo=
+            =upYI
+            -----END PGP SIGNATURE-----
 
-TEXT;
+            TEXT;
         // }}}
 
         $expectedSignatures = [$signature];
@@ -474,16 +474,16 @@ TEXT;
         // }}}
         // {{{ dual detached signature
         $dualDetachedSignature = <<<TEXT
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+            -----BEGIN PGP SIGNATURE-----
+            Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQBI0vkCA8yJCvodrUsRAj8mAKCJWz3ANeG9SPGUHMg04gH0rCOqKwCfaxUR
-Dypdcanj3VE3inTxleaQtdqIPwMFAEjS+QLAl9nslMBjYxECPyYAoN+Y3tibHIg+
-9+fdvxAEvANir2RQAKCuD2BsKzSmyV3G4/i6oPNhOrwtPg==
-=8P1D
------END PGP SIGNATURE-----
+            iD8DBQBI0vkCA8yJCvodrUsRAj8mAKCJWz3ANeG9SPGUHMg04gH0rCOqKwCfaxUR
+            Dypdcanj3VE3inTxleaQtdqIPwMFAEjS+QLAl9nslMBjYxECPyYAoN+Y3tibHIg+
+            9+fdvxAEvANir2RQAKCuD2BsKzSmyV3G4/i6oPNhOrwtPg==
+            =8P1D
+            -----END PGP SIGNATURE-----
 
-TEXT;
+            TEXT;
         // }}}
 
         $expectedSignatures = [$firstSignature, $secondSignature];
@@ -575,15 +575,15 @@ TEXT;
         // }}}
         // {{{ signatureData
         $signatureData = <<<TEXT
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+            -----BEGIN PGP SIGNATURE-----
+            Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQBI1aQDwJfZ7JTAY2MRAvkzAJ0RAW0wtlfEgDccgq+N5IgbpA4BOQCfS8vV
-Of32/RcteCLdt73awNJ0CwI=
-=RVco
------END PGP SIGNATURE-----
+            iD8DBQBI1aQDwJfZ7JTAY2MRAvkzAJ0RAW0wtlfEgDccgq+N5IgbpA4BOQCfS8vV
+            Of32/RcteCLdt73awNJ0CwI=
+            =RVco
+            -----END PGP SIGNATURE-----
 
-TEXT;
+            TEXT;
         // }}}
 
         $expectedSignatures = [$signature];
@@ -725,16 +725,16 @@ TEXT;
         // }}}
         // {{{ signature data
         $signatureData = <<<TEXT
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+            -----BEGIN PGP SIGNATURE-----
+            Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQBI1aQDwJfZ7JTAY2MRAvkzAKDPnJ030GdYE15mE8smz2oV7zYziwCeJFxf
-UaTrAgP1Dck9DhHOBhvhwLuIPwMFAEjVpAMDzIkK+h2tSxEC+TMAn38yx3mXk6wP
-JaPThD7lRVE9ve57AJ0Yy7JwiT9sGXomln4JtRvuSpGtsg==
-=Gw9D
------END PGP SIGNATURE-----
+            iD8DBQBI1aQDwJfZ7JTAY2MRAvkzAKDPnJ030GdYE15mE8smz2oV7zYziwCeJFxf
+            UaTrAgP1Dck9DhHOBhvhwLuIPwMFAEjVpAMDzIkK+h2tSxEC+TMAn38yx3mXk6wP
+            JaPThD7lRVE9ve57AJ0Yy7JwiT9sGXomln4JtRvuSpGtsg==
+            =Gw9D
+            -----END PGP SIGNATURE-----
 
-TEXT;
+            TEXT;
         // }}}
 
         $expectedSignatures = [$firstSignature, $secondSignature];

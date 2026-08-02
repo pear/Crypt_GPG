@@ -69,7 +69,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 0,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'isRevoked'   => true
+            'isRevoked'   => true,
         ]);
 
         $string = 'sub:r:2048:16:8C37DBD2A01B7976:1221528655::::::e:';
@@ -93,7 +93,7 @@ class SubKeyTest extends TestCase
             'canSign'     => false,
             'canEncrypt'  => true,
             'hasPrivate'  => true,
-            'isRevoked'   => true
+            'isRevoked'   => true,
         ]);
 
         $subKey = new SubKey($expectedSubKey);
@@ -116,15 +116,19 @@ class SubKeyTest extends TestCase
             'canSign'     => false,
             'canEncrypt'  => true,
             'hasPrivate'  => true,
-            'isRevoked'   => true
+            'isRevoked'   => true,
         ]);
 
         $this->assertEquals('8C37DBD2A01B7976', $subKey->getId());
-        $this->assertEquals(SubKey::ALGORITHM_ELGAMAL_ENC,
-            $subKey->getAlgorithm());
+        $this->assertEquals(
+            SubKey::ALGORITHM_ELGAMAL_ENC,
+            $subKey->getAlgorithm()
+        );
 
-        $this->assertEquals('8D2299D9C5C211128B32BBB0C097D9EC94C06363',
-            $subKey->getFingerprint());
+        $this->assertEquals(
+            '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            $subKey->getFingerprint()
+        );
 
         $this->assertEquals(2048, $subKey->getLength());
         $this->assertFalse($subKey->canSign());
@@ -154,7 +158,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 3321785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'isRevoked'   => true
+            'isRevoked'   => true,
         ]);
 
         $string = 'sub:r:2048:16:8C37DBD2A01B7976:1221528655:3321785858:::::e:';
@@ -183,7 +187,7 @@ class SubKeyTest extends TestCase
             'creation'    => 1221442255,
             'expiration'  => 0,
             'canSign'     => false,
-            'canEncrypt'  => true
+            'canEncrypt'  => true,
         ]);
 
         $string = 'sub:u:2048:16:8C37DBD2A01B7976:20080915T013055::::::e:';
@@ -206,7 +210,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertEquals('8C37DBD2A01B7976', $subKey->getId());
@@ -226,11 +230,13 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
-        $this->assertEquals(SubKey::ALGORITHM_ELGAMAL_ENC,
-            $subKey->getAlgorithm());
+        $this->assertEquals(
+            SubKey::ALGORITHM_ELGAMAL_ENC,
+            $subKey->getAlgorithm()
+        );
     }
 
     /**
@@ -247,11 +253,13 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
-        $this->assertEquals('8D2299D9C5C211128B32BBB0C097D9EC94C06363',
-            $subKey->getFingerprint());
+        $this->assertEquals(
+            '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            $subKey->getFingerprint()
+        );
     }
 
     /**
@@ -268,7 +276,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertEquals(2048, $subKey->getLength());
@@ -288,7 +296,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertEquals(1221785858, $subKey->getCreationDate());
@@ -308,7 +316,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertSame('2008-09-19T00:57:38+00:00', $subKey->getCreationDateTime()->format('c'));
@@ -322,7 +330,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertSame(null, $subKey->getCreationDateTime());
@@ -342,7 +350,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertEquals(1421785858, $subKey->getExpirationDate());
@@ -362,7 +370,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertSame('2015-01-20T20:30:58+00:00', $subKey->getExpirationDateTime()->format('c'));
@@ -376,7 +384,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 0,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertSame(null, $subKey->getExpirationDateTime());
@@ -396,7 +404,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => true,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertTrue($subKey->canSign());
@@ -410,7 +418,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertFalse($subKey->canSign());
@@ -430,7 +438,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertTrue($subKey->canEncrypt());
@@ -444,7 +452,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => true,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertFalse($subKey->canEncrypt());
@@ -465,7 +473,7 @@ class SubKeyTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'usage'       => $usage,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertSame($usage, $subKey->usage());
@@ -479,7 +487,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => true,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertSame(SubKey::USAGE_SIGN, $subKey->usage());
@@ -499,7 +507,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => true,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertTrue($subKey->hasPrivate());
@@ -513,7 +521,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => true,
             'canEncrypt'  => false,
-            'hasPrivate'  => false
+            'hasPrivate'  => false,
         ]);
 
         $this->assertFalse($subKey->hasPrivate());
@@ -534,7 +542,7 @@ class SubKeyTest extends TestCase
             'canSign'     => true,
             'canEncrypt'  => false,
             'hasPrivate'  => true,
-            'isRevoked'   => true
+            'isRevoked'   => true,
         ]);
 
         $this->assertTrue($subKey->isRevoked());
@@ -549,7 +557,7 @@ class SubKeyTest extends TestCase
             'canSign'     => true,
             'canEncrypt'  => false,
             'hasPrivate'  => false,
-            'isRevoked'   => false
+            'isRevoked'   => false,
         ]);
 
         $this->assertFalse($subKey->isRevoked());
@@ -569,7 +577,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey = new SubKey([
@@ -581,7 +589,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey->setId('8C37DBD2A01B7976');
@@ -603,7 +611,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey = new SubKey([
@@ -615,7 +623,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey->setAlgorithm(SubKey::ALGORITHM_ELGAMAL_ENC);
@@ -637,7 +645,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey = new SubKey([
@@ -649,7 +657,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey->setFingerprint('8D2299D9C5C211128B32BBB0C097D9EC94C06363');
@@ -671,7 +679,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey = new SubKey([
@@ -683,7 +691,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey->setLength(2048);
@@ -705,7 +713,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey = new SubKey([
@@ -717,7 +725,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey->setCreationDate(1221785858);
@@ -739,7 +747,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey = new SubKey([
@@ -751,7 +759,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1111111111,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey->setExpirationDate(1421785858);
@@ -773,7 +781,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => true,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey = new SubKey([
@@ -785,7 +793,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey->setCanSign(true);
@@ -807,7 +815,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey = new SubKey([
@@ -819,7 +827,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey->setCanEncrypt(true);
@@ -841,7 +849,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $subKey = new SubKey([
@@ -853,7 +861,7 @@ class SubKeyTest extends TestCase
             'expiration'  => 1421785858,
             'canSign'     => false,
             'canEncrypt'  => false,
-            'hasPrivate'  => false
+            'hasPrivate'  => false,
         ]);
 
         $subKey->setHasPrivate(true);
@@ -876,7 +884,7 @@ class SubKeyTest extends TestCase
             'canSign'     => false,
             'canEncrypt'  => false,
             'hasPrivate'  => false,
-            'isRevoked'   => true
+            'isRevoked'   => true,
         ]);
 
         $subKey = new SubKey([
@@ -889,7 +897,7 @@ class SubKeyTest extends TestCase
             'canSign'     => false,
             'canEncrypt'  => false,
             'hasPrivate'  => false,
-            'isRevoked'   => false
+            'isRevoked'   => false,
         ]);
 
         $subKey->setRevoked(true);
@@ -925,8 +933,8 @@ class SubKeyTest extends TestCase
         $this->assertEquals(
             $subKey,
             $returnedSubKey,
-            'Failed asserting fluent interface works for setFingerprint() ' .
-            'method.'
+            'Failed asserting fluent interface works for setFingerprint() '
+            . 'method.'
         );
 
         $subKey         = new SubKey();
@@ -942,8 +950,8 @@ class SubKeyTest extends TestCase
         $this->assertEquals(
             $subKey,
             $returnedSubKey,
-            'Failed asserting fluent interface works for setCreationDate() ' .
-            'method.'
+            'Failed asserting fluent interface works for setCreationDate() '
+            . 'method.'
         );
 
         $subKey         = new SubKey();
@@ -951,8 +959,8 @@ class SubKeyTest extends TestCase
         $this->assertEquals(
             $subKey,
             $returnedSubKey,
-            'Failed asserting fluent interface works for setExpirationDate() ' .
-            'method.'
+            'Failed asserting fluent interface works for setExpirationDate() '
+            . 'method.'
         );
 
         $subKey         = new SubKey();
@@ -968,8 +976,8 @@ class SubKeyTest extends TestCase
         $this->assertEquals(
             $subKey,
             $returnedSubKey,
-            'Failed asserting fluent interface works for setCanEncrypt() ' .
-            'method.'
+            'Failed asserting fluent interface works for setCanEncrypt() '
+            . 'method.'
         );
 
         $subKey         = new SubKey();
@@ -977,8 +985,8 @@ class SubKeyTest extends TestCase
         $this->assertEquals(
             $subKey,
             $returnedSubKey,
-            'Failed asserting fluent interface works for setHasPrivate() ' .
-            'method.'
+            'Failed asserting fluent interface works for setHasPrivate() '
+            . 'method.'
         );
 
         $subKey         = new SubKey();

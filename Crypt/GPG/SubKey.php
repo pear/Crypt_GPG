@@ -53,43 +53,43 @@ class SubKey
     /**
      * RSA encryption algorithm.
      */
-    const ALGORITHM_RSA = 1;
+    public const ALGORITHM_RSA = 1;
 
     /**
      * Elgamal encryption algorithm (encryption only).
      */
-    const ALGORITHM_ELGAMAL_ENC = 16;
+    public const ALGORITHM_ELGAMAL_ENC = 16;
 
     /**
      * DSA encryption algorithm (sometimes called DH, sign only).
      */
-    const ALGORITHM_DSA = 17;
+    public const ALGORITHM_DSA = 17;
 
     /**
      * Elgamal encryption algorithm (signage and encryption - should not be
      * used).
      */
-    const ALGORITHM_ELGAMAL_ENC_SGN = 20;
+    public const ALGORITHM_ELGAMAL_ENC_SGN = 20;
 
     /**
      * Key can be used to encrypt
      */
-    const USAGE_ENCRYPT = 1;
+    public const USAGE_ENCRYPT = 1;
 
     /**
      * Key can be used to sign
      */
-    const USAGE_SIGN = 2;
+    public const USAGE_SIGN = 2;
 
     /**
      * Key can be used to certify other keys
      */
-    const USAGE_CERTIFY = 4;
+    public const USAGE_CERTIFY = 4;
 
     /**
      * Key can be used for authentication
      */
-    const USAGE_AUTHENTICATION = 8;
+    public const USAGE_AUTHENTICATION = 8;
 
     /**
      * The id of this sub-key

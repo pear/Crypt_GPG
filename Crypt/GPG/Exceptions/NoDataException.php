@@ -15,6 +15,4 @@ namespace Crypt\GPG\Exceptions;
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @link      http://pear.php.net/package/Crypt_GPG
  */
-class NoDataException extends Exception
-{
-}
+class NoDataException extends Exception {}

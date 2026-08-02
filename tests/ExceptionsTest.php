@@ -177,8 +177,11 @@ class ExceptionsTest extends TestCase
      */
     public function testBadPassphraseException_getBadPassphrases()
     {
-        $e = new Exceptions\BadPassphraseException('test exception', 0,
-            ['C097D9EC94C06363', '9F93F9116728EF12']);
+        $e = new Exceptions\BadPassphraseException(
+            'test exception',
+            0,
+            ['C097D9EC94C06363', '9F93F9116728EF12']
+        );
 
         $keyIds = $e->getBadPassphrases();
 
@@ -191,8 +194,12 @@ class ExceptionsTest extends TestCase
      */
     public function testBadPassphraseException_getMissingPassphrase()
     {
-        $e = new Exceptions\BadPassphraseException('test exception', 0, [],
-            ['C097D9EC94C06363', '9F93F9116728EF12']);
+        $e = new Exceptions\BadPassphraseException(
+            'test exception',
+            0,
+            [],
+            ['C097D9EC94C06363', '9F93F9116728EF12']
+        );
 
         $keyIds = $e->getMissingPassphrases();
 
@@ -216,8 +223,11 @@ class ExceptionsTest extends TestCase
      */
     public function testDeletePrivateKeyException_getKeyId()
     {
-        $e = new Exceptions\DeletePrivateKeyException('test exception', 0,
-            '9F93F9116728EF12');
+        $e = new Exceptions\DeletePrivateKeyException(
+            'test exception',
+            0,
+            '9F93F9116728EF12'
+        );
 
         $this->assertEquals('9F93F9116728EF12', $e->getKeyId());
     }

@@ -30,7 +30,8 @@
     "require-dev": {
         "ext-posix": "*",
         "phpstan/phpstan": "^2.2",
-        "phpunit/phpunit": "^10"
+        "phpunit/phpunit": "^10",
+        "friendsofphp/php-cs-fixer": "^3.95"
     },
     "suggest": {
         "ext-posix": "May require the posix PHP extension"
@@ -51,10 +52,5 @@
     },
     "archive": {
         "exclude": ["tools"]
-    },
-    "config": {
-        "audit": {
-            "block-insecure": false
-        }
     }
 }

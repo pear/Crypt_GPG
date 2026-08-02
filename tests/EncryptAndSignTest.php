@@ -267,19 +267,21 @@ class EncryptAndSignTest extends TestCase
     {
         $expectedMd5Sum    = 'f96267d87551ee09bfcac16921e351c1';
         $originalFilename  = $this->getDataFilename('testFileMedium.plain');
-        $encryptedFilename =
-            $this->getTempFilename('testEncryptAndSignFileNoPassphrase.asc');
+        $encryptedFilename
+            = $this->getTempFilename('testEncryptAndSignFileNoPassphrase.asc');
 
-        $decryptedFilename =
-            $this->getTempFilename('testEncryptAndSignFileNoPassphrase.plain');
+        $decryptedFilename
+            = $this->getTempFilename('testEncryptAndSignFileNoPassphrase.plain');
 
         $this->gpg->addSignKey('no-passphrase@example.com');
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptAndSignFile($originalFilename, $encryptedFilename);
 
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
-        $results = $this->gpg->decryptAndVerifyFile($encryptedFilename,
-            $decryptedFilename);
+        $results = $this->gpg->decryptAndVerifyFile(
+            $encryptedFilename,
+            $decryptedFilename
+        );
 
         $md5Sum = $this->getMd5Sum($decryptedFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
@@ -297,19 +299,21 @@ class EncryptAndSignTest extends TestCase
     {
         $expectedMd5Sum    = 'f96267d87551ee09bfcac16921e351c1';
         $originalFilename  = $this->getDataFilename('testFileMedium.plain');
-        $encryptedFilename =
-            $this->getTempFilename('testEncryptAndSignFileNoPassphrase.asc');
+        $encryptedFilename
+            = $this->getTempFilename('testEncryptAndSignFileNoPassphrase.asc');
 
-        $decryptedFilename =
-            $this->getTempFilename('testEncryptAndSignFileNoPassphrase.plain');
+        $decryptedFilename
+            = $this->getTempFilename('testEncryptAndSignFileNoPassphrase.plain');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptAndSignFile($originalFilename, $encryptedFilename);
 
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
-        $results = $this->gpg->decryptAndVerifyFile($encryptedFilename,
-            $decryptedFilename);
+        $results = $this->gpg->decryptAndVerifyFile(
+            $encryptedFilename,
+            $decryptedFilename
+        );
 
         $md5Sum = $this->getMd5Sum($decryptedFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
@@ -327,11 +331,11 @@ class EncryptAndSignTest extends TestCase
     {
         $expectedMd5Sum    = 'f96267d87551ee09bfcac16921e351c1';
         $originalFilename  = $this->getDataFilename('testFileMedium.plain');
-        $encryptedFilename =
-            $this->getTempFilename('testEncryptAndSignFileNoPassphrase.asc');
+        $encryptedFilename
+            = $this->getTempFilename('testEncryptAndSignFileNoPassphrase.asc');
 
-        $decryptedFilename =
-            $this->getTempFilename('testEncryptAndSignFileNoPassphrase.plain');
+        $decryptedFilename
+            = $this->getTempFilename('testEncryptAndSignFileNoPassphrase.plain');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addSignKey('no-passphrase@example.com');
@@ -339,8 +343,10 @@ class EncryptAndSignTest extends TestCase
         $this->gpg->encryptAndSignFile($originalFilename, $encryptedFilename);
 
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
-        $results = $this->gpg->decryptAndVerifyFile($encryptedFilename,
-            $decryptedFilename);
+        $results = $this->gpg->decryptAndVerifyFile(
+            $encryptedFilename,
+            $decryptedFilename
+        );
 
         $md5Sum = $this->getMd5Sum($decryptedFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
@@ -358,11 +364,11 @@ class EncryptAndSignTest extends TestCase
     {
         $expectedMd5Sum    = 'f96267d87551ee09bfcac16921e351c1';
         $originalFilename  = $this->getDataFilename('testFileMedium.plain');
-        $encryptedFilename =
-            $this->getTempFilename('testEncryptAndSignFileNoPassphrase.asc');
+        $encryptedFilename
+            = $this->getTempFilename('testEncryptAndSignFileNoPassphrase.asc');
 
-        $decryptedFilename =
-            $this->getTempFilename('testEncryptAndSignFileNoPassphrase.plain');
+        $decryptedFilename
+            = $this->getTempFilename('testEncryptAndSignFileNoPassphrase.plain');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addSignKey('second-keypair@example.com', 'test2');
@@ -370,8 +376,10 @@ class EncryptAndSignTest extends TestCase
         $this->gpg->encryptAndSignFile($originalFilename, $encryptedFilename);
 
         $this->gpg->addDecryptKey('first-keypair@example.com', 'test1');
-        $results = $this->gpg->decryptAndVerifyFile($encryptedFilename,
-            $decryptedFilename);
+        $results = $this->gpg->decryptAndVerifyFile(
+            $encryptedFilename,
+            $decryptedFilename
+        );
 
         $md5Sum = $this->getMd5Sum($decryptedFilename);
         $this->assertEquals($expectedMd5Sum, $md5Sum);
@@ -391,7 +399,8 @@ class EncryptAndSignTest extends TestCase
 
         // input file does not exist
         $inputFilename = $this->getDataFilename(
-            'testEncryptAndSignFileFileFileException_input.plain');
+            'testEncryptAndSignFileFileFileException_input.plain'
+        );
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addEncryptKey('first-keypair@example.com');
@@ -408,8 +417,8 @@ class EncryptAndSignTest extends TestCase
         // input file is plaintext
         // output file does not exist
         $inputFilename  = $this->getDataFilename('testFileMedium.plain');
-        $outputFilename = './non-existent' .
-            '/testEncryptAndSignFileFileException_output.plain';
+        $outputFilename = './non-existent'
+            . '/testEncryptAndSignFileFileException_output.plain';
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addEncryptKey('first-keypair@example.com');
@@ -422,8 +431,8 @@ class EncryptAndSignTest extends TestCase
     public function testEncryptAndSignFileEmpty()
     {
         $originalFilename  = $this->getDataFilename('testFileEmpty.plain');
-        $encryptedFilename =
-            $this->getTempFilename('testEncryptAndSignFileEmpty.asc');
+        $encryptedFilename
+            = $this->getTempFilename('testEncryptAndSignFileEmpty.asc');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addEncryptKey('first-keypair@example.com');

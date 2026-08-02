@@ -6,3 +6,4 @@ tests/config.php
 tests/debug.log
 tests/test-keychain/
 tests/.phpunit.result.cache
+.php-cs-fixer.cache

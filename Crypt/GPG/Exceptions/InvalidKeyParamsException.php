@@ -47,18 +47,13 @@ class InvalidKeyParamsException extends Exception
      * @param int    $size      The key size.
      * @param int    $usage     The key usage.
      */
-    public function __construct(
-        $message,
-        $code = 0,
-        $algorithm = 0,
-        $size = 0,
-        $usage = 0
-    ) {
+    public function __construct($message, $code = 0, $algorithm = 0, $size = 0, $usage = 0)
+    {
         parent::__construct($message, $code);
 
-        $this->_algorithm = $algorithm;
-        $this->_size      = $size;
-        $this->_usage     = $usage;
+        $this->_algorithm = (int) $algorithm;
+        $this->_size      = (int) $size;
+        $this->_usage     = (int) $usage;
     }
 
     /**

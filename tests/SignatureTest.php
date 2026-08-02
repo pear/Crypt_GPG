@@ -68,7 +68,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature = new Signature($expectedSignature);
@@ -88,14 +88,18 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
-        $this->assertEquals('KuhELanvhPRXozEjFWb2mam1q20',
-            $signature->getId());
+        $this->assertEquals(
+            'KuhELanvhPRXozEjFWb2mam1q20',
+            $signature->getId()
+        );
 
-        $this->assertEquals('8D2299D9C5C211128B32BBB0C097D9EC94C06363',
-            $signature->getKeyFingerprint());
+        $this->assertEquals(
+            '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            $signature->getKeyFingerprint()
+        );
 
         $this->assertEquals('0C097D9EC94C06363', $signature->getKeyId());
 
@@ -104,8 +108,10 @@ class SignatureTest extends TestCase
 
         $this->assertFalse($signature->isValid());
 
-        $this->assertEquals('Alice <alice@example.com>',
-            strval($signature->getUserId()));
+        $this->assertEquals(
+            'Alice <alice@example.com>',
+            strval($signature->getUserId())
+        );
     }
 
     /**
@@ -119,7 +125,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $this->assertEquals('KuhELanvhPRXozEjFWb2mam1q20', $signature->getId());
@@ -136,11 +142,13 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
-        $this->assertEquals('8D2299D9C5C211128B32BBB0C097D9EC94C06363',
-            $signature->getKeyFingerprint());
+        $this->assertEquals(
+            '8D2299D9C5C211128B32BBB0C097D9EC94C06363',
+            $signature->getKeyFingerprint()
+        );
     }
 
     /**
@@ -155,7 +163,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $this->assertEquals('0C097D9EC94C06363', $signature->getKeyId());
@@ -172,7 +180,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $this->assertEquals(1221785858, $signature->getCreationDate());
@@ -189,7 +197,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $this->assertEquals(1421785858, $signature->getExpirationDate());
@@ -206,7 +214,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $this->assertTrue($signature->isValid());
@@ -217,7 +225,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $this->assertFalse($signature->isValid());
@@ -234,12 +242,12 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $expectedUserId = new UserId([
             'name'  => 'Alice',
-            'email' => 'alice@example.com'
+            'email' => 'alice@example.com',
         ]);
 
         $this->assertEquals($expectedUserId, $signature->getUserId());
@@ -256,7 +264,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature = new Signature([
@@ -265,7 +273,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature->setId('KuhELanvhPRXozEjFWb2mam1q20');
@@ -284,7 +292,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature = new Signature([
@@ -293,11 +301,12 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature->setKeyFingerprint(
-            '8D2299D9C5C211128B32BBB0C097D9EC94C06363');
+            '8D2299D9C5C211128B32BBB0C097D9EC94C06363'
+        );
 
         $this->assertEquals($expectedSignature, $signature);
     }
@@ -314,7 +323,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature = new Signature([
@@ -324,7 +333,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature->setKeyId('0C097D9EC94C06363');
@@ -343,7 +352,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature = new Signature([
@@ -352,7 +361,7 @@ class SignatureTest extends TestCase
             'creation'    => 1111111111,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature->setCreationDate(1221785858);
@@ -371,7 +380,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature = new Signature([
@@ -380,7 +389,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 0,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature->setExpirationDate(1421785858);
@@ -399,7 +408,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature = new Signature([
@@ -408,7 +417,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => false,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature->setValid(true);
@@ -427,7 +436,7 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Alice <alice@example.com>'
+            'userId'      => 'Alice <alice@example.com>',
         ]);
 
         $signature = new Signature([
@@ -436,12 +445,12 @@ class SignatureTest extends TestCase
             'creation'    => 1221785858,
             'expiration'  => 1421785858,
             'valid'       => true,
-            'userId'      => 'Bob <bob@example.com>'
+            'userId'      => 'Bob <bob@example.com>',
         ]);
 
         $userId = new UserId([
             'name'  => 'Alice',
-            'email' => 'alice@example.com'
+            'email' => 'alice@example.com',
         ]);
 
         $signature->setUserId($userId);
@@ -469,8 +478,8 @@ class SignatureTest extends TestCase
         $this->assertEquals(
             $signature,
             $returnedSignature,
-            'Failed asserting fluent interface works for setKeyFingerprint() ' .
-            'method.'
+            'Failed asserting fluent interface works for setKeyFingerprint() '
+            . 'method.'
         );
 
         $signature         = new Signature();
@@ -486,8 +495,8 @@ class SignatureTest extends TestCase
         $this->assertEquals(
             $signature,
             $returnedSignature,
-            'Failed asserting fluent interface works for setCreationDate() ' .
-            'method.'
+            'Failed asserting fluent interface works for setCreationDate() '
+            . 'method.'
         );
 
         $signature         = new Signature();
@@ -495,8 +504,8 @@ class SignatureTest extends TestCase
         $this->assertEquals(
             $signature,
             $returnedSignature,
-            'Failed asserting fluent interface works for setExpirationDate() ' .
-            'method.'
+            'Failed asserting fluent interface works for setExpirationDate() '
+            . 'method.'
         );
 
         $signature         = new Signature();

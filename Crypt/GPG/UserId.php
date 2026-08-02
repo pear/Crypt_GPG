@@ -36,8 +36,8 @@ use Crypt\GPG\Signature;
 /**
  * A class for GPG user id information
  *
- * This class is used to store the results of the {@link Crypt_GPG::getKeys()}
- * method. User id objects are members of a {@link Crypt_GPG_Key} object.
+ * This class is used to store the results of the {@link \Crypt\GPG::getKeys()}
+ * method. User id objects are members of a {@link \Crypt\GPG\Key} object.
  *
  * @category  Encryption
  * @package   Crypt_GPG
@@ -242,7 +242,7 @@ class UserId
         }
 
         if (strlen($this->_email) > 0) {
-            $components[] = '<' . $this->_email. '>';
+            $components[] = '<' . $this->_email . '>';
         }
 
         return implode(' ', $components);
@@ -296,7 +296,7 @@ class UserId
      */
     public function setRevoked($isRevoked)
     {
-        $this->_isRevoked = ($isRevoked) ? true : false;
+        $this->_isRevoked = $isRevoked ? true : false;
         return $this;
     }
 
@@ -309,7 +309,7 @@ class UserId
      */
     public function setValid($isValid)
     {
-        $this->_isValid = ($isValid) ? true : false;
+        $this->_isValid = $isValid ? true : false;
         return $this;
     }
 

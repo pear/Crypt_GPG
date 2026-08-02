@@ -138,7 +138,7 @@ class Signature
      */
     public function __construct($signature = null)
     {
-       if ($signature instanceof self) {
+        if ($signature instanceof self) {
             $this->_id             = $signature->_id;
             $this->_keyFingerprint = $signature->_keyFingerprint;
             $this->_keyId          = $signature->_keyId;

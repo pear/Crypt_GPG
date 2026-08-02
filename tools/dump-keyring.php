@@ -16,7 +16,7 @@ $dataFiles = [
     'pubring'     => 'pubring.gpg',
     'secring'     => 'secring.gpg',
     'trustdb'     => 'trustdb.gpg',
-    'random_seed' => 'random_seed'
+    'random_seed' => 'random_seed',
 ];
 
 

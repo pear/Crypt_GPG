@@ -177,8 +177,8 @@ class KeyGenerator extends GPG
         if ($expirationDate === false) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Invalid expiration date format: "%s". Please use a ' .
-                    'format compatible with PHP\'s strtotime().',
+                    'Invalid expiration date format: "%s". Please use a '
+                    . 'format compatible with PHP\'s strtotime().',
                     $date
                 )
             );
@@ -244,8 +244,8 @@ class KeyGenerator extends GPG
 
         if ($algorithm === SubKey::ALGORITHM_ELGAMAL_ENC) {
             throw new Exceptions\InvalidKeyParamsException(
-                'Primary key algorithm must be capable of signing. The ' .
-                'Elgamal algorithm can only encrypt.',
+                'Primary key algorithm must be capable of signing. The '
+                . 'Elgamal algorithm can only encrypt.',
                 0,
                 $algorithm,
                 $size,
@@ -267,9 +267,9 @@ class KeyGenerator extends GPG
             && ($usage & $usageEncrypt) === $usageEncrypt
         ) {
             throw new Exceptions\InvalidKeyParamsException(
-                'The DSA algorithm is not capable of encrypting. Please ' .
-                'specify a different algorithm or do not include encryption ' .
-                'as a usage for the primary key.',
+                'The DSA algorithm is not capable of encrypting. Please '
+                . 'specify a different algorithm or do not include encryption '
+                . 'as a usage for the primary key.',
                 0,
                 $algorithm,
                 $size,
@@ -326,9 +326,9 @@ class KeyGenerator extends GPG
 
         if ($algorithm === SubKey::ALGORITHM_ELGAMAL_ENC && ($usage & $usageSign) === $usageSign) {
             throw new Exceptions\InvalidKeyParamsException(
-                'The Elgamal algorithm is not capable of signing. Please ' .
-                'specify a different algorithm or do not include signing ' .
-                'as a usage for the sub-key.',
+                'The Elgamal algorithm is not capable of signing. Please '
+                . 'specify a different algorithm or do not include signing '
+                . 'as a usage for the sub-key.',
                 0,
                 $algorithm,
                 $size,
@@ -340,9 +340,9 @@ class KeyGenerator extends GPG
 
         if ($algorithm === SubKey::ALGORITHM_DSA && ($usage & $usageEncrypt) === $usageEncrypt) {
             throw new Exceptions\InvalidKeyParamsException(
-                'The DSA algorithm is not capable of encrypting. Please ' .
-                'specify a different algorithm or do not include encryption ' .
-                'as a usage for the sub-key.',
+                'The DSA algorithm is not capable of encrypting. Please '
+                . 'specify a different algorithm or do not include encryption '
+                . 'as a usage for the sub-key.',
                 0,
                 $algorithm,
                 $size,
@@ -459,24 +459,24 @@ class KeyGenerator extends GPG
             $this->engine->run();
         } catch (Exceptions\InvalidKeyParamsException $e) {
             switch ($this->engine->getProcessData('LineNumber')) {
-            case 1:
-                throw new Exceptions\InvalidKeyParamsException(
-                    'Invalid primary key algorithm specified.',
-                    0,
-                    $this->keyAlgorithm,
-                    $this->keySize,
-                    $this->keyUsage
-                );
-            case 4:
-                throw new Exceptions\InvalidKeyParamsException(
-                    'Invalid sub-key algorithm specified.',
-                    0,
-                    $this->subKeyAlgorithm,
-                    $this->subKeySize,
-                    $this->subKeyUsage
-                );
-            default:
-                throw $e;
+                case 1:
+                    throw new Exceptions\InvalidKeyParamsException(
+                        'Invalid primary key algorithm specified.',
+                        0,
+                        $this->keyAlgorithm,
+                        $this->keySize,
+                        $this->keyUsage
+                    );
+                case 4:
+                    throw new Exceptions\InvalidKeyParamsException(
+                        'Invalid sub-key algorithm specified.',
+                        0,
+                        $this->subKeyAlgorithm,
+                        $this->subKeySize,
+                        $this->subKeyUsage
+                    );
+                default:
+                    throw $e;
             }
         }
 

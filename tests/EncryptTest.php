@@ -217,8 +217,8 @@ class EncryptTest extends TestCase
         $this->expectException(Exceptions\FileException::class);
 
         // input file does not exist
-        $filename =
-            $this->getDataFilename('testEncryptFileFileException_input.plain');
+        $filename
+            = $this->getDataFilename('testEncryptFileFileException_input.plain');
 
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptFile($filename);
@@ -233,8 +233,8 @@ class EncryptTest extends TestCase
 
         // output file does not exist
         $inputFilename  = $this->getDataFilename('testFileMedium.plain');
-        $outputFilename = './non-existent' .
-            '/testEncryptFileFileException_output.asc';
+        $outputFilename = './non-existent'
+            . '/testEncryptFileFileException_output.asc';
 
         $this->gpg->addEncryptKey('first-keypair@example.com');
         $this->gpg->encryptFile($inputFilename, $outputFilename);

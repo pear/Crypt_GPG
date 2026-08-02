@@ -308,8 +308,8 @@ class SignTest extends TestCase
     public function testSignFileNoPassphrase()
     {
         $inputFilename  = $this->getDataFilename('testFileMedium.plain');
-        $outputFilename =
-            $this->getTempFilename('testSignFileNoPassphrase.asc');
+        $outputFilename
+            = $this->getTempFilename('testSignFileNoPassphrase.asc');
 
         $this->gpg->addSignKey('no-passphrase@example.com');
         $this->gpg->signFile($inputFilename, $outputFilename);
@@ -399,8 +399,8 @@ class SignTest extends TestCase
     public function testSignFileDualOnePassphrase()
     {
         $inputFilename  = $this->getDataFilename('testFileMedium.plain');
-        $outputFilename =
-            $this->getTempFilename('testSignFileDualOnePassphrase.asc');
+        $outputFilename
+            = $this->getTempFilename('testSignFileDualOnePassphrase.asc');
 
         $this->gpg->addSignKey('no-passphrase@example.com');
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
@@ -457,8 +457,8 @@ class SignTest extends TestCase
     public function testSignFileDualDetached()
     {
         $inputFilename  = $this->getDataFilename('testFileMedium.plain');
-        $outputFilename =
-            $this->getTempFilename('testSignFileDualDetached.asc');
+        $outputFilename
+            = $this->getTempFilename('testSignFileDualDetached.asc');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->addSignKey('second-keypair@example.com', 'test2');
@@ -481,8 +481,8 @@ class SignTest extends TestCase
         $this->expectException(Exceptions\FileException::class);
 
         // input file does not exist
-        $inputFilename =
-            $this->getDataFilename('testSignFileFileFileException_input.plain');
+        $inputFilename
+            = $this->getDataFilename('testSignFileFileFileException_input.plain');
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->signFile($inputFilename);
@@ -498,8 +498,8 @@ class SignTest extends TestCase
         // input file is encrypted with first-keypair@example.com
         // output file does not exist
         $inputFilename  = $this->getDataFilename('testFileMedium.plain');
-        $outputFilename = './non-existent' .
-            '/testSignFileFileException_output.plain';
+        $outputFilename = './non-existent'
+            . '/testSignFileFileException_output.plain';
 
         $this->gpg->addSignKey('first-keypair@example.com', 'test1');
         $this->gpg->signFile($inputFilename, $outputFilename);

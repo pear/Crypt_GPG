@@ -25,7 +25,7 @@ class DeletePrivateKeyException extends Exception
     private $_keyId = '';
 
     /**
-     * Creates a new Crypt_GPG_DeletePrivateKeyException
+     * Creates a new DeletePrivateKeyException
      *
      * @param string $message An error message.
      * @param int    $code    A user defined error code.

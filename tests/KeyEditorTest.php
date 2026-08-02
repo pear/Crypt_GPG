@@ -70,7 +70,7 @@ class KeyEditorTest extends TestCase
         $user = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
-            'email'   => 'alice@example.com'
+            'email'   => 'alice@example.com',
         ]);
 
         $keyEditor->edit('first-keypair@example.com', 'test1')
@@ -82,7 +82,9 @@ class KeyEditorTest extends TestCase
         $userIds = $keys[0]->getUserIds();
         $this->assertCount(2, $userIds);
 
-        $userIds = array_filter($userIds, function ($id) use ($user) { return $id->getName() == $user->getName(); });
+        $userIds = array_filter($userIds, function ($id) use ($user) {
+            return $id->getName() == $user->getName();
+        });
         $this->assertCount(1, $userIds);
 
         $userId = $userIds[key($userIds)];
@@ -93,7 +95,7 @@ class KeyEditorTest extends TestCase
         $user = new UserId([
             'name'    => 'Alice2',
             'comment' => '',
-            'email'   => 'alice2@example.com'
+            'email'   => 'alice2@example.com',
         ]);
 
         $keyEditor->edit('first-keypair@example.com', 'test1')
@@ -105,7 +107,9 @@ class KeyEditorTest extends TestCase
         $userIds = $keys[0]->getUserIds();
         $this->assertCount(2, $userIds);
 
-        $userIds = array_filter($userIds, function ($id) use ($user) { return $id->getName() == $user->getName(); });
+        $userIds = array_filter($userIds, function ($id) use ($user) {
+            return $id->getName() == $user->getName();
+        });
         $this->assertCount(0, $userIds);
 
         // Test editing a key that has no secret key
@@ -128,19 +132,19 @@ class KeyEditorTest extends TestCase
         $user1 = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
-            'email'   => 'alice@example.com'
+            'email'   => 'alice@example.com',
         ]);
 
         $user2 = new UserId([
             'name'    => 'Jonathan',
             'comment' => '',
-            'email'   => 'john@example.com'
+            'email'   => 'john@example.com',
         ]);
 
         $user3 = new UserId([
             'name'    => '',
             'comment' => '',
-            'email'   => 'john@example.com'
+            'email'   => 'john@example.com',
         ]);
 
         $keyEditor->edit('second-keypair@example.com', 'test2')
@@ -155,7 +159,9 @@ class KeyEditorTest extends TestCase
         $keys = $this->gpg->getKeys('second-keypair@example.com');
         $userIds = $keys[0]->getUserIds();
         $this->assertCount(3, $userIds);
-        $userIds = array_filter($userIds, function ($id) use ($user1) { return $id->getEmail() != $user1->getEmail(); });
+        $userIds = array_filter($userIds, function ($id) use ($user1) {
+            return $id->getEmail() != $user1->getEmail();
+        });
         $this->assertCount(3, $userIds);
 
         // Test deleting users with no name or no comment
@@ -167,7 +173,9 @@ class KeyEditorTest extends TestCase
         $keys = $this->gpg->getKeys('second-keypair@example.com');
         $userIds = $keys[0]->getUserIds();
         $this->assertCount(1, $userIds);
-        $userIds = array_filter($userIds, function ($id) use ($user1) { return $id->getEmail() != $user1->getEmail(); });
+        $userIds = array_filter($userIds, function ($id) use ($user1) {
+            return $id->getEmail() != $user1->getEmail();
+        });
         $this->assertCount(1, $userIds);
 
         // Test deleting the last user
@@ -247,7 +255,9 @@ class KeyEditorTest extends TestCase
         $keys = $this->gpg->getKeys('second-keypair@example.com');
         $userIds = $keys[0]->getUserIds();
         $this->assertCount(2, $userIds);
-        $userIds = array_values(array_filter($userIds, function ($id) use ($user1) { return $id->getEmail() == $user1->getEmail(); }));
+        $userIds = array_values(array_filter($userIds, function ($id) use ($user1) {
+            return $id->getEmail() == $user1->getEmail();
+        }));
         $this->assertCount(1, $userIds);
         $this->assertTrue($userIds[0]->isRevoked());
 

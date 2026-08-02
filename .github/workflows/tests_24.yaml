@@ -1,4 +1,4 @@
-name: GnuPG 2.4 + phpstan
+name: GnuPG 2.4 + SA + CS
 
 on:
   push:
@@ -35,6 +35,9 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Execute php-cs-fixer
+        run: php vendor/bin/php-cs-fixer fix --dry-run --using-cache=no --diff --verbose --allow-unsupported-php-version=yes
 
       - name: Execute phpstan
         run: php -dmemory_limit=256M vendor/bin/phpstan analyse -v

@@ -31,7 +31,7 @@ class KeyNotFoundException extends Exception
      * @param int    $code    A user defined error code.
      * @param string $keyId   The key identifier of the key.
      */
-    public function __construct($message, $code = 0, $keyId= '')
+    public function __construct($message, $code = 0, $keyId = '')
     {
         $this->_keyId = $keyId;
         parent::__construct($message, $code);

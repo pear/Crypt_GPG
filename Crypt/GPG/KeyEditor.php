@@ -34,11 +34,11 @@ use Crypt\GPG\UserId;
  */
 class KeyEditor
 {
-    const TRUST_UNKNOWN = 1;
-    const TRUST_NONE = 2;
-    const TRUST_MARGINAL = 3;
-    const TRUST_FULL = 4;
-    const TRUST_ULTIMATE = 5;
+    public const TRUST_UNKNOWN = 1;
+    public const TRUST_NONE = 2;
+    public const TRUST_MARGINAL = 3;
+    public const TRUST_FULL = 4;
+    public const TRUST_ULTIMATE = 5;
 
     /** @var array The GnuPG engine/key editor options */
     protected $options;

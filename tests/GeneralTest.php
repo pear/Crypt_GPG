@@ -105,7 +105,7 @@ class GeneralTest extends TestCase
 
         $nonExecutableDirectory = $this->getTempFilename('home-no-execute');
         mkdir($nonExecutableDirectory);
-        chmod($nonExecutableDirectory, 0600); // rw- --- ---
+        chmod($nonExecutableDirectory, 0o600); // rw- --- ---
 
         new GPG(['homedir' => $nonExecutableDirectory]);
     }
@@ -121,7 +121,7 @@ class GeneralTest extends TestCase
 
         $nonWriteableDirectory = $this->getTempFilename('home-no-write');
         mkdir($nonWriteableDirectory);
-        chmod($nonWriteableDirectory, 0500); // r-x --- ---
+        chmod($nonWriteableDirectory, 0o500); // r-x --- ---
 
         new GPG(['homedir' => $nonWriteableDirectory]);
     }
@@ -168,8 +168,8 @@ class GeneralTest extends TestCase
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for addDecryptKey() ' .
-            'method.'
+            'Failed asserting fluent interface works for addDecryptKey() '
+            . 'method.'
         );
 
         $returnedGpg = $this->gpg->addEncryptKey(
@@ -178,8 +178,8 @@ class GeneralTest extends TestCase
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for addEncryptKey() ' .
-            'method.'
+            'Failed asserting fluent interface works for addEncryptKey() '
+            . 'method.'
         );
 
         $returnedGpg = $this->gpg->addSignKey(
@@ -189,32 +189,32 @@ class GeneralTest extends TestCase
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for addSignKey() ' .
-            'method.'
+            'Failed asserting fluent interface works for addSignKey() '
+            . 'method.'
         );
 
         $returnedGpg = $this->gpg->clearDecryptKeys();
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for clearDecryptKeys() ' .
-            'method.'
+            'Failed asserting fluent interface works for clearDecryptKeys() '
+            . 'method.'
         );
 
         $returnedGpg = $this->gpg->clearEncryptKeys();
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for clearEncryptKeys() ' .
-            'method.'
+            'Failed asserting fluent interface works for clearEncryptKeys() '
+            . 'method.'
         );
 
         $returnedGpg = $this->gpg->clearSignKeys();
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for clearSignKeys() ' .
-            'method.'
+            'Failed asserting fluent interface works for clearSignKeys() '
+            . 'method.'
         );
     }
 }

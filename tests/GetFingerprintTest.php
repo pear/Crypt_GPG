@@ -82,8 +82,8 @@ class GetFingerprintTest extends TestCase
     public function testGetFingerprintX509()
     {
         $keyId = 'public-only@example.com';
-        $expectedFingerprint =
-            'F8:31:18:CB:6F:58:92:DC:1C:3E:93:6D:AB:A8:1E:F5:4E:8C:0D:EB';
+        $expectedFingerprint
+            = 'F8:31:18:CB:6F:58:92:DC:1C:3E:93:6D:AB:A8:1E:F5:4E:8C:0D:EB';
 
         $fingerprint = $this->gpg->getFingerprint($keyId, GPG::FORMAT_X509);
 
@@ -96,8 +96,8 @@ class GetFingerprintTest extends TestCase
     public function testGetFingerprintCanonical()
     {
         $keyId = 'public-only@example.com';
-        $expectedFingerprint =
-            'F831 18CB 6F58 92DC 1C3E  936D ABA8 1EF5 4E8C 0DEB';
+        $expectedFingerprint
+            = 'F831 18CB 6F58 92DC 1C3E  936D ABA8 1EF5 4E8C 0DEB';
 
         $fingerprint = $this->gpg->getFingerprint($keyId, GPG::FORMAT_CANONICAL);
 

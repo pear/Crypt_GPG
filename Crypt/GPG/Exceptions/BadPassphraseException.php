@@ -44,7 +44,8 @@ class BadPassphraseException extends Exception
      * @param array  $missingPassphrases An array containing user ids of keys
      *                                   for which the passphrase is missing.
      */
-    public function __construct($message, $code = 0, array $badPassphrases = [], array $missingPassphrases = []) {
+    public function __construct($message, $code = 0, array $badPassphrases = [], array $missingPassphrases = [])
+    {
         $this->_badPassphrases     = (array) $badPassphrases;
         $this->_missingPassphrases = (array) $missingPassphrases;
 
@@ -63,7 +64,7 @@ class BadPassphraseException extends Exception
     }
 
     /**
-     * Gets keys for which the passhprase is missing 
+     * Gets keys for which the passhprase is missing
      *
      * @return array an array of keys for which the passphrase is missing.
      *               The array contains primary user ids indexed by the sub-key id.

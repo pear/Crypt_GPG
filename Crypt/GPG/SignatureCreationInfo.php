@@ -110,21 +110,21 @@ class SignatureCreationInfo
             $this->valid = false;
             return;
         }
-        list(
+        [
             $title, $mode, $pkAlgorithm, $hashAlgorithm,
             $class, $timestamp, $keyFingerprint
-        ) = $parts;
+        ] = $parts;
 
         switch (strtoupper($mode[0])) {
-        case 'D':
-            $this->mode = GPG::SIGN_MODE_DETACHED;
-            break;
-        case 'C':
-            $this->mode = GPG::SIGN_MODE_CLEAR;
-            break;
-        case 'S':
-            $this->mode = GPG::SIGN_MODE_NORMAL;
-            break;
+            case 'D':
+                $this->mode = GPG::SIGN_MODE_DETACHED;
+                break;
+            case 'C':
+                $this->mode = GPG::SIGN_MODE_CLEAR;
+                break;
+            case 'S':
+                $this->mode = GPG::SIGN_MODE_NORMAL;
+                break;
         }
 
         $this->pkAlgorithm    = (int) $pkAlgorithm;

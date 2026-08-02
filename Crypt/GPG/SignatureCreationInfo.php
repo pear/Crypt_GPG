@@ -11,10 +11,8 @@ use Crypt\GPG;
  * @package   Crypt_GPG
  * @author    Christian Weiske <cweiske@php.net>
  * @copyright 2015 PEAR
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- * @link      http://pear.php.net/manual/en/package.encryption.crypt-gpg.php
- * @link      http://www.gnupg.org/
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
  */
 class SignatureCreationInfo
 {

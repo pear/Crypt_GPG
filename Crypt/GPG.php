@@ -2,46 +2,6 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-/**
- * Crypt_GPG is a package to use GPG from PHP
- *
- * This package provides an object oriented interface to GNU Privacy
- * Guard (GPG). It requires the GPG executable to be on the system.
- *
- * Though GPG can support symmetric-key cryptography, this package is intended
- * only to facilitate public-key cryptography.
- *
- * This file contains the main GPG class. The class in this file lets you
- * encrypt, decrypt, sign and verify data; import and delete keys; and perform
- * other useful GPG tasks.
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Nathan Fredrickson <nathan@silverorange.com>
- * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2013 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- * @link      http://pear.php.net/manual/en/package.encryption.crypt-gpg.php
- * @link      http://www.gnupg.org/
- */
-
 namespace Crypt;
 
 use Crypt\GPG\Engine;
@@ -65,9 +25,9 @@ use Crypt\GPG\UserId;
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2013 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- * @link      http://www.gnupg.org/
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
+ * @link      https://www.gnupg.org/
  */
 class GPG
 {

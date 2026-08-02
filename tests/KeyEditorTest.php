@@ -2,33 +2,6 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-/**
- * KeyEditor class test cases for the Crypt_GPG package.
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Aleksander Machniak <machniak@apheleia-it.ch>
- * @copyright Apheleia IT AG <contact@apheleia-it.ch>
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- */
-
 namespace Crypt\GPG\Tests;
 
 use Crypt\GPG;
@@ -43,8 +16,8 @@ use Crypt\GPG\UserId;
  * @package   Crypt_GPG
  * @author    Aleksander Machniak <machniak@apheleia-it.ch>
  * @copyright Apheleia IT AG <contact@apheleia-it.ch>
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
  */
 class KeyEditorTest extends TestCase
 {

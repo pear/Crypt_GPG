@@ -529,11 +529,10 @@ class GPG
      * <kbd>$keyId</kbd> (for example, if you use a non-unique uid) only the
      * first public key is deleted.
      *
-     * @param string $keyId either the full uid of the public key, the email
-     *                      part of the uid of the public key or the key id of
-     *                      the public key. For example,
-     *                      "Test User (example) <test@example.com>",
-     *                      "test@example.com" or a hexadecimal string.
+     * @param Key|string $keyId Either the {@link Crypt\GPG\Key} object or full uid of the public key,
+     *                          the email part of the uid of the public key or the key id of
+     *                          the public key. For example "Test User (example) <test@example.com>",
+     *                          "test@example.com" or a hexadecimal string.
      *
      * @return void
      *
@@ -550,15 +549,7 @@ class GPG
      */
     public function deletePublicKey($keyId)
     {
-        $fingerprint = $this->getFingerprint($keyId);
-
-        if ($fingerprint === null) {
-            throw new Exceptions\KeyNotFoundException(
-                'Public key not found: ' . $keyId,
-                self::ERROR_KEY_NOT_FOUND,
-                $keyId
-            );
-        }
+        $fingerprint = $this->toFingerprint($keyId);
 
         $operation = '--delete-key -- ' . escapeshellarg($fingerprint);
         $arguments = [
@@ -580,11 +571,10 @@ class GPG
      *
      * Calls GPG with the <kbd>--delete-secret-key</kbd> command.
      *
-     * @param string $keyId Either the full uid of the private key, the email
-     *                      part of the uid of the private key or the key id of
-     *                      the private key. For example,
-     *                      "Test User (example) <test@example.com>",
-     *                      "test@example.com" or a hexadecimal string.
+     * @param Key|string $keyId Either the {@link Crypt\GPG\Key} object or full uid of the public key,
+     *                          the email part of the uid of the public key or the key id of
+     *                          the public key. For example "Test User (example) <test@example.com>",
+     *                          "test@example.com" or a hexadecimal string.
      *
      * @return void
      *
@@ -597,15 +587,7 @@ class GPG
      */
     public function deletePrivateKey($keyId)
     {
-        $fingerprint = $this->getFingerprint($keyId);
-
-        if ($fingerprint === null) {
-            throw new Exceptions\KeyNotFoundException(
-                'Private key not found: ' . $keyId,
-                self::ERROR_KEY_NOT_FOUND,
-                $keyId
-            );
-        }
+        $fingerprint = $this->toFingerprint($keyId);
 
         $operation = '--delete-secret-key -- ' . escapeshellarg($fingerprint);
         $arguments = [
@@ -1580,12 +1562,14 @@ class GPG
      * <kbd>$keyId</kbd> (for example, if you use a non-unique uid) only the
      * first key is exported.
      *
-     * @param string  $keyId   either the full uid of the key, the email
-     *                         part of the uid of the key or the key id.
-     * @param bool    $armor   optional. If true, ASCII armored data is returned;
-     *                         otherwise, binary data is returned. Defaults to
-     *                         true.
-     * @param bool    $private return private instead of public key
+     * @param Key|string $keyId   Either the {@link Crypt\GPG\Key} object or full uid of the public key,
+     *                            the email part of the uid of the public key or the key id of
+     *                            the public key. For example "Test User (example) <test@example.com>",
+     *                            "test@example.com" or a hexadecimal string.
+     * @param bool       $armor   Optional. If true, ASCII armored data is returned;
+     *                            otherwise, binary data is returned. Defaults to
+     *                            true.
+     * @param bool       $private Return private instead of public key
      *
      * @return string the key data.
      *
@@ -1602,15 +1586,7 @@ class GPG
      */
     protected function _exportKey($keyId, $armor = true, $private = false)
     {
-        $fingerprint = $this->getFingerprint($keyId);
-
-        if ($fingerprint === null) {
-            throw new Exceptions\KeyNotFoundException(
-                'Key not found: ' . $keyId,
-                self::ERROR_KEY_NOT_FOUND,
-                $keyId
-            );
-        }
+        $fingerprint = $this->toFingerprint($keyId);
 
         $keyData   = '';
         $operation = $private ? '--export-secret-keys' : '--export';
@@ -2144,5 +2120,31 @@ class GPG
         }
 
         return $output;
+    }
+
+    /**
+     * Find fingerprint for the key id input
+     *
+     * @param mixed $input Input
+     *
+     * @return string|null
+     */
+    protected function toFingerprint($input)
+    {
+        if (is_string($input) && strlen($input)) {
+            if (preg_match('/^[0-9A-F]{40}$/', $input)) {
+                return $input;
+            }
+
+            if ($fingerprint = $this->getFingerprint($input)) {
+                return $fingerprint;
+            }
+        } elseif ($input instanceof Key) {
+            if ($pkey = $input->getPrimaryKey()) {
+                return $pkey->getFingerprint();
+            }
+        }
+
+        throw new Exceptions\KeyNotFoundException('Key not found: ' . $input, self::ERROR_KEY_NOT_FOUND, $input);
     }
 }

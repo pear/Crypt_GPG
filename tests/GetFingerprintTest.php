@@ -2,43 +2,6 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-/**
- * Fingerprint retrieval tests for the Crypt_GPG package.
- *
- * These tests require the PHPUnit 3.6 or greater package to be installed.
- * PHPUnit is installable using PEAR. See the
- * {@link http://www.phpunit.de/manual/3.6/en/installation.html manual}
- * for detailed installation instructions.
- *
- * To run these tests, use:
- * <code>
- * $ phpunit GetFingerprintTestCase
- * </code>
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2008 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- */
-
 namespace Crypt\GPG\Tests;
 
 use Crypt\GPG;
@@ -50,8 +13,8 @@ use Crypt\GPG;
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2008 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
  */
 class GetFingerprintTest extends TestCase
 {
@@ -82,8 +45,8 @@ class GetFingerprintTest extends TestCase
     public function testGetFingerprintX509()
     {
         $keyId = 'public-only@example.com';
-        $expectedFingerprint =
-            'F8:31:18:CB:6F:58:92:DC:1C:3E:93:6D:AB:A8:1E:F5:4E:8C:0D:EB';
+        $expectedFingerprint
+            = 'F8:31:18:CB:6F:58:92:DC:1C:3E:93:6D:AB:A8:1E:F5:4E:8C:0D:EB';
 
         $fingerprint = $this->gpg->getFingerprint($keyId, GPG::FORMAT_X509);
 
@@ -96,8 +59,8 @@ class GetFingerprintTest extends TestCase
     public function testGetFingerprintCanonical()
     {
         $keyId = 'public-only@example.com';
-        $expectedFingerprint =
-            'F831 18CB 6F58 92DC 1C3E  936D ABA8 1EF5 4E8C 0DEB';
+        $expectedFingerprint
+            = 'F831 18CB 6F58 92DC 1C3E  936D ABA8 1EF5 4E8C 0DEB';
 
         $fingerprint = $this->gpg->getFingerprint($keyId, GPG::FORMAT_CANONICAL);
 

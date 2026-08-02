@@ -11,10 +11,8 @@ use Crypt\GPG;
  * @package   Crypt_GPG
  * @author    Christian Weiske <cweiske@php.net>
  * @copyright 2015 PEAR
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- * @link      http://pear.php.net/manual/en/package.encryption.crypt-gpg.php
- * @link      http://www.gnupg.org/
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
  */
 class SignatureCreationInfo
 {
@@ -110,21 +108,21 @@ class SignatureCreationInfo
             $this->valid = false;
             return;
         }
-        list(
+        [
             $title, $mode, $pkAlgorithm, $hashAlgorithm,
             $class, $timestamp, $keyFingerprint
-        ) = $parts;
+        ] = $parts;
 
         switch (strtoupper($mode[0])) {
-        case 'D':
-            $this->mode = GPG::SIGN_MODE_DETACHED;
-            break;
-        case 'C':
-            $this->mode = GPG::SIGN_MODE_CLEAR;
-            break;
-        case 'S':
-            $this->mode = GPG::SIGN_MODE_NORMAL;
-            break;
+            case 'D':
+                $this->mode = GPG::SIGN_MODE_DETACHED;
+                break;
+            case 'C':
+                $this->mode = GPG::SIGN_MODE_CLEAR;
+                break;
+            case 'S':
+                $this->mode = GPG::SIGN_MODE_NORMAL;
+                break;
         }
 
         $this->pkAlgorithm    = (int) $pkAlgorithm;

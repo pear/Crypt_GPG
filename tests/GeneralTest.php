@@ -2,43 +2,6 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-/**
- * General test cases for the Crypt_GPG package.
- *
- * These tests require the PHPUnit 3.6 or greater package to be installed.
- * PHPUnit is installable using PEAR. See the
- * {@link http://www.phpunit.de/manual/3.6/en/installation.html manual}
- * for detailed installation instructions.
- *
- * To run these tests, use:
- * <code>
- * $ phpunit GeneralTestCase
- * </code>
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2013 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- */
-
 namespace Crypt\GPG\Tests;
 
 use Crypt\GPG;
@@ -52,8 +15,8 @@ use Crypt\GPG\Exceptions;
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2008-2013 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
  */
 class GeneralTest extends TestCase
 {
@@ -105,7 +68,7 @@ class GeneralTest extends TestCase
 
         $nonExecutableDirectory = $this->getTempFilename('home-no-execute');
         mkdir($nonExecutableDirectory);
-        chmod($nonExecutableDirectory, 0600); // rw- --- ---
+        chmod($nonExecutableDirectory, 0o600); // rw- --- ---
 
         new GPG(['homedir' => $nonExecutableDirectory]);
     }
@@ -121,7 +84,7 @@ class GeneralTest extends TestCase
 
         $nonWriteableDirectory = $this->getTempFilename('home-no-write');
         mkdir($nonWriteableDirectory);
-        chmod($nonWriteableDirectory, 0500); // r-x --- ---
+        chmod($nonWriteableDirectory, 0o500); // r-x --- ---
 
         new GPG(['homedir' => $nonWriteableDirectory]);
     }
@@ -168,8 +131,8 @@ class GeneralTest extends TestCase
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for addDecryptKey() ' .
-            'method.'
+            'Failed asserting fluent interface works for addDecryptKey() '
+            . 'method.'
         );
 
         $returnedGpg = $this->gpg->addEncryptKey(
@@ -178,8 +141,8 @@ class GeneralTest extends TestCase
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for addEncryptKey() ' .
-            'method.'
+            'Failed asserting fluent interface works for addEncryptKey() '
+            . 'method.'
         );
 
         $returnedGpg = $this->gpg->addSignKey(
@@ -189,32 +152,32 @@ class GeneralTest extends TestCase
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for addSignKey() ' .
-            'method.'
+            'Failed asserting fluent interface works for addSignKey() '
+            . 'method.'
         );
 
         $returnedGpg = $this->gpg->clearDecryptKeys();
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for clearDecryptKeys() ' .
-            'method.'
+            'Failed asserting fluent interface works for clearDecryptKeys() '
+            . 'method.'
         );
 
         $returnedGpg = $this->gpg->clearEncryptKeys();
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for clearEncryptKeys() ' .
-            'method.'
+            'Failed asserting fluent interface works for clearEncryptKeys() '
+            . 'method.'
         );
 
         $returnedGpg = $this->gpg->clearSignKeys();
         $this->assertEquals(
             $this->gpg,
             $returnedGpg,
-            'Failed asserting fluent interface works for clearSignKeys() ' .
-            'method.'
+            'Failed asserting fluent interface works for clearSignKeys() '
+            . 'method.'
         );
     }
 }

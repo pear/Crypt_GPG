@@ -2,33 +2,6 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-/**
- * KeyEditor class test cases for the Crypt_GPG package.
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Aleksander Machniak <machniak@apheleia-it.ch>
- * @copyright Apheleia IT AG <contact@apheleia-it.ch>
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- */
-
 namespace Crypt\GPG\Tests;
 
 use Crypt\GPG;
@@ -43,8 +16,8 @@ use Crypt\GPG\UserId;
  * @package   Crypt_GPG
  * @author    Aleksander Machniak <machniak@apheleia-it.ch>
  * @copyright Apheleia IT AG <contact@apheleia-it.ch>
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
  */
 class KeyEditorTest extends TestCase
 {
@@ -70,7 +43,7 @@ class KeyEditorTest extends TestCase
         $user = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
-            'email'   => 'alice@example.com'
+            'email'   => 'alice@example.com',
         ]);
 
         $keyEditor->edit('first-keypair@example.com', 'test1')
@@ -82,7 +55,9 @@ class KeyEditorTest extends TestCase
         $userIds = $keys[0]->getUserIds();
         $this->assertCount(2, $userIds);
 
-        $userIds = array_filter($userIds, function ($id) use ($user) { return $id->getName() == $user->getName(); });
+        $userIds = array_filter($userIds, function ($id) use ($user) {
+            return $id->getName() == $user->getName();
+        });
         $this->assertCount(1, $userIds);
 
         $userId = $userIds[key($userIds)];
@@ -93,7 +68,7 @@ class KeyEditorTest extends TestCase
         $user = new UserId([
             'name'    => 'Alice2',
             'comment' => '',
-            'email'   => 'alice2@example.com'
+            'email'   => 'alice2@example.com',
         ]);
 
         $keyEditor->edit('first-keypair@example.com', 'test1')
@@ -105,7 +80,9 @@ class KeyEditorTest extends TestCase
         $userIds = $keys[0]->getUserIds();
         $this->assertCount(2, $userIds);
 
-        $userIds = array_filter($userIds, function ($id) use ($user) { return $id->getName() == $user->getName(); });
+        $userIds = array_filter($userIds, function ($id) use ($user) {
+            return $id->getName() == $user->getName();
+        });
         $this->assertCount(0, $userIds);
 
         // Test editing a key that has no secret key
@@ -128,19 +105,19 @@ class KeyEditorTest extends TestCase
         $user1 = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
-            'email'   => 'alice@example.com'
+            'email'   => 'alice@example.com',
         ]);
 
         $user2 = new UserId([
             'name'    => 'Jonathan',
             'comment' => '',
-            'email'   => 'john@example.com'
+            'email'   => 'john@example.com',
         ]);
 
         $user3 = new UserId([
             'name'    => '',
             'comment' => '',
-            'email'   => 'john@example.com'
+            'email'   => 'john@example.com',
         ]);
 
         $keyEditor->edit('second-keypair@example.com', 'test2')
@@ -155,7 +132,9 @@ class KeyEditorTest extends TestCase
         $keys = $this->gpg->getKeys('second-keypair@example.com');
         $userIds = $keys[0]->getUserIds();
         $this->assertCount(3, $userIds);
-        $userIds = array_filter($userIds, function ($id) use ($user1) { return $id->getEmail() != $user1->getEmail(); });
+        $userIds = array_filter($userIds, function ($id) use ($user1) {
+            return $id->getEmail() != $user1->getEmail();
+        });
         $this->assertCount(3, $userIds);
 
         // Test deleting users with no name or no comment
@@ -167,7 +146,9 @@ class KeyEditorTest extends TestCase
         $keys = $this->gpg->getKeys('second-keypair@example.com');
         $userIds = $keys[0]->getUserIds();
         $this->assertCount(1, $userIds);
-        $userIds = array_filter($userIds, function ($id) use ($user1) { return $id->getEmail() != $user1->getEmail(); });
+        $userIds = array_filter($userIds, function ($id) use ($user1) {
+            return $id->getEmail() != $user1->getEmail();
+        });
         $this->assertCount(1, $userIds);
 
         // Test deleting the last user
@@ -247,7 +228,9 @@ class KeyEditorTest extends TestCase
         $keys = $this->gpg->getKeys('second-keypair@example.com');
         $userIds = $keys[0]->getUserIds();
         $this->assertCount(2, $userIds);
-        $userIds = array_values(array_filter($userIds, function ($id) use ($user1) { return $id->getEmail() == $user1->getEmail(); }));
+        $userIds = array_values(array_filter($userIds, function ($id) use ($user1) {
+            return $id->getEmail() == $user1->getEmail();
+        }));
         $this->assertCount(1, $userIds);
         $this->assertTrue($userIds[0]->isRevoked());
 

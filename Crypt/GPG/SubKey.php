@@ -2,94 +2,64 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-/**
- * Contains a class representing GPG sub-keys and constants for GPG algorithms
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Michael Gauthier <mike@silverorange.com>
- * @author    Nathan Fredrickson <nathan@silverorange.com>
- * @copyright 2005-2010 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- */
-
 namespace Crypt\GPG;
 
 /**
  * A class for GPG sub-key information
  *
- * This class is used to store the results of the {@link Crypt_GPG::getKeys()}
- * method. Sub-key objects are members of a {@link Crypt_GPG_Key} object.
+ * This class is used to store the results of the {@link Crypt\GPG::getKeys()}
+ * method. Sub-key objects are members of a {@link Crypt\GPG\Key} object.
  *
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @copyright 2005-2010 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- * @see       \Crypt\GPG::getKeys()
- * @see       \Crypt\GPG\Key::getSubKeys()
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
  */
 class SubKey
 {
     /**
      * RSA encryption algorithm.
      */
-    const ALGORITHM_RSA = 1;
+    public const ALGORITHM_RSA = 1;
 
     /**
      * Elgamal encryption algorithm (encryption only).
      */
-    const ALGORITHM_ELGAMAL_ENC = 16;
+    public const ALGORITHM_ELGAMAL_ENC = 16;
 
     /**
      * DSA encryption algorithm (sometimes called DH, sign only).
      */
-    const ALGORITHM_DSA = 17;
+    public const ALGORITHM_DSA = 17;
 
     /**
      * Elgamal encryption algorithm (signage and encryption - should not be
      * used).
      */
-    const ALGORITHM_ELGAMAL_ENC_SGN = 20;
+    public const ALGORITHM_ELGAMAL_ENC_SGN = 20;
 
     /**
      * Key can be used to encrypt
      */
-    const USAGE_ENCRYPT = 1;
+    public const USAGE_ENCRYPT = 1;
 
     /**
      * Key can be used to sign
      */
-    const USAGE_SIGN = 2;
+    public const USAGE_SIGN = 2;
 
     /**
      * Key can be used to certify other keys
      */
-    const USAGE_CERTIFY = 4;
+    public const USAGE_CERTIFY = 4;
 
     /**
      * Key can be used for authentication
      */
-    const USAGE_AUTHENTICATION = 8;
+    public const USAGE_AUTHENTICATION = 8;
 
     /**
      * The id of this sub-key

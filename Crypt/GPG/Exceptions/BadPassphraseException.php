@@ -7,6 +7,22 @@ namespace Crypt\GPG\Exceptions;
 /**
  * An exception thrown when a required passphrase is incorrect or missing
  *
+ * LICENSE:
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, see
+ * <http://www.gnu.org/licenses/>
+ *
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
@@ -44,7 +60,8 @@ class BadPassphraseException extends Exception
      * @param array  $missingPassphrases An array containing user ids of keys
      *                                   for which the passphrase is missing.
      */
-    public function __construct($message, $code = 0, array $badPassphrases = [], array $missingPassphrases = []) {
+    public function __construct($message, $code = 0, array $badPassphrases = [], array $missingPassphrases = [])
+    {
         $this->_badPassphrases     = (array) $badPassphrases;
         $this->_missingPassphrases = (array) $missingPassphrases;
 
@@ -63,7 +80,7 @@ class BadPassphraseException extends Exception
     }
 
     /**
-     * Gets keys for which the passhprase is missing 
+     * Gets keys for which the passhprase is missing
      *
      * @return array an array of keys for which the passphrase is missing.
      *               The array contains primary user ids indexed by the sub-key id.

@@ -2,43 +2,6 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-/**
- * Key class test cases for the Crypt_GPG package.
- *
- * These tests require the PHPUnit 3.6 or greater package to be installed.
- * PHPUnit is installable using PEAR. See the
- * {@link http://www.phpunit.de/manual/3.6/en/installation.html manual}
- * for detailed installation instructions.
- *
- * To run these tests, use:
- * <code>
- * $ phpunit KeyTestCase
- * </code>
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008-2010 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- */
-
 namespace Crypt\GPG\Tests;
 
 use Crypt\GPG\Key;
@@ -52,8 +15,8 @@ use Crypt\GPG\UserId;
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2008-2010 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
  */
 class KeyTest extends TestCase
 {
@@ -73,7 +36,7 @@ class KeyTest extends TestCase
             'expiration'  => 0,
             'canSign'     => true,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $key->addSubKey($firstSubKey);
@@ -87,30 +50,43 @@ class KeyTest extends TestCase
             'expiration'  => 0,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $key->addSubKey($secondSubKey);
 
         $subKeys = $key->getSubKeys();
 
-        $this->assertEquals(2, count($subKeys),
-            'Failed to assert number of returned sub-keys is the same as ' .
-            'the number of sub-keys added.');
+        $this->assertEquals(
+            2,
+            count($subKeys),
+            'Failed to assert number of returned sub-keys is the same as '
+            . 'the number of sub-keys added.'
+        );
 
-        $this->assertContainsOnly(SubKey::class, $subKeys, false,
-            'Failed to assert all returned sub-keys are Crypt_GPG_SubKey ' .
-            'objects.');
+        $this->assertContainsOnly(
+            SubKey::class,
+            $subKeys,
+            false,
+            'Failed to assert all returned sub-keys are Crypt_GPG_SubKey '
+            . 'objects.'
+        );
 
         $this->assertArrayHasKey(0, $subKeys);
-        $this->assertEquals($subKeys[0], $firstSubKey,
-            'Failed to assert the first sub-key is the same as the first ' .
-            'added sub-key.');
+        $this->assertEquals(
+            $subKeys[0],
+            $firstSubKey,
+            'Failed to assert the first sub-key is the same as the first '
+            . 'added sub-key.'
+        );
 
         $this->assertArrayHasKey(1, $subKeys);
-        $this->assertEquals($subKeys[1], $secondSubKey,
-            'Failed to assert the second sub-key is the same as the second ' .
-            'added sub-key.');
+        $this->assertEquals(
+            $subKeys[1],
+            $secondSubKey,
+            'Failed to assert the second sub-key is the same as the second '
+            . 'added sub-key.'
+        );
     }
 
     /**
@@ -123,7 +99,7 @@ class KeyTest extends TestCase
         $firstUserId = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
-            'email'   => 'alice@example.com'
+            'email'   => 'alice@example.com',
         ]);
 
         $key->addUserId($firstUserId);
@@ -131,30 +107,43 @@ class KeyTest extends TestCase
         $secondUserId = new UserId([
             'name'    => 'Bob',
             'comment' => 'receiving',
-            'email'   => 'bob@example.com'
+            'email'   => 'bob@example.com',
         ]);
 
         $key->addUserId($secondUserId);
 
         $userIds = $key->getUserIds();
 
-        $this->assertCount(2, $userIds,
-            'Failed to assert number of returned user ids is the same as ' .
-            'the number of user ids added.');
+        $this->assertCount(
+            2,
+            $userIds,
+            'Failed to assert number of returned user ids is the same as '
+            . 'the number of user ids added.'
+        );
 
-        $this->assertContainsOnly(UserId::class, $userIds, false,
-            'Failed to assert all returned user ids are UserId ' .
-            'objects.');
+        $this->assertContainsOnly(
+            UserId::class,
+            $userIds,
+            false,
+            'Failed to assert all returned user ids are UserId '
+            . 'objects.'
+        );
 
         $this->assertArrayHasKey(0, $userIds);
-        $this->assertEquals($userIds[0], $firstUserId,
-            'Failed to assert the first user id is the same as the first ' .
-            'added user id.');
+        $this->assertEquals(
+            $userIds[0],
+            $firstUserId,
+            'Failed to assert the first user id is the same as the first '
+            . 'added user id.'
+        );
 
         $this->assertArrayHasKey(1, $userIds);
-        $this->assertEquals($userIds[1], $secondUserId,
-            'Failed to assert the second user id is the same as the second ' .
-            'added user id.');
+        $this->assertEquals(
+            $userIds[1],
+            $secondUserId,
+            'Failed to assert the second user id is the same as the second '
+            . 'added user id.'
+        );
     }
 
     /**
@@ -173,7 +162,7 @@ class KeyTest extends TestCase
             'expiration'  => 0,
             'canSign'     => true,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $key->addSubKey($firstSubKey);
@@ -187,16 +176,19 @@ class KeyTest extends TestCase
             'expiration'  => 0,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $key->addSubKey($secondSubKey);
 
         $primaryKey = $key->getPrimaryKey();
 
-        $this->assertEquals($firstSubKey, $primaryKey,
-            'Failed to assert the primary key is the same as the first added ' .
-            'sub-key.');
+        $this->assertEquals(
+            $firstSubKey,
+            $primaryKey,
+            'Failed to assert the primary key is the same as the first added '
+            . 'sub-key.'
+        );
     }
 
     /**
@@ -329,7 +321,7 @@ class KeyTest extends TestCase
             'expiration'  => 0,
             'canSign'     => true,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $this->assertSame((string) $key, '');
@@ -348,8 +340,11 @@ class KeyTest extends TestCase
 
         $subKeys = $key->getSubKeys();
 
-        $this->assertCount(0, $subKeys,
-            'Failed to assert there are no sub-keys.');
+        $this->assertCount(
+            0,
+            $subKeys,
+            'Failed to assert there are no sub-keys.'
+        );
 
         // add first sub-key
         $firstSubKey = new SubKey([
@@ -361,25 +356,35 @@ class KeyTest extends TestCase
             'expiration'  => 0,
             'canSign'     => true,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $key->addSubKey($firstSubKey);
 
         $subKeys = $key->getSubKeys();
 
-        $this->assertCount(1, $subKeys,
-            'Failed to assert number of returned sub-keys is the same as ' .
-            'the number of sub-keys added.');
+        $this->assertCount(
+            1,
+            $subKeys,
+            'Failed to assert number of returned sub-keys is the same as '
+            . 'the number of sub-keys added.'
+        );
 
-        $this->assertContainsOnly(SubKey::class, $subKeys, false,
-            'Failed to assert all returned sub-keys are SubKey ' .
-            'objects.');
+        $this->assertContainsOnly(
+            SubKey::class,
+            $subKeys,
+            false,
+            'Failed to assert all returned sub-keys are SubKey '
+            . 'objects.'
+        );
 
         $this->assertArrayHasKey(0, $subKeys);
-        $this->assertEquals($subKeys[0], $firstSubKey,
-            'Failed to assert the first sub-key is the same as the first ' .
-            'added sub-key.');
+        $this->assertEquals(
+            $subKeys[0],
+            $firstSubKey,
+            'Failed to assert the first sub-key is the same as the first '
+            . 'added sub-key.'
+        );
 
         // add second sub-key
         $secondSubKey = new SubKey([
@@ -391,29 +396,42 @@ class KeyTest extends TestCase
             'expiration'  => 0,
             'canSign'     => false,
             'canEncrypt'  => true,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $key->addSubKey($secondSubKey);
 
         $subKeys = $key->getSubKeys();
 
-        $this->assertCount(2, $subKeys,
-            'Failed to assert number of returned sub-keys is the same as ' .
-            'the number of sub-keys added.');
+        $this->assertCount(
+            2,
+            $subKeys,
+            'Failed to assert number of returned sub-keys is the same as '
+            . 'the number of sub-keys added.'
+        );
 
-        $this->assertContainsOnly(SubKey::class, $subKeys, false,
-            'Failed to assert all returned sub-keys are SubKey objects.');
+        $this->assertContainsOnly(
+            SubKey::class,
+            $subKeys,
+            false,
+            'Failed to assert all returned sub-keys are SubKey objects.'
+        );
 
         $this->assertArrayHasKey(0, $subKeys);
-        $this->assertEquals($subKeys[0], $firstSubKey,
-            'Failed to assert the first sub-key is the same as the first ' .
-            'added sub-key.');
+        $this->assertEquals(
+            $subKeys[0],
+            $firstSubKey,
+            'Failed to assert the first sub-key is the same as the first '
+            . 'added sub-key.'
+        );
 
         $this->assertArrayHasKey(1, $subKeys);
-        $this->assertEquals($subKeys[1], $secondSubKey,
-            'Failed to assert the second sub-key is the same as the second ' .
-            'added sub-key.');
+        $this->assertEquals(
+            $subKeys[1],
+            $secondSubKey,
+            'Failed to assert the second sub-key is the same as the second '
+            . 'added sub-key.'
+        );
     }
 
     /**
@@ -431,53 +449,76 @@ class KeyTest extends TestCase
         $firstUserId = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
-            'email'   => 'alice@example.com'
+            'email'   => 'alice@example.com',
         ]);
 
         $key->addUserId($firstUserId);
 
         $userIds = $key->getUserIds();
 
-        $this->assertCount(1, $userIds,
-            'Failed to assert number of returned user ids is the same as ' .
-            'the number of user ids added.');
+        $this->assertCount(
+            1,
+            $userIds,
+            'Failed to assert number of returned user ids is the same as '
+            . 'the number of user ids added.'
+        );
 
-        $this->assertContainsOnly(UserId::class, $userIds, false,
-            'Failed to assert all returned user ids are UserId objects.');
+        $this->assertContainsOnly(
+            UserId::class,
+            $userIds,
+            false,
+            'Failed to assert all returned user ids are UserId objects.'
+        );
 
         $this->assertArrayHasKey(0, $userIds);
-        $this->assertEquals($userIds[0], $firstUserId,
-            'Failed to assert the first user id is the same as the first ' .
-            'added user id.');
+        $this->assertEquals(
+            $userIds[0],
+            $firstUserId,
+            'Failed to assert the first user id is the same as the first '
+            . 'added user id.'
+        );
 
         // add second user id
         $secondUserId = new UserId([
             'name'    => 'Bob',
             'comment' => 'receiving',
-            'email'   => 'bob@example.com'
+            'email'   => 'bob@example.com',
         ]);
 
         $key->addUserId($secondUserId);
 
         $userIds = $key->getUserIds();
 
-        $this->assertCount(2, $userIds,
-            'Failed to assert number of returned user ids is the same as ' .
-            'the number of user ids added.');
+        $this->assertCount(
+            2,
+            $userIds,
+            'Failed to assert number of returned user ids is the same as '
+            . 'the number of user ids added.'
+        );
 
-        $this->assertContainsOnly(UserId::class, $userIds, false,
-            'Failed to assert all returned user ids are UserId ' .
-            'objects.');
+        $this->assertContainsOnly(
+            UserId::class,
+            $userIds,
+            false,
+            'Failed to assert all returned user ids are UserId '
+            . 'objects.'
+        );
 
         $this->assertArrayHasKey(0, $userIds);
-        $this->assertEquals($userIds[0], $firstUserId,
-            'Failed to assert the first user id is the same as the first ' .
-            'added user id.');
+        $this->assertEquals(
+            $userIds[0],
+            $firstUserId,
+            'Failed to assert the first user id is the same as the first '
+            . 'added user id.'
+        );
 
         $this->assertArrayHasKey(1, $userIds);
-        $this->assertEquals($userIds[1], $secondUserId,
-            'Failed to assert the second user id is the same as the second ' .
-            'added user id.');
+        $this->assertEquals(
+            $userIds[1],
+            $secondUserId,
+            'Failed to assert the second user id is the same as the second '
+            . 'added user id.'
+        );
     }
 
     /**
@@ -497,7 +538,7 @@ class KeyTest extends TestCase
             'expiration'  => 0,
             'canSign'     => true,
             'canEncrypt'  => false,
-            'hasPrivate'  => true
+            'hasPrivate'  => true,
         ]);
 
         $returnedKey = $key->addSubKey($firstSubKey);
@@ -511,7 +552,7 @@ class KeyTest extends TestCase
         $firstUserId = new UserId([
             'name'    => 'Alice',
             'comment' => 'shipping',
-            'email'   => 'alice@example.com'
+            'email'   => 'alice@example.com',
         ]);
 
         $returnedKey = $key->addUserId($firstUserId);

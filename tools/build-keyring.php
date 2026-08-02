@@ -16,13 +16,13 @@ $dataFiles = [
     'pubring'     => 'pubring.gpg',
     'secring'     => 'secring.gpg',
     'trustdb'     => 'trustdb.gpg',
-    'random_seed' => 'random_seed'
+    'random_seed' => 'random_seed',
 ];
 
 $keyFiles = [
     'expectedKeyData'   => 'public-only-pub.asc',
     'privateKeyData'    => 'public-only-sec.asc',
-    'publicKeyData'     => 'external-public-pub.asc'
+    'publicKeyData'     => 'external-public-pub.asc',
 ];
 
 $signatureFiles = [
@@ -31,7 +31,7 @@ $signatureFiles = [
     'detachedSignature'     => 'detached-signature.asc',
     'dualNormalSignedData'  => 'dual-normal-signed-data.asc',
     'dualClearsignedData'   => 'dual-clearsigned-data.asc',
-    'dualDetachedSignature' => 'dual-detached-signature.asc'
+    'dualDetachedSignature' => 'dual-detached-signature.asc',
 ];
 
 $encryptedFiles = [
@@ -39,7 +39,7 @@ $encryptedFiles = [
     'encryptedDataNoPassphrase'      => 'encrypted-data-no-passphrase.asc',
     'encryptedDataMissingKey'        => 'encrypted-data-missing-key.asc',
     'dualEncryptedData'              => 'dual-encrypted-data.asc',
-    'dualEncryptedDataOnePassphrase' => 'dual-encrypted-data-one-passphrase.asc'
+    'dualEncryptedDataOnePassphrase' => 'dual-encrypted-data-one-passphrase.asc',
 ];
 
 echo "\n// For TestCase\n";

@@ -2,46 +2,6 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-/**
- * Crypt_GPG is a package to use GPG from PHP
- *
- * This package provides an object oriented interface to GNU Privacy
- * Guard (GPG). It requires the GPG executable to be on the system.
- *
- * Though GPG can support symmetric-key cryptography, this package is intended
- * only to facilitate public-key cryptography.
- *
- * This file contains the main GPG class. The class in this file lets you
- * encrypt, decrypt, sign and verify data; import and delete keys; and perform
- * other useful GPG tasks.
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>
- *
- * @category  Encryption
- * @package   Crypt_GPG
- * @author    Nathan Fredrickson <nathan@silverorange.com>
- * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2005-2013 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- * @link      http://pear.php.net/manual/en/package.encryption.crypt-gpg.php
- * @link      http://www.gnupg.org/
- */
-
 namespace Crypt;
 
 use Crypt\GPG\Engine;
@@ -65,9 +25,9 @@ use Crypt\GPG\UserId;
  * @author    Nathan Fredrickson <nathan@silverorange.com>
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2005-2013 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
- * @link      http://www.gnupg.org/
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
+ * @link      https://www.gnupg.org/
  */
 class GPG
 {
@@ -80,7 +40,7 @@ class GPG
      * @see self::sign()
      * @see self::signFile()
      */
-    const SIGN_MODE_NORMAL = 1;
+    public const SIGN_MODE_NORMAL = 1;
 
     /**
      * Signing mode for clearsigning data. Clearsigned signatures are ASCII
@@ -91,7 +51,7 @@ class GPG
      * @see self::sign()
      * @see self::signFile()
      */
-    const SIGN_MODE_CLEAR = 2;
+    public const SIGN_MODE_CLEAR = 2;
 
     /**
      * Signing mode for creating a detached signature. When using detached
@@ -103,7 +63,7 @@ class GPG
      * @see self::sign()
      * @see self::signFile()
      */
-    const SIGN_MODE_DETACHED = 3;
+    public const SIGN_MODE_DETACHED = 3;
 
     /**
      * No formatting is performed.
@@ -112,7 +72,7 @@ class GPG
      *
      * @see self::getFingerprint()
      */
-    const FORMAT_NONE = 1;
+    public const FORMAT_NONE = 1;
 
     /**
      * Fingerprint is formatted in the format used by the GnuPG gpg command's
@@ -122,63 +82,61 @@ class GPG
      *
      * @see self::getFingerprint()
      */
-    const FORMAT_CANONICAL = 2;
+    public const FORMAT_CANONICAL = 2;
 
     /**
-     * Fingerprint is formatted in the format used when displaying X.509
-     * certificates
+     * Fingerprint is formatted in the format used when displaying X.509 certificates
      *
      * Example: C3:BC:61:5A:D9:C7:66:E5:A8:5C:1F:27:16:D2:74:58:B1:BB:A1:C4
      *
      * @see self::getFingerprint()
      */
-    const FORMAT_X509 = 3;
+    public const FORMAT_X509 = 3;
 
     /**
      * Use to specify ASCII armored mode for returned data
      */
-    const ARMOR_ASCII = true;
+    public const ARMOR_ASCII = true;
 
     /**
      * Use to specify binary mode for returned data
      */
-    const ARMOR_BINARY = false;
+    public const ARMOR_BINARY = false;
 
     /**
      * Use to specify that line breaks in signed text should be normalized
      */
-    const TEXT_NORMALIZED = true;
+    public const TEXT_NORMALIZED = true;
 
     /**
      * Use to specify that line breaks in signed text should not be normalized
      */
-    const TEXT_RAW = false;
+    public const TEXT_RAW = false;
 
     /**
      * Error code returned when there is no error.
      */
-    const ERROR_NONE = 0;
+    public const ERROR_NONE = 0;
 
     /**
      * Error code returned when an unknown or unhandled error occurs.
      */
-    const ERROR_UNKNOWN = 1;
+    public const ERROR_UNKNOWN = 1;
 
     /**
      * Error code returned when a bad passphrase is used.
      */
-    const ERROR_BAD_PASSPHRASE = 2;
+    public const ERROR_BAD_PASSPHRASE = 2;
 
     /**
      * Error code returned when a required passphrase is missing.
      */
-    const ERROR_MISSING_PASSPHRASE = 3;
+    public const ERROR_MISSING_PASSPHRASE = 3;
 
     /**
-     * Error code returned when a key that is already in the keyring is
-     * imported.
+     * Error code returned when a key that is already in the keyring is imported.
      */
-    const ERROR_DUPLICATE_KEY = 4;
+    public const ERROR_DUPLICATE_KEY = 4;
 
     /**
      * Error code returned the required data is missing for an operation.
@@ -186,55 +144,54 @@ class GPG
      * This could be missing key data, missing encrypted data or missing
      * signature data.
      */
-    const ERROR_NO_DATA = 5;
+    public const ERROR_NO_DATA = 5;
 
     /**
      * Error code returned when an unsigned key is used.
      */
-    const ERROR_UNSIGNED_KEY = 6;
+    public const ERROR_UNSIGNED_KEY = 6;
 
     /**
      * Error code returned when a key that is not self-signed is used.
      */
-    const ERROR_NOT_SELF_SIGNED = 7;
+    public const ERROR_NOT_SELF_SIGNED = 7;
 
     /**
      * Error code returned when a public or private key that is not in the
      * keyring is used.
      */
-    const ERROR_KEY_NOT_FOUND = 8;
+    public const ERROR_KEY_NOT_FOUND = 8;
 
     /**
      * Error code returned when an attempt to delete public key having a
      * private key is made.
      */
-    const ERROR_DELETE_PRIVATE_KEY = 9;
+    public const ERROR_DELETE_PRIVATE_KEY = 9;
 
     /**
      * Error code returned when one or more bad signatures are detected.
      */
-    const ERROR_BAD_SIGNATURE = 10;
+    public const ERROR_BAD_SIGNATURE = 10;
 
     /**
      * Error code returned when there is a problem reading GnuPG data files.
      */
-    const ERROR_FILE_PERMISSIONS = 11;
+    public const ERROR_FILE_PERMISSIONS = 11;
 
     /**
      * Error code returned when a key could not be created.
      */
-    const ERROR_KEY_NOT_CREATED = 12;
+    public const ERROR_KEY_NOT_CREATED = 12;
 
     /**
-     * Error code returned when bad key parameters are used during key
-     * generation.
+     * Error code returned when bad key parameters are used during key generation.
      */
-    const ERROR_BAD_KEY_PARAMS = 13;
+    public const ERROR_BAD_KEY_PARAMS = 13;
 
     /**
      * URI at which package bugs may be reported.
      */
-    const BUG_URI = 'https://github.com/pear/Crypt_GPG/issues';
+    public const BUG_URI = 'https://github.com/pear/Crypt_GPG/issues';
 
     /**
      * Engine used to control the GPG subprocess
@@ -251,10 +208,10 @@ class GPG
      * The array is of the form:
      * <code>
      * [
-     *   $key_id => array(
+     *   $key_id => [
      *     'fingerprint' => $fingerprint,
      *     'passphrase'  => null
-     *   )
+     *   ]
      * ];
      * </code>
      *
@@ -270,10 +227,10 @@ class GPG
      * The array is of the form:
      * <code>
      * [
-     *   $key_id => array(
+     *   $key_id => [
      *     'fingerprint' => $fingerprint,
      *     'passphrase'  => $passphrase
-     *   )
+     *   ]
      * ];
      * </code>
      *
@@ -289,10 +246,10 @@ class GPG
      * The array is of the form:
      * <code>
      * [
-     *   $key_id => array(
+     *   $key_id => [
      *     'fingerprint' => $fingerprint,
      *     'passphrase'  => $passphrase
-     *   )
+     *   ]
      * ];
      * </code>
      *
@@ -303,7 +260,7 @@ class GPG
     protected $decryptKeys = [];
 
     /**
-     * Passphrases used on import/export of private keys in GnuPG 2.1
+     * Passphrases used on import/export of private keys
      *
      * The array is of the form:
      * <code>
@@ -421,8 +378,7 @@ class GPG
      * Imports a public or private key into the keyring
      *
      * Keys may be removed from the keyring using
-     * {@link self::deletePublicKey()} or
-     * {@link self::deletePrivateKey()}.
+     * {@link self::deletePublicKey()} or {@link self::deletePrivateKey()}.
      *
      * @param string $data the key data to be imported.
      *
@@ -461,8 +417,7 @@ class GPG
      * Imports a public or private key file into the keyring
      *
      * Keys may be removed from the keyring using
-     * {@link self::deletePublicKey()} or
-     * {@link self::deletePrivateKey()}.
+     * {@link self::deletePublicKey()} or {@link self::deletePrivateKey()}.
      *
      * @param string $filename the key file to be imported.
      *
@@ -574,10 +529,6 @@ class GPG
      * <kbd>$keyId</kbd> (for example, if you use a non-unique uid) only the
      * first public key is deleted.
      *
-     * The private key must be deleted first or an exception will be thrown.
-     * In GnuPG >= 2.1 this limitation does not exist.
-     * See {@link self::deletePrivateKey()}.
-     *
      * @param string $keyId either the full uid of the public key, the email
      *                      part of the uid of the public key or the key id of
      *                      the public key. For example,
@@ -612,7 +563,7 @@ class GPG
         $operation = '--delete-key -- ' . escapeshellarg($fingerprint);
         $arguments = [
             '--batch',
-            '--yes'
+            '--yes',
         ];
 
         $this->engine->reset();
@@ -629,7 +580,7 @@ class GPG
      *
      * Calls GPG with the <kbd>--delete-secret-key</kbd> command.
      *
-     * @param string $keyId either the full uid of the private key, the email
+     * @param string $keyId Either the full uid of the private key, the email
      *                      part of the uid of the private key or the key id of
      *                      the private key. For example,
      *                      "Test User (example) <test@example.com>",
@@ -659,7 +610,7 @@ class GPG
         $operation = '--delete-secret-key -- ' . escapeshellarg($fingerprint);
         $arguments = [
             '--batch',
-            '--yes'
+            '--yes',
         ];
 
         $this->engine->reset();
@@ -680,15 +631,12 @@ class GPG
      *                      a user id, a key id or a key fingerprint. If not
      *                      specified, all keys are returned.
      *
-     * @return array an array of {@link \Crypt\GPG\Key} objects. If no keys
-     *               match the specified <kbd>$keyId</kbd> an empty array is
-     *               returned.
+     * @return array<Key> A list of keys. If no keys match the specified <kbd>$keyId</kbd>
+     *                    an empty array is returned.
      *
      * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
-     *
-     * @see \Crypt\GPG\Key
      */
     public function getKeys($keyId = '')
     {
@@ -731,7 +679,7 @@ class GPG
         $operation = '--list-keys -- ' . escapeshellarg($keyId);
         $arguments = [
             '--with-colons',
-            '--with-fingerprint'
+            '--with-fingerprint',
         ];
 
         $this->engine->reset();
@@ -747,16 +695,16 @@ class GPG
                 $fingerprint = $lineExp[9];
 
                 switch ($format) {
-                case self::FORMAT_CANONICAL:
-                    $fingerprintExp = str_split($fingerprint, 4);
-                    $format         = '%s %s %s %s %s  %s %s %s %s %s';
-                    $fingerprint    = vsprintf($format, $fingerprintExp);
-                    break;
+                    case self::FORMAT_CANONICAL:
+                        $fingerprintExp = str_split($fingerprint, 4);
+                        $format         = '%s %s %s %s %s  %s %s %s %s %s';
+                        $fingerprint    = vsprintf($format, $fingerprintExp);
+                        break;
 
-                case self::FORMAT_X509:
-                    $fingerprintExp = str_split($fingerprint, 2);
-                    $fingerprint    = implode(':', $fingerprintExp);
-                    break;
+                    case self::FORMAT_X509:
+                        $fingerprintExp = str_split($fingerprint, 2);
+                        $fingerprint    = implode(':', $fingerprintExp);
+                        break;
                 }
 
                 break;
@@ -779,13 +727,11 @@ class GPG
     /**
      * Encrypts string data
      *
-     * Data is ASCII armored by default but may optionally be returned as
-     * binary.
+     * Data is ASCII-armored by default, but may optionally be returned as binary.
      *
      * @param string  $data  the data to be encrypted.
      * @param bool    $armor optional. If true, ASCII armored data is returned;
-     *                       otherwise, binary data is returned. Defaults to
-     *                       true.
+     *                       otherwise, binary data is returned. Defaults to true.
      *
      * @return string the encrypted data.
      *
@@ -806,8 +752,7 @@ class GPG
     /**
      * Encrypts a file
      *
-     * Encrypted data is ASCII armored by default but may optionally be saved
-     * as binary.
+     * Encrypted data is ASCII-armored by default, but may optionally be saved as binary.
      *
      * @param string  $filename      the filename of the file to encrypt.
      * @param string  $encryptedFile optional. The filename of the file in
@@ -818,7 +763,7 @@ class GPG
      *                               returned; otherwise, binary data is
      *                               returned. Defaults to true.
      *
-     * @return void|string if the <kbd>$encryptedFile</kbd> parameter is null,
+     * @return string|null If the <kbd>$encryptedFile</kbd> parameter is null,
      *                     a string containing the encrypted data is returned.
      *
      * @throws Exceptions\KeyNotFoundException if no encryption key is specified.
@@ -882,14 +827,12 @@ class GPG
      *                            returned; otherwise, binary data is returned.
      *                            Defaults to true.
      *
-     * @return void|string if the <kbd>$signedFile</kbd> parameter is null, a
-     *                     string containing the encrypted, signed data is
-     *                     returned.
+     * @return string|null if the <kbd>$signedFile</kbd> parameter is null, a
+     *                     string containing the encrypted, signed data is returned.
      *
      * @throws Exceptions\KeyNotFoundException if no encryption key is specified
      *         or if no signing key is specified. See
-     *         {@link self::addEncryptKey()} and
-     *         {@link self::addSignKey()}.
+     *         {@link self::addEncryptKey()} and {@link self::addSignKey()}.
      *
      * @throws Exceptions\BadPassphraseException if a specified passphrase is
      *         incorrect or if a required passphrase is not specified.
@@ -903,11 +846,8 @@ class GPG
      *
      * @see self::decryptAndVerifyFile()
      */
-    public function encryptAndSignFile(
-        $filename,
-        $signedFile = null,
-        $armor = self::ARMOR_ASCII
-    ) {
+    public function encryptAndSignFile($filename, $signedFile = null, $armor = self::ARMOR_ASCII)
+    {
         return $this->_encryptAndSign($filename, true, $signedFile, $armor);
     }
 
@@ -957,7 +897,7 @@ class GPG
      *                              or unspecified, the decrypted data is
      *                              returned as a string.
      *
-     * @return void|string if the <kbd>$decryptedFile</kbd> parameter is null,
+     * @return string|null if the <kbd>$decryptedFile</kbd> parameter is null,
      *                     a string containing the decrypted data is returned.
      *
      * @throws Exceptions\KeyNotFoundException if the private key needed to
@@ -1161,12 +1101,8 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function sign(
-        $data,
-        $mode = self::SIGN_MODE_NORMAL,
-        $armor = self::ARMOR_ASCII,
-        $textmode = self::TEXT_RAW
-    ) {
+    public function sign($data, $mode = self::SIGN_MODE_NORMAL, $armor = self::ARMOR_ASCII, $textmode = self::TEXT_RAW)
+    {
         return $this->_sign($data, false, null, $mode, $armor, $textmode);
     }
 
@@ -1204,10 +1140,9 @@ class GPG
      *                            mode <kbd>self::SIGN_MODE_CLEAR</kbd> is
      *                            used as clear-signing always uses textmode.
      *
-     * @return void|string if the <kbd>$signedFile</kbd> parameter is null, a
+     * @return string|null if the <kbd>$signedFile</kbd> parameter is null, a
      *                     string containing the signed data (or the signature
-     *                     data if a detached signature is requested) is
-     *                     returned.
+     *                     data if a detached signature is requested) is returned.
      *
      * @throws Exceptions\KeyNotFoundException if no signing key is specified.
      *         See {@link self::addSignKey()}.
@@ -1229,14 +1164,7 @@ class GPG
         $armor = self::ARMOR_ASCII,
         $textmode = self::TEXT_RAW
     ) {
-        return $this->_sign(
-            $filename,
-            true,
-            $signedFile,
-            $mode,
-            $armor,
-            $textmode
-        );
+        return $this->_sign($filename, true, $signedFile, $mode, $armor, $textmode);
     }
 
     /**
@@ -1252,7 +1180,7 @@ class GPG
      *                           signature data. The data that was signed is
      *                           specified in <kbd>$signedData</kbd>.
      *
-     * @return array an array of {@link \Crypt\GPG\Signature} objects for the
+     * @return array<Signature> An array of {@link \Crypt\GPG\Signature} objects for the
      *               signed data. For each signature that is valid, the
      *               {@link \Crypt\GPG\Signature::isValid()} will return true.
      *
@@ -1265,8 +1193,6 @@ class GPG
      * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
-     *
-     * @see \Crypt\GPG\Signature
      */
     public function verify($signedData, $signature = '')
     {
@@ -1286,7 +1212,7 @@ class GPG
      *                          signature data. The file that was signed is
      *                          specified in <kbd>$filename</kbd>.
      *
-     * @return array an array of {@link \Crypt\GPG\Signature} objects for the
+     * @return array<Signature> An array of {@link \Crypt\GPG\Signature} objects for the
      *               signed data. For each signature that is valid, the
      *               {@link \Crypt\GPG\Signature::isValid()} will return true.
      *
@@ -1301,8 +1227,6 @@ class GPG
      * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
-     *
-     * @see \Crypt\GPG\Signature
      */
     public function verifyFile($filename, $signature = '')
     {
@@ -1381,11 +1305,11 @@ class GPG
     }
 
     /**
-     * Register a private key passphrase for import/export (GnuPG 2.1)
+     * Register a private key passphrase for import/export.
      *
-     * @param mixed  $key        The key to use. This must be a key identifier,
-     *                           or fingerprint.
-     * @param string $passphrase The passphrase of the key.
+     * @param string|Key $key        The key to use. This must be a key identifier,
+     *                               or fingerprint or a Key object.
+     * @param string     $passphrase The passphrase of the key.
      *
      * @return $this the current object, for fluent interface.
      *
@@ -1524,22 +1448,21 @@ class GPG
      * This handles resolving full key objects from the provided
      * <kbd>$key</kbd> value.
      *
-     * @param array   &$array     The array to which the key should be added
-     * @param bool    $encrypt    Whether or not the key must be able to
-     *                            encrypt
-     * @param bool    $sign       Whether or not the key must be able to sign
-     * @param mixed   $key        The key to add. This may be a key identifier,
-     *                            user id, fingerprint, {@link \Crypt\GPG\Key} or
-     *                            {@link \Crypt\GPG\SubKey}
-     * @param string  $passphrase Optional passphrase associated with the key
+     * @param array             &$array     The array to which the key should be added
+     * @param bool              $encrypt    Whether or not the key must be able to
+     *                                      encrypt
+     * @param bool              $sign       Whether or not the key must be able to sign
+     * @param string|Key|SubKey $key        The key to add. This may be a key identifier,
+     *                                      user id, fingerprint, {@link \Crypt\GPG\Key} or
+     *                                      {@link \Crypt\GPG\SubKey}
+     * @param string            $passphrase Optional passphrase associated with the key
      *
      * @return void
      *
      * @sensitive $passphrase
      */
-    protected function _addKey(array &$array, $encrypt, $sign, $key,
-        $passphrase = null
-    ) {
+    protected function _addKey(array &$array, $encrypt, $sign, $key, $passphrase = null)
+    {
         $subKeys = [];
 
         if (is_scalar($key)) {
@@ -1554,7 +1477,7 @@ class GPG
             $key = $keys[0];
         }
 
-        if ($key instanceof \Crypt\GPG\Key) {
+        if ($key instanceof Key) {
             if ($encrypt && !$key->canEncrypt()) {
                 throw new \InvalidArgumentException('Key "' . $key . '" cannot encrypt.');
             }
@@ -1595,7 +1518,7 @@ class GPG
 
             $array[$subKey->getId()] = [
                 'fingerprint' => $subKey->getFingerprint(),
-                'passphrase'  => $passphrase
+                'passphrase'  => $passphrase,
             ];
         }
     }
@@ -1730,9 +1653,7 @@ class GPG
     protected function _encrypt($data, $isFile, $outputFile, $armor)
     {
         if (!$this->hasEncryptKeys()) {
-            throw new Exceptions\KeyNotFoundException(
-                'No encryption keys specified.'
-            );
+            throw new Exceptions\KeyNotFoundException('No encryption keys specified.');
         }
 
         $input     = $this->_prepareInput($data, $isFile);
@@ -1763,7 +1684,7 @@ class GPG
      *                                data should be written. If null, the decrypted
      *                                data is returned as a string.
      *
-     * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
+     * @return string|null if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the decrypted data is returned.
      *
      * @throws Exceptions\KeyNotFoundException if the private key needed to
@@ -1795,9 +1716,7 @@ class GPG
         $this->engine->setOutput($output);
         $this->engine->run();
 
-        if ($outputFile === null) {
-            return $output;
-        }
+        return $outputFile === null ? $output : null;
     }
 
     /**
@@ -1825,10 +1744,9 @@ class GPG
      *                                mode <kbd>self::SIGN_MODE_CLEAR</kbd> is
      *                                used as clear-signing always uses textmode.
      *
-     * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
+     * @return string|null if the <kbd>$outputFile</kbd> parameter is null, a
      *                     string containing the signed data (or the signature
-     *                     data if a detached signature is requested) is
-     *                     returned.
+     *                     data if a detached signature is requested) is returned.
      *
      * @throws Exceptions\KeyNotFoundException if no signing key is specified.
      *         See {@link self::addSignKey()}.
@@ -1843,29 +1761,26 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    protected function _sign($data, $isFile, $outputFile, $mode, $armor,
-        $textmode
-    ) {
+    protected function _sign($data, $isFile, $outputFile, $mode, $armor, $textmode)
+    {
         if (!$this->hasSignKeys()) {
-            throw new Exceptions\KeyNotFoundException(
-                'No signing keys specified.'
-            );
+            throw new Exceptions\KeyNotFoundException('No signing keys specified.');
         }
 
         $input  = $this->_prepareInput($data, $isFile);
         $output = $this->_prepareOutput($outputFile, $input);
 
         switch ($mode) {
-        case self::SIGN_MODE_DETACHED:
-            $operation = '--detach-sign';
-            break;
-        case self::SIGN_MODE_CLEAR:
-            $operation = '--clearsign';
-            break;
-        case self::SIGN_MODE_NORMAL:
-        default:
-            $operation = '--sign';
-            break;
+            case self::SIGN_MODE_DETACHED:
+                $operation = '--detach-sign';
+                break;
+            case self::SIGN_MODE_CLEAR:
+                $operation = '--clearsign';
+                break;
+            case self::SIGN_MODE_NORMAL:
+            default:
+                $operation = '--sign';
+                break;
         }
 
         $arguments = [];
@@ -1878,8 +1793,7 @@ class GPG
         }
 
         foreach ($this->signKeys as $key) {
-            $arguments[] = '--local-user ' .
-                escapeshellarg($key['fingerprint']);
+            $arguments[] = '--local-user ' . escapeshellarg($key['fingerprint']);
         }
 
         $this->engine->reset();
@@ -1889,9 +1803,7 @@ class GPG
         $this->engine->setOperation($operation, $arguments);
         $this->engine->run();
 
-        if ($outputFile === null) {
-            return $output;
-        }
+        return $outputFile === null ? $output : null;
     }
 
     /**
@@ -1906,9 +1818,8 @@ class GPG
      * @param bool        $armor      If true, ASCII armored data is returned;
      *                                otherwise, binary data is returned.
      *
-     * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
-     *                     string containing the encrypted, signed data is
-     *                     returned.
+     * @return string|null if the <kbd>$outputFile</kbd> parameter is null, a
+     *                     string containing the encrypted, signed data is returned.
      *
      * @throws Exceptions\KeyNotFoundException if no encryption key is specified
      *         or if no signing key is specified. See
@@ -1954,9 +1865,7 @@ class GPG
         $this->engine->setOperation('--encrypt --sign', $arguments);
         $this->engine->run();
 
-        if ($outputFile === null) {
-            return $output;
-        }
+        return $outputFile === null ? $output : null;
     }
 
     /**
@@ -1968,8 +1877,8 @@ class GPG
      *                           signature, this must be the detached signature
      *                           data. Otherwise, specify ''.
      *
-     * @return array an array of {@link \Crypt\GPG\Signature} objects for the
-     *               signed data.
+     * @return array<Signature> An array of {@link \Crypt\GPG\Signature} objects for the
+     *                          signed data.
      *
      * @throws Exceptions\KeyNotFoundException if the public key needed for
      *         signature verification is not in the user's keyring.
@@ -1982,8 +1891,6 @@ class GPG
      * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
-     *
-     * @see \Crypt\GPG\Signature
      */
     protected function _verify($data, $isFile, $signature)
     {
@@ -1992,7 +1899,7 @@ class GPG
             $arguments = [];
         } else {
             // Signed data goes in FD_MESSAGE, detached signature data goes in FD_INPUT.
-            $operation = '--verify - "-&' . Engine::FD_MESSAGE. '"';
+            $operation = '--verify - "-&' . Engine::FD_MESSAGE . '"';
             $arguments = ['--enable-special-filenames'];
         }
 
@@ -2053,8 +1960,6 @@ class GPG
      * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
-     *
-     * @see \Crypt\GPG\Signature
      */
     protected function _decryptAndVerify($data, $isFile, $outputFile, $ignoreVerifyErrors = false)
     {
@@ -2069,16 +1974,10 @@ class GPG
         $this->engine->setProcessData('IgnoreVerifyErrors', $ignoreVerifyErrors);
         $this->engine->run();
 
-        $return = [
-            'data'       => null,
-            'signatures' => $this->engine->getProcessData('Signatures')
+        return [
+            'data'       => $outputFile === null ? $output : null,
+            'signatures' => $this->engine->getProcessData('Signatures'),
         ];
-
-        if ($outputFile === null) {
-            $return['data'] = $output;
-        }
-
-        return $return;
     }
 
     /**
@@ -2094,15 +1993,13 @@ class GPG
      *                      a user id, a key id or a key fingerprint. If not
      *                      specified, all keys are returned.
      *
-     * @return array an array of {@link \Crypt\GPG\Key} objects. If no keys
-     *               match the specified <kbd>$keyId</kbd> an empty array is
-     *               returned.
+     * @return array<Key> An array of {@link \Crypt\GPG\Key} objects. If no keys
+     *                    match the specified <kbd>$keyId</kbd> an empty array is
+     *                    returned.
      *
      * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
-     *
-     * @see \Crypt\GPG\Key
      */
     protected function _getKeys($keyId = '')
     {
@@ -2143,7 +2040,7 @@ class GPG
         $userId = null; // current user-id
 
         foreach (explode(PHP_EOL, $output) as $line) {
-            list($type) = explode(':', $line, 2);
+            [$type] = explode(':', $line, 2);
 
             if ($type == 'pub') {
                 // new primary key means last key should be added to the array

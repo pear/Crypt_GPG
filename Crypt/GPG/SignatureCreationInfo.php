@@ -31,15 +31,15 @@ class SignatureCreationInfo
      *
      * @var int
      */
-    protected $pkAlgorithm;
+    protected $pkAlgorithm = 0;
 
     /**
      * Algorithm to hash the data
      *
      * @see RFC 2440 / 9.4. Hash Algorithm
-     * @var int
+     * @var ?int
      */
-    protected $hashAlgorithm;
+    protected $hashAlgorithm = 0;
 
     /**
      * OpenPGP signature class
@@ -53,21 +53,21 @@ class SignatureCreationInfo
      *
      * @var int
      */
-    protected $timestamp;
+    protected $timestamp = 0;
 
     /**
      * Key fingerprint
      *
      * @var string
      */
-    protected $keyFingerprint;
+    protected $keyFingerprint = '';
 
     /**
      * If the line given to the constructor was valid
      *
      * @var bool
      */
-    protected $valid;
+    protected $valid = true;
 
     /**
      * Names for the hash algorithm IDs.
@@ -108,10 +108,8 @@ class SignatureCreationInfo
             $this->valid = false;
             return;
         }
-        [
-            $title, $mode, $pkAlgorithm, $hashAlgorithm,
-            $class, $timestamp, $keyFingerprint
-        ] = $parts;
+
+        [$title, $mode, $pkAlgorithm, $hashAlgorithm, $class, $timestamp, $keyFingerprint] = $parts;
 
         switch (strtoupper($mode[0])) {
             case 'D':
@@ -142,73 +140,60 @@ class SignatureCreationInfo
      * - {@link \Crypt\GPG::SIGN_MODE_NORMAL}
      * - {@link \Crypt\GPG::SIGN_MODE_CLEAR}
      * - {@link \Crypt\GPG::SIGN_MODE_DETACHED}
-     *
-     * @return ?int
      */
-    public function getMode()
+    public function getMode(): ?int
     {
         return $this->mode;
     }
 
     /**
      * Return the public key algorithm used.
-     *
-     * @return int
      */
-    public function getPkAlgorithm()
+    public function getPkAlgorithm(): int
     {
         return $this->pkAlgorithm;
     }
 
     /**
      * Return the hash algorithm used to hash the data to sign.
-     *
-     * @return int
      */
-    public function getHashAlgorithm()
+    public function getHashAlgorithm(): int
     {
         return $this->hashAlgorithm;
     }
 
     /**
      * Get a name for the used hashing algorithm.
-     *
-     * @return string|null
      */
-    public function getHashAlgorithmName()
+    public function getHashAlgorithmName(): ?string
     {
         if (!isset(self::$hashAlgorithmNames[$this->hashAlgorithm])) {
             return null;
         }
+
         return self::$hashAlgorithmNames[$this->hashAlgorithm];
     }
 
     /**
      * Return the timestamp at which the signature was created
-     *
-     * @return int
      */
-    public function getTimestamp()
+    public function getTimestamp(): ?int
     {
         return $this->timestamp;
     }
 
     /**
      * Return the key's fingerprint
-     *
-     * @return string
      */
-    public function getKeyFingerprint()
+    public function getKeyFingerprint(): string
     {
         return $this->keyFingerprint;
     }
 
     /**
      * Tell if the fingerprint line given to the constructor was valid
-     *
-     * @return bool
      */
-    public function isValid()
+    public function isValid(): bool
     {
         return $this->valid;
     }

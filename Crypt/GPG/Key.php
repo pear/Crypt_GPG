@@ -52,7 +52,7 @@ class Key
      *
      * @see self::addSubKey()
      */
-    public function getSubKeys()
+    public function getSubKeys(): array
     {
         return $this->_subKeys;
     }
@@ -64,7 +64,7 @@ class Key
      *
      * @see self::addUserId()
      */
-    public function getUserIds()
+    public function getUserIds(): array
     {
         return $this->_userIds;
     }
@@ -76,7 +76,7 @@ class Key
      *
      * @return ?SubKey the primary sub-key of this key.
      */
-    public function getPrimaryKey()
+    public function getPrimaryKey(): ?SubKey
     {
         $primary_key = null;
         if (count($this->_subKeys) > 0) {
@@ -93,16 +93,15 @@ class Key
      * @return bool True if this key can sign data and false if this key
      *              cannot sign data.
      */
-    public function canSign()
+    public function canSign(): bool
     {
-        $canSign = false;
         foreach ($this->_subKeys as $subKey) {
             if ($subKey->canSign()) {
-                $canSign = true;
-                break;
+                return true;
             }
         }
-        return $canSign;
+
+        return false;
     }
 
     /**
@@ -113,16 +112,15 @@ class Key
      * @return bool True if this key can encrypt data and false if this
      *              key cannot encrypt data.
      */
-    public function canEncrypt()
+    public function canEncrypt(): bool
     {
-        $canEncrypt = false;
         foreach ($this->_subKeys as $subKey) {
             if ($subKey->canEncrypt()) {
-                $canEncrypt = true;
-                break;
+                return true;
             }
         }
-        return $canEncrypt;
+
+        return false;
     }
 
     /**
@@ -158,7 +156,7 @@ class Key
      *
      * @return string The key ID.
      */
-    public function __toString()
+    public function __toString(): string
     {
         foreach ($this->_subKeys as $subKey) {
             if ($id = $subKey->getId()) {

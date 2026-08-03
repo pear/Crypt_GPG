@@ -6,6 +6,7 @@ namespace Crypt\GPG;
 
 use Crypt\GPG;
 use Crypt\GPG\Exceptions;
+use Crypt\GPG\Key;
 use Crypt\GPG\SubKey;
 use Crypt\GPG\UserId;
 
@@ -78,7 +79,7 @@ class KeyGenerator extends GPG
      * The usages of generated primary keys
      *
      * This is a bitwise combination of the usage constants in
-     * {@link Crypt_GPG_SubKey}.
+     * {@link Crypt\GPG\SubKey}.
      *
      * @var int
      *
@@ -354,7 +355,7 @@ class KeyGenerator extends GPG
      *                               specified as a string, this is
      *                               the comment of the user id.
      *
-     * @return \Crypt\GPG\Key the newly generated key.
+     * @return Key the newly generated key.
      *
      * @throws Exceptions\KeyNotCreatedException if the key parameters are
      *         incorrect, if an unknown error occurs during key generation, or
@@ -364,7 +365,7 @@ class KeyGenerator extends GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function generateKey($name, $email = '', $comment = '')
+    public function generateKey($name, $email = '', $comment = ''): Key
     {
         $handle = uniqid('key', true);
 
@@ -454,10 +455,7 @@ class KeyGenerator extends GPG
 
         if (count($keys) === 0) {
             throw new Exceptions\KeyNotCreatedException(
-                sprintf(
-                    'Newly created key "%s" not found in keyring.',
-                    $fingerprint
-                )
+                sprintf('Newly created key "%s" not found in keyring.', $fingerprint)
             );
         }
 
@@ -477,7 +475,7 @@ class KeyGenerator extends GPG
      *
      * @return string The key usage string.
      */
-    protected function getUsage($usage)
+    protected function getUsage($usage): string
     {
         $map = [
             SubKey::USAGE_ENCRYPT        => 'encrypt',
@@ -516,7 +514,7 @@ class KeyGenerator extends GPG
      *
      * @return UserId a user id object for the specified parameters.
      */
-    protected function getUserId($name, $email = '', $comment = '')
+    protected function getUserId($name, $email = '', $comment = ''): UserId
     {
         if ($name instanceof UserId) {
             $userId = $name;

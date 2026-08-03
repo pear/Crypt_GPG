@@ -366,10 +366,8 @@ class GPG
 
     /**
      * Get a key editor instance
-     *
-     * @return KeyEditor Key editor object
      */
-    public function getKeyEditor()
+    public function getKeyEditor(): KeyEditor
     {
         return $this->engine->getKeyEditor();
     }
@@ -399,7 +397,7 @@ class GPG
      *
      * @throws Exceptions\BadPassphraseException if a required passphrase is
      *         incorrect or if a required passphrase is not specified. See
-     *         {@link Crypt_GPG::addPassphrase()}.
+     *         {@link self::addPassphrase()}.
      *
      * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *         Use the <kbd>debug</kbd> option and file a bug report if these
@@ -408,7 +406,7 @@ class GPG
      * @see self::addPassphrase()
      * @see self::clearPassphrases()
      */
-    public function importKey($data)
+    public function importKey($data): array
     {
         return $this->_importKey($data, false);
     }
@@ -447,7 +445,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function importKeyFile($filename)
+    public function importKeyFile($filename): array
     {
         return $this->_importKey($filename, true);
     }
@@ -484,7 +482,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function exportPrivateKey($keyId, $armor = true)
+    public function exportPrivateKey($keyId, $armor = true): string
     {
         return $this->_exportKey($keyId, $armor, true);
     }
@@ -517,7 +515,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function exportPublicKey($keyId, $armor = true)
+    public function exportPublicKey($keyId, $armor = true): string
     {
         return $this->_exportKey($keyId, $armor, false);
     }
@@ -534,8 +532,6 @@ class GPG
      *                          the public key. For example "Test User (example) <test@example.com>",
      *                          "test@example.com" or a hexadecimal string.
      *
-     * @return void
-     *
      * @throws Exceptions\KeyNotFoundException if a public key with the given
      *         <kbd>$keyId</kbd> is not found.
      *
@@ -547,7 +543,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function deletePublicKey($keyId)
+    public function deletePublicKey($keyId): void
     {
         $fingerprint = $this->toFingerprint($keyId);
 
@@ -576,8 +572,6 @@ class GPG
      *                          the public key. For example "Test User (example) <test@example.com>",
      *                          "test@example.com" or a hexadecimal string.
      *
-     * @return void
-     *
      * @throws Exceptions\KeyNotFoundException if a private key with the given
      *         <kbd>$keyId</kbd> is not found.
      *
@@ -585,7 +579,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function deletePrivateKey($keyId)
+    public function deletePrivateKey($keyId): void
     {
         $fingerprint = $this->toFingerprint($keyId);
 
@@ -620,7 +614,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function getKeys($keyId = '')
+    public function getKeys($keyId = ''): array
     {
         return $this->_getKeys($keyId);
     }
@@ -655,7 +649,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function getFingerprint($keyId, $format = self::FORMAT_NONE)
+    public function getFingerprint($keyId, $format = self::FORMAT_NONE): ?string
     {
         $output    = '';
         $operation = '--list-keys -- ' . escapeshellarg($keyId);
@@ -698,10 +692,8 @@ class GPG
 
     /**
      * Get information about the last signature that was created.
-     *
-     * @return \Crypt\GPG\SignatureCreationInfo
      */
-    public function getLastSignatureInfo()
+    public function getLastSignatureInfo(): ?\Crypt\GPG\SignatureCreationInfo
     {
         return $this->engine->getProcessData('SignatureInfo');
     }
@@ -726,7 +718,7 @@ class GPG
      *
      * @sensitive $data
      */
-    public function encrypt($data, $armor = self::ARMOR_ASCII)
+    public function encrypt($data, $armor = self::ARMOR_ASCII): string
     {
         return $this->_encrypt($data, false, null, $armor);
     }
@@ -758,7 +750,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function encryptFile($filename, $encryptedFile = null, $armor = self::ARMOR_ASCII)
+    public function encryptFile($filename, $encryptedFile = null, $armor = self::ARMOR_ASCII): ?string
     {
         return $this->_encrypt($filename, true, $encryptedFile, $armor);
     }
@@ -789,7 +781,7 @@ class GPG
      *
      * @see self::decryptAndVerify()
      */
-    public function encryptAndSign($data, $armor = self::ARMOR_ASCII)
+    public function encryptAndSign($data, $armor = self::ARMOR_ASCII): string
     {
         return $this->_encryptAndSign($data, false, null, $armor);
     }
@@ -828,7 +820,7 @@ class GPG
      *
      * @see self::decryptAndVerifyFile()
      */
-    public function encryptAndSignFile($filename, $signedFile = null, $armor = self::ARMOR_ASCII)
+    public function encryptAndSignFile($filename, $signedFile = null, $armor = self::ARMOR_ASCII): ?string
     {
         return $this->_encryptAndSign($filename, true, $signedFile, $armor);
     }
@@ -859,7 +851,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function decrypt($encryptedData)
+    public function decrypt($encryptedData): string
     {
         return $this->_decrypt($encryptedData, false, null);
     }
@@ -899,7 +891,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function decryptFile($encryptedFile, $decryptedFile = null)
+    public function decryptFile($encryptedFile, $decryptedFile = null): ?string
     {
         return $this->_decrypt($encryptedFile, true, $decryptedFile);
     }
@@ -939,7 +931,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function decryptAndVerify($encryptedData, $ignoreVerifyErrors = false)
+    public function decryptAndVerify($encryptedData, $ignoreVerifyErrors = false): array
     {
         return $this->_decryptAndVerify($encryptedData, false, null, $ignoreVerifyErrors);
     }
@@ -988,7 +980,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function decryptAndVerifyFile($encryptedFile, $decryptedFile = null, $ignoreVerifyErrors = false)
+    public function decryptAndVerifyFile($encryptedFile, $decryptedFile = null, $ignoreVerifyErrors = false): array
     {
         return $this->_decryptAndVerify($encryptedFile, true, $decryptedFile, $ignoreVerifyErrors);
     }
@@ -1037,7 +1029,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->engine->getVersion();
     }
@@ -1083,7 +1075,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function sign($data, $mode = self::SIGN_MODE_NORMAL, $armor = self::ARMOR_ASCII, $textmode = self::TEXT_RAW)
+    public function sign($data, $mode = self::SIGN_MODE_NORMAL, $armor = self::ARMOR_ASCII, $textmode = self::TEXT_RAW): string
     {
         return $this->_sign($data, false, null, $mode, $armor, $textmode);
     }
@@ -1145,7 +1137,7 @@ class GPG
         $mode = self::SIGN_MODE_NORMAL,
         $armor = self::ARMOR_ASCII,
         $textmode = self::TEXT_RAW
-    ) {
+    ): ?string {
         return $this->_sign($filename, true, $signedFile, $mode, $armor, $textmode);
     }
 
@@ -1176,7 +1168,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function verify($signedData, $signature = '')
+    public function verify($signedData, $signature = ''): array
     {
         return $this->_verify($signedData, false, $signature);
     }
@@ -1210,7 +1202,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function verifyFile($filename, $signature = '')
+    public function verifyFile($filename, $signature = ''): array
     {
         return $this->_verify($filename, true, $signature);
     }
@@ -1376,7 +1368,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      */
-    public function getOwnerTrust()
+    public function getOwnerTrust(): array
     {
         $output = '';
         $this->engine->reset();
@@ -1396,20 +1388,16 @@ class GPG
 
     /**
      * Tell if there are encryption keys registered
-     *
-     * @return bool True if the data shall be encrypted
      */
-    public function hasEncryptKeys()
+    public function hasEncryptKeys(): bool
     {
         return count($this->encryptKeys) > 0;
     }
 
     /**
      * Tell if there are signing keys registered
-     *
-     * @return bool True if the data shall be signed
      */
-    public function hasSignKeys()
+    public function hasSignKeys(): bool
     {
         return count($this->signKeys) > 0;
     }
@@ -1419,7 +1407,7 @@ class GPG
      *
      * @return array List of warning messages
      */
-    public function getWarnings()
+    public function getWarnings(): array
     {
         return $this->engine->getProcessData('Warnings');
     }
@@ -1439,11 +1427,9 @@ class GPG
      *                                      {@link \Crypt\GPG\SubKey}
      * @param string            $passphrase Optional passphrase associated with the key
      *
-     * @return void
-     *
      * @sensitive $passphrase
      */
-    protected function _addKey(array &$array, $encrypt, $sign, $key, $passphrase = null)
+    protected function _addKey(array &$array, $encrypt, $sign, $key, $passphrase = null): void
     {
         $subKeys = [];
 
@@ -1613,8 +1599,8 @@ class GPG
      * @param bool        $armor      If true, ASCII armored data is returned;
      *                                otherwise, binary data is returned.
      *
-     * @return void|string if the <kbd>$outputFile</kbd> parameter is null, a
-     *                     string containing the encrypted data is returned.
+     * @return string|null If the <kbd>$outputFile</kbd> parameter is null,
+     *                     a string containing the encrypted data is returned.
      *
      * @throws Exceptions\KeyNotFoundException if no encryption key is specified.
      *         See {@link self::addEncryptKey()}.
@@ -1646,9 +1632,7 @@ class GPG
         $this->engine->setOperation('--encrypt', $arguments);
         $this->engine->run();
 
-        if ($outputFile === null) {
-            return $output;
-        }
+        return $outputFile === null ? $output : null;
     }
 
     /**
@@ -2126,10 +2110,8 @@ class GPG
      * Find fingerprint for the key id input
      *
      * @param mixed $input Input
-     *
-     * @return string|null
      */
-    protected function toFingerprint($input)
+    protected function toFingerprint($input): string
     {
         if (is_string($input) && strlen($input)) {
             if (preg_match('/^[0-9A-F]{40}$/', $input)) {
@@ -2141,7 +2123,9 @@ class GPG
             }
         } elseif ($input instanceof Key) {
             if ($pkey = $input->getPrimaryKey()) {
-                return $pkey->getFingerprint();
+                if ($fingerprint = $pkey->getFingerprint()) {
+                    return $fingerprint;
+                }
             }
         }
 

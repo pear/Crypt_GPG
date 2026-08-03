@@ -378,7 +378,7 @@ class KeyEditor
     /**
      * Close the process
      */
-    private function _close()
+    private function _close(): void
     {
         foreach ($this->pipes as $pipe) {
             fflush($pipe);
@@ -399,7 +399,7 @@ class KeyEditor
     /**
      * Read process output
      */
-    private function _read($handlers = [], $stop_at = [])
+    private function _read($handlers = [], $stop_at = []): string
     {
         if (empty($this->pipes[Engine::FD_ERROR])) {
             $this->_close();
@@ -498,7 +498,7 @@ class KeyEditor
     /**
      * Log debug information
      */
-    private function _debug($line)
+    private function _debug($line): void
     {
         if (!empty($this->options['debug'])) {
             call_user_func($this->options['debug'], $line);
@@ -508,7 +508,7 @@ class KeyEditor
     /**
      * Find user identities in the key (by full identity or email)
      */
-    private function _find_users(UserId $userid, $by_email = false)
+    private function _find_users(UserId $userid, $by_email = false): array
     {
         $output = $this->_write('list')->_read([], ['keyedit.prompt']);
 

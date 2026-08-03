@@ -99,23 +99,23 @@ class UserId
         // initialize from array
         if (is_array($userId)) {
             if (array_key_exists('name', $userId)) {
-                $this->setName($userId['name']);
+                $this->setName((string) $userId['name']);
             }
 
             if (array_key_exists('comment', $userId)) {
-                $this->setComment($userId['comment']);
+                $this->setComment((string) $userId['comment']);
             }
 
             if (array_key_exists('email', $userId)) {
-                $this->setEmail($userId['email']);
+                $this->setEmail((string) $userId['email']);
             }
 
             if (array_key_exists('revoked', $userId)) {
-                $this->setRevoked($userId['revoked']);
+                $this->setRevoked((bool) $userId['revoked']);
             }
 
             if (array_key_exists('valid', $userId)) {
-                $this->setValid($userId['valid']);
+                $this->setValid((bool) $userId['valid']);
             }
         }
     }
@@ -138,7 +138,7 @@ class UserId
      *
      * @return string the name field of this user id.
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->_name;
     }
@@ -148,7 +148,7 @@ class UserId
      *
      * @return string the comments field of this user id.
      */
-    public function getComment()
+    public function getComment(): string
     {
         return $this->_comment;
     }
@@ -158,7 +158,7 @@ class UserId
      *
      * @return string the email field of this user id.
      */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->_email;
     }
@@ -168,7 +168,7 @@ class UserId
      *
      * @return array<Signature> List of signatures.
      */
-    public function getSignatures()
+    public function getSignatures(): array
     {
         return $this->_signatures;
     }
@@ -178,7 +178,7 @@ class UserId
      *
      * @return bool True if this user id is revoked and false if it is not.
      */
-    public function isRevoked()
+    public function isRevoked(): bool
     {
         return $this->_isRevoked;
     }
@@ -188,7 +188,7 @@ class UserId
      *
      * @return bool True if this user id is valid and false if it is not.
      */
-    public function isValid()
+    public function isValid(): bool
     {
         return $this->_isValid;
     }
@@ -200,7 +200,7 @@ class UserId
      *
      * @return string a string representation of this user id.
      */
-    public function __toString()
+    public function __toString(): string
     {
         $components = [];
 
@@ -295,7 +295,7 @@ class UserId
      *
      * @return self the user id object parsed from the string.
      */
-    public static function parse($string)
+    public static function parse($string): self
     {
         // keys listing's 'uid' format
         if (str_starts_with($string, 'uid:') && substr_count($string, ':') > 10) {

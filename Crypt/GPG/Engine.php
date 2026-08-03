@@ -14,7 +14,7 @@ use Crypt\GPG\SignatureCreationInfo;
  * Native PHP Crypt_GPG I/O engine
  *
  * This class is used internally by Crypt_GPG and does not need be used
- * directly. See the {@link \Crypt\GPG} class for end-user API.
+ * directly. See the {@link Crypt\GPG} class for end-user API.
  *
  * This engine uses PHP's native process control functions to directly control
  * the GPG process. The GPG executable is required to be on the system.
@@ -538,10 +538,8 @@ class Engine
      * @param callable $callback the callback method to use.
      * @param array    $args     optional. Additional arguments to pass as
      *                           parameters to the callback method.
-     *
-     * @return void
      */
-    public function addErrorHandler($callback, array $args = [])
+    public function addErrorHandler($callback, array $args = []): void
     {
         $this->_errorHandlers[] = [
             'callback' => $callback,
@@ -559,10 +557,8 @@ class Engine
      * @param callable $callback the callback method to use.
      * @param array    $args     optional. Additional arguments to pass as
      *                           parameters to the callback method.
-     *
-     * @return void
      */
-    public function addStatusHandler($callback, array $args = [])
+    public function addStatusHandler($callback, array $args = []): void
     {
         $this->_statusHandlers[] = [
             'callback' => $callback,
@@ -576,11 +572,9 @@ class Engine
      *
      * @param string $command the command to send.
      *
-     * @return void
-     *
      * @sensitive $command
      */
-    public function sendCommand($command)
+    public function sendCommand($command): void
     {
         if (array_key_exists(self::FD_COMMAND, $this->_openPipes)) {
             $this->_commandBuffer .= $command . PHP_EOL;
@@ -590,12 +584,10 @@ class Engine
     /**
      * Resets the GPG engine, preparing it for a new operation
      *
-     * @return void
-     *
      * @see self::run()
      * @see self::setOperation()
      */
-    public function reset()
+    public function reset(): void
     {
         $this->_operation      = '';
         $this->_arguments      = [];
@@ -627,15 +619,13 @@ class Engine
      * The operation must be set with {@link Crypt\GPG\Engine::setOperation()}
      * before this method is called.
      *
-     * @return void
-     *
      * @throws Exceptions\InvalidOperationException if no operation is specified.
      * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *
      * @see self::reset()
      * @see self::setOperation()
      */
-    public function run()
+    public function run(): void
     {
         if ($this->_operation === '') {
             throw new Exceptions\InvalidOperationException(
@@ -655,10 +645,8 @@ class Engine
      * @param string|resource &$input Either a reference to the string
      *                                containing the input data or an open
      *                                stream resource containing the input data
-     *
-     * @return void
      */
-    public function setInput(&$input)
+    public function setInput(&$input): void
     {
         $this->_input = & $input;
     }
@@ -671,10 +659,8 @@ class Engine
      * @param string|resource &$message Either a reference to the string
      *                                  containing the message data or an open
      *                                  stream resource containing the message data
-     *
-     * @return void
      */
-    public function setMessage(&$message)
+    public function setMessage(&$message): void
     {
         $this->_message = & $message;
     }
@@ -686,10 +672,8 @@ class Engine
      *                                 which to store GPG output or an open
      *                                 stream resource to which the output data
      *                                 should be written
-     *
-     * @return void
      */
-    public function setOutput(&$output)
+    public function setOutput(&$output): void
     {
         $this->_output = & $output;
     }
@@ -705,12 +689,10 @@ class Engine
      *                          subprocess. See the GPG manual for specific
      *                          values.
      *
-     * @return void
-     *
      * @see self::reset()
      * @see self::run()
      */
-    public function setOperation($operation, array $arguments = [])
+    public function setOperation($operation, array $arguments = []): void
     {
         $this->_operation = $operation;
         $this->_arguments = $arguments;
@@ -734,10 +716,8 @@ class Engine
      * For GnuPG 2.x this is how passphrases are passed.
      *
      * @param array $keys the internal key array to use.
-     *
-     * @return void
      */
-    public function setPins(array $keys)
+    public function setPins(array $keys): void
     {
         $envKeys = [];
 
@@ -758,10 +738,8 @@ class Engine
      *                       Value is a string containing command line arguments to be
      *                       added to the related command. For example:
      *                       ['sign' => '--emit-version'].
-     *
-     * @return void
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): void
     {
         $this->_options = $options;
     }
@@ -780,7 +758,7 @@ class Engine
      * @throws Exceptions\Exception if the provided binary is not
      *         GnuPG or if the GnuPG version is less than {@link self::MIN_VERSION }
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         if ($this->_version == '') {
             $options = [
@@ -858,10 +836,8 @@ class Engine
      *
      * @param string $name  Data element name (e.g. 'Handle')
      * @param mixed  $value Data value
-     *
-     * @return void
      */
-    public function setProcessData($name, $value)
+    public function setProcessData($name, $value): void
     {
         if ($this->_processHandler) {
             $this->_processHandler->setData($name, $value);
@@ -870,10 +846,8 @@ class Engine
 
     /**
      * Initialize key editor instance
-     *
-     * @return KeyEditor Key editor object
      */
-    public function getKeyEditor()
+    public function getKeyEditor(): KeyEditor
     {
         $keys = ['homedir', 'binary', 'publicKeyring', 'privateKeyring', 'trustDb'];
         $options = [];
@@ -897,10 +871,8 @@ class Engine
      * Displays debug output for status lines
      *
      * @param string $line the status line to handle.
-     *
-     * @return void
      */
-    private function _handleDebugStatus($line)
+    private function _handleDebugStatus($line): void
     {
         $this->_debug('STATUS: ' . $line);
     }
@@ -909,10 +881,8 @@ class Engine
      * Displays debug output for error lines
      *
      * @param string $line the error line to handle.
-     *
-     * @return void
      */
-    private function _handleDebugError($line)
+    private function _handleDebugError($line): void
     {
         $this->_debug('ERROR: ' . $line);
     }
@@ -927,13 +897,11 @@ class Engine
      * reasons. Adding streams to a lookup array and looping the array inside
      * the main I/O loop would be siginficantly slower for large streams.
      *
-     * @return void
-     *
      * @throws Exceptions\Exception if there is an error selecting streams for
      *         reading or writing. If this occurs, please file a bug report at
      *         https://github.com/pear/Crypt_GPG/issues
      */
-    private function _process()
+    private function _process(): void
     {
         $this->_debug('BEGIN PROCESSING');
 
@@ -1301,15 +1269,13 @@ class Engine
      * the private class property {@link Crypt\GPG\Engine::$_process} to
      * the new subprocess.
      *
-     * @return void
-     *
      * @throws Exceptions\OpenSubprocessException if the subprocess could not be opened.
      *
      * @see self::setOperation()
      * @see self::_closeSubprocess()
      * @see self::$_process
      */
-    private function _openSubprocess()
+    private function _openSubprocess(): void
     {
         $version = $this->getVersion();
 
@@ -1432,12 +1398,10 @@ class Engine
      * Closes the internal GPG subprocess. Sets the private class property
      * {@link self::$_process} to null.
      *
-     * @return void
-     *
      * @see self::_openSubprocess()
      * @see self::$_process
      */
-    private function _closeSubprocess()
+    private function _closeSubprocess(): void
     {
         // clear PINs from environment if they were set
         $_ENV['PINENTRY_USER_DATA'] = null;
@@ -1486,10 +1450,8 @@ class Engine
      * is flushed and then closed.
      *
      * @param int $pipeNumber The file descriptor number of the pipe to close
-     *
-     * @return void
      */
-    private function _closePipe($pipeNumber)
+    private function _closePipe($pipeNumber): void
     {
         $pipeNumber = intval($pipeNumber);
         if (array_key_exists($pipeNumber, $this->_openPipes)) {
@@ -1509,7 +1471,7 @@ class Engine
      *                system. If no suitable binary could be found, an empty
      *                string is returned.
      */
-    private function _getBinary()
+    private function _getBinary(): string
     {
         if ($binary = $this->_findBinary('gpg')) {
             return $binary;
@@ -1527,7 +1489,7 @@ class Engine
      *                system. If no suitable binary could be found, an empty
      *                string is returned.
      */
-    private function _findBinary($name)
+    private function _findBinary($name): string
     {
         if ($this->_isDarwin) {
             $locations = [
@@ -1559,10 +1521,8 @@ class Engine
      * Debugging text is prepended with a debug identifier and echoed to stdout.
      *
      * @param string $text the debugging text to display.
-     *
-     * @return void
      */
-    private function _debug($text)
+    private function _debug($text): void
     {
         if ($this->_debug) {
             if (is_callable($this->_debug)) {

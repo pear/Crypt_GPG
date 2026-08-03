@@ -237,7 +237,7 @@ class SubKey
      *
      * @return string The id of this sub-key.
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->_id;
     }
@@ -245,12 +245,11 @@ class SubKey
     /**
      * Gets the algorithm used by this sub-key
      *
-     * The algorithm should be one of the Crypt_GPG_SubKey::ALGORITHM_*
-     * constants.
+     * The algorithm should be one of the self::ALGORITHM_* constants.
      *
      * @return int The algorithm used by this sub-key.
      */
-    public function getAlgorithm()
+    public function getAlgorithm(): int
     {
         return $this->_algorithm;
     }
@@ -263,7 +262,7 @@ class SubKey
      *
      * @return int The creation date of this sub-key.
      */
-    public function getCreationDate()
+    public function getCreationDate(): int
     {
         return $this->_creationDate ? (int) $this->_creationDate->format('U') : 0;
     }
@@ -273,7 +272,7 @@ class SubKey
      *
      * @return \DateTime|null The creation date of this sub-key.
      */
-    public function getCreationDateTime()
+    public function getCreationDateTime(): ?\DateTime
     {
         return $this->_creationDate ? $this->_creationDate : null;
     }
@@ -287,7 +286,7 @@ class SubKey
      *
      * @return int The date this sub-key expires.
      */
-    public function getExpirationDate()
+    public function getExpirationDate(): int
     {
         return $this->_expirationDate ? (int) $this->_expirationDate->format('U') : 0;
     }
@@ -297,7 +296,7 @@ class SubKey
      *
      * @return \DateTime|null The date this sub-key expires.
      */
-    public function getExpirationDateTime()
+    public function getExpirationDateTime(): ?\DateTime
     {
         return $this->_expirationDate ? $this->_expirationDate : null;
     }
@@ -307,7 +306,7 @@ class SubKey
      *
      * @return string The fingerprint of this sub-key.
      */
-    public function getFingerprint()
+    public function getFingerprint(): string
     {
         return $this->_fingerprint;
     }
@@ -317,7 +316,7 @@ class SubKey
      *
      * @return int The length of this sub-key in bits.
      */
-    public function getLength()
+    public function getLength(): int
     {
         return $this->_length;
     }
@@ -328,7 +327,7 @@ class SubKey
      * @return bool True if this sub-key can sign data and false if this
      *              sub-key can not sign data.
      */
-    public function canSign()
+    public function canSign(): bool
     {
         return ($this->_usage & self::USAGE_SIGN) != 0;
     }
@@ -339,7 +338,7 @@ class SubKey
      * @return bool True if this sub-key can encrypt data and false if this
      *              sub-key can not encrypt data.
      */
-    public function canEncrypt()
+    public function canEncrypt(): bool
     {
         return ($this->_usage & self::USAGE_ENCRYPT) != 0;
     }
@@ -349,7 +348,7 @@ class SubKey
      *
      * @return int Sum of usage flags
      */
-    public function usage()
+    public function usage(): int
     {
         return $this->_usage;
     }
@@ -361,7 +360,7 @@ class SubKey
      * @return bool True the private key for this sub-key exists in the
      *              keyring and false if it does not.
      */
-    public function hasPrivate()
+    public function hasPrivate(): bool
     {
         return $this->_hasPrivate;
     }
@@ -371,7 +370,7 @@ class SubKey
      *
      * @return bool True if this sub-key is revoked and false if it is not.
      */
-    public function isRevoked()
+    public function isRevoked(): bool
     {
         return $this->_isRevoked;
     }
@@ -572,7 +571,7 @@ class SubKey
      *
      * @return self The sub-key object parsed from the string.
      */
-    public static function parse($string)
+    public static function parse($string): self
     {
         $tokens = explode(':', $string);
 
@@ -584,10 +583,7 @@ class SubKey
         $subKey->setCreationDate(self::_parseDate($tokens[5]));
         $subKey->setExpirationDate(self::_parseDate($tokens[6]));
         $subKey->setHasPrivate(isset($tokens[14]) && $tokens[14] == '+');
-
-        if ($tokens[1] == 'r') {
-            $subKey->setRevoked(true);
-        }
+        $subKey->setRevoked($tokens[1] == 'r');
 
         $usage = 0;
         $usage_map = [
@@ -615,7 +611,7 @@ class SubKey
      *
      * @return \DateTime|null The date corresponding to the provided date string.
      */
-    private static function _parseDate($string)
+    private static function _parseDate($string): ?\DateTime
     {
         if (empty($string)) {
             return null;

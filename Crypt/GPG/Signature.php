@@ -123,11 +123,11 @@ class Signature
         // initialize from array
         if (is_array($signature)) {
             if (array_key_exists('id', $signature)) {
-                $this->setId($signature['id']);
+                $this->setId((string) $signature['id']);
             }
 
             if (array_key_exists('fingerprint', $signature)) {
-                $this->setKeyFingerprint($signature['fingerprint']);
+                $this->setKeyFingerprint((string) $signature['fingerprint']);
             }
 
             if (array_key_exists('keyId', $signature)) {
@@ -143,7 +143,7 @@ class Signature
             }
 
             if (array_key_exists('valid', $signature)) {
-                $this->setValid($signature['valid']);
+                $this->setValid((bool) $signature['valid']);
             }
 
             if (array_key_exists('userId', $signature)) {
@@ -159,7 +159,7 @@ class Signature
      *                signature. This id is used to prevent replay attacks and
      *                is not present for all types of signatures.
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->_id;
     }
@@ -169,7 +169,7 @@ class Signature
      *
      * @return string The fingerprint of the key used to create this signature.
      */
-    public function getKeyFingerprint()
+    public function getKeyFingerprint(): string
     {
         return $this->_keyFingerprint;
     }
@@ -183,7 +183,7 @@ class Signature
      *
      * @return string The id of the key used to create this signature.
      */
-    public function getKeyId()
+    public function getKeyId(): string
     {
         return $this->_keyId;
     }
@@ -191,10 +191,9 @@ class Signature
     /**
      * Gets the creation date of this signature
      *
-     * @return int The creation date of this signature. This is a Unix
-     *             timestamp.
+     * @return int The creation date of this signature. This is a Unix timestamp.
      */
-    public function getCreationDate()
+    public function getCreationDate(): int
     {
         return $this->_creationDate;
     }
@@ -203,10 +202,9 @@ class Signature
      * Gets the expiration date of the signature
      *
      * @return int The expiration date of this signature. This is a Unix
-     *             timestamp. If this signature does not expire, this will
-     *             be zero.
+     *             timestamp. If this signature does not expire, this will be zero.
      */
-    public function getExpirationDate()
+    public function getExpirationDate(): int
     {
         return $this->_expirationDate;
     }
@@ -220,7 +218,7 @@ class Signature
      *
      * @return UserId|null The user id associated with this signature.
      */
-    public function getUserId()
+    public function getUserId(): ?UserId
     {
         return $this->_userId;
     }
@@ -230,7 +228,7 @@ class Signature
      *
      * @return bool True if this signature is valid and false if it is not.
      */
-    public function isValid()
+    public function isValid(): bool
     {
         return $this->_isValid;
     }
@@ -246,7 +244,7 @@ class Signature
      *
      * @return self signature object
      */
-    public static function parse($string)
+    public static function parse($string): self
     {
         $tokens = explode(':', $string);
 
@@ -356,7 +354,7 @@ class Signature
      */
     public function setValid($isValid)
     {
-        $this->_isValid = ($isValid) ? true : false;
+        $this->_isValid = !empty($isValid);
         return $this;
     }
 }

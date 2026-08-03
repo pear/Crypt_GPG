@@ -91,10 +91,8 @@ class ProcessHandler
      * Sets the operation that is being performed by the engine.
      *
      * @param string $operation The GPG operation to perform.
-     *
-     * @return void
      */
-    public function setOperation($operation)
+    public function setOperation($operation): void
     {
         $op    = null;
         $opArg = null;
@@ -133,10 +131,8 @@ class ProcessHandler
      * information on GPG's status output.
      *
      * @param string $line the status line to handle.
-     *
-     * @return void
      */
-    public function handleStatus($line)
+    public function handleStatus($line): void
     {
         $tokens = explode(' ', $line);
         switch ($tokens[0]) {
@@ -412,10 +408,8 @@ class ProcessHandler
      * {@link \Crypt\GPG\Engine::$_errorCode}.
      *
      * @param string $line the error line to handle.
-     *
-     * @return void
      */
-    public function handleError($line)
+    public function handleError($line): void
     {
         if (stripos($line, 'gpg: WARNING: ') !== false) {
             $this->data['Warnings'][] = substr($line, 14);
@@ -490,10 +484,9 @@ class ProcessHandler
      *
      * @param int $exitcode GPG process exit code
      *
-     * @return void
      * @throws Exceptions\Exception
      */
-    public function throwException($exitcode = 0)
+    public function throwException($exitcode = 0): void
     {
         if ($exitcode > 0 && $this->errorCode === GPG::ERROR_NONE) {
             $this->errorCode = $this->setErrorCode($exitcode);
@@ -504,7 +497,7 @@ class ProcessHandler
         }
 
         $code = $this->errorCode;
-        $note = "Please use the 'debug' option when creating the Crypt_GPG "
+        $note = "Please use the 'debug' option when creating the Crypt\\GPG "
             . "object, and file a bug report at " . GPG::BUG_URI;
 
         switch ($this->operation) {
@@ -721,7 +714,7 @@ class ProcessHandler
      *
      * @return int Internal error code
      */
-    protected function setErrorCode($exitcode)
+    protected function setErrorCode($exitcode): int
     {
         if ($this->needPassphrase > 0) {
             return GPG::ERROR_MISSING_PASSPHRASE;
@@ -774,10 +767,8 @@ class ProcessHandler
      *                      when signature verification failes because
      *                      of a missing public key.
      * @param mixed  $value Data element value
-     *
-     * @return void
      */
-    public function setData($name, $value)
+    public function setData($name, $value): void
     {
         switch ($name) {
             case 'Handle':
@@ -791,14 +782,12 @@ class ProcessHandler
     }
 
     /**
-     * Create Crypt_GPG_BadPassphraseException from operation data.
+     * Create BadPassphraseException from operation data.
      *
      * @param int    $code    Error code
      * @param string $message Error message
-     *
-     * @return Exceptions\BadPassphraseException
      */
-    protected function badPassException($code, $message)
+    protected function badPassException($code, $message): Exceptions\BadPassphraseException
     {
         $badPassphrases = array_diff_key(
             $this->data['BadPassphrases'] ?? [],
@@ -834,7 +823,7 @@ class ProcessHandler
      *
      * @return string Passphrase
      */
-    protected function getPin($key)
+    protected function getPin($key): string
     {
         $passphrase  = '';
         $keyIdLength = strlen($key);
@@ -853,7 +842,7 @@ class ProcessHandler
                 }
 
                 if ($_keyId === $keyId) {
-                    $passphrase = $pass;
+                    $passphrase = (string) $pass;
                     break;
                 }
             }

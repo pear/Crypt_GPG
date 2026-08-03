@@ -58,8 +58,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $config = [
             'homedir' => __DIR__ . '/' . self::HOMEDIR,
             // 'binary' => '/usr/bin/gpg2',
-            // 'agent'  => '/usr/bin/gpg-agent',
-            // 'gpgconf'  => '/usr/local/bin/gpgconf',
             // 'cipher-algo' => 'AES256',
             // 'digest-algo' => 'SHA512',
             // 'compress-algo' => 'zip',

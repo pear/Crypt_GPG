@@ -308,17 +308,6 @@ class GPG
      *                      the GPG binary location using a list of known default
      *                      locations for the current operating system. The option
      *                      <kbd>gpgBinary</kbd> is a deprecated alias.
-     * - <kbd>string agent</kbd> - the location of the GnuPG agent binary.
-     *                      The gpg-agent is only used for GnuPG 2.x. If not
-     *                      specified, the engine attempts to auto-detect
-     *                      the gpg-agent binary location using a list of
-     *                      know default locations for the current operating system.
-     * - <kbd>string|false gpgconf</kbd> - the location of the GnuPG conf binary.
-     *                      The gpgconf is only used for GnuPG >= 2.1. If not
-     *                      specified, the engine attempts to auto-detect
-     *                      the location using a list of know default locations.
-     *                      When set to FALSE `gpgconf --kill` will not be executed
-     *                      via destructor.
      * - <kbd>string digest-algo</kbd> - Sets the message digest algorithm.
      * - <kbd>string cipher-algo</kbd> - Sets the symmetric cipher.
      * - <kbd>string compress-algo</kbd> - Sets the compression algorithm.
@@ -354,10 +343,6 @@ class GPG
      * @throws Exceptions\Exception if the provided <kbd>binary</kbd> is invalid, or
      *         if no <kbd>binary</kbd> is provided and no suitable binary could
      *         be found.
-     *
-     * @throws Exceptions\Exception if the provided <kbd>agent</kbd> is invalid, or
-     *         if no <kbd>agent</kbd> is provided and no suitable gpg-agent
-     *         could be found.
      */
     public function __construct(array $options = [])
     {

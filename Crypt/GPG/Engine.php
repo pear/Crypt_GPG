@@ -334,7 +334,7 @@ class Engine
      *
      * @param array $options An array of options used to create the engine object.
      *                       All options are optional and are represented as key-value
-     *                       pairs. See \Crypt\GPG::__construct() for more info.
+     *                       pairs. See {@link Crypt\GPG::__construct()} for more info.
      *
      * @throws Exceptions\FileException if the <kbd>homedir</kbd> does not exist
      *         and cannot be created. This can happen if <kbd>homedir</kbd> is

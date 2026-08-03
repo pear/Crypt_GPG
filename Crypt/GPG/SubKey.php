@@ -7,8 +7,8 @@ namespace Crypt\GPG;
 /**
  * A class for GPG sub-key information
  *
- * This class is used to store the results of the {@link Crypt\GPG::getKeys()}
- * method. Sub-key objects are members of a {@link Crypt\GPG\Key} object.
+ * This class is used to store the results of the {@link \Crypt\GPG::getKeys()}
+ * method. Sub-key objects are members of a {@link \Crypt\GPG\Key} object.
  *
  * @category  Encryption
  * @package   Crypt_GPG
@@ -563,8 +563,8 @@ class SubKey
     /**
      * Parses a sub-key object from a sub-key string
      *
-     * See <b>doc/DETAILS</b> in the
-     * {@link http://www.gnupg.org/download/ GPG distribution} for information
+     * See <kbd>doc/DETAILS</kbd> in the
+     * {@link https://www.gnupg.org/download/ GPG distribution} for information
      * on how the sub-key string is parsed.
      *
      * @param string $string The string containing the sub-key.

@@ -37,8 +37,8 @@ class GPG
      *
      * This is the default signing mode.
      *
-     * @see self::sign()
-     * @see self::signFile()
+     * @see GPG::sign()
+     * @see GPG::signFile()
      */
     public const SIGN_MODE_NORMAL = 1;
 
@@ -48,8 +48,8 @@ class GPG
      * message is unencrypted, the message will still be readable. The message
      * text will be in the original encoding.
      *
-     * @see self::sign()
-     * @see self::signFile()
+     * @see GPG::sign()
+     * @see GPG::signFile()
      */
     public const SIGN_MODE_CLEAR = 2;
 
@@ -58,10 +58,10 @@ class GPG
      * signatures, only the signature data is returned. The original message
      * text may be distributed separately from the signature data. This is
      * useful for miltipart/signed email messages as per
-     * {@link http://www.ietf.org/rfc/rfc3156.txt RFC 3156}.
+     * {@link https://www.ietf.org/rfc/rfc3156.txt RFC 3156}.
      *
-     * @see self::sign()
-     * @see self::signFile()
+     * @see GPG::sign()
+     * @see GPG::signFile()
      */
     public const SIGN_MODE_DETACHED = 3;
 
@@ -70,7 +70,7 @@ class GPG
      *
      * Example: C3BC615AD9C766E5A85C1F2716D27458B1BBA1C4
      *
-     * @see self::getFingerprint()
+     * @see GPG::getFingerprint()
      */
     public const FORMAT_NONE = 1;
 
@@ -80,7 +80,7 @@ class GPG
      *
      * Example: C3BC 615A D9C7 66E5 A85C  1F27 16D2 7458 B1BB A1C4
      *
-     * @see self::getFingerprint()
+     * @see GPG::getFingerprint()
      */
     public const FORMAT_CANONICAL = 2;
 
@@ -89,7 +89,7 @@ class GPG
      *
      * Example: C3:BC:61:5A:D9:C7:66:E5:A8:5C:1F:27:16:D2:74:58:B1:BB:A1:C4
      *
-     * @see self::getFingerprint()
+     * @see GPG::getFingerprint()
      */
     public const FORMAT_X509 = 3;
 
@@ -198,7 +198,7 @@ class GPG
      *
      * @var Engine
      *
-     * @see self::setEngine()
+     * @see GPG::setEngine()
      */
     protected $engine = null;
 
@@ -216,8 +216,8 @@ class GPG
      * </code>
      *
      * @var array
-     * @see self::addEncryptKey()
-     * @see self::clearEncryptKeys()
+     * @see GPG::addEncryptKey()
+     * @see GPG::clearEncryptKeys()
      */
     protected $encryptKeys = [];
 
@@ -235,8 +235,8 @@ class GPG
      * </code>
      *
      * @var array
-     * @see self::addSignKey()
-     * @see self::clearSignKeys()
+     * @see GPG::addSignKey()
+     * @see GPG::clearSignKeys()
      */
     protected $signKeys = [];
 
@@ -254,8 +254,8 @@ class GPG
      * </code>
      *
      * @var array
-     * @see self::addDecryptKey()
-     * @see self::clearDecryptKeys()
+     * @see GPG::addDecryptKey()
+     * @see GPG::clearDecryptKeys()
      */
     protected $decryptKeys = [];
 
@@ -268,8 +268,8 @@ class GPG
      * </code>
      *
      * @var array
-     * @see self::addPassphrase()
-     * @see self::clearPassphrases()
+     * @see GPG::addPassphrase()
+     * @see GPG::clearPassphrases()
      */
     protected $passphrases = [];
 
@@ -388,8 +388,8 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see self::addPassphrase()
-     * @see self::clearPassphrases()
+     * @see GPG::addPassphrase()
+     * @see GPG::clearPassphrases()
      */
     public function importKey($data): array
     {
@@ -583,8 +583,8 @@ class GPG
      * Gets the available keys in the keyring
      *
      * Calls GPG with the <kbd>--list-keys</kbd> command and grabs keys. See
-     * the first section of <b>doc/DETAILS</b> in the
-     * {@link http://www.gnupg.org/download/ GPG package} for a detailed
+     * the first section of <kbd>doc/DETAILS</kbd> in the
+     * {@link https://www.gnupg.org/download/ GPG package} for a detailed
      * description of how the GPG command output is parsed.
      *
      * @param string $keyId optional. Only keys with that match the specified
@@ -764,7 +764,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see self::decryptAndVerify()
+     * @see GPG::decryptAndVerify()
      */
     public function encryptAndSign($data, $armor = self::ARMOR_ASCII): string
     {
@@ -803,7 +803,7 @@ class GPG
      *         Use the <kbd>debug</kbd> option and file a bug report if these
      *         exceptions occur.
      *
-     * @see self::decryptAndVerifyFile()
+     * @see GPG::decryptAndVerifyFile()
      */
     public function encryptAndSignFile($filename, $signedFile = null, $armor = self::ARMOR_ASCII): ?string
     {
@@ -1204,10 +1204,10 @@ class GPG
      *
      * @return $this the current object, for fluent interface.
      *
-     * @see self::decrypt()
-     * @see self::decryptFile()
-     * @see self::clearDecryptKeys()
-     * @see self::_addKey()
+     * @see GPG::decrypt()
+     * @see GPG::decryptFile()
+     * @see GPG::clearDecryptKeys()
+     * @see GPG::_addKey()
      *
      * @sensitive $passphrase
      */
@@ -1227,10 +1227,10 @@ class GPG
      *
      * @return $this the current object, for fluent interface.
      *
-     * @see self::encrypt()
-     * @see self::encryptFile()
-     * @see self::clearEncryptKeys()
-     * @see self::_addKey()
+     * @see GPG::encrypt()
+     * @see GPG::encryptFile()
+     * @see GPG::clearEncryptKeys()
+     * @see GPG::_addKey()
      */
     public function addEncryptKey($key)
     {
@@ -1250,10 +1250,10 @@ class GPG
      *
      * @return $this the current object, for fluent interface.
      *
-     * @see self::sign()
-     * @see self::signFile()
-     * @see self::clearSignKeys()
-     * @see self::_addKey()
+     * @see GPG::sign()
+     * @see GPG::signFile()
+     * @see GPG::clearSignKeys()
+     * @see GPG::_addKey()
      *
      * @sensitive $passphrase
      */
@@ -1272,9 +1272,9 @@ class GPG
      *
      * @return $this the current object, for fluent interface.
      *
-     * @see self::clearPassphrases()
-     * @see self::importKey()
-     * @see self::exportKey()
+     * @see GPG::clearPassphrases()
+     * @see GPG::importKey()
+     * @see GPG::exportKey()
      *
      * @sensitive $passphrase
      */
@@ -1289,8 +1289,8 @@ class GPG
      *
      * @return $this the current object, for fluent interface.
      *
-     * @see self::decrypt()
-     * @see self::addDecryptKey()
+     * @see GPG::decrypt()
+     * @see GPG::addDecryptKey()
      */
     public function clearDecryptKeys()
     {
@@ -1303,8 +1303,8 @@ class GPG
      *
      * @return $this the current object, for fluent interface.
      *
-     * @see self::encrypt()
-     * @see self::addEncryptKey()
+     * @see GPG::encrypt()
+     * @see GPG::addEncryptKey()
      */
     public function clearEncryptKeys()
     {
@@ -1317,8 +1317,8 @@ class GPG
      *
      * @return $this The current object, for fluent interface.
      *
-     * @see self::sign()
-     * @see self::addSignKey()
+     * @see GPG::sign()
+     * @see GPG::addSignKey()
      */
     public function clearSignKeys()
     {
@@ -1331,9 +1331,9 @@ class GPG
      *
      * @return $this The current object, for fluent interface.
      *
-     * @see self::importKey()
-     * @see self::exportKey()
-     * @see self::addPassphrase()
+     * @see GPG::importKey()
+     * @see GPG::exportKey()
+     * @see GPG::addPassphrase()
      */
     public function clearPassphrases()
     {
@@ -1929,8 +1929,8 @@ class GPG
      * Gets the available keys in the keyring
      *
      * Calls GPG with the <kbd>--list-keys</kbd> command and grabs keys. See
-     * the first section of <b>doc/DETAILS</b> in the
-     * {@link http://www.gnupg.org/download/ GPG package} for a detailed
+     * the first section of <kbd>doc/DETAILS</kbd> in the
+     * {@link https://www.gnupg.org/download/ GPG package} for a detailed
      * description of how the GPG command output is parsed.
      *
      * @param string $keyId optional. Only keys with that match the specified

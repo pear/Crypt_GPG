@@ -7,28 +7,12 @@ namespace Crypt\GPG\Exceptions;
 /**
  * An exception thrown when a required passphrase is incorrect or missing
  *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>
- *
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2006-2008 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
  */
 class BadPassphraseException extends Exception
 {
@@ -74,7 +58,7 @@ class BadPassphraseException extends Exception
      * @return array an array of keys for which the passphrase is incorrect.
      *               The array contains primary user ids indexed by the sub-key id.
      */
-    public function getBadPassphrases()
+    public function getBadPassphrases(): array
     {
         return $this->_badPassphrases;
     }
@@ -85,7 +69,7 @@ class BadPassphraseException extends Exception
      * @return array an array of keys for which the passphrase is missing.
      *               The array contains primary user ids indexed by the sub-key id.
      */
-    public function getMissingPassphrases()
+    public function getMissingPassphrases(): array
     {
         return $this->_missingPassphrases;
     }

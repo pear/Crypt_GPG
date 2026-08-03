@@ -196,7 +196,7 @@ class UserId
     /**
      * Gets a string representation of this user id
      *
-     * The string is formatted as: <b><kbd>name (comment) <email-address></kbd></b>.
+     * The string is formatted as: <kbd>name (comment) <email-address></kbd>.
      *
      * @return string a string representation of this user id.
      */
@@ -288,7 +288,7 @@ class UserId
      * Parses a user id object from a user id string (or uid: line)
      *
      * A user id string is of the form:
-     * <b><kbd>name (comment) <email-address></kbd></b> with the <i>comment</i>
+     * <kbd>name (comment) <email-address></kbd> with the <i>comment</i>
      * and <i>email-address</i> fields being optional.
      *
      * @param string $string the user id string to parse.

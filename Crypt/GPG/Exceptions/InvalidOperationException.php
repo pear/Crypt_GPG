@@ -7,28 +7,12 @@ namespace Crypt\GPG\Exceptions;
 /**
  * An exception thrown when an invalid GPG operation is attempted
  *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>
- *
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2008 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
  */
 class InvalidOperationException extends Exception
 {
@@ -48,18 +32,16 @@ class InvalidOperationException extends Exception
      */
     public function __construct($message, $code = 0, $operation = '')
     {
-        $this->_operation = $operation;
+        $this->_operation = (string) $operation;
         parent::__construct($message, $code);
     }
 
     /**
-     * Returns the contents of the internal _operation property
+     * Returns the attempted operation
      *
-     * @return string the attempted operation.
-     *
-     * @see self::$_operation
+     * @return string the attempted operation
      */
-    public function getOperation()
+    public function getOperation(): string
     {
         return $this->_operation;
     }

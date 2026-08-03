@@ -13,8 +13,8 @@ use Crypt\GPG\UserId;
 /**
  * Status/Error handler for GPG process pipes.
  *
- * This class is used internally by {@link Crypt\GPG\Engine} and does not need
- * to be used directly. See the {@link Crypt\GPG} class for end-user API.
+ * This class is used internally by {@link \Crypt\GPG\Engine} and does not need
+ * to be used directly. See the {@link \Crypt\GPG} class for end-user API.
  *
  * @category  Encryption
  * @package   Crypt_GPG

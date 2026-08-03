@@ -25,8 +25,8 @@ use Crypt\GPG\UserId;
  * Debian systems may want to install the 'randomsound' package.
  *
  * This class uses the experimental automated key generation support available
- * in GnuPG. See <b>doc/DETAILS</b> in the
- * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
+ * in GnuPG. See <kbd>doc/DETAILS</kbd> in the
+ * {@link https://www.gnupg.org/download/ GPG distribution} for detailed
  * information on the key generation format.
  *
  * @category  Encryption
@@ -44,7 +44,7 @@ class KeyGenerator extends GPG
      *
      * @var int
      *
-     * @see self::setExpirationDate()
+     * @see KeyGenerator::setExpirationDate()
      */
     protected $expirationDate = 0;
 
@@ -53,7 +53,7 @@ class KeyGenerator extends GPG
      *
      * @var string
      *
-     * @see self::setPassphrase()
+     * @see KeyGenerator::setPassphrase()
      */
     protected $passphrase = '';
 
@@ -62,7 +62,7 @@ class KeyGenerator extends GPG
      *
      * @var int
      *
-     * @see self::setKeyParams()
+     * @see KeyGenerator::setKeyParams()
      */
     protected $keyAlgorithm = SubKey::ALGORITHM_DSA;
 
@@ -71,7 +71,7 @@ class KeyGenerator extends GPG
      *
      * @var int
      *
-     * @see self::setKeyParams()
+     * @see KeyGenerator::setKeyParams()
      */
     protected $keySize = 1024;
 
@@ -83,7 +83,7 @@ class KeyGenerator extends GPG
      *
      * @var int
      *
-     * @see self::setKeyParams()
+     * @see KeyGenerator::setKeyParams()
      */
     protected $keyUsage = 6; // USAGE_SIGN | USAGE_CERTIFY
 
@@ -92,7 +92,7 @@ class KeyGenerator extends GPG
      *
      * @var int
      *
-     * @see self::setSubKeyParams()
+     * @see KeyGenerator::setSubKeyParams()
      */
     protected $subKeyAlgorithm = SubKey::ALGORITHM_ELGAMAL_ENC;
 
@@ -101,7 +101,7 @@ class KeyGenerator extends GPG
      *
      * @var int
      *
-     * @see self::setSubKeyParams()
+     * @see KeyGenerator::setSubKeyParams()
      */
     protected $subKeySize = 2048;
 
@@ -113,7 +113,7 @@ class KeyGenerator extends GPG
      *
      * @var int
      *
-     * @see self::setSubKeyParams()
+     * @see KeyGenerator::setSubKeyParams()
      */
     protected $subKeyUsage = \Crypt\GPG\SubKey::USAGE_ENCRYPT;
 
@@ -465,13 +465,12 @@ class KeyGenerator extends GPG
     /**
      * Builds a GnuPG key usage string suitable for key generation
      *
-     * See <b>doc/DETAILS</b> in the
-     * {@link http://www.gnupg.org/download/ GPG distribution} for detailed
+     * See <kbd>doc/DETAILS</kbd> in the
+     * {@link https://www.gnupg.org/download/ GPG distribution} for detailed
      * information on the key usage format.
      *
      * @param int $usage A bitwise combination of the key usages. This is
-     *                   a combination of the \Crypt\GPG\SubKey::USAGE_*
-     *                   constants.
+     *                   a combination of the \Crypt\GPG\SubKey::USAGE_* constants.
      *
      * @return string The key usage string.
      */

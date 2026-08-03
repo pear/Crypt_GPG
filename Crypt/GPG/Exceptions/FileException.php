@@ -11,28 +11,12 @@ namespace Crypt\GPG\Exceptions;
  * if an input file is specified and the file is not readable, this exception
  * is thrown.
  *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>
- *
  * @category  Encryption
  * @package   Crypt_GPG
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2007-2008 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
- * @link      http://pear.php.net/package/Crypt_GPG
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL License 2.1
+ * @link      https://github.com/pear/Crypt_GPG
  */
 class FileException extends Exception
 {
@@ -52,7 +36,7 @@ class FileException extends Exception
      */
     public function __construct($message, $code = 0, $filename = '')
     {
-        $this->_filename = $filename;
+        $this->_filename = (string) $filename;
         parent::__construct($message, $code);
     }
 
@@ -60,10 +44,8 @@ class FileException extends Exception
      * Returns the filename of the file that caused this exception
      *
      * @return string the filename of the file that caused this exception.
-     *
-     * @see self::$_filename
      */
-    public function getFilename()
+    public function getFilename(): string
     {
         return $this->_filename;
     }

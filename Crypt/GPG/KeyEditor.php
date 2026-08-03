@@ -329,7 +329,7 @@ class KeyEditor
     /**
      * Trust a key.
      *
-     * @param int $level Trust level (see self::TRUST_* constants)
+     * @param int $level Trust level (see KeyEditor::TRUST_* constants)
      *
      * @return $this The current object, for fluent interface.
      */

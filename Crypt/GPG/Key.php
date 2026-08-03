@@ -28,8 +28,8 @@ class Key
      *
      * @var array<UserId>
      *
-     * @see self::addUserId()
-     * @see self::getUserIds()
+     * @see Key::addUserId()
+     * @see Key::getUserIds()
      */
     private $_userIds = [];
 
@@ -40,8 +40,8 @@ class Key
      *
      * @var array<SubKey>
      *
-     * @see self::addSubKey()
-     * @see self::getSubKeys()
+     * @see Key::addSubKey()
+     * @see Key::getSubKeys()
      */
     private $_subKeys = [];
 
@@ -50,7 +50,7 @@ class Key
      *
      * @return array<SubKey> the sub-keys of this key.
      *
-     * @see self::addSubKey()
+     * @see Key::addSubKey()
      */
     public function getSubKeys(): array
     {
@@ -62,7 +62,7 @@ class Key
      *
      * @return array<UserId> the user ids of this key.
      *
-     * @see self::addUserId()
+     * @see Key::addUserId()
      */
     public function getUserIds(): array
     {

@@ -236,8 +236,8 @@ class Signature
     /**
      * Parses a sig: line from keys listing output (available with --with-sig-list)
      *
-     * See <b>doc/DETAILS</b> in the
-     * {@link http://www.gnupg.org/download/ GPG distribution} for information
+     * See <kbd>doc/DETAILS</kbd> in the
+     * {@link https://www.gnupg.org/download/ GPG distribution} for information
      * on how the sub-key string is parsed.
      *
      * @param string $string The string containing the sig: line
@@ -266,7 +266,7 @@ class Signature
      *
      * @return $this The current object, for fluent interface.
      *
-     * @see self::getId()
+     * @see Signature::getId()
      */
     public function setId($id)
     {

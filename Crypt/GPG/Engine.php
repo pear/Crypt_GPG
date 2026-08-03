@@ -14,7 +14,7 @@ use Crypt\GPG\SignatureCreationInfo;
  * Native PHP Crypt_GPG I/O engine
  *
  * This class is used internally by Crypt_GPG and does not need be used
- * directly. See the {@link Crypt\GPG} class for end-user API.
+ * directly. See the {@link Crypt\GPG Crypt\GPG} class for end-user API.
  *
  * This engine uses PHP's native process control functions to directly control
  * the GPG process. The GPG executable is required to be on the system.
@@ -63,8 +63,8 @@ class Engine
     /**
      * GPG status output file descriptor. The status file descriptor outputs
      * detailed information for many GPG commands. See the second section of
-     * the file <b>doc/DETAILS</b> in the
-     * {@link http://www.gnupg.org/download/ GPG package} for a detailed
+     * the file <kbd>doc/DETAILS</kbd> in the
+     * {@link https://www.gnupg.org/download/ GPG package} for a detailed
      * description of GPG's status output.
      */
     public const FD_STATUS = 3;
@@ -95,7 +95,7 @@ class Engine
      * Strict mode is disabled by default.
      *
      * @var bool
-     * @see self::__construct()
+     * @see Engine::__construct()
      */
     private $_strict = false;
 
@@ -111,7 +111,7 @@ class Engine
      * debug line to process.
      *
      * @var bool|callable
-     * @see self::__construct()
+     * @see Engine::__construct()
      */
     private $_debug = false;
 
@@ -119,8 +119,8 @@ class Engine
      * Location of GPG binary
      *
      * @var string
-     * @see self::__construct()
-     * @see self::_getBinary()
+     * @see Engine::__construct()
+     * @see Engine::_getBinary()
      */
     private $_binary = '';
 
@@ -131,7 +131,7 @@ class Engine
      * is specified in the constructor.
      *
      * @var string
-     * @see self::__construct()
+     * @see Engine::__construct()
      */
     private $_homedir = '';
 
@@ -146,7 +146,7 @@ class Engine
      * <kbd>~/.gnupg</kbd>.
      *
      * @var string
-     * @see self::__construct()
+     * @see Engine::__construct()
      */
     private $_publicKeyring = '';
 
@@ -161,7 +161,7 @@ class Engine
      * <kbd>~/.gnupg</kbd>.
      *
      * @var string
-     * @see self::__construct()
+     * @see Engine::__construct()
      */
     private $_privateKeyring = '';
 
@@ -176,7 +176,7 @@ class Engine
      * <kbd>~/.gnupg</kbd>.
      *
      * @var string
-     * @see self::__construct()
+     * @see Engine::__construct()
      */
     private $_trustDb = '';
 
@@ -198,7 +198,7 @@ class Engine
      * descriptor resources.
      *
      * @var array
-     * @see self::_closePipe()
+     * @see Engine::_closePipe()
      */
     private $_openPipes = [];
 
@@ -248,7 +248,7 @@ class Engine
      * Commands to be sent to GPG's command input stream
      *
      * @var string
-     * @see self::sendCommand()
+     * @see Engine::sendCommand()
      */
     private $_commandBuffer = '';
 
@@ -263,7 +263,7 @@ class Engine
      * Array of status line handlers
      *
      * @var array
-     * @see self::addStatusHandler()
+     * @see Engine::addStatusHandler()
      */
     private $_statusHandlers = [];
 
@@ -271,7 +271,7 @@ class Engine
      * Array of error line handlers
      *
      * @var array
-     * @see self::addErrorHandler()
+     * @see Engine::addErrorHandler()
      */
     private $_errorHandlers = [];
 
@@ -281,7 +281,7 @@ class Engine
      * This is data to send to GPG. Either a string or a stream resource.
      *
      * @var string|resource|null
-     * @see self::setInput()
+     * @see Engine::setInput()
      */
     private $_input = null;
 
@@ -291,7 +291,7 @@ class Engine
      * Either a string or a stream resource.
      *
      * @var string|resource|null
-     * @see self::setMessage()
+     * @see Engine::setMessage()
      */
     private $_message = null;
 
@@ -301,7 +301,7 @@ class Engine
      * This is where the output from GPG is sent. Either a string or a stream resource.
      *
      * @var string|resource
-     * @see self::setOutput()
+     * @see Engine::setOutput()
      */
     private $_output = '';
 
@@ -309,7 +309,7 @@ class Engine
      * The GPG operation to execute
      *
      * @var string
-     * @see self::setOperation()
+     * @see Engine::setOperation()
      */
     private $_operation;
 
@@ -317,7 +317,7 @@ class Engine
      * Arguments for the current operation
      *
      * @var array
-     * @see self::setOperation()
+     * @see Engine::setOperation()
      */
     private $_arguments = [];
 
@@ -325,7 +325,7 @@ class Engine
      * The version number of the GPG binary
      *
      * @var string
-     * @see self::getVersion()
+     * @see Engine::getVersion()
      */
     private $_version = '';
 
@@ -584,8 +584,8 @@ class Engine
     /**
      * Resets the GPG engine, preparing it for a new operation
      *
-     * @see self::run()
-     * @see self::setOperation()
+     * @see Engine::run()
+     * @see Engine::setOperation()
      */
     public function reset(): void
     {
@@ -622,8 +622,8 @@ class Engine
      * @throws Exceptions\InvalidOperationException if no operation is specified.
      * @throws Exceptions\Exception if an unknown or unexpected error occurs.
      *
-     * @see self::reset()
-     * @see self::setOperation()
+     * @see Engine::reset()
+     * @see Engine::setOperation()
      */
     public function run(): void
     {
@@ -689,8 +689,8 @@ class Engine
      *                          subprocess. See the GPG manual for specific
      *                          values.
      *
-     * @see self::reset()
-     * @see self::run()
+     * @see Engine::reset()
+     * @see Engine::run()
      */
     public function setOperation($operation, array $arguments = []): void
     {
@@ -1271,9 +1271,9 @@ class Engine
      *
      * @throws Exceptions\OpenSubprocessException if the subprocess could not be opened.
      *
-     * @see self::setOperation()
-     * @see self::_closeSubprocess()
-     * @see self::$_process
+     * @see Engine::setOperation()
+     * @see Engine::_closeSubprocess()
+     * @see Engine::$_process
      */
     private function _openSubprocess(): void
     {
@@ -1398,8 +1398,8 @@ class Engine
      * Closes the internal GPG subprocess. Sets the private class property
      * {@link self::$_process} to null.
      *
-     * @see self::_openSubprocess()
-     * @see self::$_process
+     * @see Engine::_openSubprocess()
+     * @see Engine::$_process
      */
     private function _closeSubprocess(): void
     {

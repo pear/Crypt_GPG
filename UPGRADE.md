@@ -1,16 +1,15 @@
 # UPGRADING TO v2
 
-## Dropped support for PHP < 8.1
-
 ## Dropped support for GNUPG < 2.2.0
 
 - A lot of code has been removed including the dummy pinentry implementation.
 - Removed configuration options: `agent`, `gpgconf`.
 
-## Dropped PEAR dependency
+## Dropped support for PHP < 8.1
 
-All exceptions thrown by the library now do not inherit from `PEAR_Exception` anymore.
-The release channel is now only the Packagist.
+- Added return type declarations.
+- Removed `mbstring` dependency.
+- Improved code style and quality (introduced `php-cs-fixer` and bumped `phpstan` level).
 
 ## PSR-4
 
@@ -26,6 +25,11 @@ Implemented PSR-4 class structure and autoloading.
     - `Crypt_GPG_Exception` -> `Crypt\GPG\Exceptions\Exception`
     - `Crypt_GPG_BadPassphraseException` -> `Crypt\GPG\Exceptions\BadPassphraseException`
     and so on.
+
+## Dropped PEAR dependency
+
+All exceptions thrown by the library now do not inherit from `PEAR_Exception` anymore.
+The release channel is now only the Packagist.
 
 ## Optimizations
 

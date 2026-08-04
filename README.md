@@ -28,7 +28,7 @@ $ vendor/bin/phpunit tests
 use Crypt/GPG;
 
 $gpg = new GPG([
-        'homedir' => '/home/alec',
+        'homedir' => '/home/alec/.gnupg',
         'binary' => '/usr/bin/gpg',
 ]);
 
@@ -47,13 +47,16 @@ Additionally you can use `KeyEditor` or `KeyGenerator` for functionality not cov
 <?php
 
 use Crypt/GPG/KeyGenerator;
+use Crypt/GPG/UserId;
 
 $keygen = new KeyGenerator([
-        'homedir' => '/home/alec',
+        'homedir' => '/home/alec/.gnupg',
         'binary' => '/usr/bin/gpg',
 ]);
 
-$key = $keygen->generateKey('Test Keypair');
+$key = $keygen
+    ->setExpirationDate('+10 years')
+    ->generateKey(new UserId('Test Keypair <test@example.com>'));
 
 ?>
 ```
